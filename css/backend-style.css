@@ -1,0 +1,262 @@
+/* Loyalty Settings tables */
+.loyalty_level th, .loyalty_point th {
+	width: 100px;
+}
+.loyalty_level td, .loyalty_point td {
+	line-height: 2;
+}
+.loyalty_using_point, .loyalty_customization {
+	padding-bottom: 15px;
+	line-height: 2;
+}
+.loyalty_customization tr, .loyalty_customization_message tr, .loyalty_customization_display tr {
+	display: flex;
+}
+.loyalty_customization .button {
+	margin-left: 5px;
+}
+.loyalty_customization th {
+	width: 120px;
+	margin-bottom: 9px;
+	padding: 10px 10px 0 0;
+	display: inline-flex;
+	align-items: center;
+    justify-content: left;
+}
+.loyalty_customization td {
+	padding: 10px 10px 0 0;
+	display: inline-flex;
+	align-items: center;
+    justify-content: left;
+}
+.loyalty_customization_message th, .loyalty_customization_display th {
+	width: 120px;
+	margin-bottom: 9px;
+	padding: 10px 10px 10px 0;
+	display: inline-flex;
+	align-items: center;
+    justify-content: left;
+}
+.loyalty_customization_message td, .loyalty_customization_display td {
+	padding: 10px 10px 10px 0;
+	display: inline-flex;
+	align-items: center;
+    justify-content: center;
+}
+
+.loyalty_customization_membercard {
+	display: inline-flex;
+	align-items: center;
+    justify-content: center;
+}
+
+/* Points Modal Popup */
+#points-modal {
+	position: fixed;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.modal-content {
+	background-color: #fefefe;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 400px;
+	border-radius: 5px;
+}
+.modal-content h2 {
+	margin-top: 0;
+}
+.modal-content th {
+    width: 120px;
+    text-align: left;
+}
+.modal-content td {
+	width: 280px;
+}
+.modal-content input#points-amount {
+    width: 80px;
+}
+.modal-content input#points-description {
+    width: 100%;
+}
+.point-modal-footer {
+    margin-top: 20px;
+	display: flex;
+	justify-content: right;
+	align-items: center;
+}
+.close-modal, .close-modal-log {
+	color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+}
+.close-modal:hover, .close-modal:focus{
+	color: black;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+/* Styles for Points Log Modal */
+#points-log-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+.log-modal-content {
+    background-color: #fff;
+    margin: 15% auto; 
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 5px;
+    width: 80%;
+    max-width: 700px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.log-modal-content h2 {
+    margin-top: 0;
+}
+#points-log-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+#points-log-table th, #points-log-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+#points-log-table th {
+    background-color: #f2f2f2;
+    color: #333;
+    font-weight: bold;
+}
+#points-log-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+.close-modal-log {
+    cursor: pointer;
+    float: right;
+    font-size: 24px;
+}
+
+/* Users page */
+th#actions {
+	width: 120px;
+}
+th#current_points, th#total_earned {
+	width: 80px;
+}
+td.current_points, td.total_earned {
+	text-align: center;
+}
+.button.reward-points, .button.deduct-points {
+    padding: 0 5px;
+    display: inline-flex !important;
+}
+
+/* User Profile */
+.user-points td {
+	margin-bottom: 0;
+	padding: 20px 10px 20px 0;
+}
+
+.yoswc-user-points-upsell {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-left: 4px solid #2271b1;
+	border-radius: 4px;
+	margin: 12px 0 20px;
+	max-width: 760px;
+	padding: 12px 14px;
+}
+
+.yoswc-user-points-upsell--modal {
+	margin: 16px 0 0;
+}
+
+.yoswc-user-points-upsell h4 {
+	font-size: 14px;
+	margin: 0 0 6px;
+}
+
+.yoswc-user-points-upsell p {
+	margin: 0 0 8px;
+}
+
+.yoswc-user-points-upsell ul {
+	list-style: disc;
+	margin: 0 0 10px 18px;
+}
+
+.yoswc-user-points-upsell__actions {
+	margin: 0;
+}
+
+/* Upload form */
+.yobm-upload-form {
+    background: #f6f7f7;
+    border: 1px solid #c3c4c7;
+    padding: 20px;
+}
+
+/* Settings */
+.label-child {
+	padding-left: 20px;
+}
+
+/* Premium preview cards */
+.yoswc-premium-preview-row th {
+	vertical-align: top;
+}
+
+.yoswc-premium-preview-row__label {
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	color: #50575e;
+	display: inline-block;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1;
+	padding: 7px 9px;
+}
+
+.yoswc-premium-preview-card {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-left: 4px solid #2271b1;
+	border-radius: 4px;
+	max-width: 760px;
+	padding: 14px 16px;
+}
+
+.yoswc-premium-preview-card h3 {
+	font-size: 15px;
+	margin: 0 0 6px;
+}
+
+.yoswc-premium-preview-card p {
+	margin: 0 0 10px;
+}
+
+.yoswc-premium-preview-card ul {
+	list-style: disc;
+	margin: 0 0 12px 20px;
+}
+
+.yoswc-premium-preview-card__actions {
+	margin: 0;
+}

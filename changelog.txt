@@ -1,0 +1,88 @@
+=== WooCommerce Loyalty (Free Version) ===
+
+== Changelog ==
+
+= 1.2.2 (Jun 13, 2026) =
+* Fix: Reworked point redemption to use the WooCommerce session and cart discount fee instead of generated `yosl-loyalty-{user_id}` coupons.
+* Fix: Corrected admin JavaScript asset paths for user point modals.
+* Improve: Updated third-party service disclosure and limited the YoOhw subscription request to the first successful install connection.
+* Improve: Added translation-safe fallbacks for default point labels and My Account labels.
+
+= 1.2.1 (Jun 6, 2026) =
+* Fix: Added a WooCommerce runtime guard for older WordPress versions that do not enforce plugin dependencies.
+* Fix: Removed unnecessary guest AJAX handlers from loyalty points actions.
+* Improve: Cleaned translation text domains, translator comments, and package metadata for WordPress.org readiness.
+
+= 1.2.0 (Jun 1, 2026) =
+* New: Added a frontend Loyalty bubble that explains the active free loyalty program, including reward levels, earning rules, bonus rewards, point redemption, and customer reward summary.
+* New: Added Customization settings for Loyalty bubble visibility and bottom-left/bottom-right placement.
+* New: Added premium previews for Advanced earning rules and Redeem products in the General settings.
+
+= 1.1.5 (Apr 27, 2026) =
+* Improve: Optimized and cleaned functionality. 
+* Improve: WooCommerce 10.7 compatibility.
+
+= 1.1.4 (Feb 6, 2026) =
+* Improve: WooCommerce version 10.5 compatibility.
+
+= 1.1.3 (Oct 15, 2025) =
+* Fix: Uncaught TypeError `call_user_func_array()` throws “class not found”.
+* Fix: Added the null-coalescing fallback fixes the immediate warnings in the first start.
+* Fix: Added the missing default settings of the message for guest.
+
+= 1.1.2 (Jun 13, 2025) =
+* New: Integrated the WooCommerce Advanced Accounts plugin.
+* Update: Reorder the `Loyalty` settings tab.
+* Fix: Issue of the JavaScript performance in account page.
+* Improve: WooCommerce version 9.3 compatibility.
+
+= 1.1.1 (May 6, 2025) =
+* New: Added membercard background and border color options.
+* Improve: Updated the frontend CSS displaying.
+
+= 1.1.0 (Apr 24, 2025) =
+* New: Added optionals to display the message for guests on the shop and product pages.
+* New: Added option to set the message icon.
+* Update: Loyalty card displaying on mobile screens.
+* Improve: WordPress compatibility to 6.8.
+* Improve: WooCommerce compatibility.
+
+= 1.0.9 (Feb 25, 2025) =
+* New: Extra points - Daily login.
+* New: Extra points - Level up.
+* Fix: Cannot load more points table on the My Account page.
+
+= 1.0.8 (Feb 18, 2025) =
+* Fix: Error during leaving a review for the product.
+* Improve: WooCommerce compatibility.
+
+= 1.0.7 (Jan 22, 2025) =
+* Fix: Update to work on some sites with `dbDelta()` enforces strict checks.
+
+= 1.0.6 (Jan 13, 2025) =
+* New: Added Tools > Redefine the loyalty level option.
+* Improve: Updated to display points, log modals immediately.
+* Improve: Added CSS for upload form of import tool.
+
+= 1.0.5 (Dec 29, 2024) =
+* New: Added Tools > Import user points and earning points.
+* Improve: Display level name instead of level slug and some improvements at email notifications.
+
+= 1.0.4 (Dec 20, 2024) =
+* Improve: The loyalty is only available for those user roles that have set.
+* Improve: Point card heading updated.
+
+= 1.0.3 (Dec 14, 2024) =
+* Fix: The notice cannot be dismissed.
+
+= 1.0.2 (Dec 12, 2024) =
+* Improve: The notices will only display for administrators.
+* Fix: Missing the Add / Remove roles button.
+
+= 1.0.1 (Dec 7, 2024) =
+* Improve: Close points log modal when clicking outside of the form.
+* Improve: Added missing language strings.
+* Fix: Empty log message. 
+
+= 1.0.0 (Nov 6, 2024) =
+* First released.

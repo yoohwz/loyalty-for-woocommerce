@@ -1,0 +1,658 @@
+/* Cart & Checkout pages */
+#loyalty-reward-message {
+	display: flex;
+}
+.loyalty-reward-message {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+}
+.loyalty-reward-message img {
+	margin-right: 5px;
+}
+
+/* Product page */
+.loyalty-earning-points-message-content {
+	display: inline-flex;
+	align-items: center;
+    padding: 10px;
+    margin: 20px 0;
+    font-size: 14px;
+}
+.loyalty-earning-points-message-content img {
+	margin-right: 5px;
+}
+.loyalty-shop-message-content {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 5px;
+    margin: 0 0 16px 0;
+}
+.loyalty-shop-message-content img {
+	margin: 0 4px 0 0 !important;
+}
+
+/* Loyalty info bubble */
+.yoswc-loyalty-info {
+	--yoswc-info-accent: #79a70a;
+	--yoswc-info-accent-contrast: #ffffff;
+	--yoswc-info-panel-bg: #f8fafc;
+	--yoswc-info-text: #1f2937;
+	--yoswc-info-border: #d9dee5;
+	--yoswc-info-card-bg: #ffffff;
+	--yoswc-info-card-text: #1f2937;
+	--yoswc-info-card-border: #d9dee5;
+	--yoswc-info-line-style: solid;
+	--yoswc-info-line-size: 1px;
+	--yoswc-info-radius: 16px;
+	position: fixed;
+	right: 24px;
+	bottom: 24px;
+	z-index: 99999;
+	border: 0 !important;
+	border-style: none !important;
+	border-width: 0 !important;
+	font-size: 14px;
+	line-height: 1.45;
+}
+
+.yoswc-loyalty-info--bottom-left {
+	right: auto;
+	left: 24px;
+}
+
+.yoswc-loyalty-info,
+.yoswc-loyalty-info * {
+	box-sizing: border-box;
+}
+
+.yoswc-loyalty-info__bubble {
+	-webkit-appearance: none;
+	appearance: none;
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 48px;
+	padding: 10px 16px;
+	border: 0 !important;
+	border-radius: 999px;
+	outline: 0 !important;
+	background: var(--yoswc-info-accent);
+	color: var(--yoswc-info-accent-contrast);
+	box-shadow: 0 12px 30px rgba(15, 23, 42, 0.24) !important;
+	font-weight: 700;
+	cursor: pointer;
+	transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.yoswc-loyalty-info__bubble:hover,
+.yoswc-loyalty-info__bubble:focus,
+.yoswc-loyalty-info__bubble:active {
+	background: var(--yoswc-info-accent);
+	color: var(--yoswc-info-accent-contrast);
+	border: 0 !important;
+	outline: 0 !important;
+	transform: translateY(-2px);
+}
+
+.yoswc-loyalty-info__bubble-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 999px;
+	background: var(--yoswc-info-accent-contrast);
+}
+
+.yoswc-loyalty-info__bubble-icon img {
+	display: block;
+	width: 20px;
+	height: 20px;
+	object-fit: contain;
+}
+
+.yoswc-loyalty-info__panel {
+	position: absolute;
+	right: 0;
+	bottom: 64px;
+	display: flex;
+	flex-direction: column;
+	width: min(430px, calc(100vw - 32px));
+	max-height: min(720px, calc(100vh - 120px));
+	overflow: hidden;
+	border: 1px solid var(--yoswc-info-border);
+	border-radius: 16px;
+	background: var(--yoswc-info-panel-bg);
+	color: var(--yoswc-info-text);
+	box-shadow: 0 22px 60px rgba(15, 23, 42, 0.28);
+	animation: yoswcPanelIn 180ms ease-out;
+	transform-origin: bottom right;
+}
+
+.yoswc-loyalty-info--bottom-left .yoswc-loyalty-info__panel {
+	right: auto;
+	left: 0;
+	transform-origin: bottom left;
+}
+
+.yoswc-loyalty-info__panel[hidden] {
+	display: none;
+}
+
+.yoswc-loyalty-info__powered {
+	position: absolute;
+	right: 0;
+	bottom: 40px;
+	display: none;
+	width: min(430px, calc(100vw - 32px));
+	margin: 0;
+	color: var(--yoswc-info-text);
+	font-size: 11px;
+	font-weight: 650;
+	line-height: 1.25;
+	opacity: 0.72;
+	pointer-events: none;
+}
+
+.yoswc-loyalty-info.is-open .yoswc-loyalty-info__powered {
+	display: block;
+}
+
+.yoswc-loyalty-info__powered a {
+	color: var(--yoswc-info-accent);
+	font-weight: 800;
+	text-decoration: none;
+	pointer-events: auto;
+}
+
+.yoswc-loyalty-info__powered a:hover,
+.yoswc-loyalty-info__powered a:focus {
+	color: var(--yoswc-info-accent);
+	text-decoration: underline;
+}
+
+.yoswc-loyalty-info--bottom-left .yoswc-loyalty-info__powered {
+	right: auto;
+	left: 0;
+	text-align: right;
+}
+
+.yoswc-loyalty-info__header {
+	position: relative;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 18px;
+	padding: 24px 28px 20px;
+	border-bottom: 1px solid var(--yoswc-info-border);
+}
+
+.yoswc-loyalty-info__header::before {
+	content: "";
+	position: absolute;
+	right: 20px;
+	bottom: 0;
+	left: 20px;
+	height: 4px;
+	border-radius: 999px;
+	background: var(--yoswc-info-accent);
+}
+
+.yoswc-loyalty-info__eyebrow {
+	margin: 0 0 8px;
+	color: #64748b;
+	font-size: 12px;
+	font-weight: 800;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.yoswc-loyalty-info__header h3 {
+	margin: 0;
+	color: var(--yoswc-info-text);
+	font-size: 24px;
+	font-weight: 400;
+	line-height: 1.15;
+}
+
+.yoswc-loyalty-info__intro {
+	margin: 12px 0 0;
+	color: var(--yoswc-info-text);
+	font-weight: 700;
+}
+
+.yoswc-loyalty-info__close {
+	-webkit-appearance: none;
+	appearance: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	width: 42px;
+	height: 42px;
+	border: 2px solid var(--yoswc-info-accent) !important;
+	border-radius: 999px;
+	background: transparent;
+	color: var(--yoswc-info-text);
+	cursor: pointer;
+	font-size: 28px;
+	font-weight: 800;
+	line-height: 1;
+}
+
+.yoswc-loyalty-info__body {
+	padding: 18px;
+	overflow-y: auto;
+}
+
+.yoswc-loyalty-info__section {
+	margin: 0 0 14px;
+	border: var(--yoswc-info-line-size) var(--yoswc-info-line-style) var(--yoswc-info-card-border);
+	border-radius: var(--yoswc-info-radius);
+	background: var(--yoswc-info-card-bg);
+	color: var(--yoswc-info-card-text);
+}
+
+.yoswc-loyalty-info__section:last-child {
+	margin-bottom: 0;
+}
+
+.yoswc-loyalty-info__section-toggle {
+	-webkit-appearance: none;
+	appearance: none;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	width: 100%;
+	padding: 18px;
+	border: 0 !important;
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+	text-align: left;
+}
+
+.yoswc-loyalty-info__section-main {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	min-width: 0;
+}
+
+.yoswc-loyalty-info__section-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	width: 38px;
+	height: 38px;
+	border-radius: 14px;
+	background: var(--yoswc-info-accent);
+	color: var(--yoswc-info-accent-contrast);
+	font-weight: 900;
+}
+
+.yoswc-loyalty-info__section-title,
+.yoswc-loyalty-info__section-subtitle {
+	display: block;
+}
+
+.yoswc-loyalty-info__section-title {
+	color: var(--yoswc-info-card-text);
+	font-size: 16px;
+	font-weight: 850;
+	line-height: 1.15;
+}
+
+.yoswc-loyalty-info__section-subtitle {
+	margin-top: 4px;
+	font-size: 13px;
+	font-weight: 700;
+	opacity: 0.78;
+}
+
+.yoswc-loyalty-info__section-control {
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.yoswc-loyalty-info__switch {
+	position: relative;
+	width: 44px;
+	height: 24px;
+	border-radius: 999px;
+	background: #2f3135;
+}
+
+.yoswc-loyalty-info__switch span {
+	position: absolute;
+	top: 4px;
+	left: 4px;
+	width: 16px;
+	height: 16px;
+	border-radius: 999px;
+	background: #ffffff;
+	transition: transform 180ms ease;
+}
+
+.yoswc-loyalty-info__section.is-open .yoswc-loyalty-info__switch span {
+	transform: translateX(20px);
+}
+
+.yoswc-loyalty-info__chevron {
+	width: 12px;
+	height: 12px;
+	border-right: 3px solid #374151;
+	border-bottom: 3px solid #374151;
+	transform: rotate(45deg);
+	transition: transform 180ms ease;
+}
+
+.yoswc-loyalty-info__section.is-open .yoswc-loyalty-info__chevron {
+	transform: rotate(225deg);
+}
+
+.yoswc-loyalty-info__section-panel {
+	display: none;
+	padding: 0 18px 18px;
+}
+
+.yoswc-loyalty-info__section.is-open .yoswc-loyalty-info__section-panel {
+	display: block;
+}
+
+.yoswc-loyalty-info__section-grid {
+	display: grid;
+	gap: 12px;
+}
+
+.yoswc-loyalty-info__row {
+	padding: 14px;
+	border: var(--yoswc-info-line-size) var(--yoswc-info-line-style) var(--yoswc-info-card-border);
+	border-radius: var(--yoswc-info-radius);
+	background: var(--yoswc-info-card-bg);
+}
+
+.yoswc-loyalty-info__row-label {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 8px;
+	color: var(--yoswc-info-card-text);
+	font-weight: 850;
+	text-transform: uppercase;
+}
+
+.yoswc-loyalty-info__dot {
+	display: inline-block;
+	width: 7px;
+	height: 7px;
+	border-radius: 999px;
+	background: var(--yoswc-info-accent);
+	box-shadow: 0 0 0 4px rgba(121, 167, 10, 0.12);
+}
+
+.yoswc-loyalty-info__text-value {
+	display: inline-flex;
+	align-items: center;
+	min-height: 34px;
+	padding: 8px 10px;
+	border: var(--yoswc-info-line-size) var(--yoswc-info-line-style) var(--yoswc-info-card-border);
+	border-radius: var(--yoswc-info-radius);
+	background: var(--yoswc-info-card-bg);
+	color: var(--yoswc-info-card-text);
+	font-weight: 650;
+}
+
+.yoswc-loyalty-info__chips,
+.yoswc-loyalty-info__cta {
+	display: grid;
+	gap: 8px;
+}
+
+.yoswc-loyalty-info__chip {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	padding: 9px 10px;
+	border: var(--yoswc-info-line-size) var(--yoswc-info-line-style) var(--yoswc-info-card-border);
+	border-radius: var(--yoswc-info-radius);
+	background: var(--yoswc-info-card-bg);
+	color: var(--yoswc-info-card-text);
+	font-weight: 650;
+}
+
+.yoswc-loyalty-info__chip > span {
+	display: inline-block;
+	flex: 0 0 auto;
+	width: 16px;
+	height: 16px;
+	margin-top: 2px;
+	border-radius: 999px;
+	background: var(--yoswc-info-panel-bg);
+	border: 4px solid var(--yoswc-info-accent);
+}
+
+.yoswc-loyalty-info__cta p {
+	margin: 0;
+	color: var(--yoswc-info-card-text);
+	font-weight: 650;
+}
+
+.yoswc-loyalty-info__cta-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: fit-content;
+	min-height: 38px;
+	padding: 9px 16px;
+	border: 0 !important;
+	border-radius: 999px;
+	background: var(--yoswc-info-accent);
+	color: var(--yoswc-info-accent-contrast) !important;
+	box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
+	font-weight: 800;
+	text-decoration: none !important;
+}
+
+@keyframes yoswcPanelIn {
+	from {
+		opacity: 0;
+		transform: translateY(10px) scale(0.98);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+/* My account */
+.loyalty-points-card {
+	border: 1px solid #ccc;
+	padding: 30px 40px;
+	border-radius: 8px;
+	background-color: #f9f9f9;
+	max-width: 100%;
+	margin: 0 auto 20px;
+	display: flex;
+	flex-direction: column;
+}
+
+.loyalty-points-card h3 {
+	text-align: center;
+	margin-bottom: 40px;
+}
+
+.loyalty-card-container {
+	display: inline-flex;
+	align-items: center;
+    justify-content: space-between;
+}
+
+.loyalty-card-level {
+	width: 36%;
+	display: flex;
+	flex: 1;
+	margin-bottom: 15px;
+}
+
+.loyalty-card-details {
+	width: 64%;
+	display: block;
+	margin-bottom: 15px;
+}
+
+.loyalty-card-level {
+	font-weight: bold;
+	margin-right: 10px;
+	flex: 0.4;
+}
+
+.loyalty-card-points-details {
+	display: flex;
+	padding: 10px;
+	margin-bottom: 30px;
+	justify-content: space-between;
+}
+
+.loyalty-card-available-points, .loyalty-card-earning-points {
+	width: 48%;
+	display: grid;
+}
+
+.loyalty-card-available-points {
+	border: solid;
+	border-color: #eee;
+	border-width: 0 4px 0 0;
+}
+
+.loyalty-card-points {
+	font-size: 34px;
+}
+
+.loyalty-levels-bar {
+	margin-top: 15px;
+	width: 100%;
+	padding: 10px;
+	text-align: center;
+	border-radius: 4px;
+}
+
+.circle-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0; /* Center the circle */
+}
+
+.circular-chart {
+    width: 100%;
+    height: 100%;
+}
+
+.circle-bg {
+    fill: none;
+    stroke: #eee;
+    stroke-width: 2.8;
+}
+
+.circle {
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke: #FF6A6A;
+    transition: stroke-dasharray 0.6s ease;
+}
+
+.level-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+	font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+.progress-bar {
+	background-color: #eee;
+	border-radius: 5px;
+	overflow: hidden;
+	height: 10px;
+	margin-top: 5px;
+	margin-bottom: 26px;
+}
+
+.progress-bar-fill {
+	background-color: #FF6A6A;
+	height: 100%;
+	width: 0;
+	transition: width 0.6s ease;
+}
+
+.loyalty-level-notes {
+	font-size: 12px;
+	text-align: left;
+}
+
+.loyalty-points-table-button {
+	text-align: right;
+}
+
+/*
+** Mobile screen
+*/
+@media (max-width: 767px) {
+	.yoswc-loyalty-info {
+		right: 16px;
+		bottom: 16px;
+	}
+
+	.yoswc-loyalty-info--bottom-left {
+		right: auto;
+		left: 16px;
+	}
+
+	.yoswc-loyalty-info__bubble {
+		min-height: 44px;
+		padding: 9px 13px;
+	}
+
+	.yoswc-loyalty-info__panel {
+		right: -8px;
+		bottom: 58px;
+		max-height: calc(100vh - 96px);
+	}
+
+	.yoswc-loyalty-info--bottom-left .yoswc-loyalty-info__panel {
+		right: auto;
+		left: -8px;
+	}
+
+	.yoswc-loyalty-info__powered {
+		right: -8px;
+		bottom: 38px;
+	}
+
+	.yoswc-loyalty-info--bottom-left .yoswc-loyalty-info__powered {
+		right: auto;
+		left: -8px;
+	}
+
+	.yoswc-loyalty-info__bubble-text {
+		display: none;
+	}
+
+	.yoswc-loyalty-info__section-toggle {
+		padding: 15px;
+	}
+
+	.loyalty-points-card {padding: 14px 20px 0;}
+	.loyalty-card-container {justify-content: center; flex-wrap: wrap;}
+	.loyalty-card-details {width: 100%; margin-top: 10px;}
+}
