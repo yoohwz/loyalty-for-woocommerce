@@ -119,7 +119,7 @@ class PolicyTest(unittest.TestCase):
         self.assertEqual(1, workflow.count("if: needs.syntax.outputs.mode == 'FULL'"))
         self.assertIn('needs: [syntax, runtime]', workflow)
         self.assertIn("if: ${{ always() && (github.event_name != 'pull_request' || github.event.pull_request.draft == false) }}", workflow)
-        self.assertIn('run: bash tests/runtime/run.sh', workflow)
+        self.assertIn('run: |\n          bash tests/runtime/run.sh\n          bash tests/runtime/modern.sh', workflow)
         block = workflow.split('      - name: Classify with accepted base policy\n')[1].split('        run: |\n')[1].split('\n      - name:')[0]
         shell = '\n'.join(line[10:] for line in block.splitlines())
         with tempfile.TemporaryDirectory(prefix='loy-output-') as out:
