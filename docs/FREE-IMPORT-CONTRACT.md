@@ -1,6 +1,6 @@
 # Exact-SHA Free downstream contract
 
-Authority: LOYF-1, LOYF-2, LOYF-5 and its approved cutover boundary in Issue #5. Canonical workflow remains the read-only upstream workflow; this file describes source and package provenance.
+Authority: LOYF-1, LOYF-2, LOYF-5 and its approved cutover boundary in Issue #5, plus the modern adapters admitted by LOYF-8 in Issue #8. Canonical workflow remains the read-only upstream workflow; this file describes source and package provenance.
 
 Pinned upstream: `yoohwz/wc-loyalty@9e3d663b9828a24eacd141216d5e6f6e22da8ca4`.
 Free baseline: `yoohwz/loyalty-for-woocommerce@3ee1ba4841615c0fc23f3e4d6680d442ea276d1b`.
@@ -8,7 +8,7 @@ The executable `config/free-import-manifest.json` inventories every upstream Git
 
 ## Core runtime and extraction
 
-The phase is `core-runtime`: 25 explicit imports plus 54 Free product overlays form the complete 79-file distribution. Source, stage, ZIP and extracted-tree checks require this same boundary. The historical CLI mode name `legacy` automatically includes imports in this phase; it cannot waive core-runtime verification.
+The phase is `core-runtime`: 25 explicit imports plus 58 Free product overlays form the complete 83-file distribution. Source, stage, ZIP and extracted-tree checks require this same boundary. The historical CLI mode name `legacy` automatically includes imports in this phase; it cannot waive core-runtime verification.
 
 Five imports retain whole canonical source bytes: `points-lock.php`, `points-log-cache.php`, `points-log.php`, `role-claims.php` and `inc/backend/actions/helper/roles.php`. The core mixed modules use reviewed exact-byte extraction recipes:
 
@@ -22,7 +22,7 @@ Five imports retain whole canonical source bytes: `points-lock.php`, `points-log
 | `order-rewards.php` | Serialized purchase/reversal finalization and role projection; no referral or checkpoint allocation |
 | `inc/cores/database.php` → `inc/cores/helper/database.php` | Exact additive canonical schema v3 prerequisite, Free activation identity |
 | `inc/backend/actions/deduct-points.php` → `inc/cores/helper/order-deduction.php` | Canonical purchase reversal with no Premium entitlement dependency |
-| `order-redemption.php` | Proven Classic cart debit/return/payment fences; no product, coupon conversion or Store API redemption producer |
+| `order-redemption.php` | Canonical Classic/Store API cart debit/return/payment fences and native draft/POST recovery; no product or coupon conversion producer |
 | `role-ownership.php` | Canonical new-role creation and owned retirement; no hard deletion, companion scan or historical ownership adoption |
 
 Helper names above resolve under `inc/cores/helper/` unless qualified. Canonical symbols, locks, transaction keys, persisted `yowcl_*` identities and shared role protocol identities stay unchanged. Recipes preserve canonical portions and explicitly replace/remove spans needed by the admitted Free adapters. They are not blanket prefix/domain replacements or permission to import a folder.
@@ -45,7 +45,7 @@ The admitted additive schema preserves existing table/IDs/rows and balances, lea
 
 Legacy redemption markers without atomic debit proof receive an idempotent manual-review hold, never automatic credit. Old cart selections cannot fund a new order; a new selection carries frozen terms and an attempt UUID. Pending funded checkout retains that selection through same-identity retry; gateway completion/empty-cart lifecycle retires it. Manual operation scope is actor/site/target/action, independent of nonce refresh; original terms remain recoverable until acknowledged. Fractional stored balances remain byte-for-byte intact and economic mutation explicitly fails closed, including duplicate meta during historical reversal. CSV retains a durable actor-scoped form identity across rendering/reloads; original file terms and row keys remain immutable. A separate import requires an explicit authorized action, serialized with the current writer; starting it never deletes prior events/witnesses. Existing allocation checkpoints/dormant unsupported redemption records are held for review rather than rewritten.
 
-LOYF-6 retains semantic option/email/session/role compatibility migrations, fractional resolution and full old-Free upgrade certification. LOYF-7 retains broader economic certification; LOYF-8 retains Blocks/HPOS support. The Store API guard only refuses unsupported points checkout; it does not claim Blocks support.
+LOYF-6 retains semantic option/email/session/role compatibility migrations, fractional resolution and full old-Free upgrade certification. LOYF-7 retains broader economic certification; LOYF-8 adds native Cart/Checkout Blocks and namespaced Store API selection updates over the same canonical redemption identity/owner. CPT/HPOS sync-off and shipped Blocks browser evidence precede positive FeaturesUtil declarations. The lifecycle and certification boundary is recorded in `docs/MODERN-CHECKOUT-CONTRACT.md`; Premium-only requests remain denied without value mutation.
 
 ## Verification and refresh
 

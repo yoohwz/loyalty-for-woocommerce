@@ -196,7 +196,7 @@ class YOSWC_Loyalty_User_Profile_Points {
 				if ($entry->order_id == 0) {
 					$order_id = '-';
 				} else {
-					$order_id = sprintf('<a href="%s" target="_blank">#%d</a>', esc_url(admin_url('post.php?post=' . intval($entry->order_id) . '&action=edit')), intval($entry->order_id));
+					$order_id = sprintf('<a href="%s" target="_blank">#%d</a>', esc_url( ( $order = wc_get_order( $entry->order_id ) ) ? $order->get_edit_order_url() : '' ), intval($entry->order_id));
 				}
 	
 				$description_prefix = '';

@@ -79,15 +79,6 @@ class YOWCL_Free_Core {
         $role = sanitize_key( $role );
         if ( '' !== $role ) { self::user_reward( $user, 'reward:level_up:' . (int) $user . ':' . $role, 'level_up_reward', (int) ( $rules[$role]['awarded'] ?? 0 ), __( 'Level up bonus for role:', 'loyalty-for-woocommerce' ) . ' ' . ( wp_roles()->roles[$role]['name'] ?? $role ) ); }
     }
-    /** Safety hold for the checkout adapter explicitly deferred to LOYF-8. */
-    public static function deny_store_api_redemption( $order ) {
-        $selected = WC()->session ? (float) WC()->session->get( 'yoswc_loyalty_applied_points', 0 ) : 0;
-        $discount = false;
-        foreach ( $order->get_items( 'fee' ) as $fee ) { if ( (float) $fee->get_total() < 0 && $fee->get_name() === __( 'Points used', 'loyalty-for-woocommerce' ) ) { $discount = true; } }
-        if ( $selected > 0 || $discount || (float) $order->get_meta( '_used_points' ) > 0 ) {
-            throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'loyf_classic_checkout_required', __( 'Please remove point redemption or use Classic checkout to place this order.', 'loyalty-for-woocommerce' ), 400 );
-        }
-    }
     public static function history_amount( $row ) {
         $row = (array) $row;
         $canonical = false;

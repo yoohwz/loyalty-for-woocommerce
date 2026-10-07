@@ -6,7 +6,8 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
     const SESSION_POINTS = 'yoswc_loyalty_applied_points';
     const SESSION_DISCOUNT = 'yoswc_loyalty_discount_amount';
 
-	    public function __construct() {
+	    public function __construct( $register = true ) {
+            if ( ! $register ) { return; }
 	        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
 	        add_action('woocommerce_before_checkout_form', array($this, 'display_user_points_notice'));
 	        add_action('woocommerce_before_cart', array($this, 'display_user_points_notice'));
@@ -19,6 +20,7 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 	    }
 
     public function enqueue_scripts() {
+        if ( has_block( 'woocommerce/cart' ) || has_block( 'woocommerce/checkout' ) ) { return; }
         if (!wp_script_is('jquery', 'enqueued')) {
             wp_enqueue_script('jquery');
         }
@@ -208,73 +210,17 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 	            wp_die();
 	        }
 	    
-	        if ( ! YOWCL_Free_Core::owns() || ! isset( $_POST['loyalty_points_input'] ) || ! is_scalar( $_POST['loyalty_points_input'] ) || ! preg_match( '/^[0-9]+$/D', (string) $_POST['loyalty_points_input'] ) || strlen( (string) $_POST['loyalty_points_input'] ) > 8 ) { wp_send_json_error( array( 'message' => __( 'A valid whole points amount is required.', 'loyalty-for-woocommerce' ) ) ); }
-            $loyalty_points_input = isset($_POST['loyalty_points_input']) ? floatval( wp_unslash( $_POST['loyalty_points_input'] ) ) : 0;
-	    
-	        $user_id = get_current_user_id();
-	        $user_points = get_user_meta($user_id, 'user_points', true);
-	        $user_points = !empty($user_points) ? floatval($user_points) : 0.0;
-
-	        $rules = $this->get_using_rules();
-	        if (empty($rules)) {
-	            wp_send_json_error(['message' => __('Point redemption is not configured.', 'loyalty-for-woocommerce')]);
-	            wp_die();
-	        }
-
-	        if ($loyalty_points_input <= 0 || $loyalty_points_input < $rules['points'] || $loyalty_points_input > $user_points) {
-	            wp_send_json_error(['message' => __('Invalid points amount.', 'loyalty-for-woocommerce')]);
-	            wp_die();
-	        }
-
-	        $redemption = $this->calculate_redemption_for_cart($loyalty_points_input, $rules);
-	        if (empty($redemption)) {
-	            wp_send_json_error(['message' => __('Invalid points amount.', 'loyalty-for-woocommerce')]);
-	            wp_die();
-	        }
-
-	        $this->set_applied_points($redemption['points'], $redemption['discount']);
-	        WC()->cart->calculate_totals();
-
-	        wp_send_json_success(['message' => __('Points applied successfully.', 'loyalty-for-woocommerce')]);
+            try { YOWCL_Free_Cart::apply( $_POST['loyalty_points_input'] ?? null ); WC()->cart->calculate_totals(); }
+            catch ( Throwable $e ) { wp_send_json_error( array( 'message' => $e->getMessage() ) ); return; }
+            wp_send_json_success( array( 'message' => __( 'Points applied successfully.', 'loyalty-for-woocommerce' ) ) );
 	    
 	        wp_die();
 	    }
 	    
 	    public function apply_points_to_cart_total($cart = null) {
-	        if (!is_user_logged_in() || ( defined( 'REST_REQUEST' ) && REST_REQUEST )) {
-	            return;
-	        }
+            YOWCL_Free_Cart::fee( $cart instanceof WC_Cart ? $cart : WC()->cart );
+        }
 
-	        if (is_admin() && !wp_doing_ajax()) {
-	            return;
-	        }
-
-	        $cart = $cart instanceof WC_Cart ? $cart : WC()->cart;
-	        if (!$cart) {
-	            return;
-	        }
-
-	        $applied_points = $this->get_applied_points();
-	        $discount = $this->get_applied_discount();
-	        if ($applied_points <= 0 || $discount <= 0) {
-	            return;
-	        }
-
-	        $user_points = (float) get_user_meta(get_current_user_id(), 'user_points', true);
-	        if ($applied_points > $user_points + YOWCL_Order_Redemption::funded_selection_points()) {
-	            $this->clear_applied_points();
-	            return;
-	        }
-
-	        $discount_limit = $this->get_cart_discount_limit($cart);
-	        if ($discount <= 0 || $discount > $discount_limit) {
-	            $this->clear_applied_points();
-	            return;
-	        }
-
-	        $cart->add_fee(__('Points used', 'loyalty-for-woocommerce'), -1 * $discount, false);
-	    }
-    
     public function ajax_get_earned_points() {
         if (!is_user_logged_in()) {
             wp_send_json_error(['message' => __('User not logged in', 'loyalty-for-woocommerce')]);
@@ -286,7 +232,7 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
         wp_send_json_success(['earned_points' => $earned_points]);
     }
 
-	    private function calculate_potential_earned_points($user_id) {
+	    public function calculate_potential_earned_points($user_id) {
 	        $user = get_userdata($user_id);
 	        $user_role = $user ? YOWCL_Helper_Roles::get_highest_loyalty_user_role( (int) $user->ID ) : 'customer';
 
@@ -338,99 +284,15 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 	        return (int) $earned_points;
 	    }
 
-	    private function get_using_rules() {
-	        $rules = maybe_unserialize(get_option('loyalty_points_using_rules'));
-	        if (!YOWCL_Free_Migrations::ready( 'redemption' ) || !is_array($rules) || empty($rules['points']) || empty($rules['amount'])) {
-	            return array();
-	        }
-
-	        $points = (float) $rules['points'];
-	        $amount = (float) $rules['amount'];
-	        if ($points <= 0 || $amount <= 0) {
-	            return array();
-	        }
-
-	        return array(
-	            'points' => $points,
-	            'amount' => $amount,
-	        );
-	    }
-
-	    private function calculate_redemption_for_cart($points, $rules) {
-	        $discount = ($points / $rules['points']) * $rules['amount'];
-	        $limit = $this->get_cart_discount_limit(WC()->cart);
-
-	        if ($limit <= 0) {
-	            return array();
-	        }
-
-	        if ($discount > $limit) {
-	            $points = floor(($limit / $rules['amount']) * $rules['points']);
-	            $discount = ($points / $rules['points']) * $rules['amount'];
-	        }
-
-	        if ($points < $rules['points'] || $discount <= 0) {
-	            return array();
-	        }
-
-	        return array(
-	            'points' => $points,
-	            'discount' => wc_format_decimal($discount),
-	        );
-	    }
-
-	    private function get_cart_discount_limit($cart) {
-	        if (!$cart) {
-	            return 0.0;
-	        }
-
-	        $subtotal = (float) $cart->get_subtotal();
-	        $discounts = (float) $cart->get_discount_total();
-
-	        return max(0.0, $subtotal - $discounts);
-	    }
-
 	    private function get_applied_points() {
-        YOWCL_Free_Migrations::session();
-            if ( ! WC()->session || ! is_array( WC()->session->get( 'loyf_funded_selection' ) ) ) { return 0; }
-	        if (!WC()->session) {
-	            return 0.0;
-	        }
-
-	        return (float) WC()->session->get(self::SESSION_POINTS, 0);
-	    }
-
-	    private function get_applied_discount() {
-	        if (!WC()->session) {
-	            return 0.0;
-	        }
-
-	        return (float) WC()->session->get(self::SESSION_DISCOUNT, 0);
-	    }
-
-	    private function set_applied_points($points, $discount) {
-            if ( WC()->session ) {
-                $id = wp_generate_uuid4();
-                WC()->session->set( 'yowcl_checkout_id', $id );
-                WC()->session->set( 'loyf_funded_selection', array( 'id' => $id, 'points' => (int) $points, 'discount' => wc_format_decimal( $discount, wc_get_price_decimals() ), 'currency' => get_woocommerce_currency(), 'owner' => YOWCL_Order_Redemption::session_owner() ) );
-            }
-	        if (!WC()->session) {
-	            return;
-	        }
-
-	        WC()->session->set(self::SESSION_POINTS, (float) $points);
-	        WC()->session->set(self::SESSION_DISCOUNT, (float) $discount);
-	    }
+            $selection = YOWCL_Free_Cart::selection();
+            return $selection ? $selection['points'] : 0;
+        }
 
 	    private function clear_applied_points() {
-            if ( WC()->session ) { WC()->session->set( 'loyf_funded_selection', null ); WC()->session->set( 'yowcl_checkout_id', null ); }
-	        if (!WC()->session) {
-	            return;
-	        }
+            YOWCL_Free_Cart::clear();
+        }
 
-	        WC()->session->__unset(self::SESSION_POINTS);
-	        WC()->session->__unset(self::SESSION_DISCOUNT);
-	    }
 	    
 	    public function delete_loyalty_coupon() {
 	        if (!is_user_logged_in()) {

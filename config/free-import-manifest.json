@@ -140,7 +140,7 @@
       "target": "inc/cores/helper/order-redemption.php",
       "transform": "wp-text-domain-v1",
       "sha256": "cc4f1f15860ca8518b091ef31379abbdf655c661cdef875e8c80be31f3a40753",
-      "output_sha256": "c1487eb70c28208e7701d46b7ee0ce2413ba8c0a6d400cdde42310929a64dfa5",
+      "output_sha256": "a59b4606dbd304a192d513e81e6c15146ee485e09f5f930cbde37f16dcdec461",
       "domain_replacements": 0,
       "extraction": "inc/cores/helper/order-redemption.php"
     },
@@ -239,7 +239,7 @@
     {
       "target": "loyalty-for-woocommerce.php",
       "mode": "100644",
-      "sha256": "930c467b7483f7e8892ae48f43f4bb2f223dffc70f04cbc621e43817e771e795"
+      "sha256": "ec7208efd109c23f384cb236bbe8a63c521d719a87f45a7808847335757c9329"
     },
     {
       "target": "readme.txt",
@@ -314,7 +314,7 @@
     {
       "target": "inc/backend/actions/use-points.php",
       "mode": "100644",
-      "sha256": "1e3d91ec8213484f25795a84963137a3e94a1afc328fb3c67304832ac3191af2"
+      "sha256": "9380266184841986df0ac8933cd7b82ca412f199ccca915a9837320f4a9b1f93"
     },
     {
       "target": "inc/backend/settings/customization.php",
@@ -379,7 +379,7 @@
     {
       "target": "inc/backend/users/user-profile-points.php",
       "mode": "100644",
-      "sha256": "12319959313d2b2545412808531499b21fb59ef67cc773513f8845b0915ed4a5"
+      "sha256": "51ef2fcc6d0d256293ce5256060aa6b7ea10aa165361e04193cde2165cbe0db5"
     },
     {
       "target": "inc/backend/users/users-points.php",
@@ -424,7 +424,7 @@
     {
       "target": "inc/cores/helper/free-core.php",
       "mode": "100644",
-      "sha256": "c3cf0fbfa0757bb4e78c423c7856310819bb4097627b0c12aff06c5977e497f5"
+      "sha256": "b2336339d93396b857fb6a7ebcce8155af5fdbce16972f4178eaccdfac87026d"
     },
     {
       "target": "inc/cores/helper/free-order-actions.php",
@@ -439,7 +439,7 @@
     {
       "target": "inc/frontend/cart-checkout.php",
       "mode": "100644",
-      "sha256": "64a13ddb5f14bfcafca558ff060a1adb8eaa1d252ea092e0255b950a9974a055"
+      "sha256": "64f0631c98903bb8cd35dd22523beea63deb77f5b249ad00d20e5ce4d101c131"
     },
     {
       "target": "inc/frontend/loyalty-info-bubble.php",
@@ -505,6 +505,26 @@
       "target": "inc/cores/helper/free-migrations.php",
       "mode": "100644",
       "sha256": "64067daeedbc4b506400fbc0a9608858e04787f95e169078c6dcbad51496633c"
+    },
+    {
+      "target": "inc/cores/helper/free-cart.php",
+      "mode": "100644",
+      "sha256": "98bfc52c6417d5dc9950f6883eba23445dcfdcb941104b5173f6c252d94d04f6"
+    },
+    {
+      "target": "inc/cores/helper/free-blocks.php",
+      "mode": "100644",
+      "sha256": "125645ca54b280054f9fc5239a09a6a13b29be92ed4587c44a6ab573b808eb10"
+    },
+    {
+      "target": "inc/cores/helper/free-blocks-integration.php",
+      "mode": "100644",
+      "sha256": "778fa7963f2041ff2e5c461c7e2bd90351ab5d1fe814900294e4a96ad318233b"
+    },
+    {
+      "target": "js/blocks-redemption.js",
+      "mode": "100644",
+      "sha256": "8e458aa89c1dc1f476fa0cccf9a2de930c6f953e3e638e5345cd3251cddbfeaf"
     }
   ],
   "blocked_mixed_modules": [
@@ -1694,6 +1714,6 @@
   "extractions": {
     "id": "byte-spans-v1",
     "path": "config/free-core-extractions.json",
-    "sha256": "86f149c889398c0309211b0f2d0cbf66424b7006e5381f30b4ef6364ab050c7f"
+    "sha256": "3ec7a3c54eb162a16b3df1541fbdd1350ff6537e54dc3be6cd0607cd8314a213"
   }
 }

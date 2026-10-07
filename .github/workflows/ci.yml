@@ -177,7 +177,9 @@ jobs:
           LOY_DB_HOST: 127.0.0.1
           LOY_DB_USER: root
           LOY_DB_PASSWORD: loy-runtime-only
-        run: bash tests/runtime/run.sh
+        run: |
+          bash tests/runtime/run.sh
+          bash tests/runtime/modern.sh
 
   required:
     name: LOYF Required CI

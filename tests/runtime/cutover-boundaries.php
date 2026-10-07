@@ -19,12 +19,6 @@ add_option( 'yowcl_order_redemption_' . $uuid, $dormant, '', false );
 try { YOWCL_Order_Redemption::record( $uuid ); throw new RuntimeException( 'Dormant product record accepted' ); }
 catch ( RuntimeException $error ) { loyf_equal( 'unsupported_redemption_review_required', $error->getMessage(), 'Dormant mode held' ); }
 loyf_equal( $dormant, get_option( 'yowcl_order_redemption_' . $uuid ), 'Dormant record bytes preserved' );
-$ordinary = loyf_order( $user, $product );
-WC()->session->set( 'yoswc_loyalty_applied_points', 0 ); YOWCL_Free_Core::deny_store_api_redemption( $ordinary );
-WC()->session->set( 'yoswc_loyalty_applied_points', 1 );
-try { YOWCL_Free_Core::deny_store_api_redemption( $ordinary ); throw new RuntimeException( 'Unsupported points checkout accepted' ); }
-catch ( \Automattic\WooCommerce\StoreApi\Exceptions\RouteException $error ) { loyf_equal( 400, $error->getCode(), 'Store API redemption safety hold' ); }
-WC()->session->set( 'yoswc_loyalty_applied_points', 0 );
 // Existing public role controller denies unprivileged writes and never deletes legacy/shared access.
 $controller = new YOSWC_Loyalty_Settings_Add_Remove_User_Role();
 wp_set_current_user( $user ); $_SERVER['REQUEST_METHOD'] = 'POST';
