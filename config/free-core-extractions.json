@@ -1,7 +1,7 @@
 {
   "inc/cores/helper/points-transaction.php": {
     "input_sha256": "65514f221a43c6957ff04cd585aa63000637bab8598f1050374642acefce708e",
-    "selected_sha256": "f98c88a1947bb8d4b8b7fd082f97b9f2923e782eb63ddc07382dea8ad6f54eb1",
+    "selected_sha256": "2edae12e3292b7107010e5d80d92b791df7db028fa6ec491de3a65f0cca983b3",
     "spans": [
       {
         "start": 306,
@@ -237,6 +237,11 @@
         "start": 18506,
         "end": 19043,
         "replacement": ""
+      },
+      {
+        "start": 21466,
+        "end": 21466,
+        "replacement": "c2VsZjo6Y2hlY2twb2ludCggJ2NvbW1pdF9yZXNwb25zZScgKTsKCQkJ"
       },
       {
         "start": 22607,

@@ -68,7 +68,7 @@
       "target": "inc/cores/helper/points-transaction.php",
       "transform": "wp-text-domain-v1",
       "sha256": "65514f221a43c6957ff04cd585aa63000637bab8598f1050374642acefce708e",
-      "output_sha256": "f98c88a1947bb8d4b8b7fd082f97b9f2923e782eb63ddc07382dea8ad6f54eb1",
+      "output_sha256": "2edae12e3292b7107010e5d80d92b791df7db028fa6ec491de3a65f0cca983b3",
       "domain_replacements": 0,
       "extraction": "inc/cores/helper/points-transaction.php"
     },
@@ -1694,6 +1694,6 @@
   "extractions": {
     "id": "byte-spans-v1",
     "path": "config/free-core-extractions.json",
-    "sha256": "2346a712d442483449e61a26b137cd2c657a61b9204c343f266157e413bf6359"
+    "sha256": "071bc93f402f3fd500c59102e9ff0a814bacec7e9ff2adb4d7e1fe5100d5f78a"
   }
 }

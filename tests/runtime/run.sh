@@ -62,6 +62,7 @@ for phase in baseline candidate; do
     [[ "$phase" != candidate ]] || scenario=hardened.php
     wp eval-file "$repo/tests/runtime/$scenario" --quiet
     test -s "$LOYF_SNAPSHOT" && test -s "$LOYF_RAW_SNAPSHOT"
+    if [[ "$phase" == candidate ]]; then wp eval-file "$repo/tests/runtime/economic-certification.php" --quiet; fi
     if [[ "$phase" == baseline ]]; then
         # Upgrade the actual executed 1.2.2 database/tree; do not manufacture canonical history.
         wp eval-file "$repo/tests/runtime/upgrade-seed.php" --quiet
