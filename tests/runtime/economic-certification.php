@@ -3,7 +3,7 @@ require __DIR__ . '/assertions.php';
 global $wpdb;
 function loyf7_user($name) {
     $rules=get_option('loyalty_extra_points_rules'); $off=$rules; $off['signup_enabled']='no'; update_option('loyalty_extra_points_rules',$off);
-    $id=wp_insert_user(array('user_login'=>'cert7_'.$name,'user_email'=>$name.'@example.invalid','user_pass'=>'disposable-only','role'=>'customer'));
+    $id=wp_insert_user(array('user_login'=>'cert7_'.$name,'user_email'=>'cert7_'.$name.'@example.invalid','user_pass'=>'disposable-only','role'=>'customer'));
     update_option('loyalty_extra_points_rules',$rules); loyf_assert(!is_wp_error($id),'User fixture'); return (int)$id;
 }
 function loyf7_row($key,$delta,$earning) {
@@ -105,7 +105,7 @@ loyf_assert(is_wp_error($insufficient),'Unaffordable checkout refused'); loyf_as
 // Consumers and public legacy observations cannot write accounting or reinterpret nullable history.
 $before_rows=$wpdb->get_results('SELECT * FROM '.YOWCL_Points_Log::table_name().' ORDER BY id',ARRAY_A); $before_meta=$wpdb->get_results("SELECT * FROM {$wpdb->usermeta} WHERE meta_key IN ('user_points','user_earning_points') ORDER BY umeta_id",ARRAY_A);
 wp_set_current_user($partial); $history=loyf_ajax('wp_ajax_load_more_points_log',array('security'=>wp_create_nonce('load_more_points_nonce'),'offset'=>0)); loyf_equal(true,$history['success'],'Native My Account history');
-foreach($history['data'] as $row){loyf_assert(!isset($row['event_key'],$row['available_delta']),'Consumer hides internal accounting');}
+foreach($history['data'] as $row){loyf_assert(!isset($row['event_key']) && !isset($row['available_delta']),'Consumer hides internal accounting');}
 do_action('yoswc_loyalty_points_reward',$partial,999,999,null); do_action('yoswc_loyalty_points_deduct',$partial,999,999,null);
 loyf_equal($before_rows,$wpdb->get_results('SELECT * FROM '.YOWCL_Points_Log::table_name().' ORDER BY id',ARRAY_A),'Observations/readers do not append history'); loyf_equal($before_meta,$wpdb->get_results("SELECT * FROM {$wpdb->usermeta} WHERE meta_key IN ('user_points','user_earning_points') ORDER BY umeta_id",ARRAY_A),'Consumers cannot write value');
 require __DIR__ . '/upstream-replay.php';
