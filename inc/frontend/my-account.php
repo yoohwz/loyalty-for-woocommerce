@@ -384,7 +384,7 @@ class YOSWC_Loyalty_My_Account_My_Points {
 	
 	private function get_user_role() {
 		$user = wp_get_current_user();
-		return $user->roles ? $user->roles[0] : 'customer';
+		return YOWCL_Helper_Roles::get_highest_loyalty_user_role( (int) $user->ID ) ?: 'customer';
 	}
 
 	public function get_user_points_log( $user_id ) {

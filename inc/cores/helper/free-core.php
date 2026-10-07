@@ -7,8 +7,18 @@ class YOWCL_Free_Core {
         // The activation sandbox must not load canonical definitions from both editions.
         if ( is_admin() && in_array( $_REQUEST['action'] ?? '', array( 'activate', 'activate-selected' ), true ) && ( ( $_REQUEST['plugin'] ?? '' ) === 'wc-loyalty/wc-loyalty.php' || in_array( 'wc-loyalty/wc-loyalty.php', (array) ( $_REQUEST['checked'] ?? array() ), true ) ) ) { return false; }
         if ( defined( 'WP_CLI' ) && WP_CLI && in_array( 'activate', (array) ( $_SERVER['argv'] ?? array() ), true ) && in_array( 'wc-loyalty', (array) ( $_SERVER['argv'] ?? array() ), true ) ) { return false; }
-        $active = (array) get_option( 'active_plugins', array() );
-        $network = (array) get_site_option( 'active_sitewide_plugins', array() );
+        global $wpdb;
+        $raw = $wpdb->get_var( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'active_plugins' ) );
+        if ( $wpdb->last_error ) { return false; }
+        $active = null === $raw ? array() : maybe_unserialize( $raw );
+        if ( ! is_array( $active ) ) { return false; }
+        $network = array();
+        if ( is_multisite() ) {
+            $raw = $wpdb->get_var( $wpdb->prepare( "SELECT meta_value FROM {$wpdb->sitemeta} WHERE site_id = %d AND meta_key = %s", get_current_network_id(), 'active_sitewide_plugins' ) );
+            if ( $wpdb->last_error ) { return false; }
+            $network = null === $raw ? array() : maybe_unserialize( $raw );
+            if ( ! is_array( $network ) ) { return false; }
+        }
         return ! in_array( 'wc-loyalty/wc-loyalty.php', $active, true ) && ! isset( $network['wc-loyalty/wc-loyalty.php'] ) && ! class_exists( 'YOWCL_Loyalty', false );
     }
     public static function cutover() {
@@ -36,7 +46,7 @@ class YOWCL_Free_Core {
         return (int) $user > $cutover['users'];
     }
     public static function hold( $user, $code ) {
-        if ( $code ) { update_user_meta( (int) $user, '_loyf_economic_hold', sanitize_key( $code ) ); }
+        if ( $code && get_userdata( (int) $user ) ) { update_user_meta( (int) $user, '_loyf_economic_hold', sanitize_key( $code ) ); }
         do_action( 'loyf_economic_recovery_required', (int) $user, $code );
     }
     public static function user_reward( $user, $key, $action, $points, $description = null ) {
@@ -65,11 +75,20 @@ class YOWCL_Free_Core {
         $role = sanitize_key( $role );
         if ( '' !== $role ) { self::user_reward( $user, 'reward:level_up:' . (int) $user . ':' . $role, 'level_up_reward', (int) ( $rules[$role]['awarded'] ?? 0 ), __( 'Level up bonus for role:', 'loyalty-for-woocommerce' ) . ' ' . ( wp_roles()->roles[$role]['name'] ?? $role ) ); }
     }
+    /** Safety hold for the checkout adapter explicitly deferred to LOYF-8. */
+    public static function deny_store_api_redemption( $order ) {
+        $selected = WC()->session ? (float) WC()->session->get( 'yoswc_loyalty_applied_points', 0 ) : 0;
+        $discount = false;
+        foreach ( $order->get_items( 'fee' ) as $fee ) { if ( (float) $fee->get_total() < 0 && $fee->get_name() === __( 'Points used', 'loyalty-for-woocommerce' ) ) { $discount = true; } }
+        if ( $selected > 0 || $discount || (float) $order->get_meta( '_used_points' ) > 0 ) {
+            throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'loyf_classic_checkout_required', __( 'Please remove point redemption or use Classic checkout to place this order.', 'loyalty-for-woocommerce' ), 400 );
+        }
+    }
     public static function history_amount( $row ) {
         $row = (array) $row;
         $value = $row['available_delta'] ?? null;
         if ( null === $value ) { return null; }
-        if ( ! YOWCL_Ledger_V2::integer_valid( $value, 99999999 ) ) { return null; }
+        if ( ! in_array( YOWCL_Ledger_V2::inspect( $row )['kind'], array( 'v2', 'transaction_pre_v2' ), true ) ) { return null; }
         return ( (int) $value >= 0 ? '+' : '-' ) . abs( (int) $value );
     }
     public static function extra( $kind ) {

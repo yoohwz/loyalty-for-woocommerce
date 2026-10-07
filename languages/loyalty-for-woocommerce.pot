@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-07T04:06:05+00:00\n"
+"POT-Creation-Date: 2026-10-07T04:47:10+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
@@ -169,7 +169,7 @@ msgid "Premium features"
 msgstr ""
 
 #: inc/backend/settings.php:240
-#: inc/backend/settings/general-add-remove-user-role.php:82
+#: inc/backend/settings/general-add-remove-user-role.php:72
 msgid "Loyalty levels"
 msgstr ""
 
@@ -672,8 +672,8 @@ msgstr ""
 
 #: inc/backend/settings/customization.php:642
 #: inc/backend/settings/extra-points.php:156
-#: inc/backend/settings/general-add-remove-user-role.php:18
-#: inc/backend/settings/general-add-remove-user-role.php:25
+#: inc/backend/settings/general-add-remove-user-role.php:19
+#: inc/backend/settings/general-add-remove-user-role.php:26
 #: inc/backend/settings/notification.php:49
 #: inc/backend/settings/tools.php:97
 msgid "Nonce verification failed. Please try again."
@@ -733,33 +733,33 @@ msgstr ""
 msgid "Inactivity win-back campaigns and achievement points"
 msgstr ""
 
-#: inc/backend/settings/general-add-remove-user-role.php:82
+#: inc/backend/settings/general-add-remove-user-role.php:72
 msgid "Add / Remove role"
 msgstr ""
 
-#: inc/backend/settings/general-add-remove-user-role.php:85
+#: inc/backend/settings/general-add-remove-user-role.php:75
 msgid "Add new"
 msgstr ""
 
-#: inc/backend/settings/general-add-remove-user-role.php:88
+#: inc/backend/settings/general-add-remove-user-role.php:78
 msgid "Role name"
 msgstr ""
 
-#: inc/backend/settings/general-add-remove-user-role.php:92
+#: inc/backend/settings/general-add-remove-user-role.php:82
 msgid "Role slug"
 msgstr ""
 
-#: inc/backend/settings/general-add-remove-user-role.php:97
+#: inc/backend/settings/general-add-remove-user-role.php:87
 msgid "Add new role"
 msgstr ""
 
-#: inc/backend/settings/general-add-remove-user-role.php:99
+#: inc/backend/settings/general-add-remove-user-role.php:89
 msgid "Remove"
 msgstr ""
 
-#: inc/backend/settings/general-add-remove-user-role.php:102
-#: inc/backend/settings/general-add-remove-user-role.php:121
-msgid "Remove role"
+#: inc/backend/settings/general-add-remove-user-role.php:92
+#: inc/backend/settings/general-add-remove-user-role.php:111
+msgid "Retire role"
 msgstr ""
 
 #: inc/backend/settings/general-earning-point-rules.php:22
@@ -1017,31 +1017,31 @@ msgstr ""
 msgid "This import identity belongs to different terms. Retry the original file."
 msgstr ""
 
-#: inc/backend/settings/tools.php:163
+#: inc/backend/settings/tools.php:161
 msgid "Points imported from CSV."
 msgstr ""
 
 #. translators: %d: number of rows imported.
-#: inc/backend/settings/tools.php:176
+#: inc/backend/settings/tools.php:174
 #, php-format
 msgid "Successfully imported %d row(s)."
 msgstr ""
 
 #. translators: %d: number of rows that failed to import.
-#: inc/backend/settings/tools.php:186
+#: inc/backend/settings/tools.php:184
 #, php-format
 msgid "%d row(s) failed to import."
 msgstr ""
 
-#: inc/backend/settings/tools.php:197
+#: inc/backend/settings/tools.php:195
 msgid "You do not have permission to perform this action."
 msgstr ""
 
-#: inc/backend/settings/tools.php:258
+#: inc/backend/settings/tools.php:256
 msgid "Loyalty levels have been successfully redefined."
 msgstr ""
 
-#: inc/backend/settings/tools.php:266
+#: inc/backend/settings/tools.php:264
 msgid "An error occurred redefining loyalty levels."
 msgstr ""
 
@@ -1173,21 +1173,21 @@ msgstr ""
 msgid "Invalid user ID."
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:201
+#: inc/backend/users/user-profile-points.php:203
 msgid "Admin rewarded"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:203
+#: inc/backend/users/user-profile-points.php:205
 msgid "Admin deducted"
 msgstr ""
 
 #. translators: %s: Loyalty level role.
-#: inc/backend/users/user-profile-points.php:221
+#: inc/backend/users/user-profile-points.php:223
 #, php-format
 msgid "Level updated: %s"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:241
+#: inc/backend/users/user-profile-points.php:243
 #: inc/frontend/my-account.php:368
 msgid "No points log found."
 msgstr ""
@@ -1232,20 +1232,33 @@ msgstr ""
 msgid "Points rewarded successfully!"
 msgstr ""
 
-#: inc/cores/helper/free-core.php:57
+#: inc/cores/helper/free-core.php:67
 msgid "Sign-up bonus"
 msgstr ""
 
-#: inc/cores/helper/free-core.php:57
+#: inc/cores/helper/free-core.php:67
 msgid "Daily login bonus"
 msgstr ""
 
-#: inc/cores/helper/free-core.php:57
+#: inc/cores/helper/free-core.php:67
 msgid "Product review bonus"
 msgstr ""
 
-#: inc/cores/helper/free-core.php:57
+#: inc/cores/helper/free-core.php:67
 msgid "Level up bonus"
+msgstr ""
+
+#: inc/cores/helper/free-core.php:76
+msgid "Level up bonus for role:"
+msgstr ""
+
+#: inc/cores/helper/free-core.php:82
+#: inc/frontend/cart-checkout.php:275
+msgid "Points used"
+msgstr ""
+
+#: inc/cores/helper/free-core.php:84
+msgid "Please remove point redemption or use Classic checkout to place this order."
 msgstr ""
 
 #: inc/cores/helper/free-order-actions.php:36
@@ -1268,56 +1281,56 @@ msgstr ""
 msgid "Order status change"
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:196
+#: inc/cores/helper/order-redemption.php:212
 msgid "Please sign in and reapply your Loyalty redemption."
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:201
+#: inc/cores/helper/order-redemption.php:217
 msgid "This Loyalty redemption cannot be reused. Please start a new checkout."
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:229
+#: inc/cores/helper/order-redemption.php:245
 msgid "The points for this order were returned. Please create a new order."
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:250
+#: inc/cores/helper/order-redemption.php:266
 msgid "Get a discount by using points"
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:256
+#: inc/cores/helper/order-redemption.php:272
 msgid "Could not commit Loyalty points. Please retry this checkout."
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:336
+#: inc/cores/helper/order-redemption.php:352
 msgid "Order is incomplete; redeemed points returned"
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:367
+#: inc/cores/helper/order-redemption.php:383
 msgid "Historical Loyalty redemption has no atomic debit proof. Manual points-return review required."
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:392
+#: inc/cores/helper/order-redemption.php:409
 msgid "Loyalty payment outcome is uncertain. Points remain charged; merchant must reconcile the payment and order before returning points."
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:396
+#: inc/cores/helper/order-redemption.php:413
 msgid "Loyalty points return requires recovery. Retry the order status action after restoring storage."
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:428
+#: inc/cores/helper/order-redemption.php:445
 msgid "Your points were returned. Reapply redemption and start a new checkout."
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:450
+#: inc/cores/helper/order-redemption.php:467
 msgid "The points for this order were returned. Please start a new checkout."
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:464
+#: inc/cores/helper/order-redemption.php:481
 msgid "This Loyalty order cannot be paid. Please start a new checkout."
 msgstr ""
 
 #. translators: %s: Gateway transaction reference, when supplied.
-#: inc/cores/helper/order-redemption.php:499
+#: inc/cores/helper/order-redemption.php:516
 #, php-format
 msgid "Late payment after Loyalty redemption return or incomplete recovery; manual review required. Merchant must resolve the payment. Reference: %s"
 msgstr ""
@@ -1411,10 +1424,6 @@ msgstr ""
 
 #: inc/frontend/cart-checkout.php:238
 msgid "Points applied successfully."
-msgstr ""
-
-#: inc/frontend/cart-checkout.php:275
-msgid "Points used"
 msgstr ""
 
 #: inc/frontend/cart-checkout.php:280

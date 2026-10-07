@@ -241,7 +241,7 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 	    }
 	    
 	    public function apply_points_to_cart_total($cart = null) {
-	        if (!is_user_logged_in()) {
+	        if (!is_user_logged_in() || ( defined( 'REST_REQUEST' ) && REST_REQUEST )) {
 	            return;
 	        }
 
@@ -261,7 +261,7 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 	        }
 
 	        $user_points = (float) get_user_meta(get_current_user_id(), 'user_points', true);
-	        if ($applied_points > $user_points) {
+	        if ($applied_points > $user_points + YOWCL_Order_Redemption::funded_selection_points()) {
 	            $this->clear_applied_points();
 	            return;
 	        }
@@ -288,7 +288,7 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 
 	    private function calculate_potential_earned_points($user_id) {
 	        $user = get_userdata($user_id);
-	        $user_role = !empty($user->roles) ? $user->roles[0] : '';
+	        $user_role = YOWCL_Helper_Roles::get_highest_loyalty_user_role( (int) $user->ID );
 
         $earning_rules = maybe_unserialize(get_option('loyalty_points_earning_rules', []));
 

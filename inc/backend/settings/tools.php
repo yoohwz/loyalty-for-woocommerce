@@ -156,8 +156,6 @@ class YOSWC_Loyalty_Settings_Tools {
 
 			$row = str_getcsv($line, ',');
 			$user_id = isset($row[0]) ? absint($row[0]) : 0;
-			$user_points = isset($row[1]) ? max(0, (float) $row[1]) : 0;
-			$user_earning_points = isset($row[2]) ? max(0, (float) $row[2]) : 0;
 
 			if (get_userdata($user_id)) {
                 $result = YOWCL_Points_Transaction::mutate( $user_id, (int) $row[1], (int) $row[2], 'import:' . get_current_user_id() . ':' . $operation . ':' . $user_id, array( 'action' => 'points_import', 'description' => __( 'Points imported from CSV.', 'loyalty-for-woocommerce' ) ), 'replace' );

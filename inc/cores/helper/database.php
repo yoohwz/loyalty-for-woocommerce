@@ -16,8 +16,7 @@ class YOWCL_Database {
 
 	public function activate() {
 		$this->check_version();
-		// Retain the legacy installed-package witness for Free/Premium compatibility.
-		update_option( 'yoswc_loyalty_version', YOSWC_LOYALTY_VERSION );
+		// Free package/subscription version handling remains with its legacy backend.
 	}
 
 	public function check_version() {

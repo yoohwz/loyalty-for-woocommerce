@@ -1,7 +1,7 @@
 {
   "inc/cores/helper/points-transaction.php": {
     "input_sha256": "65514f221a43c6957ff04cd585aa63000637bab8598f1050374642acefce708e",
-    "selected_sha256": "d0612b67f7d89ac601be02f8f0aac528ae3ee041fb9e6588554d5975005c9c8d",
+    "selected_sha256": "f98c88a1947bb8d4b8b7fd082f97b9f2923e782eb63ddc07382dea8ad6f54eb1",
     "spans": [
       {
         "start": 306,
@@ -52,6 +52,11 @@
         "start": 8964,
         "end": 9195,
         "replacement": ""
+      },
+      {
+        "start": 10079,
+        "end": 10079,
+        "replacement": "fQogICAgICAgICAgICBpZiAoICEgWU9XQ0xfRnJlZV9Db3JlOjpvd25zKCkgKSB7IHJldHVybiBzZWxmOjpyZXN1bHQoICdmYWlsZWQnLCAnZnJlZV9vd25lcl9pbmFjdGl2ZScgKTsg"
       },
       {
         "start": 11671,
@@ -324,7 +329,7 @@
   },
   "inc/cores/database.php": {
     "input_sha256": "d47837b6a1023e63f43ba10c8ae8807f4815f2cd8c588cc64bd05e4696778e82",
-    "selected_sha256": "28043ae7b82883cf3f6bf08223276d0d1f056eceeec5219dc2f6ea45edd0a997",
+    "selected_sha256": "98dd3795cd5a1c9491fb93db645fcd7805c06a817e10f527971221e97d4e4bbb",
     "spans": [
       {
         "start": 235,
@@ -337,14 +342,59 @@
         "replacement": "WU9T"
       },
       {
-        "start": 552,
-        "end": 552,
-        "replacement": "eW9z"
+        "start": 458,
+        "end": 459,
+        "replacement": "RnI="
       },
       {
-        "start": 573,
-        "end": 573,
-        "replacement": "WU9T"
+        "start": 460,
+        "end": 460,
+        "replacement": "ZSBwYWNrYWdlL3N1YnNjcmlw"
+      },
+      {
+        "start": 461,
+        "end": 461,
+        "replacement": "aW9uIHZlcnNpb24gaGFuZGxpbmcgcmVt"
+      },
+      {
+        "start": 464,
+        "end": 464,
+        "replacement": "cw=="
+      },
+      {
+        "start": 465,
+        "end": 465,
+        "replacement": "d2k="
+      },
+      {
+        "start": 467,
+        "end": 468,
+        "replacement": "IGl0cw=="
+      },
+      {
+        "start": 476,
+        "end": 487,
+        "replacement": "Yg=="
+      },
+      {
+        "start": 490,
+        "end": 492,
+        "replacement": ""
+      },
+      {
+        "start": 493,
+        "end": 497,
+        "replacement": ""
+      },
+      {
+        "start": 498,
+        "end": 532,
+        "replacement": "ZA=="
+      },
+      {
+        "start": 533,
+        "end": 594,
+        "replacement": ""
       }
     ]
   },
@@ -657,7 +707,7 @@
   },
   "inc/cores/helper/order-rewards.php": {
     "input_sha256": "b6c99bb52947f4035ee4030122627ac861a6a12085f49d981aec681e08d89417",
-    "selected_sha256": "5aa346444dd49687469f231d538880405c1f780a8fbc19c59a544bee740934f2",
+    "selected_sha256": "5e761727fbfe05c6d3ba6429d2fc4e8843a8fcd4e0355325c4b7520bfc1f95cc",
     "spans": [
       {
         "start": 4358,
@@ -688,6 +738,11 @@
         "start": 7721,
         "end": 7727,
         "replacement": "ZA=="
+      },
+      {
+        "start": 7741,
+        "end": 7741,
+        "replacement": "CiAgICAgICAgaWYgKCAkdW51c2VkICkgeyB0aHJvdyBuZXcgRG9tYWluRXhjZXB0aW9uKCAndW5zdXBwb3J0ZWRfZXZlbnRfYWN0aW9uJyApOyB9"
       },
       {
         "start": 7777,
@@ -839,7 +894,7 @@
   },
   "inc/cores/helper/order-redemption.php": {
     "input_sha256": "cc4f1f15860ca8518b091ef31379abbdf655c661cdef875e8c80be31f3a40753",
-    "selected_sha256": "eec01d8d3b755382069e162973c9215ebcafaec60b693e6a8d6349b5b929a5a1",
+    "selected_sha256": "491aca8151e12d244f1571d621ecae7ca2f30518e62eaa941337b9e830ea596c",
     "spans": [
       {
         "start": 1182,
@@ -915,6 +970,16 @@
         "start": 6047,
         "end": 7762,
         "replacement": ""
+      },
+      {
+        "start": 8722,
+        "end": 8722,
+        "replacement": "fQogICAgICAgICR0ZXJtcyA9ICRyZWNvcmRbJ3Rlcm1zJ107CiAgICAgICAgaWYgKCAhIGlzX2FycmF5KCAkdGVybXMgKSB8fCAoICR0ZXJtc1sncHJvZHVjdCddID8/IG51bGwgKSAhPT0gMCB8fCAhIGVtcHR5KCAkdGVybXNbJ2l0ZW1zJ10gKSB8fCAhIGVtcHR5KCAkdGVybXNbJ2NvdXBvbiddICkgKSB7IHRocm93IG5ldyBSdW50aW1lRXhjZXB0aW9uKCAndW5zdXBwb3J0ZWRfcmVkZW1wdGlvbl9yZXZpZXdfcmVxdWlyZWQnICk7IH0KICAgICAgICBpZiAoICEgaW5fYXJyYXkoICRyZWNvcmRbJ3N0YXRlJ10sIGFycmF5KCAncHJlcGFyZWQnLCAnYWN0aXZlJywgJ3JldHVybmluZycsICdyZXR1cm5lZCcgKSwgdHJ1ZSApIHx8ICEgaXNfaW50KCAkcmVjb3JkWydvcmRlcl9pZCddICkgfHwgJHJlY29yZFsnb3JkZXJfaWQnXSA8IDAgfHwgISBpc19pbnQoICR0ZXJtc1sndXNlciddID8/IG51bGwgKSB8fCAkdGVybXNbJ3VzZXInXSA8PSAwIHx8ICEgaXNfaW50KCAkdGVybXNbJ2NhcnQnXSA/PyBudWxsICkgfHwgJHRlcm1zWydjYXJ0J10gPD0gMCB8fCAkdGVybXNbJ2NhcnQnXSA+IDk5OTk5OTk5IHx8ICEgaXNfc3RyaW5nKCAkdGVybXNbJ293bmVyJ10gPz8gbnVsbCApIHx8ICEgcHJlZ19tYXRjaCggJy9eW2EtZjAtOV17NjR9JC9EJywgJHRlcm1zWydvd25lciddICkgfHwgISBpc19zdHJpbmcoICR0ZXJtc1snY3VycmVuY3knXSA/PyBudWxsICkgfHwgISBpc19zdHJpbmcoICR0ZXJtc1snZGlzY291bnQnXSA/PyBudWxsICkgfHwgISBpc19zdHJpbmcoICR0ZXJtc1snY2FydF9oYXNoJ10gPz8gbnVsbCApIHx8ICEgaXNfc3RyaW5nKCAkdGVybXNbJ3RvdGFsJ10gPz8gbnVsbCApICkgeyB0aHJvdyBuZXcgUnVudGltZUV4Y2VwdGlvbiggJ29yZGVyX3JlZGVtcHRpb25fcmVjb3JkX2ludmFsaWQnICk7IA=="
+      },
+      {
+        "start": 10980,
+        "end": 10980,
+        "replacement": "ICAgIC8qKiBVWCByZWNvdmVyeSBvbmx5OiBvcmlnaW5hbCBkZWJpdCBwcm9vZiBuZXZlciBhdXRob3JpemVzIGFub3RoZXIgb3JkZXIuICovCiAgICBwdWJsaWMgc3RhdGljIGZ1bmN0aW9uIGZ1bmRlZF9zZWxlY3Rpb25fcG9pbnRzKCkgewogICAgICAgIGlmICggISBXQygpLT5zZXNzaW9uICkgeyByZXR1cm4gMDsgfQogICAgICAgICRzZWxlY3Rpb24gPSBXQygpLT5zZXNzaW9uLT5nZXQoICdsb3lmX2Z1bmRlZF9zZWxlY3Rpb24nICk7CiAgICAgICAgaWYgKCAhIGlzX2FycmF5KCAkc2VsZWN0aW9uICkgfHwgJHNlbGVjdGlvblsnb3duZXInXSAhPT0gc2VsZjo6c2Vzc2lvbl9vd25lcigpIHx8ICRzZWxlY3Rpb25bJ2N1cnJlbmN5J10gIT09IGdldF93b29jb21tZXJjZV9jdXJyZW5jeSgpICkgeyByZXR1cm4gMDsgfQogICAgICAgIHRyeSB7CiAgICAgICAgICAgICRyZWNvcmQgPSBzZWxmOjpyZWNvcmQoICRzZWxlY3Rpb25bJ2lkJ10gKTsKICAgICAgICAgICAgaWYgKCAhICRyZWNvcmQgfHwgISBpbl9hcnJheSggJHJlY29yZFsnc3RhdGUnXSwgYXJyYXkoICdwcmVwYXJlZCcsICdhY3RpdmUnICksIHRydWUgKSB8fCAkcmVjb3JkWyd0ZXJtcyddWyd1c2VyJ10gIT09IGdldF9jdXJyZW50X3VzZXJfaWQoKSB8fCAkcmVjb3JkWyd0ZXJtcyddWydvd25lciddICE9PSBzZWxmOjpzZXNzaW9uX293bmVyKCkgfHwgJHJlY29yZFsndGVybXMnXVsnY3VycmVuY3knXSAhPT0gJHNlbGVjdGlvblsnY3VycmVuY3knXSB8fCAkcmVjb3JkWyd0ZXJtcyddWydjYXJ0J10gIT09ICRzZWxlY3Rpb25bJ3BvaW50cyddIHx8ICRyZWNvcmRbJ3Rlcm1zJ11bJ2Rpc2NvdW50J10gIT09ICRzZWxlY3Rpb25bJ2Rpc2NvdW50J10gKSB7IHJldHVybiAwOyB9CiAgICAgICAgICAgICRyb3cgPSBZT1dDTF9Qb2ludHNfVHJhbnNhY3Rpb246OmZpbmQoIHNlbGY6OmV2ZW50X2tleSggJHNlbGVjdGlvblsnaWQnXSwgJ2NhcnQnICkgKTsKICAgICAgICAgICAgcmV0dXJuICRyb3cgJiYgKGludCkgJHJvd1sndXNlcl9pZCddID09PSAkcmVjb3JkWyd0ZXJtcyddWyd1c2VyJ10gJiYgKGludCkgJHJvd1snb3JkZXJfaWQnXSA9PT0gJHJlY29yZFsnb3JkZXJfaWQnXSAmJiAncG9pbnRzX3VzZWQnID09PSAkcm93WydhY3Rpb24nXSAmJiAoaW50KSAkcm93WydhdmFpbGFibGVfZGVsdGEnXSA9PT0gLSRzZWxlY3Rpb25bJ3BvaW50cyddICYmIDAgPT09IChpbnQpICRyb3dbJ2Vhcm5pbmdfZGVsdGEnXSA/ICRzZWxlY3Rpb25bJ3BvaW50cyddIDogMDsKICAgICAgICB9IGNhdGNoICggVGhyb3dhYmxlICRlICkgeyByZXR1cm4gMDsgfQogICAgfQoK"
       },
       {
         "start": 11028,
@@ -1562,6 +1627,91 @@
         "replacement": "CiAgICAgICAgaWYgKCAhIFlPV0NMX0ZyZWVfQ29yZTo6b3ducygpICkgeyByZXR1cm47IH0="
       },
       {
+        "start": 32129,
+        "end": 32134,
+        "replacement": ""
+      },
+      {
+        "start": 32135,
+        "end": 32135,
+        "replacement": "ICAgICAgICAgICBZT1dDTF9PcmRlcl9SZXdhcmRzOjpsb2NrZWQ="
+      },
+      {
+        "start": 32149,
+        "end": 32149,
+        "replacement": "X2lkLCBzdGF0aWMgZnVuY3Rpb24gKCAkZnJlc2gsICRvd25lciApIHsKICAgICAgICAgICAgICAgIGlmICggKGZsb2F0KSAkZnJlc2g="
+      },
+      {
+        "start": 32188,
+        "end": 32189,
+        "replacement": "Zg=="
+      },
+      {
+        "start": 32190,
+        "end": 32191,
+        "replacement": ""
+      },
+      {
+        "start": 32192,
+        "end": 32193,
+        "replacement": "c2g="
+      },
+      {
+        "start": 32241,
+        "end": 32245,
+        "replacement": "ICAgICAgICAgICAgICAgICAgICA="
+      },
+      {
+        "start": 32247,
+        "end": 32247,
+        "replacement": "d25lcigpOyBZT1dDTF9P"
+      },
+      {
+        "start": 32251,
+        "end": 32255,
+        "replacement": "X1Jld2Fy"
+      },
+      {
+        "start": 32256,
+        "end": 32260,
+        "replacement": "czo6"
+      },
+      {
+        "start": 32264,
+        "end": 32269,
+        "replacement": ""
+      },
+      {
+        "start": 32270,
+        "end": 32270,
+        "replacement": "ICRmcmVzaCw="
+      },
+      {
+        "start": 32311,
+        "end": 32315,
+        "replacement": "ICAgICAgICAgICAgICAgICAgICA="
+      },
+      {
+        "start": 32316,
+        "end": 32317,
+        "replacement": "Zg=="
+      },
+      {
+        "start": 32318,
+        "end": 32319,
+        "replacement": ""
+      },
+      {
+        "start": 32320,
+        "end": 32323,
+        "replacement": ""
+      },
+      {
+        "start": 32324,
+        "end": 32341,
+        "replacement": "aA=="
+      },
+      {
         "start": 32462,
         "end": 32465,
         "replacement": ""
@@ -1570,6 +1720,16 @@
         "start": 32472,
         "end": 32472,
         "replacement": "LWZvci13b29jb21tZXJjZQ=="
+      },
+      {
+        "start": 32479,
+        "end": 32482,
+        "replacement": "ICAgICAgICAgICAgICAgIA=="
+      },
+      {
+        "start": 32483,
+        "end": 32483,
+        "replacement": "CiAgICAgICAgICAgIH0gKTs="
       },
       {
         "start": 33236,
@@ -1645,6 +1805,67 @@
         "start": 39754,
         "end": 39754,
         "replacement": "LWZvci13b29jb21tZXJjZQ=="
+      }
+    ]
+  },
+  "inc/cores/helper/role-ownership.php": {
+    "input_sha256": "d962047b1669d8a1b411699fd7312b89dfd93653e12521052373f62a161dba08",
+    "selected_sha256": "4a78cea82a9e75da809c4bf37062e65cfb6c086340c04cd0ee41033a9ba9ac16",
+    "spans": [
+      {
+        "start": 5,
+        "end": 94,
+        "replacement": ""
+      },
+      {
+        "start": 124,
+        "end": 432,
+        "replacement": ""
+      },
+      {
+        "start": 7104,
+        "end": 7104,
+        "replacement": "ISBzZWxmOjpvdw=="
+      },
+      {
+        "start": 7105,
+        "end": 7112,
+        "replacement": "cyg="
+      },
+      {
+        "start": 7114,
+        "end": 7163,
+        "replacement": ""
+      },
+      {
+        "start": 7168,
+        "end": 7182,
+        "replacement": ""
+      },
+      {
+        "start": 7183,
+        "end": 7193,
+        "replacement": ""
+      },
+      {
+        "start": 7199,
+        "end": 7370,
+        "replacement": ""
+      },
+      {
+        "start": 7509,
+        "end": 8216,
+        "replacement": ""
+      },
+      {
+        "start": 8991,
+        "end": 32673,
+        "replacement": ""
+      },
+      {
+        "start": 32677,
+        "end": 32679,
+        "replacement": ""
       }
     ]
   }

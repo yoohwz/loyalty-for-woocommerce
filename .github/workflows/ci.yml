@@ -87,6 +87,8 @@ jobs:
           PYTHONDONTWRITEBYTECODE=1 python3 tests/ci/provenance-test.py
           PYTHONDONTWRITEBYTECODE=1 python3 tests/ci/runtime-test.py
           PYTHONDONTWRITEBYTECODE=1 python3 tests/ci/import-contract-test.py
+          PYTHONDONTWRITEBYTECODE=1 python3 tests/ci/extraction-test.py
+          node tests/js/admin-replay.cjs
           PYTHONDONTWRITEBYTECODE=1 python3 scripts/free-import.py verify-source --root "$PWD"
 
       - name: Exact diff whitespace

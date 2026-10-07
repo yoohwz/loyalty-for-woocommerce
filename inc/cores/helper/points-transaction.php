@@ -106,6 +106,7 @@ class YOWCL_Points_Transaction {
 					return self::result( 'failed', 'transactional_storage_required' );
 				}
 			}
+            if ( ! YOWCL_Free_Core::owns() ) { return self::result( 'failed', 'free_owner_inactive' ); }
 			self::require_event_schema( $db, $table );
 			YOWCL_Points_Lock::query( $db, 'START TRANSACTION' );
 			$started = true;

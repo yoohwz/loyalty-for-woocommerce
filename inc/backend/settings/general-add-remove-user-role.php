@@ -11,6 +11,7 @@ class YOSWC_Loyalty_Settings_Add_Remove_User_Role {
     }
 
     public function handle_role_actions() {
+        if ( ! current_user_can( 'manage_woocommerce' ) || ! YOWCL_Free_Core::owns() ) { return; }
         if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
     
             if (isset($_POST['add_new_role_submit'], $_POST['new_role_name'], $_POST['new_role_slug'], $_POST['add_new_role_nonce'])) {
@@ -47,13 +48,8 @@ class YOSWC_Loyalty_Settings_Add_Remove_User_Role {
             return;
         }
     
-        $customer_role = get_role('customer');
-        if ($customer_role) {
-            add_role($new_role_slug, $new_role_name, $customer_role->capabilities);
-            set_transient('yoswc_loyalty_admin_notice', 'yoswc_success_role_added', 30);
-        } else {
-            set_transient('yoswc_loyalty_admin_notice', 'yoswc_error_customer_role_not_found', 30);
-        }
+        $result = YOSWC_Role_Ownership::create( 'wc-loyalty', $new_role_slug, $new_role_name );
+        set_transient( 'yoswc_loyalty_admin_notice', true === $result ? 'yoswc_success_role_added' : 'yoswc_error_protected_role', 30 );
     }    
 
     private function remove_role() {
@@ -67,14 +63,8 @@ class YOSWC_Loyalty_Settings_Add_Remove_User_Role {
         }
     
         $role_to_remove = sanitize_text_field( wp_unslash( $_POST['role_to_remove'] ) );
-        $protected_roles = ['administrator', 'editor', 'author', 'contributor', 'subscriber', 'shop_manager', 'translator'];
-    
-        if (!in_array($role_to_remove, $protected_roles)) {
-            remove_role($role_to_remove);
-            set_transient('yoswc_loyalty_admin_notice', 'yoswc_success_role_removed', 30);
-        } else {
-            set_transient('yoswc_loyalty_admin_notice', 'yoswc_error_protected_role', 30);
-        }
+        $result = YOSWC_Role_Ownership::retire( 'wc-loyalty', $role_to_remove );
+        set_transient( 'yoswc_loyalty_admin_notice', true === $result ? 'yoswc_success_role_removed' : 'yoswc_error_protected_role', 30 );
     }
     
     public function display_add_remove_role() {
@@ -99,7 +89,7 @@ class YOSWC_Loyalty_Settings_Add_Remove_User_Role {
             <h3><?php esc_html_e('Remove', 'loyalty-for-woocommerce'); ?></h3>
             <table class="form-table">
                 <tr valign="top">
-                    <th scope="row"><?php esc_html_e('Remove role', 'loyalty-for-woocommerce'); ?></th>
+                    <th scope="row"><?php esc_html_e('Retire role', 'loyalty-for-woocommerce'); ?></th>
                     <td>
                         <select name="role_to_remove" style="width: 150px;">
                             <?php 
@@ -118,7 +108,7 @@ class YOSWC_Loyalty_Settings_Add_Remove_User_Role {
                 </tr>
             </table>
             <?php wp_nonce_field('remove_role_action', 'remove_role_nonce'); ?>
-            <?php submit_button(__('Remove role', 'loyalty-for-woocommerce'), 'primary', 'remove_role_submit'); ?>
+            <?php submit_button(__('Retire role', 'loyalty-for-woocommerce'), 'primary', 'remove_role_submit'); ?>
         </form>
         <?php
     }
@@ -168,9 +158,9 @@ class YOSWC_Loyalty_Settings_Add_Remove_User_Role {
         } elseif ($notice === 'yoswc_error_customer_role_not_found') {
             echo '<div class="notice notice-error"><p>Error: The customer role does not exist.</p></div>';
         } elseif ($notice === 'yoswc_success_role_removed') {
-            echo '<div class="notice notice-success"><p>Role removed successfully.</p></div>';
+            echo '<div class="notice notice-success"><p>Role retired. Existing users and access are preserved.</p></div>';
         } elseif ($notice === 'yoswc_error_protected_role') {
-            echo '<div class="notice notice-error"><p>Failed to remove role. Certain roles cannot be removed.</p></div>';
+            echo '<div class="notice notice-error"><p>Role change refused. Protected, shared or historical roles require review.</p></div>';
         }
 
         delete_transient('yoswc_loyalty_admin_notice');

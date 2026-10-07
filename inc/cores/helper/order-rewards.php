@@ -124,6 +124,7 @@ class YOWCL_Order_Rewards {
 
 	/** Historical rows stay nullable; atomically commit their clamp, log and Woo marker. */
 	public static function legacy_deduct( $order, $description, array $unused = array() ) {
+        if ( $unused ) { throw new DomainException( 'unsupported_event_action' ); }
 		global $wpdb;
 		$user_id = (int) $order->get_user_id();
 		$marker = '_points_deducted';

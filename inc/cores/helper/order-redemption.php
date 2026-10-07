@@ -118,6 +118,9 @@ class YOWCL_Order_Redemption {
 		if ( ! is_array( $record ) || ! isset( $record['state'], $record['terms'], $record['order_id'] ) ) {
 			throw new RuntimeException( 'order_redemption_record_invalid' );
 		}
+        $terms = $record['terms'];
+        if ( ! is_array( $terms ) || ( $terms['product'] ?? null ) !== 0 || ! empty( $terms['items'] ) || ! empty( $terms['coupon'] ) ) { throw new RuntimeException( 'unsupported_redemption_review_required' ); }
+        if ( ! in_array( $record['state'], array( 'prepared', 'active', 'returning', 'returned' ), true ) || ! is_int( $record['order_id'] ) || $record['order_id'] < 0 || ! is_int( $terms['user'] ?? null ) || $terms['user'] <= 0 || ! is_int( $terms['cart'] ?? null ) || $terms['cart'] <= 0 || $terms['cart'] > 99999999 || ! is_string( $terms['owner'] ?? null ) || ! preg_match( '/^[a-f0-9]{64}$/D', $terms['owner'] ) || ! is_string( $terms['currency'] ?? null ) || ! is_string( $terms['discount'] ?? null ) || ! is_string( $terms['cart_hash'] ?? null ) || ! is_string( $terms['total'] ?? null ) ) { throw new RuntimeException( 'order_redemption_record_invalid' ); }
 		return $record;
 	}
 
@@ -165,6 +168,19 @@ class YOWCL_Order_Redemption {
 		self::owner( $db, $name );
 		YOWCL_Points_Lock::query( $db, $wpdb->prepare( "INSERT INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, 'no') ON DUPLICATE KEY UPDATE option_value = VALUES(option_value)", self::key( $id ), wp_json_encode( $record ) ) );
 	}
+
+    /** UX recovery only: original debit proof never authorizes another order. */
+    public static function funded_selection_points() {
+        if ( ! WC()->session ) { return 0; }
+        $selection = WC()->session->get( 'loyf_funded_selection' );
+        if ( ! is_array( $selection ) || $selection['owner'] !== self::session_owner() || $selection['currency'] !== get_woocommerce_currency() ) { return 0; }
+        try {
+            $record = self::record( $selection['id'] );
+            if ( ! $record || ! in_array( $record['state'], array( 'prepared', 'active' ), true ) || $record['terms']['user'] !== get_current_user_id() || $record['terms']['owner'] !== self::session_owner() || $record['terms']['currency'] !== $selection['currency'] || $record['terms']['cart'] !== $selection['points'] || $record['terms']['discount'] !== $selection['discount'] ) { return 0; }
+            $row = YOWCL_Points_Transaction::find( self::event_key( $selection['id'], 'cart' ) );
+            return $row && (int) $row['user_id'] === $record['terms']['user'] && (int) $row['order_id'] === $record['order_id'] && 'points_used' === $row['action'] && (int) $row['available_delta'] === -$selection['points'] && 0 === (int) $row['earning_delta'] ? $selection['points'] : 0;
+        } catch ( Throwable $e ) { return 0; }
+    }
 
 	private static function terms( $order, $id ) {
         $selection = WC()->session ? WC()->session->get( 'loyf_funded_selection' ) : null;
@@ -361,11 +377,12 @@ class YOWCL_Order_Redemption {
 		$order = wc_get_order( $order_id );
 		if ( ! $order ) { return; }
 		if ( ! self::valid_id( self::id( $order ) ) ) {
-			if ( (int) $order->get_meta( '_used_points' ) > 0 && ! $order->get_meta( '_yowcl_legacy_return_review' ) ) {
-				$order->update_meta_data( '_yowcl_legacy_return_review', 'yes' );
-				$order->save();
-				$order->add_order_note( __( 'Historical Loyalty redemption has no atomic debit proof. Manual points-return review required.', 'loyalty-for-woocommerce' ) );
-			}
+            YOWCL_Order_Rewards::locked( (int) $order_id, static function ( $fresh, $owner ) {
+                if ( (float) $fresh->get_meta( '_used_points' ) > 0 && ! $fresh->get_meta( '_yowcl_legacy_return_review' ) ) {
+                    $owner(); YOWCL_Order_Rewards::meta( $fresh, '_yowcl_legacy_return_review', 'yes' );
+                    $fresh->add_order_note( __( 'Historical Loyalty redemption has no atomic debit proof. Manual points-return review required.', 'loyalty-for-woocommerce' ) );
+                }
+            } );
 			return;
 		}
 		if ( isset( self::$held[ self::id( $order ) ] ) ) { return; }

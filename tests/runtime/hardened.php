@@ -124,6 +124,7 @@ foreach ( array( true, false ) as $same ) {
     sort( $statuses ); $expected = $same ? array( 'already_applied', 'applied' ) : array( 'applied', 'insufficient_balance' ); sort( $expected ); loyf_equal( $expected, $statuses, 'Independent concurrency outcome' );
     wp_cache_delete( $worker_user, 'user_meta' ); loyf_balance( $worker_user, 10, 40, 'Concurrent strict debit' );
 }
+require __DIR__ . '/cutover-boundaries.php';
 // Forbidden product surface is absent; generic primitive cannot enable its modes/actions.
 foreach ( array( 'YOWCL_Premium_Gate', 'YOWCL_Campaign_Rules', 'YOWCL_Actions_Points_Expiration', 'YOWCL_Helper_Product_Earning_Rules', 'YOWCL_Referral_Rewards', 'YOWCL_Coupon_Redemption' ) as $class ) { loyf_equal( false, class_exists( $class ), 'Forbidden class ' . $class ); }
 foreach ( array( 'expire', 'zero', 'reset' ) as $mode ) { loyf_equal( 'invalid_operation', YOWCL_Points_Transaction::mutate( (int) $user, 0, 0, 'fixture:' . $mode, array( 'action' => 'points_expired' ), $mode )['code'], 'Forbidden mutation mode' ); }

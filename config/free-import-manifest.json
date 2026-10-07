@@ -68,7 +68,7 @@
       "target": "inc/cores/helper/points-transaction.php",
       "transform": "wp-text-domain-v1",
       "sha256": "65514f221a43c6957ff04cd585aa63000637bab8598f1050374642acefce708e",
-      "output_sha256": "d0612b67f7d89ac601be02f8f0aac528ae3ee041fb9e6588554d5975005c9c8d",
+      "output_sha256": "f98c88a1947bb8d4b8b7fd082f97b9f2923e782eb63ddc07382dea8ad6f54eb1",
       "domain_replacements": 0,
       "extraction": "inc/cores/helper/points-transaction.php"
     },
@@ -113,7 +113,7 @@
       "target": "inc/cores/helper/order-rewards.php",
       "transform": "wp-text-domain-v1",
       "sha256": "b6c99bb52947f4035ee4030122627ac861a6a12085f49d981aec681e08d89417",
-      "output_sha256": "5aa346444dd49687469f231d538880405c1f780a8fbc19c59a544bee740934f2",
+      "output_sha256": "5e761727fbfe05c6d3ba6429d2fc4e8843a8fcd4e0355325c4b7520bfc1f95cc",
       "domain_replacements": 0,
       "extraction": "inc/cores/helper/order-rewards.php"
     },
@@ -122,7 +122,7 @@
       "target": "inc/cores/helper/database.php",
       "transform": "wp-text-domain-v1",
       "sha256": "d47837b6a1023e63f43ba10c8ae8807f4815f2cd8c588cc64bd05e4696778e82",
-      "output_sha256": "28043ae7b82883cf3f6bf08223276d0d1f056eceeec5219dc2f6ea45edd0a997",
+      "output_sha256": "98dd3795cd5a1c9491fb93db645fcd7805c06a817e10f527971221e97d4e4bbb",
       "domain_replacements": 0,
       "extraction": "inc/cores/database.php"
     },
@@ -140,16 +140,25 @@
       "target": "inc/cores/helper/order-redemption.php",
       "transform": "wp-text-domain-v1",
       "sha256": "cc4f1f15860ca8518b091ef31379abbdf655c661cdef875e8c80be31f3a40753",
-      "output_sha256": "eec01d8d3b755382069e162973c9215ebcafaec60b693e6a8d6349b5b929a5a1",
+      "output_sha256": "491aca8151e12d244f1571d621ecae7ca2f30518e62eaa941337b9e830ea596c",
       "domain_replacements": 0,
       "extraction": "inc/cores/helper/order-redemption.php"
+    },
+    {
+      "source": "inc/cores/helper/role-ownership.php",
+      "target": "inc/cores/helper/role-ownership.php",
+      "transform": "wp-text-domain-v1",
+      "sha256": "d962047b1669d8a1b411699fd7312b89dfd93653e12521052373f62a161dba08",
+      "output_sha256": "4a78cea82a9e75da809c4bf37062e65cfb6c086340c04cd0ee41033a9ba9ac16",
+      "domain_replacements": 0,
+      "extraction": "inc/cores/helper/role-ownership.php"
     }
   ],
   "overlays": [
     {
       "target": "loyalty-for-woocommerce.php",
       "mode": "100644",
-      "sha256": "a5130006e9cb25f6547d542f4802144b59e4a9dd2143dc0c61ee3057dc7c30e5"
+      "sha256": "6e2c5b890e26a971f08915a51389062e2f614659b4143c2aae320a12107037cf"
     },
     {
       "target": "readme.txt",
@@ -244,7 +253,7 @@
     {
       "target": "inc/backend/settings/general-add-remove-user-role.php",
       "mode": "100644",
-      "sha256": "5e195f744c40c199217e21847a0238e9571c5a546cf5ae67c4adaf293ed7128f"
+      "sha256": "8a1505966a94cc55ce36b81128976bbdef9d346743ed16b66e1fd9ae4ecaa0c4"
     },
     {
       "target": "inc/backend/settings/general-earning-point-rules.php",
@@ -279,7 +288,7 @@
     {
       "target": "inc/backend/settings/tools.php",
       "mode": "100644",
-      "sha256": "2fda8fa6a20c1857e110ca7217a30681cf909d6ac5904a80f465421e031cafa4"
+      "sha256": "f89b8ae50a7ed081f12e34190d7a16eaf0caaa22863b636414f620092947ce4b"
     },
     {
       "target": "inc/backend/settings.php",
@@ -324,7 +333,7 @@
     {
       "target": "inc/cores/frontend.php",
       "mode": "100644",
-      "sha256": "aac3d68451df91691b96a0259b0dfcf8b8931cc914d7fb0a88d45c2c3d5c3a07"
+      "sha256": "6dec9f347e24907c654d5bfde78c64be4883ad2c8f117355d093e76b514e171c"
     },
     {
       "target": "inc/cores/helper/free-admin.php",
@@ -334,7 +343,7 @@
     {
       "target": "inc/cores/helper/free-core.php",
       "mode": "100644",
-      "sha256": "1b61725854f7326658ded65348bbfe5ce9cad1c0e645e5c3f1716398d7c26f78"
+      "sha256": "f96776e0a0e595de1a0bc79299780529ee7a003f5290ff08221e56b59c58ddb0"
     },
     {
       "target": "inc/cores/helper/free-order-actions.php",
@@ -349,7 +358,7 @@
     {
       "target": "inc/frontend/cart-checkout.php",
       "mode": "100644",
-      "sha256": "a3da61d93f309cf8ea4ed37ba3144591ae0722970b79f833ad88f3245cd1b8bf"
+      "sha256": "9a93d0723aa9be04f519359d659972213d7fd048a73885888d12e98ba0a9c1dc"
     },
     {
       "target": "inc/frontend/loyalty-info-bubble.php",
@@ -359,17 +368,17 @@
     {
       "target": "inc/frontend/my-account.php",
       "mode": "100644",
-      "sha256": "3f3b906b1ceb289965fd22dca2ffca9b9ad012c7d8ff9215a555a465d0ff8634"
+      "sha256": "80bde91fa712cb01e5ae4667e6baf1b70306b98e93880a35c1db098ed62b39c2"
     },
     {
       "target": "inc/frontend/product-message.php",
       "mode": "100644",
-      "sha256": "a704e553bc788a55696af2d82f20bde521d805024ad06b7e5edd60442fdffe2d"
+      "sha256": "f9e9c370d51b9ddee44fe9cc3adfcbab5261e6d1619cd141103e4caec51e612b"
     },
     {
       "target": "inc/frontend/shop-message.php",
       "mode": "100644",
-      "sha256": "ad1b81a147a090957c7b0a1599f6e5d3ca67d5a6568bb821720dcf1425c507c8"
+      "sha256": "64f702b36bb046a6bc7882c47bcec63d4d733688254c959282e39d61b027331e"
     },
     {
       "target": "js/loyalty-info-bubble.js",
@@ -409,7 +418,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "c7e36490a467e2261896c8c08154dc669a1d2d7a399da0cce2ea075f2245487e"
+      "sha256": "119999e4d2dbbc6f0f2a307eb7ff8adfbfacb016edf337acdc52199915418e99"
     }
   ],
   "blocked_mixed_modules": [
@@ -1038,7 +1047,7 @@
     "inc/cores/helper/role-ownership.php": {
       "mode": "100644",
       "blob": "94b053f2eccdc0f6144b3012d2d5d9480293a554",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "inc/cores/helper/yoohw-debug-blob.php": {
       "mode": "100644",
@@ -1599,6 +1608,6 @@
   "extractions": {
     "id": "byte-spans-v1",
     "path": "config/free-core-extractions.json",
-    "sha256": "92aaebc52668b2f79ad781ee302a7e32bd9086decd35c7e8cedbd5a65b171b5c"
+    "sha256": "282f1da3759ddf83f9637ca9f7a88576a0a6990ab00f53c2ac79725ca554c936"
   }
 }
