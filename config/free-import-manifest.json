@@ -68,7 +68,7 @@
       "target": "inc/cores/helper/points-transaction.php",
       "transform": "wp-text-domain-v1",
       "sha256": "65514f221a43c6957ff04cd585aa63000637bab8598f1050374642acefce708e",
-      "output_sha256": "2edae12e3292b7107010e5d80d92b791df7db028fa6ec491de3a65f0cca983b3",
+      "output_sha256": "6d51644b8fcb57103fcb9e8148b14dec017b45e99e65644512d285ab82bbded5",
       "domain_replacements": 0,
       "extraction": "inc/cores/helper/points-transaction.php"
     },
@@ -104,7 +104,7 @@
       "target": "inc/cores/helper/points-events.php",
       "transform": "wp-text-domain-v1",
       "sha256": "878ba2aeea66853e18ddea7458588a47998a6365bece28394419b5ec7f091ad1",
-      "output_sha256": "b5ab8e4fcf19440c1655ac0d0b41bf255b06116f4044633ca3a631fede0f5a07",
+      "output_sha256": "40c20272ab0280ecc948ca1d7826a1b150c7e87e617fe335a132a3f072a12877",
       "domain_replacements": 0,
       "extraction": "inc/cores/helper/points-events.php"
     },
@@ -233,13 +233,31 @@
       "output_sha256": "f66258eb17e0aee7d5bc70ff5751b47065871105b9550e0556badb4378a69347",
       "domain_replacements": 9,
       "transform": "wp-text-domain-v1"
+    },
+    {
+      "source": "inc/cores/helper/advanced-rewards.php",
+      "target": "inc/cores/helper/advanced-rewards.php",
+      "transform": "wp-text-domain-v1",
+      "sha256": "0b89f0f2b190a8f5735d1304899d81d614321db7bce723c95261a04b300fc5ee",
+      "output_sha256": "ee5505ccebadbd98c256c35fe3757547a8a8fcc5c3b97679707687000b890751",
+      "domain_replacements": 0,
+      "extraction": "inc/cores/helper/advanced-rewards.php"
+    },
+    {
+      "source": "inc/backend/actions/extra/first-purchase.php",
+      "target": "inc/backend/actions/extra/first-purchase.php",
+      "transform": "wp-text-domain-v1",
+      "sha256": "b1fe9f165d9189dfd85b7ce2ce471de1bed98377925b1b2374824ac4f9eab8ff",
+      "output_sha256": "869bae3620ee832f29c4fc6e235278d72f650dc71fcf45cdd0f8f910d0a85141",
+      "domain_replacements": 0,
+      "extraction": "inc/backend/actions/extra/first-purchase.php"
     }
   ],
   "overlays": [
     {
       "target": "loyalty-for-woocommerce.php",
       "mode": "100644",
-      "sha256": "ec7208efd109c23f384cb236bbe8a63c521d719a87f45a7808847335757c9329"
+      "sha256": "b74d50d2ac8276384b08c9994efe0eb910786af63b70461067f434b40759223f"
     },
     {
       "target": "readme.txt",
@@ -324,7 +342,7 @@
     {
       "target": "inc/backend/settings/extra-points.php",
       "mode": "100644",
-      "sha256": "0e72ec79545f652f08c1ab24e4d216bf9752039d31b8d4cde4ea6b530fae9280"
+      "sha256": "9a4db22d610363b67d41a0d39e95ded29aa786e1c7e5b48a85c613b5d241b55a"
     },
     {
       "target": "inc/backend/settings/files/yol_import_sample.csv",
@@ -525,6 +543,11 @@
       "target": "js/blocks-redemption.js",
       "mode": "100644",
       "sha256": "8e458aa89c1dc1f476fa0cccf9a2de930c6f953e3e638e5345cd3251cddbfeaf"
+    },
+    {
+      "target": "inc/cores/helper/free-first-purchase.php",
+      "mode": "100644",
+      "sha256": "2c9bca69c9be5fd77f625a80d0517be24b7cac2b69933cb01dbbf5b55e437455"
     }
   ],
   "blocked_mixed_modules": [
@@ -540,7 +563,8 @@
     "inc/cores/helper/points-occurrences.php",
     "inc/cores/helper/role-ownership.php",
     "inc/backend/actions/extra/first-purchase.php",
-    "inc/backend/settings/tools.php"
+    "inc/backend/settings/tools.php",
+    "inc/cores/helper/advanced-rewards.php"
   ],
   "forbidden_symbols": [
     "YOWCL_License_Runtime",
@@ -553,13 +577,17 @@
     "YOWCL_Helper_Points_Expiration",
     "YOWCL_Actions_Level_Reset",
     "YOWCL_Actions_Level_Discounts",
-    "YOWCL_Advanced_Rewards",
     "YOWCL_Referral_Rewards",
     "YOWCL_Actions_Referrals",
     "YOWCL_Helper_Referrals",
     "YOWCL_Coupon_Redemption",
     "YOWCL_Frontend_Redeem_Product",
-    "YOWCL_Product_Earning_Rules"
+    "YOWCL_Product_Earning_Rules",
+    "YOWCL_Extra_Points_Payment_Methods",
+    "YOWCL_Extra_Points_High_Cart_Value",
+    "YOWCL_Extra_Points_Inactivity",
+    "YOWCL_Extra_Points_Milestone_Purchases",
+    "YOWCL_Extra_Points_Spending_Milestones"
   ],
   "compatibility": {
     "internal_names": "Preserve canonical YOWCL_* and shared YOSWC_Role_Claims identities; never blanket rename symbols or stored keys.",
@@ -783,7 +811,7 @@
     "inc/backend/actions/extra/first-purchase.php": {
       "mode": "100644",
       "blob": "76155ac65aafa9163017a10d9cea71177883b892",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "inc/backend/actions/extra/high-cart-value.php": {
       "mode": "100644",
@@ -1053,7 +1081,7 @@
     "inc/cores/helper/advanced-rewards.php": {
       "mode": "100644",
       "blob": "1f4f9548b7014557127d75a3656f7ea27abd391a",
-      "decision": "forbidden"
+      "decision": "import"
     },
     "inc/cores/helper/batch-monitor.php": {
       "mode": "100644",
@@ -1714,6 +1742,6 @@
   "extractions": {
     "id": "byte-spans-v1",
     "path": "config/free-core-extractions.json",
-    "sha256": "3ec7a3c54eb162a16b3df1541fbdd1350ff6537e54dc3be6cd0607cd8314a213"
+    "sha256": "212870fa6376e6382d2d8f108deda1feede6a2d5bf51228c05fcb1a506e80306"
   }
 }

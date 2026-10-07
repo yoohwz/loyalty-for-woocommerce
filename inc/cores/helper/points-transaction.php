@@ -5,7 +5,7 @@ defined( 'ABSPATH' ) || exit;
 /** Narrow atomic points primitive; callers still own authorization and business eligibility. */
 class YOWCL_Points_Transaction {
 	private static $active = false;
-	const REWARD_ACTIONS = array( 'order_reward', 'sign_up_reward', 'daily_login_reward', 'review_reward', 'level_up_reward' );
+	const REWARD_ACTIONS = array( 'order_reward', 'sign_up_reward', 'daily_login_reward', 'review_reward', 'level_up_reward', 'first_purchase_reward' );
 
 	/** Recovery reads fail closed: a database/schema error is never a missing event. */
 	public static function find( $event_key ) {

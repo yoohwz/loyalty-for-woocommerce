@@ -11,6 +11,10 @@ databases=()
 server_pid=
 cleanup() {
   result=$?
+  if [[ "$result" != 0 && -f "$task_tmp/browser-server.log" ]]; then
+    printf 'Browser fixture failure: candidate=%s storage=%s PHP=%s\n' "$candidate" "${LOYF_STORAGE:-unstarted}" "$(php -r 'echo PHP_VERSION;')" >&2
+    tail -n 80 "$task_tmp/browser-server.log" >&2
+  fi
   if [[ -n "$server_pid" ]]; then kill "$server_pid" 2>/dev/null || true; wait "$server_pid" 2>/dev/null || true; fi
   for database in "${databases[@]}"; do
     MYSQL_PWD="$LOY_DB_PASSWORD" mysql --host="$LOY_DB_HOST" --port="${LOY_DB_PORT:-3306}" --user="$LOY_DB_USER" -e "DROP DATABASE IF EXISTS \`$database\`" >/dev/null 2>&1 || result=1
@@ -52,6 +56,7 @@ for versions in '6.8.3:9.9.5' '7.0:11.1.2'; do
     if [[ "$storage" == hpos ]]; then wp option update woocommerce_custom_orders_table_enabled yes --quiet; fi
     wp plugin activate loyalty-for-woocommerce --quiet
     export LOYF_STORAGE="$storage"
+    wp eval-file "$repo/tests/runtime/first-purchase.php" --quiet
     wp eval-file "$repo/tests/runtime/modern.php" --quiet
     if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
       curl -fsSL --retry 3 https://downloads.wordpress.org/theme/twentytwentyfive.1.3.zip -o "$task_tmp/theme.zip"
@@ -61,7 +66,11 @@ for versions in '6.8.3:9.9.5' '7.0:11.1.2'; do
       wp option update siteurl "$LOYF_BROWSER_URL" --quiet; wp option update home "$LOYF_BROWSER_URL" --quiet
       wp option update loyalty_customization_cart_checkout '{"cart":0,"checkout":0}' --format=json --quiet
       wp eval-file "$repo/tests/runtime/browser-seed.php" --quiet
-      php -S "127.0.0.1:${LOYF_BROWSER_PORT:-18088}" -t "$site" "$repo/tests/runtime/browser-router.php" > "$task_tmp/browser-server.log" 2>&1 & server_pid=$!
+      # This disposable correctness fixture does not certify opcode/JIT optimization.
+      # Keep its interpreter mode explicit; engine crashes must still fail the whole leg.
+      browser_php=(php -d opcache.enable=0 -d opcache.enable_cli=0 -d opcache.jit=0 -d opcache.jit_buffer_size=0)
+      "${browser_php[@]}" -r 'echo "Browser fixture interpreter: ", json_encode(array("php"=>PHP_VERSION,"opcache"=>ini_get("opcache.enable"),"opcache_cli"=>ini_get("opcache.enable_cli"),"jit"=>ini_get("opcache.jit"),"jit_buffer"=>ini_get("opcache.jit_buffer_size"))), PHP_EOL;'
+      "${browser_php[@]}" -S "127.0.0.1:${LOYF_BROWSER_PORT:-18088}" -t "$site" "$repo/tests/runtime/browser-router.php" > "$task_tmp/browser-server.log" 2>&1 & server_pid=$!
       node "$repo/tests/runtime/blocks-browser.cjs"
       wp option update loyalty_points_using_rules '[]' --format=json --quiet
       for display in '1:0' '0:1' '0:0'; do

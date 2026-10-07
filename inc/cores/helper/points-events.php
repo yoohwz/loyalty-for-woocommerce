@@ -22,4 +22,10 @@ class YOWCL_Points_Events {
 		do_action( 'yoswc_loyalty_level_update', $user_id, $updated_level, $new_earning_points );
 	}
 
+    public static function context_reward( $user_id, $points, $new_points, $order_id = null, $data = array() ) {
+        $data = array_merge( is_array( $data ) ? $data : array(), array( 'points'=>(int) $points, 'points_balance'=>(int) $new_points, 'order_id'=>$order_id ) );
+        do_action( 'yowcl_loyalty_context_reward', $user_id, $data );
+        do_action( 'woocommerce_loyalty_context_reward', $user_id, $data );
+    }
+
 }
