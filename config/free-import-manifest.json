@@ -152,13 +152,94 @@
       "output_sha256": "4a78cea82a9e75da809c4bf37062e65cfb6c086340c04cd0ee41033a9ba9ac16",
       "domain_replacements": 0,
       "extraction": "inc/cores/helper/role-ownership.php"
+    },
+    {
+      "source": "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php",
+      "target": "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php",
+      "sha256": "a93524ad49541619ae2542e3b5fbc6c3f07aecfee357980bcb758973a5252f7a",
+      "output_sha256": "16f6d58defc0309bc4c39743a3ef5da4e07fe8fe92475eb679140e738ce6d408",
+      "domain_replacements": 0,
+      "transform": "wp-text-domain-v1",
+      "extraction": "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php"
+    },
+    {
+      "source": "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-reward.php",
+      "target": "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-reward.php",
+      "sha256": "9406ed89331c716cff723fc249f8c83557fb028c61aeaf00b1311b7a259868db",
+      "output_sha256": "1479795f79041403a97ce4433e7c9f3d48ed2c9ad4dd88ebe6675e11d2e1ea61",
+      "domain_replacements": 4,
+      "transform": "wp-text-domain-v1"
+    },
+    {
+      "source": "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-deduct.php",
+      "target": "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-deduct.php",
+      "sha256": "e865edeef34242b44f1bfd40fd4ad3dd329828d9b27a9a335f0880c2e8c59ae7",
+      "output_sha256": "42421db1c25d846596efb9517a17d263f7c00d735dc7244ad63ed7196b8127c8",
+      "domain_replacements": 4,
+      "transform": "wp-text-domain-v1"
+    },
+    {
+      "source": "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-level-update.php",
+      "target": "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-level-update.php",
+      "sha256": "ac6a9b73cbe39cd42bc9fff588105c182f7442be0048bc916941f11ae040b214",
+      "output_sha256": "d5b0ecbf80c0f75c30651f4ebf5942b1ff8078837c9d519f9370a210884b4033",
+      "domain_replacements": 4,
+      "transform": "wp-text-domain-v1"
+    },
+    {
+      "source": "templates/emails/loyalty-points-reward.php",
+      "target": "templates/emails/loyalty-points-reward.php",
+      "sha256": "43ec50d7894580f1187a084d0d993a49536523c576eb6edbadf6e8a742ecefff",
+      "output_sha256": "c94565c3c5699b148d02e99a7c422efeb153f59027e06d19c7fff5ea38f6558d",
+      "domain_replacements": 11,
+      "transform": "wp-text-domain-v1"
+    },
+    {
+      "source": "templates/emails/loyalty-points-deduct.php",
+      "target": "templates/emails/loyalty-points-deduct.php",
+      "sha256": "99eaff7d64a8f4e0b0a41de30f532a421fed9a6d0438bdba739b22c23f3b49ae",
+      "output_sha256": "f1aa94d55fac45164651dd6adc610b3369ace6759221765f0a7ac7ff319eed99",
+      "domain_replacements": 11,
+      "transform": "wp-text-domain-v1"
+    },
+    {
+      "source": "templates/emails/loyalty-level-update.php",
+      "target": "templates/emails/loyalty-level-update.php",
+      "sha256": "1909f5c229867896ebb1eb1ae30e12b8c34a4d4ddb2419252e1ae40c45940048",
+      "output_sha256": "f4c571154e8c99c456bc8ed6e91aeeac375b7e2fad13b3b3d3b280c546ff5016",
+      "domain_replacements": 9,
+      "transform": "wp-text-domain-v1"
+    },
+    {
+      "source": "templates/emails/plain/loyalty-points-reward.php",
+      "target": "templates/emails/plain/loyalty-points-reward.php",
+      "sha256": "40a545690d75eaf54951dc2834ca953dd10e02e655990e950d79c3c6a1be53c6",
+      "output_sha256": "dd4c187a01664e4fb390bc93b248cb9ce4238271306ed3f43676170b36783b33",
+      "domain_replacements": 11,
+      "transform": "wp-text-domain-v1"
+    },
+    {
+      "source": "templates/emails/plain/loyalty-points-deduct.php",
+      "target": "templates/emails/plain/loyalty-points-deduct.php",
+      "sha256": "e60dcd9a7eb0a00accc47461663f1b69d2a4915e9e0f5acc8f2ec775b9618ae2",
+      "output_sha256": "1ef1f6e82eef8f435094730e741eebaa1de92fcb2fc24641b4ec15994298ac75",
+      "domain_replacements": 11,
+      "transform": "wp-text-domain-v1"
+    },
+    {
+      "source": "templates/emails/plain/loyalty-level-update.php",
+      "target": "templates/emails/plain/loyalty-level-update.php",
+      "sha256": "84a8a26a92eb14125bb8b90e1f102897378747461b66581c4c3d42c9c8f9102e",
+      "output_sha256": "f66258eb17e0aee7d5bc70ff5751b47065871105b9550e0556badb4378a69347",
+      "domain_replacements": 9,
+      "transform": "wp-text-domain-v1"
     }
   ],
   "overlays": [
     {
       "target": "loyalty-for-woocommerce.php",
       "mode": "100644",
-      "sha256": "6e2c5b890e26a971f08915a51389062e2f614659b4143c2aae320a12107037cf"
+      "sha256": "930c467b7483f7e8892ae48f43f4bb2f223dffc70f04cbc621e43817e771e795"
     },
     {
       "target": "readme.txt",
@@ -203,7 +284,7 @@
     {
       "target": "inc/backend/actions/emails/notifications-email.php",
       "mode": "100644",
-      "sha256": "1788dc59f269f8f5f5228363c724ed775ec4e9c014d59a7a5111fcfb18400f7f"
+      "sha256": "8fed425d2a5aca7a1eeb835fbf7723f4d66086e753a8f01e739bc8b171942fdb"
     },
     {
       "target": "inc/backend/actions/extra-points/level-up.php",
@@ -243,7 +324,7 @@
     {
       "target": "inc/backend/settings/extra-points.php",
       "mode": "100644",
-      "sha256": "a9fda2efcbe877081a9c359a14a758dc5b9937c4c8669e9301319828d8493741"
+      "sha256": "6b0db42b42141426ea41b16aeb082ff086432f35d5d9252907562276ceab9543"
     },
     {
       "target": "inc/backend/settings/files/yol_import_sample.csv",
@@ -278,7 +359,7 @@
     {
       "target": "inc/backend/settings/notification.php",
       "mode": "100644",
-      "sha256": "de8006c4d5aae63217a489e9e71b9353c75ed0ff55d852e874339b94b7c54c60"
+      "sha256": "ab8be1e0348eb79008aefe174d28f605629d7f04da1a0862d36daba616f94535"
     },
     {
       "target": "inc/backend/settings/referrals.php",
@@ -293,7 +374,7 @@
     {
       "target": "inc/backend/settings.php",
       "mode": "100644",
-      "sha256": "44ae31870af5b6f868b78791699d4ccb1ef46764783f4d0ef13a6455903be3d3"
+      "sha256": "fe2803182eafbcbf0502e339ccc337beeacca7d69b06c3b3dd72495c2bbe81fd"
     },
     {
       "target": "inc/backend/users/user-profile-points.php",
@@ -343,7 +424,7 @@
     {
       "target": "inc/cores/helper/free-core.php",
       "mode": "100644",
-      "sha256": "f96776e0a0e595de1a0bc79299780529ee7a003f5290ff08221e56b59c58ddb0"
+      "sha256": "6f8753935cff770dee45a323ffc924de6f32d66255c79ce6d02cb89e6fdc4524"
     },
     {
       "target": "inc/cores/helper/free-order-actions.php",
@@ -358,7 +439,7 @@
     {
       "target": "inc/frontend/cart-checkout.php",
       "mode": "100644",
-      "sha256": "fac87d22d816caa8f48c8067d7729ecb1d4596e1f943c7c95224982df288ccec"
+      "sha256": "64a13ddb5f14bfcafca558ff060a1adb8eaa1d252ea092e0255b950a9974a055"
     },
     {
       "target": "inc/frontend/loyalty-info-bubble.php",
@@ -419,6 +500,11 @@
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
       "sha256": "aaae87f11b84f406c9cf97ac50530896460f6afd316c198650531bfa94139d3a"
+    },
+    {
+      "target": "inc/cores/helper/free-migrations.php",
+      "mode": "100644",
+      "sha256": "5b0ab69b975b373b345fd20e03c2f5ef4fe0ccf1025b336207f1f887de88d449"
     }
   ],
   "blocked_mixed_modules": [
@@ -632,7 +718,7 @@
     "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php": {
       "mode": "100644",
       "blob": "07edf2617021b1d6bd021e6988f37d658fed621c",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-events.php": {
       "mode": "100644",
@@ -642,17 +728,17 @@
     "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-level-update.php": {
       "mode": "100644",
       "blob": "53d47d2da6e14554c29897bd42a79ea0bb605ddd",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-deduct.php": {
       "mode": "100644",
       "blob": "8185bc93c82ac950f628ebb783d8e4c58783e267",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-reward.php": {
       "mode": "100644",
       "blob": "63e9806200394e1f20d22a0c426f656d080f0cf4",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "inc/backend/actions/emails/email-notifications.php": {
       "mode": "100644",
@@ -1217,17 +1303,17 @@
     "templates/emails/loyalty-level-update.php": {
       "mode": "100644",
       "blob": "b5852a14f75e8d7771a06f082beaa3ac27d2fee9",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "templates/emails/loyalty-points-deduct.php": {
       "mode": "100644",
       "blob": "fc800e4170f7b336da92f9e84a66d444fe9cc921",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "templates/emails/loyalty-points-reward.php": {
       "mode": "100644",
       "blob": "94c58a70e35e9c359ca5e489c0008444c2e86de4",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "templates/emails/plain/loyalty-event.php": {
       "mode": "100644",
@@ -1237,17 +1323,17 @@
     "templates/emails/plain/loyalty-level-update.php": {
       "mode": "100644",
       "blob": "7da70a5df8ebdcd4cc64e4ec1629045c54ea0ca4",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "templates/emails/plain/loyalty-points-deduct.php": {
       "mode": "100644",
       "blob": "b38d09543dd734b8bf386e9a81d020a454736589",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "templates/emails/plain/loyalty-points-reward.php": {
       "mode": "100644",
       "blob": "76519b079b9495eece5fcccac610cb0cd20752d3",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "tests/advanced-descriptions.php": {
       "mode": "100644",
@@ -1608,6 +1694,6 @@
   "extractions": {
     "id": "byte-spans-v1",
     "path": "config/free-core-extractions.json",
-    "sha256": "a87e158d4334d314b26916576888e32a7ca759e9a6749b41a87a98d164fdf5e8"
+    "sha256": "e494641d95f04325d8457ea8e4ce393aaa004996bb29441eb70bb5e42911a274"
   }
 }

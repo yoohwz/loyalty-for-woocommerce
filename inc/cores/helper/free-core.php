@@ -69,6 +69,7 @@ class YOWCL_Free_Core {
         } catch ( Throwable $e ) { self::hold( $user, $e->getMessage() ); }
     }
     public static function level_bonus( $user, $role ) {
+        if ( ! YOWCL_Free_Migrations::ready( 'levelup' ) ) { return; }
         $rules = maybe_unserialize( get_option( 'loyalty_extra_levelup_points_rules', array() ) );
         $merged = get_option( 'loyalty_extra_reviews_gamification_rules', array() );
         if ( isset( $merged['levelup_enabled'] ) ) { $rules = 'yes' === $merged['levelup_enabled'] ? ( $merged['levelup_points'] ?? array() ) : array(); }
@@ -92,6 +93,7 @@ class YOWCL_Free_Core {
         return ( (int) $value >= 0 ? '+' : '-' ) . abs( (int) $value );
     }
     public static function extra( $kind ) {
+        if ( ! YOWCL_Free_Migrations::ready( $kind ) ) { return 0; }
         $rules = maybe_unserialize( get_option( 'loyalty_extra_points_rules', array() ) );
         if ( 'review' === $kind ) {
             $merged = get_option( 'loyalty_extra_reviews_gamification_rules', array() );

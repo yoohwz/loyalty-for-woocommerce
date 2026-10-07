@@ -19,7 +19,7 @@ boundary = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(boundary)
 
 ROOT_FILES = {"loyalty-for-woocommerce.php", "readme.txt", "changelog.txt", "license.txt"}
-ROOT_DIRS = {"css", "img", "inc", "js", "languages"}
+ROOT_DIRS = {"css", "img", "inc", "js", "languages", "templates"}
 REQUIRED = ROOT_FILES | {
     "inc/cores/database.php", "inc/frontend/cart-checkout.php",
     "inc/backend/actions/use-points.php", "inc/backend/actions/return-points.php",

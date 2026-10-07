@@ -505,7 +505,8 @@ class YOSWC_Loyalty_Settings {
 			'amount' => $amount,
 		);
 
-		update_option('loyalty_points_using_rules', $loyalty_points_using_rules);
+		if (!current_user_can('manage_options')) { return; }
+		try { YOWCL_Free_Migrations::save('redemption', 'loyalty_points_using_rules', $loyalty_points_using_rules); } catch (Throwable $e) { wp_die(esc_html($e->getMessage())); }
 	}
 
 	public function wc_loyalty_get_user_roles() {

@@ -48,6 +48,11 @@ class YOSWC_Loyalty {
 		require_once plugin_dir_path(__FILE__) . 'inc/backend/actions/helper/roles.php';
 		require_once plugin_dir_path(__FILE__) . 'inc/cores/database.php';
 		( new YOWCL_Database() )->check_version();
+		require_once plugin_dir_path(__FILE__) . 'inc/cores/helper/free-migrations.php';
+		YOWCL_Free_Migrations::run();
+		add_action( 'admin_notices', array( 'YOWCL_Free_Migrations', 'notices' ) );
+		add_action( 'woocommerce_cart_loaded_from_session', array( 'YOWCL_Free_Migrations', 'session' ), 1 );
+		add_action( 'woocommerce_init', array( 'YOWCL_Free_Migrations', 'session' ), 20 );
 		YOWCL_Order_Redemption::register();
 		add_action( 'woocommerce_store_api_checkout_update_order_meta', array( 'YOWCL_Free_Core', 'deny_store_api_redemption' ), PHP_INT_MAX );
 		include_once plugin_dir_path(__FILE__) . 'inc/cores/backend.php';
