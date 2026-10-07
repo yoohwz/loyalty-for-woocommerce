@@ -92,6 +92,32 @@ __ ('wc-loyalty', 'other-domain');
         self.assertEqual(8, count)
         for preserved in [b"__('comment', 'wc-loyalty')", b"__('string', 'wc-loyalty')", b"->__('method', 'wc-loyalty')", b"::__('static', 'wc-loyalty')", b"__ ('wc-loyalty', 'other-domain')"]: self.assertIn(preserved, transformed)
 
+    def test_interpolation_and_nested_calls_preserve_non_domain_bytes(self):
+        cases = [
+            (b'<?php __("hello {$name}", "wc-loyalty");', b'<?php __("hello {$name}", "loyalty-for-woocommerce");', 1),
+            (b'<?php __("hello ${name}", "wc-loyalty");', b'<?php __("hello ${name}", "loyalty-for-woocommerce");', 1),
+            (b'<?php __("hello {$names[0]}", "wc-loyalty");', b'<?php __("hello {$names[0]}", "loyalty-for-woocommerce");', 1),
+            (b"<?php __(foo(__(\"hello {$name}\", 'wc-loyalty'), [1,2]), 'wc-loyalty');", b"<?php __(foo(__(\"hello {$name}\", 'loyalty-for-woocommerce'), [1,2]), 'loyalty-for-woocommerce');", 2),
+        ]
+        for source, expected, count in cases:
+            with self.subTest(source=source): self.assertEqual((expected, count), contract.transform(source))
+
+    def test_nullsafe_method_is_not_a_translation_call(self):
+        version = subprocess.check_output(['php', '-r', 'echo PHP_VERSION_ID;']).decode()
+        if int(version) < 80000: self.skipTest('Nullsafe syntax is unavailable under minimum PHP7.4; verified separately under PHP8.')
+        source = b'<?php $o?->__("message", "wc-loyalty");'
+        self.assertEqual((source, 0), contract.transform(source))
+
+    def test_qualified_calls_are_preserved_across_tokenizer_versions(self):
+        for source in [b"<?php \\__('x', 'wc-loyalty');", b"<?php Example\\__('x', 'wc-loyalty');"]:
+            self.assertEqual((source, 0), contract.transform(source))
+
+    def test_namespaced_resolution_fails_closed_before_transform(self):
+        for source in [b'<?php namespace Example; function __($a,$b) { return $b; } __("message", "wc-loyalty");',
+                       b'<?php namespace Example { __("message", "wc-loyalty"); }']:
+            with self.assertRaises(subprocess.CalledProcessError) as error: contract.transform(source)
+            self.assertIn(b'Namespaced source requires', error.exception.stderr)
+
     def test_manifest_rejects_collision_forbidden_path_and_duplicate_keys(self):
         for mutate in [lambda m: m['imports'][0].update(target=m['overlays'][0]['target']),
                        lambda m: m['imports'][0].update(target='../outside.php'),
