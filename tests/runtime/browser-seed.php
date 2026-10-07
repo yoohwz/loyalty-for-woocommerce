@@ -1,5 +1,6 @@
 <?php
 if(!defined('LOYF_RUNTIME_DISPOSABLE')){throw new RuntimeException('Disposable required');}
+update_option('woocommerce_coming_soon','no');
 $rules=get_option('loyalty_extra_points_rules');$rules['signup_enabled']='no';$rules['login_enabled']='no';update_option('loyalty_extra_points_rules',$rules);
 $user=wp_insert_user(array('user_login'=>'blocks_browser','user_email'=>'blocks-browser@example.invalid','user_pass'=>'disposable-only','role'=>'customer'));if(is_wp_error($user)){throw new RuntimeException($user->get_error_message());}
 YOWCL_Points_Transaction::apply((int)$user,50,50,'browser:seed');
