@@ -90,10 +90,14 @@ class YOWCL_Free_Core {
     }
     public static function history_amount( $row ) {
         $row = (array) $row;
-        $value = $row['available_delta'] ?? null;
-        if ( null === $value ) { return null; }
-        if ( ! in_array( YOWCL_Ledger_V2::inspect( $row )['kind'], array( 'v2', 'transaction_pre_v2' ), true ) ) { return null; }
-        return ( (int) $value >= 0 ? '+' : '-' ) . abs( (int) $value );
+        $canonical = false;
+        foreach ( array( 'event_key', 'available_delta', 'earning_delta', 'ledger_version', 'source_event_key', 'allocation_receipt' ) as $field ) {
+            if ( null !== ( $row[$field] ?? null ) ) { $canonical = true; break; }
+        }
+        if ( ! $canonical ) { return null; }
+        if ( ! in_array( YOWCL_Ledger_V2::inspect( $row )['kind'], array( 'v2', 'transaction_pre_v2' ), true ) ) { return __( 'Unavailable', 'loyalty-for-woocommerce' ); }
+        $value = (int) $row['available_delta'];
+        return ( $value >= 0 ? '+' : '-' ) . abs( $value );
     }
     public static function extra( $kind ) {
         if ( ! YOWCL_Free_Migrations::ready( $kind ) ) { return 0; }

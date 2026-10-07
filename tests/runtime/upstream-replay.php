@@ -5,7 +5,7 @@ foreach($identity_rows as $row) {
     $key=$row['event_key']; $event=array('action'=>$row['action'],'order_id'=>(int)$row['order_id'],'source_event_key'=>$row['source_event_key']);
     if(in_array($row['action'],YOWCL_Points_Transaction::REWARD_ACTIONS,true)) { $result=YOWCL_Points_Transaction::reward((int)$row['user_id'],(int)$row['available_delta'],$key,$event); }
     elseif('points_deducted'===$row['action']) {$result=YOWCL_Points_Transaction::reverse_order_reward((int)$row['user_id'],(int)$row['order_id'],'Replay');}
-    elseif(in_array($row['action'],array('admin_reward','admin_deduct'),true)) {
+    elseif(in_array($row['action'],array('admin_reward','admin_deduct','points_import'),true)) {
         $request=YOWCL_Points_Allocation::decode($row['allocation_receipt'])['request'];
         $result=YOWCL_Points_Transaction::mutate((int)$row['user_id'],$request['available'],$request['earning'],$key,$event,$request['mode']);
     } else {$result=YOWCL_Points_Transaction::apply((int)$row['user_id'],(int)$row['available_delta'],(int)$row['earning_delta'],$key,$event);}
@@ -31,7 +31,7 @@ foreach($identity_rows as $row) {
     $event=array('action'=>$row['action'],'order_id'=>(int)$row['order_id'],'source_event_key'=>$row['source_event_key']); $key=$row['event_key'];
     if(in_array($row['action'],LOYF7_Upstream_Transaction::REWARD_ACTIONS,true)) {$result=LOYF7_Upstream_Transaction::reward((int)$row['user_id'],(int)$row['available_delta'],$key,$event);}
     elseif('points_deducted'===$row['action']){$result=LOYF7_Upstream_Transaction::reverse_order_reward((int)$row['user_id'],(int)$row['order_id'],'Replay');}
-    elseif(in_array($row['action'],array('admin_reward','admin_deduct'),true)) {
+    elseif(in_array($row['action'],array('admin_reward','admin_deduct','points_import'),true)) {
         $request=YOWCL_Points_Allocation::decode($row['allocation_receipt'])['request'];
         $result=LOYF7_Upstream_Transaction::mutate((int)$row['user_id'],$request['available'],$request['earning'],$key,$event,$request['mode']);
     }else{$result=LOYF7_Upstream_Transaction::apply((int)$row['user_id'],(int)$row['available_delta'],(int)$row['earning_delta'],$key,$event);}

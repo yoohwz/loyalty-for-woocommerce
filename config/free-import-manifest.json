@@ -424,7 +424,7 @@
     {
       "target": "inc/cores/helper/free-core.php",
       "mode": "100644",
-      "sha256": "8d3aa9a9405586d44dc474272ceb71e746e77aea7b476204df52134c93bec7de"
+      "sha256": "c3cf0fbfa0757bb4e78c423c7856310819bb4097627b0c12aff06c5977e497f5"
     },
     {
       "target": "inc/cores/helper/free-order-actions.php",

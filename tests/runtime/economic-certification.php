@@ -105,6 +105,25 @@ YOWCL_Points_Transaction::apply($checkout_user,5,5,'cert7:after_return'); YOWCL_
 WC()->cart->empty_cart(); WC()->cart->add_to_cart($product->get_id(),1); loyf_equal(true,loyf_ajax('wp_ajax_applying_points',$apply)['success'],'Insufficient fixture selection'); $insufficient_attempt=WC()->session->get('yowcl_checkout_id');
 YOWCL_Points_Transaction::apply($checkout_user,-50,0,'cert7:concurrent_spend'); $insufficient=WC()->checkout()->create_order(array('billing_email'=>'checkout@example.invalid','payment_method'=>'cod'));
 loyf_assert(is_wp_error($insufficient),'Unaffordable checkout refused'); loyf_assert(!YOWCL_Points_Transaction::find('checkout_redeem:'.$insufficient_attempt),'No unfunded debit'); loyf_assert(!YOWCL_Points_Transaction::find('checkout_redeem:'.$insufficient_attempt.':return'),'No synthetic compensation'); loyf_balance($checkout_user,5,55,'Insufficient checkout preserves spend');
+// Purchase-level unknown outcome and failing public observer retain one authoritative row.
+$order_unknown_user=loyf7_user('order_unknown'); $order_unknown=loyf_order($order_unknown_user,$product);
+add_action('yowcl_transaction_test_checkpoint',$lose); $order_unknown->update_status('processing'); remove_action('yowcl_transaction_test_checkpoint',$lose);
+loyf7_run_jobs(YOWCL_Order_Rewards::RETRY_HOOK,function($args)use($order_unknown){return (int)$args[0]===$order_unknown->get_id();}); loyf_balance($order_unknown_user,100,100,'Unknown purchase once'); $identity_rows[]=loyf7_row('reward:order:'.$order_unknown->get_id(),100,100);
+$observed_user=loyf7_user('order_observer'); $observed_order=loyf_order($observed_user,$product); $observations=0;
+$observer=function($user)use($observed_user,&$observations){if((int)$user===$observed_user){++$observations;throw new RuntimeException('Observer failure');}};
+add_action('yoswc_loyalty_points_reward',$observer); $observed_order->update_status('processing'); $observed_order->update_status('completed'); remove_action('yoswc_loyalty_points_reward',$observer);
+loyf_equal(1,$observations,'One effective purchase observation despite observer failure'); loyf_balance($observed_user,100,100,'Observer cannot undo purchase'); $identity_rows[]=loyf7_row('reward:order:'.$observed_order->get_id(),100,100);
+// Corrupt canonical proof remains unavailable to consumers, never falls back to old amount.
+$malformed_user=loyf7_user('malformed'); do_action('user_register',$malformed_user); $malformed_key='reward:signup:'.$malformed_user; $malformed=loyf7_row($malformed_key,5,5);
+loyf_equal(1,$wpdb->update(YOWCL_Points_Log::table_name(),array('allocation_receipt'=>'{'),array('id'=>$malformed['id'])),'Native malformed receipt');
+$bad=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.YOWCL_Points_Log::table_name().' WHERE id=%d',$malformed['id']),ARRAY_A);
+loyf_equal('Unavailable',YOWCL_Free_Core::history_amount($bad),'Malformed canonical history fails closed');
+$partial_bad=$bad; $partial_bad['ledger_version']=null; $partial_bad['available_delta']=null; loyf_equal('Unavailable',YOWCL_Free_Core::history_amount($partial_bad),'Partial canonical history fails closed');
+$legacy=$bad; foreach(array('event_key','available_delta','earning_delta','ledger_version','source_event_key','allocation_receipt') as $field){$legacy[$field]=null;} loyf_equal(null,YOWCL_Free_Core::history_amount($legacy),'Nullable historical sign/amount retained');
+do_action('user_register',$malformed_user); loyf_balance($malformed_user,5,5,'Malformed existing event cannot admit new value');
+wp_set_current_user($malformed_user); $bad_history=loyf_ajax('wp_ajax_load_more_points_log',array('security'=>wp_create_nonce('load_more_points_nonce'),'offset'=>0)); loyf_equal(true,$bad_history['success'],'Malformed native history remains readable'); loyf_equal('Unavailable',$bad_history['data'][0]['amount'],'Native consumer refuses reinterpretation');
+// Include committed native CSV entries from the mandatory hardened writer scenario.
+foreach($wpdb->get_results("SELECT * FROM ".YOWCL_Points_Log::table_name()." WHERE action='points_import' AND event_key IS NOT NULL",ARRAY_A) as $row){$identity_rows[]=$row;}
 // Consumers and public legacy observations cannot write accounting or reinterpret nullable history.
 $before_rows=$wpdb->get_results('SELECT * FROM '.YOWCL_Points_Log::table_name().' ORDER BY id',ARRAY_A); $before_meta=$wpdb->get_results("SELECT * FROM {$wpdb->usermeta} WHERE meta_key IN ('user_points','user_earning_points') ORDER BY umeta_id",ARRAY_A);
 wp_set_current_user($partial); $history=loyf_ajax('wp_ajax_load_more_points_log',array('security'=>wp_create_nonce('load_more_points_nonce'),'offset'=>0)); loyf_equal(true,$history['success'],'Native My Account history');
