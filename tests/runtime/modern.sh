@@ -53,8 +53,8 @@ for versions in '6.8.3:9.9.5' '7.0:11.1.2'; do
     export LOYF_STORAGE="$storage"
     wp eval-file "$repo/tests/runtime/modern.php" --quiet
     if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
-      wp config delete DOING_AJAX --quiet
       wp theme install twentytwentyfive --version=1.3 --activate --quiet
+      wp config delete DOING_AJAX --quiet
       export LOYF_BROWSER_URL="http://127.0.0.1:${LOYF_BROWSER_PORT:-18088}" LOYF_BROWSER_FIXTURE="$task_tmp/browser-fixture.json"
       wp option update siteurl "$LOYF_BROWSER_URL" --quiet; wp option update home "$LOYF_BROWSER_URL" --quiet
       wp eval-file "$repo/tests/runtime/browser-seed.php" --quiet
