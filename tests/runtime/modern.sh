@@ -52,6 +52,7 @@ for versions in '6.8.3:9.9.5' '7.0:11.1.2'; do
     if [[ "$storage" == hpos ]]; then wp option update woocommerce_custom_orders_table_enabled yes --quiet; fi
     wp plugin activate loyalty-for-woocommerce --quiet
     export LOYF_STORAGE="$storage"
+    wp eval-file "$repo/tests/runtime/first-purchase.php" --quiet
     wp eval-file "$repo/tests/runtime/modern.php" --quiet
     if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
       curl -fsSL --retry 3 https://downloads.wordpress.org/theme/twentytwentyfive.1.3.zip -o "$task_tmp/theme.zip"

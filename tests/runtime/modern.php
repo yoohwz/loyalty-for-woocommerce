@@ -67,3 +67,19 @@ $env['LOYF8_WORKER_INDEX']='2';$pipes=array();$process=proc_open(array(PHP_BINAR
 wp_cache_delete($user,'user_meta');loyf_balance($user,80,100,'Concurrent POST debit once');$record=YOWCL_Order_Redemption::record($id);loyf_equal('active',$record['state'],'Concurrent original recovered');loyf_equal($record['order_id'],$recovered['order_id'],'Concurrent same-order recovery');loyf_balance($user,80,100,'Concurrent recovery no second debit');
 wp_set_current_user(0);loyf_assert(loyf8_api('POST','cart/extensions',array('namespace'=>YOWCL_Free_Blocks::NS,'data'=>array('action'=>'apply','points'=>'1','operation_id'=>wp_generate_uuid4())))->get_status()>=400,'Guest denied');
 echo 'Native Classic/Store API × '.getenv('LOYF_STORAGE').' PASS Woo'.WC_VERSION.' WP'.get_bloginfo('version')." sync-off\n";
+
+// First Purchase policy across the real Classic create_order and Store API draft/POST origins.
+$first_rules=get_option(YOWCL_Free_First_Purchase::RULES,null);$first_epoch=get_option(YOWCL_Free_First_Purchase::WITNESS,null);
+try {
+    foreach(array('classic','store') as $adapter) {
+        wp_set_current_user(1);YOWCL_Free_First_Purchase::save(true,17);$cutoff=YOWCL_Free_First_Purchase::configuration()['epoch']['cutoff'];while(time()<=$cutoff){usleep(100000);}
+        $user=loyf8_user('first_'.$adapter);wp_set_current_user($user);WC()->cart->empty_cart();WC()->cart->add_to_cart($product->get_id());WC()->cart->calculate_totals();WC()->session->set('store_api_draft_order',null);
+        if('classic'===$adapter){$order_id=WC()->checkout()->create_order(array('billing_email'=>$address['email'],'payment_method'=>'cod'));loyf_assert(!is_wp_error($order_id),'First Classic create');}
+        else{$draft=loyf8_ok(loyf8_api('GET','checkout'));loyf_assert(!YOWCL_Points_Transaction::find('reward:first_purchase:'.$user),'Store draft no first value');$posted=loyf8_ok(loyf8_api('POST','checkout',$body));$order_id=$posted['order_id'];}
+        $order=wc_get_order($order_id);$order->update_status('processing');$order->update_status('completed');do_action('woocommerce_payment_complete',$order_id);$row=YOWCL_Points_Transaction::find('reward:first_purchase:'.$user);loyf_assert(is_array($row),'Native origin First award');loyf_equal(17,(int)$row['available_delta'],'Native origin fixed bonus');loyf_equal($order_id,(int)$row['order_id'],'Native origin winner');
+        wp_set_current_user(1);YOWCL_Free_First_Purchase::save(false,17);
+    }
+    // Store API draft created before effective enable stays excluded after real POST finalization.
+    $user=loyf8_user('first_old_draft');wp_set_current_user($user);WC()->cart->empty_cart();WC()->cart->add_to_cart($product->get_id());WC()->cart->calculate_totals();WC()->session->set('store_api_draft_order',null);$draft=loyf8_ok(loyf8_api('GET','checkout'));$date=wc_get_order($draft['order_id'])->get_date_created()->getTimestamp();while(time()<=$date){usleep(100000);}wp_set_current_user(1);YOWCL_Free_First_Purchase::save(true,17);wp_set_current_user($user);$posted=loyf8_ok(loyf8_api('POST','checkout',$body));$order=wc_get_order($posted['order_id']);$order->update_status('processing');loyf_equal(null,YOWCL_Points_Transaction::find('reward:first_purchase:'.$user),'Native pre-enable Store draft denied');
+    echo "Native First Purchase Classic/Store API origins PASS\n";
+} finally {foreach(array(YOWCL_Free_First_Purchase::RULES=>$first_rules,YOWCL_Free_First_Purchase::WITNESS=>$first_epoch)as$name=>$value){if(null===$value){delete_option($name);}else{update_option($name,$value);}}wp_set_current_user(0);}
