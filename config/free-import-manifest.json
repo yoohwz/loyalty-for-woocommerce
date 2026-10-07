@@ -288,7 +288,7 @@
     {
       "target": "inc/backend/settings/tools.php",
       "mode": "100644",
-      "sha256": "ec6d93e91202090f3b011c3e1faad4cf3a45dfde150f5ed84e8c9d7331b534f4"
+      "sha256": "e1790600ab8a2cb0717550c3ac455307064f96295710585c7a80f38253ec3480"
     },
     {
       "target": "inc/backend/settings.php",

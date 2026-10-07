@@ -115,7 +115,7 @@ class YOSWC_Loyalty_Settings_Tools {
     private function import_locked( $callback ) {
         global $wpdb;
         $db = $wpdb->dbh;
-        $name = 'loyf_csv_' . hash( 'sha224', DB_NAME . ':' . $wpdb->options . ':' . get_current_user_id() );
+        $name = 'loyfcsv_' . hash( 'sha224', DB_NAME . ':' . $wpdb->options . ':' . get_current_user_id() );
         if ( ! current_user_can( 'manage_options' ) || ! YOWCL_Free_Core::owns() ) { wp_die( esc_html__( 'You do not have permission to import points.', 'loyalty-for-woocommerce' ) ); }
         if ( ! ( $db instanceof mysqli ) || YOWCL_Points_Lock::has_transaction( $db ) || '1' !== (string) YOWCL_Points_Lock::scalar( $db, $wpdb->prepare( 'SELECT GET_LOCK(%s, 0)', $name ) ) ) { wp_die( esc_html__( 'An import is running. Retry the current file later.', 'loyalty-for-woocommerce' ) ); }
         $owner = static function () use ( $db, $name ) {
