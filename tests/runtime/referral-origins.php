@@ -4,6 +4,7 @@ $actor=get_current_user_id();$saved=get_option(YOWCL_Free_Referral::OPTION,null)
 $extras=get_option('loyalty_extra_points_rules');update_option('loyalty_extra_points_rules',array('signup_enabled'=>'no','login_enabled'=>'no'));
 function rf_api($method,$body=array()){$r=new WP_REST_Request($method,'/wc/store/v1/checkout');$r->set_header('Nonce',wp_create_nonce('wc_store_api'));$r->set_body_params($body);$v=rest_do_request($r);loyf_assert($v->get_status()<300,'Referral Store '.$method.' '.wp_json_encode($v->get_data()));return json_decode(wp_json_encode($v->get_data()),true);}
 try{
+ update_option('woocommerce_cod_settings',array('enabled'=>'yes'));WC()->payment_gateways=new WC_Payment_Gateways();
  $product=new WC_Product_Simple();$product->set_name('Referral native checkout');$product->set_regular_price(15);$product->set_virtual(true);$product->save();
  $ref=wp_insert_user(array('user_login'=>'referral_origins_r','user_email'=>'rf-origins-r@example.invalid','user_pass'=>'disposable-only','role'=>'customer'));$token=YOWCL_Helper_Referrals::ensure_user_token((int)$ref);
  $address=array('first_name'=>'Referral','last_name'=>'Buyer','address_1'=>'1 Test','city'=>'New York','state'=>'NY','postcode'=>'10001','country'=>'US','email'=>'rf-origins@example.invalid','phone'=>'5550001000');$body=array('billing_address'=>$address,'shipping_address'=>$address,'payment_method'=>'cod');
