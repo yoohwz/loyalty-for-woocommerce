@@ -8,4 +8,5 @@ $product=new WC_Product_Simple();$product->set_name('Blocks browser product');$p
 WC_Install::create_pages();
 $cart=get_option('woocommerce_cart_page_id');$checkout=get_option('woocommerce_checkout_page_id');
 foreach(array('cart'=>$cart,'checkout'=>$checkout) as $kind=>$id){$method=new ReflectionMethod('WC_Install','get_'.$kind.'_block_content');$method->setAccessible(true);wp_update_post(array('ID'=>$id,'post_content'=>$method->invoke(null)));}
-file_put_contents(getenv('LOYF_BROWSER_FIXTURE'),wp_json_encode(array('product'=>$product->get_id(),'cart'=>$cart,'checkout'=>$checkout,'user'=>$user,'version'=>WC_VERSION,'storage'=>getenv('LOYF_STORAGE'))));
+wp_set_current_user(1);YOWCL_Free_Referral::save(true,31);$token=YOWCL_Helper_Referrals::ensure_user_token((int)$user);$other=wp_insert_user(array('user_login'=>'referral_browser_other','user_email'=>'referral-browser-other@example.invalid','user_pass'=>'disposable-only','role'=>'customer'));$other_token=YOWCL_Helper_Referrals::ensure_user_token((int)$other);
+file_put_contents(getenv('LOYF_BROWSER_FIXTURE'),wp_json_encode(array('account'=>get_option('woocommerce_myaccount_page_id'),'token'=>$token,'other_token'=>$other_token,'other_user'=>$other,'product'=>$product->get_id(),'cart'=>$cart,'checkout'=>$checkout,'user'=>$user,'version'=>WC_VERSION,'storage'=>getenv('LOYF_STORAGE'))));
