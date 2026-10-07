@@ -140,7 +140,7 @@
       "target": "inc/cores/helper/order-redemption.php",
       "transform": "wp-text-domain-v1",
       "sha256": "cc4f1f15860ca8518b091ef31379abbdf655c661cdef875e8c80be31f3a40753",
-      "output_sha256": "e64a2077cdd6e7e5ae45c5570499ccb044f7c7fbe175ac3e5ea9befd056e75a4",
+      "output_sha256": "e30165d859172cb4bd98c10c4ddd937030e8b3ca264ac7a87a8637fc5f419148",
       "domain_replacements": 0,
       "extraction": "inc/cores/helper/order-redemption.php"
     },
@@ -1714,6 +1714,6 @@
   "extractions": {
     "id": "byte-spans-v1",
     "path": "config/free-core-extractions.json",
-    "sha256": "4262348bf9955077bb0e68dc4c78de115e180974278a0a56efce2ee81e33d915"
+    "sha256": "ad9c2c5b5a4a45861499169f7e271e3f9e0f77993e97a42dd9113a078922e491"
   }
 }

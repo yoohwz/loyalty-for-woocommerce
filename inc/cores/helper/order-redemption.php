@@ -311,14 +311,17 @@ class YOWCL_Order_Redemption {
 			$record = self::record( WC()->session->get( 'yowcl_checkout_id' ) );
 			$order_id = $record ? (int) $record['order_id'] : 0;
 		}
-		if ( ! $order_id ) { return; }
-		$db = $wpdb->dbh;
-		$name = 'yowcl_b_' . hash( 'sha224', DB_NAME . ':' . $wpdb->options . ':' . $order_id );
+        $selection_id = WC()->session->get( 'yowcl_checkout_id' );
+        // Woo 11 can defer draft creation until POST. Fence the selection before it has an order.
+        $identity = self::valid_id( $selection_id ) ? 'selection:' . $selection_id : ( $order_id ? 'order:' . $order_id : '' );
+        if ( '' === $identity ) { return; }
+        $db = $wpdb->dbh;
+        $name = 'yowcl_b_' . hash( 'sha224', DB_NAME . ':' . $wpdb->options . ':' . $identity );
 		if ( self::$request_lock || ! ( $db instanceof mysqli ) || YOWCL_Points_Lock::has_transaction( $db ) || '1' !== (string) YOWCL_Points_Lock::scalar( $db, $wpdb->prepare( 'SELECT GET_LOCK(%s, 0)', $name ) ) ) { throw new RuntimeException( 'order_redemption_order_busy' ); }
 		self::$request_lock = array( $db, $name, spl_object_hash( $request ) );
 		register_shutdown_function( array( __CLASS__, 'store_api_request_unlock' ) );
 		self::request_owner();
-		self::fresh_order( $order_id );
+        if ( $order_id ) { self::fresh_order( $order_id ); }
 		self::checkpoint( 'store_api_request_owned' );
 	}
 

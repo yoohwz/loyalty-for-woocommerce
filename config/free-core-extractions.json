@@ -1164,7 +1164,7 @@
   },
   "inc/cores/helper/order-redemption.php": {
     "input_sha256": "cc4f1f15860ca8518b091ef31379abbdf655c661cdef875e8c80be31f3a40753",
-    "selected_sha256": "e64a2077cdd6e7e5ae45c5570499ccb044f7c7fbe175ac3e5ea9befd056e75a4",
+    "selected_sha256": "e30165d859172cb4bd98c10c4ddd937030e8b3ca264ac7a87a8637fc5f419148",
     "spans": [
       {
         "start": 1192,
@@ -1680,6 +1680,66 @@
         "start": 19028,
         "end": 19030,
         "replacement": ""
+      },
+      {
+        "start": 19452,
+        "end": 19454,
+        "replacement": "ICAgICAgICAkc2VsZWN0"
+      },
+      {
+        "start": 19455,
+        "end": 19455,
+        "replacement": "b25faWQgPSBXQygpLT5zZXNzaW9uLT5nZXQoICd5b3djbF9jaGVja291dF9pZCcgKTsKICAgICAgICAvLyBXb28gMTEgY2FuIGRl"
+      },
+      {
+        "start": 19456,
+        "end": 19456,
+        "replacement": "ZXIgZHJhZnQgY3JlYXRpb24gdW50aWwgUE9TVC4gRmVuY2UgdGhlIHNlbGVjdGlvbiBiZWZvcmUgaXQgaGFzIGFuIG9yZGVyLgogICAgICAgICRpZGVudGl0eSA9IHNlbGY6OnZhbGlkX2lkKCAkc2VsZWN0aW9uX2lkICkgPyAnc2VsZWN0aW9uOicgLiAkc2VsZWN0aW9uX2lkIDo="
+      },
+      {
+        "start": 19458,
+        "end": 19460,
+        "replacement": ""
+      },
+      {
+        "start": 19470,
+        "end": 19470,
+        "replacement": "ID8gJ29yZGVyOicgLiAkb3JkZXJfaWQgOiAnJyApOwogICAgICAgIGlmICggJycgPT09ICRpZGVudGl0eQ=="
+      },
+      {
+        "start": 19485,
+        "end": 19487,
+        "replacement": "ICAgICAgICA="
+      },
+      {
+        "start": 19505,
+        "end": 19507,
+        "replacement": "ICAgICAgICA="
+      },
+      {
+        "start": 19584,
+        "end": 19586,
+        "replacement": "aQ=="
+      },
+      {
+        "start": 19588,
+        "end": 19590,
+        "replacement": "bnQ="
+      },
+      {
+        "start": 19591,
+        "end": 19592,
+        "replacement": "dHk="
+      },
+      {
+        "start": 20049,
+        "end": 20051,
+        "replacement": "ICAgICAgICBpZiAoICRvcmRlcl9pZCApIHsg"
+      },
+      {
+        "start": 20082,
+        "end": 20082,
+        "replacement": "IH0="
       },
       {
         "start": 20827,

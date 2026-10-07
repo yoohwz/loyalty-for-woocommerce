@@ -34,6 +34,7 @@ foreach(array('classic','store') as $adapter) {
         $draft=loyf8_ok(loyf8_api('GET','checkout')); $order_id=$draft['order_id']; loyf_assert(!YOWCL_Order_Redemption::record($id),'GET draft not frozen'); loyf_balance($user,100,100,'Draft no debit');
         $failure=function($step){if('before_finalize'===$step){throw new RuntimeException('Modern finalization fault');}};
         add_action('yowcl_order_redemption_test_checkpoint',$failure); $failed=loyf8_api('POST','checkout',$body); remove_action('yowcl_order_redemption_test_checkpoint',$failure);
+        $bound=YOWCL_Order_Redemption::record($id)['order_id']; if($order_id){loyf_equal($order_id,$bound,'Existing draft bound');} $order_id=$bound;
         loyf_assert($failed->get_status()>=400,'Native POST failure'); loyf_balance($user,80,100,'Unknown finalization debit once'); loyf_equal('prepared',YOWCL_Order_Redemption::record($id)['state'],'Prepared recovery retained');
         $original=new WC_Order($order_id); $items=array_map(function($item){return array($item->get_id(),$item->get_quantity(),$item->get_total());},$original->get_items());
         $key=array_key_first(WC()->cart->get_cart()); loyf8_ok(loyf8_api('POST','cart/update-item',array('key'=>$key,'quantity'=>2)));
