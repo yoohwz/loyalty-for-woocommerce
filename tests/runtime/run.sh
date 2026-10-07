@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+set -euo pipefail
+[[ $# -eq 0 ]] || { echo 'Usage: run.sh' >&2; exit 2; }
+[[ "${LOY_RUNTIME_DISPOSABLE:-}" == 1 ]] || { echo 'Set LOY_RUNTIME_DISPOSABLE=1 for an isolated test database.' >&2; exit 2; }
+[[ -n "${LOY_DB_HOST:-}" && -n "${LOY_DB_USER:-}" && -n "${LOY_DB_PASSWORD:-}" ]] || { echo 'Disposable database connection is required.' >&2; exit 2; }
+repo=$(git rev-parse --show-toplevel)
+head=$(git -C "$repo" rev-parse HEAD)
+[[ "$repo" != *'/Local Sites/'* ]] || { echo 'Refusing to run from a Local site checkout.' >&2; exit 2; }
+[[ -z "$(git -C "$repo" status --porcelain --untracked-files=all)" ]] || { echo 'Exact candidate checkout must be clean.' >&2; exit 2; }
+base=$(python3 -c 'import json; print(json.load(open("tests/fixtures/free-1.2.2.json"))["free_sha"])')
+git cat-file -e "$base^{commit}"
+tmp=$(mktemp -d "${TMPDIR:-/tmp}/loyf-runtime.XXXXXXXX")
+dbs=()
+cleanup() {
+    status=$?
+    for db in "${dbs[@]}"; do
+        if ! MYSQL_PWD="$LOY_DB_PASSWORD" mysql --host="$LOY_DB_HOST" --port="${LOY_DB_PORT:-3306}" --user="$LOY_DB_USER" -e "DROP DATABASE IF EXISTS \`$db\`" >/dev/null 2>&1; then
+            echo 'Disposable database cleanup failed.' >&2
+            status=1
+        fi
+    done
+    if ! rm -rf -- "$tmp"; then status=1; fi
+    trap - EXIT
+    exit "$status"
+}
+trap cleanup EXIT
+export MYSQL_PWD="$LOY_DB_PASSWORD"
+export LOYF_FIXTURE="$repo/tests/fixtures/free-1.2.2.json"
+curl -fsSL --retry 3 https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar -o "$tmp/wp.phar"
+wp() { php "$tmp/wp.phar" --path="$site" "$@"; }
+for phase in baseline candidate; do
+    sha=$head
+    [[ "$phase" != baseline ]] || sha=$base
+    db="loyf_rt_$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')"
+    site="$tmp/$phase"
+    # Track before CREATE: cleanup also covers a client failure after server creation.
+    dbs+=( "$db" )
+    mysql --host="$LOY_DB_HOST" --port="${LOY_DB_PORT:-3306}" --user="$LOY_DB_USER" -e "CREATE DATABASE \`$db\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+    mkdir -p "$site"
+    wp core download --version=6.8.3 --locale=en_US --skip-content --quiet
+    wp core config --dbname="$db" --dbuser="$LOY_DB_USER" --dbpass="$LOY_DB_PASSWORD" --dbhost="$LOY_DB_HOST:${LOY_DB_PORT:-3306}" --skip-check --quiet
+    wp core install --url=http://loyf-runtime.invalid --title='LOYF Runtime' --admin_user=loyf_admin --admin_password='disposable-only-password' --admin_email=admin@example.invalid --skip-email --quiet
+    wp plugin install woocommerce --version=9.9.5 --quiet
+    plugin="$site/wp-content/plugins/loyalty-for-woocommerce"
+    mkdir -p "$plugin" "$site/wp-content/mu-plugins"
+    git -C "$repo" archive "$sha" -- loyalty-for-woocommerce.php readme.txt changelog.txt license.txt css img inc js languages | tar -x -C "$plugin"
+    cp "$repo/tests/runtime/mu-isolation.php" "$site/wp-content/mu-plugins/loyf-runtime.php"
+    wp config set WP_HTTP_BLOCK_EXTERNAL true --raw --quiet
+    wp config set DISABLE_WP_CRON true --raw --quiet
+    wp config set WP_AUTO_UPDATE_CORE false --raw --quiet
+    wp config set DOING_AJAX true --raw --quiet
+    wp plugin activate woocommerce --quiet
+    wp eval-file "$repo/tests/runtime/seed.php" --quiet
+    wp plugin activate loyalty-for-woocommerce --quiet
+    export LOYF_SNAPSHOT="$tmp/$phase.json" LOYF_RAW_SNAPSHOT="$tmp/$phase-raw.json"
+    echo "phase=$phase candidate=$sha wp=6.8.3 woo=9.9.5 php=$(php -r 'echo PHP_VERSION;')"
+    wp eval-file "$repo/tests/runtime/characterization.php" --quiet
+    test -s "$LOYF_SNAPSHOT" && test -s "$LOYF_RAW_SNAPSHOT"
+done
+cmp "$repo/tests/fixtures/free-1.2.2-expected.json" "$tmp/baseline.json"
+cmp "$tmp/baseline.json" "$tmp/candidate.json"
+# Optional reusable evidence: raw stable IDs/dates/order/user data for later transition tasks.
+if [[ -n "${LOYF_RUNTIME_ARTIFACTS:-}" ]]; then
+    [[ "$LOYF_RUNTIME_ARTIFACTS" == /* && "$LOYF_RUNTIME_ARTIFACTS" != "$repo"* ]] || { echo 'Artifacts must be outside source.' >&2; exit 2; }
+    mkdir -p "$LOYF_RUNTIME_ARTIFACTS"
+    cp "$tmp/"*.json "$LOYF_RUNTIME_ARTIFACTS/"
+fi
+echo 'FREE-1.2.2 baseline/candidate characterization PASS'

@@ -1,0 +1,201 @@
+name: LOYF CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  checks: read
+  actions: read
+
+concurrency:
+  group: loyf-ci-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name == 'pull_request' && (github.event.pull_request.draft && 'draft' || 'ready') || 'main' }}
+  cancel-in-progress: true
+
+jobs:
+  syntax:
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    name: Syntax and exact candidate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      mode: ${{ steps.policy.outputs.mode }}
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify exact checkout
+        env:
+          LOY_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$LOY_HEAD"
+
+      - name: Classify with accepted base policy
+        id: policy
+        shell: bash
+        env:
+          LOY_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          LOY_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          LOY_DRAFT: ${{ toJSON(github.event.pull_request.draft) }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # First adoption (including LOY-29) retains full baseline certification.
+          if git cat-file -e "$LOY_BASE:scripts/ci-policy.py" 2>/dev/null; then
+            git show "$LOY_BASE:scripts/ci-policy.py" > "$RUNNER_TEMP/loy-base-ci-policy.py"
+            PYTHONDONTWRITEBYTECODE=1 python3 "$RUNNER_TEMP/loy-base-ci-policy.py" > "$RUNNER_TEMP/loy-mode"
+            grep -Ex 'mode=(DEVELOPMENT|LIGHTWEIGHT|FULL)' "$RUNNER_TEMP/loy-mode"
+            test "$(wc -l < "$RUNNER_TEMP/loy-mode")" -eq 1
+          else
+            echo 'mode=FULL' > "$RUNNER_TEMP/loy-mode"
+          fi
+          # Main provenance is also accepted-base policy. First adoption stays FULL.
+          if [[ "$GITHUB_EVENT_NAME" == push ]] && git cat-file -e "$LOY_BASE:scripts/ci-provenance.py" 2>/dev/null; then
+            git show "$LOY_BASE:scripts/ci-provenance.py" > "$RUNNER_TEMP/loy-base-ci-provenance.py"
+            PYTHONDONTWRITEBYTECODE=1 python3 "$RUNNER_TEMP/loy-base-ci-provenance.py" > "$RUNNER_TEMP/loy-mode"
+            grep -Ex 'mode=(POST_MERGE|FULL)' "$RUNNER_TEMP/loy-mode"
+            test "$(wc -l < "$RUNNER_TEMP/loy-mode")" -eq 1
+          fi
+          cat "$RUNNER_TEMP/loy-mode" >> "$GITHUB_OUTPUT"
+          cat "$RUNNER_TEMP/loy-mode"
+
+      - name: Set up minimum supported PHP
+        if: steps.policy.outputs.mode != 'POST_MERGE'
+        uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # 2.35.5
+        with:
+          php-version: '7.4'
+          coverage: none
+
+      - name: PHP and JavaScript syntax
+        if: steps.policy.outputs.mode != 'POST_MERGE'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git ls-files -z '*.php' | xargs -0 -r -n1 php -l
+          git ls-files -z '*.js' | xargs -0 -r -n1 node --check
+
+      - name: CI routing and provenance contracts
+        if: steps.policy.outputs.mode != 'POST_MERGE'
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python3 tests/ci/policy-test.py
+          PYTHONDONTWRITEBYTECODE=1 python3 tests/ci/provenance-test.py
+          PYTHONDONTWRITEBYTECODE=1 python3 tests/ci/runtime-test.py
+
+      - name: Exact diff whitespace
+        shell: bash
+        env:
+          LOY_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          LOY_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          zero=0000000000000000000000000000000000000000
+          if [[ -n "${LOY_BASE:-}" && "$LOY_BASE" != "$zero" ]]; then
+            git cat-file -e "$LOY_BASE^{commit}"
+            git diff --check "$LOY_BASE" "$LOY_HEAD"
+          else
+            git diff --check "$LOY_HEAD^" "$LOY_HEAD"
+          fi
+
+      - name: Stage, archive, extract and verify
+        if: steps.policy.outputs.mode == 'FULL'
+        shell: bash
+        env:
+          LOY_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$LOY_HEAD"
+          version=$(sed -n 's/^[[:space:]]*\* Version:[[:space:]]*//p' loyalty-for-woocommerce.php | head -n1)
+          test -n "$version"
+          work=$(mktemp -d)
+          trap 'rm -rf "$work"' EXIT
+          mkdir "$work/stage" "$work/extracted"
+          bash scripts/stage-distribution.sh "$LOY_HEAD" "$work/stage"
+          (cd "$work/stage" && zip -qr "$work/loyalty-for-woocommerce-$version.zip" loyalty-for-woocommerce)
+          unzip -q "$work/loyalty-for-woocommerce-$version.zip" -d "$work/extracted"
+          python3 scripts/verify-distribution.py \
+            --source "$PWD" --sha "$LOY_HEAD" --version "$version" \
+            --stage "$work/stage" --zip "$work/loyalty-for-woocommerce-$version.zip" \
+            --extracted "$work/extracted"
+      - name: Repository integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fsck --connectivity-only --no-reflogs
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+  runtime:
+    needs: syntax
+    if: needs.syntax.outputs.mode == 'FULL'
+    name: Disposable WordPress and WooCommerce runtime
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: loy-runtime-only
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify exact checkout
+        env:
+          LOY_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$LOY_HEAD"
+
+      - name: Set up runtime PHP
+        uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # 2.35.5
+        with:
+          php-version: '8.2'
+          extensions: mysqli
+          coverage: none
+
+      - name: Run disposable runtime scenarios
+        env:
+          LOY_RUNTIME_DISPOSABLE: '1'
+          LOY_DB_HOST: 127.0.0.1
+          LOY_DB_USER: root
+          LOY_DB_PASSWORD: loy-runtime-only
+        run: bash tests/runtime/run.sh
+
+  required:
+    name: LOYF Required CI
+    if: ${{ always() && (github.event_name != 'pull_request' || github.event.pull_request.draft == false) }}
+    needs: [syntax, runtime]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Fail closed on required jobs
+        env:
+          LOY_MODE: ${{ needs.syntax.outputs.mode }}
+          LOY_EVENT: ${{ github.event_name }}
+          LOY_REF: ${{ github.ref }}
+          LOY_SYNTAX_RESULT: ${{ needs.syntax.result }}
+          LOY_RUNTIME_RESULT: ${{ needs.runtime.result }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$LOY_SYNTAX_RESULT" = success
+          case "$LOY_MODE" in
+            FULL) test "$LOY_RUNTIME_RESULT" = success ;;
+            LIGHTWEIGHT) test "$LOY_EVENT" = pull_request && test "$LOY_RUNTIME_RESULT" = skipped ;;
+            POST_MERGE) test "$LOY_EVENT" = push && test "$LOY_REF" = refs/heads/main && test "$LOY_RUNTIME_RESULT" = skipped ;;
+            *) echo 'Draft/development or invalid classification cannot certify a candidate.' >&2; exit 1 ;;
+          esac

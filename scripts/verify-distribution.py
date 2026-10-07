@@ -1,0 +1,143 @@
+#!/usr/bin/env python3
+"""Verify a staged and freshly extracted Free package against an exact Git source."""
+
+import argparse
+import hashlib
+import os
+from pathlib import Path
+import re
+import stat
+import subprocess
+import sys
+import zipfile
+
+ROOT_FILES = {"loyalty-for-woocommerce.php", "readme.txt", "changelog.txt", "license.txt"}
+ROOT_DIRS = {"css", "img", "inc", "js", "languages"}
+REQUIRED = ROOT_FILES | {
+    "inc/cores/database.php", "inc/frontend/cart-checkout.php",
+    "inc/backend/actions/use-points.php", "inc/backend/actions/return-points.php",
+    "inc/backend/settings/files/yol_import_sample.csv",
+    "languages/loyalty-for-woocommerce.pot", "css/frontend-style.css", "js/using-point-cart.js",
+    "img/reward.svg",
+}
+UNSAFE = {".DS_Store", "Thumbs.db", "desktop.ini", ".env", ".git", ".github", "__pycache__", "node_modules", "vendor", "tests", "docs", "scripts", "dist", "AGENTS.md", "TESTING.md"}
+
+
+def fail(message):
+    raise ValueError(message)
+
+
+def allowed(path):
+    parts = Path(path).parts
+    if not parts or any(p in UNSAFE or p.startswith(("._", ".")) or p.endswith(("~", ".swp", ".tmp", ".bak", ".pyc")) for p in parts):
+        return False
+    return path in ROOT_FILES or parts[0] in ROOT_DIRS
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def files_under(root):
+    root = Path(root)
+    if not root.is_dir() or root.is_symlink():
+        fail(f"Invalid package root: {root}")
+    found = {}
+    for current, dirs, files in os.walk(root, followlinks=False):
+        for name in dirs + files:
+            path = Path(current) / name
+            mode = path.lstat().st_mode
+            if not (stat.S_ISREG(mode) or stat.S_ISDIR(mode)):
+                fail(f"Unsafe filesystem entry: {path}")
+            relative = path.relative_to(root).as_posix()
+            if not allowed(relative):
+                fail(f"Forbidden package entry: {relative}")
+            if stat.S_ISREG(mode):
+                found[relative] = digest(path.read_bytes())
+    if not REQUIRED <= found.keys():
+        fail(f"Missing required files: {sorted(REQUIRED - found.keys())}")
+    return found
+
+
+def single_root(parent):
+    parent = Path(parent)
+    if sorted(p.name for p in parent.iterdir()) != ["loyalty-for-woocommerce"]:
+        fail(f"Expected only loyalty-for-woocommerce/ under {parent}")
+    return files_under(parent / "loyalty-for-woocommerce")
+
+
+def git_output(source, *args):
+    return subprocess.check_output(["git", "-C", str(source), *args])
+
+
+def verify_version(stage, expected):
+    plugin = (Path(stage) / "loyalty-for-woocommerce" / "loyalty-for-woocommerce.php").read_text()
+    changelog = (Path(stage) / "loyalty-for-woocommerce" / "changelog.txt").read_text()
+    header = re.search(r"(?m)^\s*\* Version:\s*([^\s]+)", plugin)
+    first_entry = next((line for line in changelog.splitlines() if re.match(r"^=(?!=)", line)), None)
+    current = re.fullmatch(r"=\s+([^\s=]+)\s+\([^)]*\)\s+=", first_entry) if first_entry else None
+    if not header or header.group(1) != expected:
+        fail("Plugin header version does not match requested version")
+    if not current or current.group(1) != expected:
+        fail("Current changelog version does not match plugin header")
+
+
+def verify_zip(archive, inventory):
+    seen = set()
+    archived_files = {}
+    with zipfile.ZipFile(archive) as bundle:
+        for entry in bundle.infolist():
+            name = entry.filename
+            parts = name.rstrip("/").split("/")
+            if (name in seen or not name.startswith("loyalty-for-woocommerce/") or
+                    any(part in ("", ".", "..") for part in parts) or
+                    "\\" in name or name.startswith("/") or
+                    (len(parts) > 1 and not allowed("/".join(parts[1:])) and not entry.is_dir()) or
+                    (len(parts) > 1 and entry.is_dir() and
+                     (parts[1] not in ROOT_DIRS or any(p.startswith(".") or p in UNSAFE for p in parts[1:])))):
+                fail(f"Unsafe or duplicate ZIP entry: {name}")
+            seen.add(name)
+            mode = (entry.external_attr >> 16) & 0xFFFF
+            if stat.S_IFMT(mode) == stat.S_IFLNK:
+                fail(f"ZIP symlink: {name}")
+            if entry.flag_bits & 1:
+                fail(f"Encrypted ZIP entry: {name}")
+            if not entry.is_dir():
+                archived_files["/".join(parts[1:])] = digest(bundle.read(entry))
+    if archived_files != inventory:
+        fail("ZIP file inventory differs from staged tree")
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    for name in ("source", "sha", "version", "stage", "zip", "extracted"):
+        parser.add_argument("--" + name, required=True)
+    args = parser.parse_args()
+    source = Path(args.source).resolve()
+    if git_output(source, "rev-parse", "HEAD").decode().strip() != args.sha:
+        fail("Source checkout SHA differs from requested SHA")
+    if git_output(source, "status", "--porcelain", "--untracked-files=all").strip():
+        fail("Source checkout is not clean")
+
+    tracked = set(git_output(source, "ls-files", "-z").decode().strip("\0").split("\0"))
+    expected = {path: digest((source / path).read_bytes()) for path in tracked if allowed(path)}
+    staged = single_root(args.stage)
+    extracted = single_root(args.extracted)
+    if staged != expected or extracted != expected:
+        fail("Source, staged and extracted file inventories differ")
+    verify_version(args.stage, args.version)
+    verify_version(args.extracted, args.version)
+    verify_zip(args.zip, expected)
+    print(f"source_sha={args.sha}")
+    print(f"version={args.version}")
+    print(f"archive={Path(args.zip).name}")
+    print(f"archive_sha256={digest(Path(args.zip).read_bytes())}")
+    print(f"files={len(expected)}")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except (ValueError, OSError, subprocess.CalledProcessError, zipfile.BadZipFile) as error:
+        print(f"Package verification failed: {error}", file=sys.stderr)
+        sys.exit(1)
