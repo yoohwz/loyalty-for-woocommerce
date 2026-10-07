@@ -31,6 +31,16 @@ loyf_equal(count($rows), (int)$wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefi
 // Read-back failure after target persistence cannot make a witness. Retry uses frozen source.
 function loyf_reset_feature($feature) { delete_option(YOWCL_Free_Migrations::witness($feature)); delete_option(YOWCL_Free_Migrations::witness($feature) . '_before'); }
 loyf_reset_feature('review');
+$old_target=get_option('loyalty_extra_reviews_gamification_rules');
+$failure=function($sql) use($wpdb) { return false !== strpos($sql, 'SELECT option_value') && false !== strpos($sql, "'loyalty_extra_points_rules'") ? 'SELECT * FROM loyf_missing_source_table' : $sql; };
+$wpdb->suppress_errors(true); add_filter('query',$failure); YOWCL_Free_Migrations::run(); remove_filter('query',$failure); $wpdb->suppress_errors(false);
+loyf_equal($old_target,get_option('loyalty_extra_reviews_gamification_rules'),'Failed source read cannot replace target'); loyf_assert(!YOWCL_Free_Migrations::ready('review'),'Failed read no witness');
+update_option('loyalty_extra_reviews_gamification_rules','malformed'); YOWCL_Free_Migrations::run(); loyf_assert(!YOWCL_Free_Migrations::ready('review'),'Malformed target held'); loyf_equal('malformed',get_option('loyalty_extra_reviews_gamification_rules'),'Malformed data not erased');
+update_option('loyalty_extra_reviews_gamification_rules',$old_target);
+$failure=function($sql) use($wpdb) { return false !== strpos($sql, "UPDATE {$wpdb->options}") && false !== strpos($sql, "'loyalty_extra_reviews_gamification_rules'") ? 'SELECT * FROM loyf_missing_target_table' : $sql; };
+$wpdb->suppress_errors(true); add_filter('query',$failure); YOWCL_Free_Migrations::run(); remove_filter('query',$failure); $wpdb->suppress_errors(false);
+loyf_assert(!YOWCL_Free_Migrations::ready('review'),'Failed target write no witness'); loyf_equal($old_target,get_option('loyalty_extra_reviews_gamification_rules'),'Failed target write retains bytes');
+loyf_reset_feature('review');
 $source = get_option('loyalty_extra_points_rules'); $source['review_points'] = '0'; update_option('loyalty_extra_points_rules', $source);
 $merged['review_enabled']='yes'; $merged['review_points']='99'; update_option('loyalty_extra_reviews_gamification_rules', $merged);
 $fail = function($sql) use ($wpdb) { return false !== strpos($sql, "INSERT INTO {$wpdb->options}") && false !== strpos($sql, "'loyf_migration_review_v1',") ? 'SELECT * FROM loyf_missing_failure_table' : $sql; };
@@ -54,6 +64,16 @@ wp_set_current_user(1); $_POST=array('extra_points_settings_nonce'=>wp_create_no
 $legacy_map=get_option('loyalty_extra_levelup_points_rules'); (new YOSWC_Loyalty_Settings_Extra_Points())->save_extra_points_settings(); $_POST=array();
 YOWCL_Free_Migrations::run(); loyf_equal(9,YOWCL_Free_Core::extra('signup'),'Authorized canonical signup save'); loyf_equal(12,YOWCL_Free_Core::extra('review'),'Review UI/runtime aligned');
 loyf_equal($legacy_map,get_option('loyalty_extra_levelup_points_rules'),'Legacy role evidence read-only'); loyf_equal('29',get_option('loyalty_extra_points_rules')['birthday_points'],'Save preserves dormant account'); loyf_equal(array('keep'=>'001'),get_option('loyalty_extra_reviews_gamification_rules')['context_rules'],'Save preserves dormant merged');
+// Denied direct save facade remains independently guarded, even with a valid nonce.
+$canonical=get_option('loyalty_extra_points_rules'); $nonce=wp_create_nonce('save_extra_points_settings_action'); wp_set_current_user((int)$before['rows'][0]['user_id']);
+$_POST=array('extra_points_settings_nonce'=>$nonce,'loyalty_extra_signup_points'=>'99');
+$die=function(){return function(){throw new LOYF_Test_Die();};}; add_filter('wp_die_handler',$die,PHP_INT_MAX); add_filter('wp_die_ajax_handler',$die,PHP_INT_MAX);
+try {(new YOSWC_Loyalty_Settings_Extra_Points())->save_extra_points_settings(); throw new RuntimeException('Denied save admitted');} catch(LOYF_Test_Die $e) {} finally {remove_filter('wp_die_handler',$die,PHP_INT_MAX);remove_filter('wp_die_ajax_handler',$die,PHP_INT_MAX);$_POST=array();}
+loyf_equal($canonical,get_option('loyalty_extra_points_rules'),'Denied save no mutation');
+// Existing legacy serialization wrappers retain unknown bytes/semantics through narrow merge.
+loyf_reset_feature('redemption'); $using=array('points'=>'10','amount'=>'1','unknown'=>array('exact'=>'009')); update_option('loyalty_points_using_rules',serialize($using)); YOWCL_Free_Migrations::run();
+$using_raw=YOWCL_Free_Migrations::read('loyalty_points_using_rules'); loyf_assert(is_serialized(maybe_unserialize($using_raw)),'Serialized wrapper retained');
+$using_after=maybe_unserialize(get_option('loyalty_points_using_rules')); loyf_equal($using['unknown'],$using_after['unknown'],'Wrapped unknown values retained');
 // Both email directions; canonical customization and legacy preference retained.
 foreach (array('points_reward','points_deduct','level_update') as $family) { loyf_equal('yes', get_option('woocommerce_yowcl_loyalty_' . $family . '_settings')['enabled'], 'Legacy mail enabled'); }
 loyf_reset_feature('email_reward'); $legacy = get_option('loyalty_notification_email'); $original_legacy=$legacy; $legacy['points_update']=false; update_option('loyalty_notification_email',$legacy);

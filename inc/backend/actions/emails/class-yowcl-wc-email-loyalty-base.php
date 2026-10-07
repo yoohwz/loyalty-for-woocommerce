@@ -149,7 +149,7 @@ abstract class YOWCL_WC_Email_Loyalty_Base extends WC_Email {
 		];
 
 		if ( class_exists( '\Automattic\WooCommerce\Internal\Email\EmailColors' ) ) {
-			$defaults = \Automattic\WooCommerce\Internal\Email\EmailColors::get_default_colors();
+			$defaults = array_replace( $defaults, \Automattic\WooCommerce\Internal\Email\EmailColors::get_default_colors() );
 		}
 
 		$accent_color     = $this->get_hex_color( get_option( 'woocommerce_email_base_color', $defaults['base'] ), $defaults['base'] );

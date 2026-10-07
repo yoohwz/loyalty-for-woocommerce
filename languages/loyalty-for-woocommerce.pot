@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-07T04:58:31+00:00\n"
+"POT-Creation-Date: 2026-10-07T05:56:08+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
@@ -39,43 +39,62 @@ msgstr ""
 msgid "https://yoohw.com"
 msgstr ""
 
-#: inc/backend/actions/emails/notifications-email.php:39
-msgid "You have earned new points!"
+#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php:178
+msgid "My points"
 msgstr ""
 
-#: inc/backend/actions/emails/notifications-email.php:40
-#: inc/backend/actions/emails/notifications-email.php:84
-msgid "Your points was updated"
+#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php:208
+msgid "Member"
 msgstr ""
 
-#. translators: 1: Customer first name, 2: Earned points, 3: New total points, 4: Account URL
-#: inc/backend/actions/emails/notifications-email.php:44
-#, php-format
-msgid "Hi %1$s,<br><br>Your loyalty points have been updated!<br><br>You have earned <strong>%2$d points</strong> and now have a total of <strong>%3$d points</strong>.<br><br><a href=\"%4$s\">Click here to see points details.</a><br><br>Thank you for purchasing."
+#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php:320
+#: inc/backend/settings.php:285
+#: inc/backend/settings/extra-points.php:45
+#: inc/backend/settings/extra-points.php:54
+#: inc/backend/settings/extra-points.php:63
+#: inc/backend/settings/extra-points.php:90
+#: inc/backend/users/users-points.php:20
+#: inc/frontend/loyalty-info-bubble.php:471
+msgid "Points"
 msgstr ""
 
-#: inc/backend/actions/emails/notifications-email.php:83
-msgid "You have deducted points!"
+#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-level-update.php:13
+#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-level-update.php:34
+msgid "Level updated"
 msgstr ""
 
-#. translators: 1: Customer first name, 2: Deducted points, 3: New total points, 4: Account URL
-#: inc/backend/actions/emails/notifications-email.php:88
-#, php-format
-msgid "Hi %1$s,<br><br>Your loyalty points have been updated!<br><br>You have deducted <strong>%2$d points</strong> and now have a total of <strong>%3$d points</strong>.<br><br><a href=\"%4$s\">Click here to see points details.</a><br><br>Thank you for reading."
+#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-level-update.php:14
+msgid "Sent to customers when their loyalty level changes."
 msgstr ""
 
-#: inc/backend/actions/emails/notifications-email.php:131
-msgid "Your loyalty level has been updated"
+#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-level-update.php:30
+msgid "Your level is now {loyalty_level}"
 msgstr ""
 
-#: inc/backend/actions/emails/notifications-email.php:132
-msgid "Loyalty level update"
+#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-deduct.php:9
+#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-deduct.php:30
+msgid "Points deducted"
 msgstr ""
 
-#. translators: 1: Customer first name, 2: New loyalty level, 3: Total earned points, 4: Account URL
-#: inc/backend/actions/emails/notifications-email.php:136
-#, php-format
-msgid "Hi %1$s,<br><br>Your loyalty level has been updated to <strong>%2$s</strong>.<br><br>You have now earned a total of <strong>%3$d points</strong>.<br><br><a href=\"%4$s\">Click here to see your loyalty level details.</a><br><br>Keep up the great work and enjoy your rewards!"
+#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-deduct.php:10
+msgid "Sent to customers when points are deducted from their account."
+msgstr ""
+
+#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-deduct.php:26
+msgid "Your points balance changed"
+msgstr ""
+
+#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-reward.php:9
+#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-reward.php:30
+msgid "Points earned"
+msgstr ""
+
+#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-reward.php:10
+msgid "Sent to customers when points are added to their account."
+msgstr ""
+
+#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-reward.php:26
+msgid "You earned {earned_points} points"
 msgstr ""
 
 #: inc/backend/settings.php:26
@@ -123,7 +142,7 @@ msgid "Point expiration and advanced redemption rules"
 msgstr ""
 
 #: inc/backend/settings.php:120
-#: inc/backend/settings/extra-points.php:137
+#: inc/backend/settings/extra-points.php:140
 msgid "Birthday, account anniversary, and profile completion rewards"
 msgstr ""
 
@@ -153,9 +172,9 @@ msgstr ""
 
 #: inc/backend/settings.php:143
 #: inc/backend/settings.php:219
-#: inc/backend/settings/extra-points.php:143
+#: inc/backend/settings/extra-points.php:146
 #: inc/backend/settings/referrals.php:271
-#: inc/backend/users/user-profile-points.php:152
+#: inc/backend/users/user-profile-points.php:153
 #: inc/backend/users/users-points.php:136
 msgid "View Premium features"
 msgstr ""
@@ -211,16 +230,6 @@ msgstr ""
 
 #: inc/backend/settings.php:269
 msgid "Exclude coupons or taxes from level discounts"
-msgstr ""
-
-#: inc/backend/settings.php:285
-#: inc/backend/settings/extra-points.php:42
-#: inc/backend/settings/extra-points.php:51
-#: inc/backend/settings/extra-points.php:60
-#: inc/backend/settings/extra-points.php:87
-#: inc/backend/users/users-points.php:20
-#: inc/frontend/loyalty-info-bubble.php:471
-msgid "Points"
 msgstr ""
 
 #: inc/backend/settings.php:291
@@ -377,13 +386,13 @@ msgid "Customization Settings"
 msgstr ""
 
 #: inc/backend/settings/customization.php:114
-#: inc/backend/settings/extra-points.php:20
+#: inc/backend/settings/extra-points.php:23
 #: inc/backend/settings/referrals.php:15
 msgid "Before start"
 msgstr ""
 
 #: inc/backend/settings/customization.php:117
-#: inc/backend/settings/extra-points.php:23
+#: inc/backend/settings/extra-points.php:26
 #: inc/backend/settings/referrals.php:18
 msgid "You have to set at least one role for the loyalty level to set this options."
 msgstr ""
@@ -671,67 +680,72 @@ msgid "Enable to display message in Checkout page."
 msgstr ""
 
 #: inc/backend/settings/customization.php:642
-#: inc/backend/settings/extra-points.php:156
+#: inc/backend/settings/extra-points.php:159
 #: inc/backend/settings/general-add-remove-user-role.php:19
 #: inc/backend/settings/general-add-remove-user-role.php:26
-#: inc/backend/settings/notification.php:49
 #: inc/backend/settings/tools.php:130
 #: inc/backend/settings/tools.php:146
 msgid "Nonce verification failed. Please try again."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:16
-#: inc/backend/settings/extra-points.php:32
+#: inc/backend/settings/extra-points.php:19
+#: inc/backend/settings/extra-points.php:35
 msgid "Extra points settings"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:39
+#: inc/backend/settings/extra-points.php:42
 msgid "Sign-up"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:43
+#: inc/backend/settings/extra-points.php:46
 msgid "Points awarded to customers when they sign up."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:48
+#: inc/backend/settings/extra-points.php:51
 msgid "Log-in"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:52
+#: inc/backend/settings/extra-points.php:55
 msgid "Points awarded to customers when they log-in daily."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:57
+#: inc/backend/settings/extra-points.php:60
 #: inc/frontend/loyalty-info-bubble.php:273
 msgid "Product review"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:61
+#: inc/backend/settings/extra-points.php:64
 msgid "Points awarded to customers for leaving a product review."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:66
+#: inc/backend/settings/extra-points.php:69
 msgid "Level up"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:93
+#: inc/backend/settings/extra-points.php:96
 msgid "Points awarded to customers for reaching a level role."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:134
+#: inc/backend/settings/extra-points.php:137
 msgid "Automate more customer reward actions in Premium"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:135
+#: inc/backend/settings/extra-points.php:138
 msgid "These core rules cover sign-up, daily login, product review, and level-up rewards. Premium adds lifecycle and purchase-based automations for deeper retention workflows."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:138
+#: inc/backend/settings/extra-points.php:141
 msgid "First order, purchase milestone, and lifetime spend rewards"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:139
+#: inc/backend/settings/extra-points.php:142
 msgid "Inactivity win-back campaigns and achievement points"
+msgstr ""
+
+#: inc/backend/settings/extra-points.php:164
+#: inc/backend/settings/extra-points.php:171
+#: inc/frontend/cart-checkout.php:211
+msgid "A valid whole points amount is required."
 msgstr ""
 
 #: inc/backend/settings/general-add-remove-user-role.php:72
@@ -818,24 +832,12 @@ msgstr ""
 msgid "point(s) for"
 msgstr ""
 
-#: inc/backend/settings/notification.php:12
+#: inc/backend/settings/notification.php:6
 msgid "Email notifications"
 msgstr ""
 
-#: inc/backend/settings/notification.php:21
-msgid "Points update"
-msgstr ""
-
-#: inc/backend/settings/notification.php:27
-msgid "Enable to send email to the customer when the points updated."
-msgstr ""
-
-#: inc/backend/settings/notification.php:33
-msgid "Level update"
-msgstr ""
-
-#: inc/backend/settings/notification.php:39
-msgid "Enable to send email to the customer when their level updated."
+#: inc/backend/settings/notification.php:7
+msgid "Manage loyalty email enablement and customization in WooCommerce email settings."
 msgstr ""
 
 #: inc/backend/settings/referrals.php:11
@@ -1067,149 +1069,153 @@ msgstr ""
 msgid "An error occurred redefining loyalty levels."
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:46
-#: inc/backend/users/users-points.php:157
-msgid "Add points to the user"
-msgstr ""
-
 #: inc/backend/users/user-profile-points.php:47
 #: inc/backend/users/users-points.php:158
-msgid "Remove points from the user"
+msgid "Add points to the user"
 msgstr ""
 
 #: inc/backend/users/user-profile-points.php:48
 #: inc/backend/users/users-points.php:159
-msgid "The points field cannot be empty."
+msgid "Remove points from the user"
 msgstr ""
 
 #: inc/backend/users/user-profile-points.php:49
 #: inc/backend/users/users-points.php:160
-msgid "Error:"
+msgid "The points field cannot be empty."
 msgstr ""
 
 #: inc/backend/users/user-profile-points.php:50
 #: inc/backend/users/users-points.php:161
-msgid "An error occurred while processing your request. Please try again."
+msgid "Error:"
 msgstr ""
 
 #: inc/backend/users/user-profile-points.php:51
-msgid "An unexpected error occurred."
+#: inc/backend/users/users-points.php:162
+msgid "An error occurred while processing your request. Please try again."
 msgstr ""
 
 #: inc/backend/users/user-profile-points.php:52
+msgid "An unexpected error occurred."
+msgstr ""
+
+#: inc/backend/users/user-profile-points.php:53
 msgid "An error occurred while fetching the points log. Please try again."
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:58
+#: inc/backend/users/user-profile-points.php:59
 msgid "User Points"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:62
+#: inc/backend/users/user-profile-points.php:63
 #: inc/frontend/my-account.php:279
 msgid "Current points"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:68
+#: inc/backend/users/user-profile-points.php:69
+#: templates/emails/loyalty-level-update.php:78
+#: templates/emails/loyalty-points-deduct.php:86
+#: templates/emails/loyalty-points-reward.php:86
 msgid "Total earned"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:78
+#: inc/backend/users/user-profile-points.php:79
 msgid "Points log"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:89
+#: inc/backend/users/user-profile-points.php:90
 msgid "Points Log"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:93
+#: inc/backend/users/user-profile-points.php:94
 #: inc/frontend/my-account.php:324
 msgid "Date"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:94
+#: inc/backend/users/user-profile-points.php:95
 #: inc/frontend/my-account.php:327
 msgid "Amount"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:95
+#: inc/backend/users/user-profile-points.php:96
 msgid "Order ID"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:96
+#: inc/backend/users/user-profile-points.php:97
 #: inc/frontend/my-account.php:326
 msgid "Description"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:109
+#: inc/backend/users/user-profile-points.php:110
 #: inc/backend/users/users-points.php:91
 msgid "Enter Points and Description"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:114
+#: inc/backend/users/user-profile-points.php:115
 #: inc/backend/users/users-points.php:96
 msgid "Points:"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:122
+#: inc/backend/users/user-profile-points.php:123
 #: inc/backend/users/users-points.php:104
 msgid "Description:"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:130
+#: inc/backend/users/user-profile-points.php:131
 #: inc/backend/users/users-points.php:112
 msgid "Submit"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:143
+#: inc/backend/users/user-profile-points.php:144
 #: inc/backend/users/users-points.php:127
 msgid "Need bulk or automated point operations?"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:144
+#: inc/backend/users/user-profile-points.php:145
 #: inc/backend/users/users-points.php:128
 msgid "Premium adds tools for larger point management workflows beyond one-off manual rewards and deductions."
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:146
+#: inc/backend/users/user-profile-points.php:147
 #: inc/backend/users/users-points.php:130
 msgid "Bulk reward campaigns"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:147
+#: inc/backend/users/user-profile-points.php:148
 #: inc/backend/users/users-points.php:131
 msgid "Scheduled point rewards"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:148
+#: inc/backend/users/user-profile-points.php:149
 #: inc/backend/users/users-points.php:132
 msgid "Advanced point history log"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:171
-#: inc/backend/users/users-points.php:173
+#: inc/backend/users/user-profile-points.php:172
+#: inc/backend/users/users-points.php:174
 #: inc/cores/helper/free-admin.php:6
+#: inc/cores/helper/free-admin.php:8
 msgid "Unauthorized user"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:178
+#: inc/backend/users/user-profile-points.php:179
 msgid "Invalid user ID."
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:203
+#: inc/backend/users/user-profile-points.php:204
 msgid "Admin rewarded"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:205
+#: inc/backend/users/user-profile-points.php:206
 msgid "Admin deducted"
 msgstr ""
 
 #. translators: %s: Loyalty level role.
-#: inc/backend/users/user-profile-points.php:223
+#: inc/backend/users/user-profile-points.php:224
 #, php-format
 msgid "Level updated: %s"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:243
+#: inc/backend/users/user-profile-points.php:244
 #: inc/frontend/my-account.php:368
 msgid "No points log found."
 msgstr ""
@@ -1222,35 +1228,35 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: inc/backend/users/users-points.php:162
+#: inc/backend/users/users-points.php:163
 msgid "Failed to get username."
 msgstr ""
 
-#: inc/backend/users/users-points.php:163
+#: inc/backend/users/users-points.php:164
 msgid "Error fetching username."
 msgstr ""
 
-#: inc/backend/users/users-points.php:183
+#: inc/backend/users/users-points.php:184
 msgid "User not found"
 msgstr ""
 
-#: inc/cores/helper/free-admin.php:10
+#: inc/cores/helper/free-admin.php:12
 msgid "A valid whole points amount and operation identity are required."
 msgstr ""
 
-#: inc/cores/helper/free-admin.php:15
+#: inc/cores/helper/free-admin.php:17
 msgid "Points require recovery. Retry the same operation after resolving the reported condition."
 msgstr ""
 
-#: inc/cores/helper/free-admin.php:17
+#: inc/cores/helper/free-admin.php:19
 msgid "Points were committed; level projection requires retry of the same operation."
 msgstr ""
 
-#: inc/cores/helper/free-admin.php:24
+#: inc/cores/helper/free-admin.php:26
 msgid "Points deducted successfully!"
 msgstr ""
 
-#: inc/cores/helper/free-admin.php:24
+#: inc/cores/helper/free-admin.php:26
 msgid "Points rewarded successfully!"
 msgstr ""
 
@@ -1270,17 +1276,26 @@ msgstr ""
 msgid "Level up bonus"
 msgstr ""
 
-#: inc/cores/helper/free-core.php:76
+#: inc/cores/helper/free-core.php:77
 msgid "Level up bonus for role:"
 msgstr ""
 
-#: inc/cores/helper/free-core.php:82
+#: inc/cores/helper/free-core.php:83
 #: inc/frontend/cart-checkout.php:275
 msgid "Points used"
 msgstr ""
 
-#: inc/cores/helper/free-core.php:84
+#: inc/cores/helper/free-core.php:85
 msgid "Please remove point redemption or use Classic checkout to place this order."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:125
+#, php-format
+msgid "Loyalty compatibility migration needs attention (%1$s: %2$s). This feature is held until storage/settings are repaired and migration succeeds."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:142
+msgid "Please reapply loyalty points after the upgrade. Your points balance has not changed."
 msgstr ""
 
 #: inc/cores/helper/free-order-actions.php:36
@@ -1422,17 +1437,13 @@ msgid "Apply points"
 msgstr ""
 
 #: inc/frontend/cart-checkout.php:202
-#: inc/frontend/cart-checkout.php:441
+#: inc/frontend/cart-checkout.php:442
 msgid "Nonce verification failed."
 msgstr ""
 
 #: inc/frontend/cart-checkout.php:207
-#: inc/frontend/cart-checkout.php:436
+#: inc/frontend/cart-checkout.php:437
 msgid "User not logged in."
-msgstr ""
-
-#: inc/frontend/cart-checkout.php:211
-msgid "A valid whole points amount is required."
 msgstr ""
 
 #: inc/frontend/cart-checkout.php:220
@@ -1452,7 +1463,7 @@ msgstr ""
 msgid "User not logged in"
 msgstr ""
 
-#: inc/frontend/cart-checkout.php:450
+#: inc/frontend/cart-checkout.php:451
 msgid "Points removed successfully."
 msgstr ""
 
@@ -1710,4 +1721,152 @@ msgstr ""
 #: inc/frontend/shop-message.php:50
 #, php-format
 msgid "<b>%d&nbsp;</b> points"
+msgstr ""
+
+#. translators: %s: Customer first name.
+#: templates/emails/loyalty-level-update.php:35
+#: templates/emails/loyalty-points-deduct.php:34
+#: templates/emails/loyalty-points-reward.php:34
+#: templates/emails/plain/loyalty-level-update.php:25
+#: templates/emails/plain/loyalty-points-deduct.php:25
+#: templates/emails/plain/loyalty-points-reward.php:25
+#, php-format
+msgid "Hi %s,"
+msgstr ""
+
+#: templates/emails/loyalty-level-update.php:39
+#: templates/emails/loyalty-points-deduct.php:38
+#: templates/emails/loyalty-points-reward.php:38
+#: templates/emails/plain/loyalty-level-update.php:30
+#: templates/emails/plain/loyalty-points-deduct.php:30
+#: templates/emails/plain/loyalty-points-reward.php:30
+msgid "Hi,"
+msgstr ""
+
+#. translators: 1: Loyalty level name, 2: Total earned points.
+#: templates/emails/loyalty-level-update.php:47
+#, php-format
+msgid "Your loyalty level is now %1$s. You have earned %2$s in total."
+msgstr ""
+
+#: templates/emails/loyalty-level-update.php:66
+msgid "New level"
+msgstr ""
+
+#: templates/emails/loyalty-level-update.php:70
+#: templates/emails/loyalty-points-deduct.php:69
+#: templates/emails/loyalty-points-reward.php:69
+msgid "Balance"
+msgstr ""
+
+#. translators: 1: Points needed, 2: Next loyalty level.
+#: templates/emails/loyalty-level-update.php:88
+#: templates/emails/loyalty-points-deduct.php:96
+#: templates/emails/loyalty-points-reward.php:96
+#: templates/emails/plain/loyalty-level-update.php:41
+#: templates/emails/plain/loyalty-points-deduct.php:42
+#: templates/emails/plain/loyalty-points-reward.php:42
+#, php-format
+msgid "Earn %1$s more to reach %2$s."
+msgstr ""
+
+#: templates/emails/loyalty-level-update.php:106
+#: templates/emails/loyalty-points-deduct.php:114
+#: templates/emails/loyalty-points-reward.php:114
+#: templates/emails/plain/loyalty-level-update.php:47
+#: templates/emails/plain/loyalty-points-deduct.php:48
+#: templates/emails/plain/loyalty-points-reward.php:48
+msgid "You are at the highest loyalty level."
+msgstr ""
+
+#. translators: %s: My account points page label.
+#: templates/emails/loyalty-level-update.php:123
+#: templates/emails/loyalty-points-deduct.php:140
+#: templates/emails/loyalty-points-reward.php:140
+#, php-format
+msgid "View %s"
+msgstr ""
+
+#. translators: 1: Deducted points, 2: Current points balance.
+#: templates/emails/loyalty-points-deduct.php:46
+#, php-format
+msgid "%1$s were deducted from your loyalty account. Your current balance is %2$s."
+msgstr ""
+
+#: templates/emails/loyalty-points-deduct.php:65
+msgid "Deducted"
+msgstr ""
+
+#: templates/emails/loyalty-points-deduct.php:77
+#: templates/emails/loyalty-points-reward.php:77
+msgid "Current level"
+msgstr ""
+
+#: templates/emails/loyalty-points-deduct.php:126
+#: templates/emails/loyalty-points-reward.php:126
+msgid "Related order"
+msgstr ""
+
+#. translators: 1: Earned points, 2: Current points balance.
+#: templates/emails/loyalty-points-reward.php:46
+#, php-format
+msgid "You earned %1$s. Your updated balance is %2$s."
+msgstr ""
+
+#: templates/emails/loyalty-points-reward.php:65
+msgid "Earned"
+msgstr ""
+
+#: templates/emails/plain/loyalty-level-update.php:33
+msgid "Your loyalty level has changed."
+msgstr ""
+
+#: templates/emails/plain/loyalty-level-update.php:34
+msgid "New level:"
+msgstr ""
+
+#: templates/emails/plain/loyalty-level-update.php:35
+#: templates/emails/plain/loyalty-points-deduct.php:37
+#: templates/emails/plain/loyalty-points-reward.php:37
+msgid "Total earned:"
+msgstr ""
+
+#: templates/emails/plain/loyalty-level-update.php:36
+#: templates/emails/plain/loyalty-points-deduct.php:35
+#: templates/emails/plain/loyalty-points-reward.php:35
+msgid "Current balance:"
+msgstr ""
+
+#. translators: %s: My account points page label.
+#: templates/emails/plain/loyalty-level-update.php:53
+#: templates/emails/plain/loyalty-points-deduct.php:58
+#: templates/emails/plain/loyalty-points-reward.php:58
+#, php-format
+msgid "View %s:"
+msgstr ""
+
+#: templates/emails/plain/loyalty-points-deduct.php:33
+msgid "Points were deducted from your loyalty account."
+msgstr ""
+
+#: templates/emails/plain/loyalty-points-deduct.php:34
+msgid "Deducted:"
+msgstr ""
+
+#: templates/emails/plain/loyalty-points-deduct.php:36
+#: templates/emails/plain/loyalty-points-reward.php:36
+msgid "Current level:"
+msgstr ""
+
+#: templates/emails/plain/loyalty-points-deduct.php:52
+#: templates/emails/plain/loyalty-points-reward.php:52
+msgid "Related order:"
+msgstr ""
+
+#: templates/emails/plain/loyalty-points-reward.php:33
+msgid "Points have been added to your loyalty account."
+msgstr ""
+
+#: templates/emails/plain/loyalty-points-reward.php:34
+msgid "Earned:"
 msgstr ""

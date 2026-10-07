@@ -2091,7 +2091,7 @@
   },
   "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php": {
     "input_sha256": "a93524ad49541619ae2542e3b5fbc6c3f07aecfee357980bcb758973a5252f7a",
-    "selected_sha256": "16f6d58defc0309bc4c39743a3ef5da4e07fe8fe92475eb679140e738ce6d408",
+    "selected_sha256": "4227df8e0b6d81d1877c26f91f1ef15c9cd7e09ceedca70629a9265e86c50c4a",
     "spans": [
       {
         "start": 526,
@@ -2107,6 +2107,16 @@
         "start": 647,
         "end": 647,
         "replacement": "CiAgICBwcml2YXRlIGZ1bmN0aW9uIG1pZ3JhdGlvbl9mZWF0dXJlKCkgewogICAgICAgIHJldHVybiAneW93Y2xfbG95YWx0eV9sZXZlbF91cGRhdGUnID09PSAkdGhpcy0+aWQgPyAnZW1haWxfbGV2ZWwnIDogKCd5b3djbF9sb3lhbHR5X3BvaW50c19kZWR1Y3QnID09PSAkdGhpcy0+aWQgPyAnZW1haWxfZGVkdWN0JyA6ICdlbWFpbF9yZXdhcmQnKTsKICAgIH0KICAgIHB1YmxpYyBmdW5jdGlvbiBpc19lbmFibGVkKCkgewogICAgICAgIHJldHVybiBZT1dDTF9GcmVlX01pZ3JhdGlvbnM6OnJlYWR5KCR0aGlzLT5taWdyYXRpb25fZmVhdHVyZSgpKSAmJiBwYXJlbnQ6OmlzX2VuYWJsZWQoKTsKICAgIH0KICAgIHB1YmxpYyBmdW5jdGlvbiBwcmVzZXJ2ZV9zZXR0aW5ncygkc2V0dGluZ3MpIHsKICAgICAgICAkZXhpc3RpbmcgPSBtYXliZV91bnNlcmlhbGl6ZShnZXRfb3B0aW9uKCd3b29jb21tZXJjZV8nIC4gJHRoaXMtPmlkIC4gJ19zZXR0aW5ncycsIGFycmF5KCkpKTsKICAgICAgICByZXR1cm4gYXJyYXlfcmVwbGFjZShpc19hcnJheSgkZXhpc3RpbmcpID8gJGV4aXN0aW5nIDogYXJyYXkoKSwgJHNldHRpbmdzKTsKICAgIH0KICAgIHB1YmxpYyBmdW5jdGlvbiBwcm9jZXNzX2FkbWluX29wdGlvbnMoKSB7CiAgICAgICAgaWYgKCFjdXJyZW50X3VzZXJfY2FuKCdtYW5hZ2Vfd29vY29tbWVyY2UnKSB8fCAhWU9XQ0xfRnJlZV9NaWdyYXRpb25zOjpyZWFkeSgkdGhpcy0+bWlncmF0aW9uX2ZlYXR1cmUoKSkpIHsgcmV0dXJuIGZhbHNlOyB9CiAgICAgICAgcmV0dXJuIHBhcmVudDo6cHJvY2Vzc19hZG1pbl9vcHRpb25zKCk7CiAgICB9"
+      },
+      {
+        "start": 4088,
+        "end": 4088,
+        "replacement": "YXJyYXlfcmVwbGFjZSggJGRlZmF1bHRzLCA="
+      },
+      {
+        "start": 4159,
+        "end": 4159,
+        "replacement": "KSA="
       },
       {
         "start": 5892,
