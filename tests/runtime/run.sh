@@ -57,6 +57,7 @@ for phase in baseline candidate; do
     wp eval-file "$repo/tests/runtime/characterization.php" --quiet
     test -s "$LOYF_SNAPSHOT" && test -s "$LOYF_RAW_SNAPSHOT"
 done
+cmp "$repo/tests/fixtures/free-1.2.2-expected.json" "$tmp/baseline.json"
 cmp "$tmp/baseline.json" "$tmp/candidate.json"
 # Optional reusable evidence: raw stable IDs/dates/order/user data for later transition tasks.
 if [[ -n "${LOYF_RUNTIME_ARTIFACTS:-}" ]]; then

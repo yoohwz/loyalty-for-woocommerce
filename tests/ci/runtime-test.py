@@ -19,6 +19,9 @@ class RuntimeTest(unittest.TestCase):
                 mu = Path(checkout) / 'tests/runtime/mu-isolation.php'
                 mu.parent.mkdir(parents=True)
                 mu.write_text('<?php // fixture\n')
+                golden = Path(checkout) / 'tests/fixtures/free-1.2.2-expected.json'
+                golden.parent.mkdir(parents=True)
+                golden.write_text('{"snapshot":"same"}\n')
             bin_dir = tmp / 'bin'
             bin_dir.mkdir()
             log = tmp / 'calls'

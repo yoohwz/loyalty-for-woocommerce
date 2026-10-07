@@ -45,13 +45,25 @@ function loyf_ajax($hook, $fields) {
 $fixture = json_decode(file_get_contents(getenv('LOYF_FIXTURE')), true);
 loyf_equal($fixture['version'], YOSWC_LOYALTY_VERSION, 'Free version');
 loyf_assert(class_exists('YOSWC_Loyalty_Database'), 'Native Free boot');
-loyf_equal(false, apply_filters('yoswc_loyalty_is_premium', false), 'Free entitlement filter default');
-foreach (array('yoswc_loyalty_premium_url', 'yoswc_loyalty_premium_docs_url') as $filter) {
-    $callback = function ($url) { return 'https://example.invalid/fixture'; };
+$settings = new YOSWC_Loyalty_Settings();
+$filter_calls = array();
+foreach (array('yoswc_loyalty_is_premium', 'yoswc_loyalty_premium_url', 'yoswc_loyalty_premium_docs_url') as $filter) {
+    $callback = function ($value) use (&$filter_calls, $filter) {
+        $filter_calls[$filter] = $value;
+        return $filter === 'yoswc_loyalty_is_premium' ? false : 'https://example.invalid/' . $filter;
+    };
     add_filter($filter, $callback);
-    loyf_equal('https://example.invalid/fixture', apply_filters($filter, 'original'), 'Public filter passes through');
-    remove_filter($filter, $callback);
+    $filter_callbacks[$filter] = $callback;
 }
+ob_start();
+$settings->output_premium_settings();
+$premium_html = ob_get_clean();
+loyf_equal(false, $filter_calls['yoswc_loyalty_is_premium'], 'Free entitlement filter default');
+foreach (array('yoswc_loyalty_premium_url', 'yoswc_loyalty_premium_docs_url') as $filter) {
+    loyf_assert(strpos($filter_calls[$filter], 'https://yoohw.com/') === 0, 'Legacy public URL default');
+    loyf_assert(strpos($premium_html, 'https://example.invalid/' . $filter) !== false, 'Production filter consumer');
+}
+foreach ($filter_callbacks as $filter => $callback) { remove_filter($filter, $callback); }
 $events = array();
 foreach (array('yoswc_loyalty_points_reward', 'yoswc_loyalty_points_deduct', 'yoswc_loyalty_level_update') as $hook) {
     add_action($hook, function (...$args) use (&$events, $hook) { $events[] = array('hook' => $hook, 'args' => $args); }, PHP_INT_MAX, 4);

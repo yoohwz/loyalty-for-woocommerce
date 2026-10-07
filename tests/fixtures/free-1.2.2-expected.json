@@ -1,0 +1,521 @@
+{
+    "states": {
+        "cancelled": {
+            "available": 41,
+            "earning": 41
+        },
+        "refunded": {
+            "available": 52,
+            "earning": 52
+        },
+        "failed": {
+            "available": 63,
+            "earning": 63
+        }
+    },
+    "balance": 85,
+    "earning": 85,
+    "roles": [
+        "loyf_gold"
+    ],
+    "rows": [
+        {
+            "id": 1,
+            "user_id": "customer",
+            "action": "sign_up_reward",
+            "order_id": "none",
+            "amount": "5.00",
+            "description": "Sign-up bonus",
+            "date": "<runtime-date>"
+        },
+        {
+            "id": 2,
+            "user_id": "customer",
+            "action": "sign_up_reward",
+            "order_id": "none",
+            "amount": "5.00",
+            "description": "Sign-up bonus",
+            "date": "<runtime-date>"
+        },
+        {
+            "id": 3,
+            "user_id": "customer",
+            "action": "daily_login_reward",
+            "order_id": "none",
+            "amount": "3.00",
+            "description": "Daily login bonus",
+            "date": "<runtime-date>"
+        },
+        {
+            "id": 4,
+            "user_id": "customer",
+            "action": "daily_login_reward",
+            "order_id": "none",
+            "amount": "3.00",
+            "description": "Daily login bonus",
+            "date": "<runtime-date>"
+        },
+        {
+            "id": 5,
+            "user_id": "customer",
+            "action": "review_reward",
+            "order_id": "none",
+            "amount": "7.00",
+            "description": "Product review bonus",
+            "date": "<runtime-date>"
+        },
+        {
+            "id": 6,
+            "user_id": "customer",
+            "action": "review_reward",
+            "order_id": "none",
+            "amount": "7.00",
+            "description": "Product review bonus",
+            "date": "<runtime-date>"
+        },
+        {
+            "id": 7,
+            "user_id": "customer",
+            "action": "level_up_reward",
+            "order_id": "none",
+            "amount": "11.00",
+            "description": "Level up bonus for role: Fixture Gold",
+            "date": "<runtime-date>"
+        },
+        {
+            "id": 8,
+            "user_id": "customer",
+            "action": "order_reward",
+            "order_id": "cancelled",
+            "amount": "100.00",
+            "description": "Purchase an order - Level updated: loyf_gold",
+            "date": "<runtime-date>"
+        },
+        {
+            "id": 9,
+            "user_id": "customer",
+            "action": "points_deducted",
+            "order_id": "cancelled",
+            "amount": "100.00",
+            "description": "Order is cancelled - Level updated: customer",
+            "date": "<runtime-date>"
+        },
+        {
+            "id": 10,
+            "user_id": "customer",
+            "action": "level_up_reward",
+            "order_id": "none",
+            "amount": "11.00",
+            "description": "Level up bonus for role: Fixture Gold",
+            "date": "<runtime-date>"
+        },
+        {
+            "id": 11,
+            "user_id": "customer",
+            "action": "order_reward",
+            "order_id": "refunded",
+            "amount": "100.00",
+            "description": "Purchase an order - Level updated: loyf_gold",
+            "date": "<runtime-date>"
+        },
+        {
+            "id": 12,
+            "user_id": "customer",
+            "action": "points_deducted",
+            "order_id": "refunded",
+            "amount": "100.00",
+            "description": "Order is refunded - Level updated: customer",
+            "date": "<runtime-date>"
+        },
+        {
+            "id": 13,
+            "user_id": "customer",
+            "action": "level_up_reward",
+            "order_id": "none",
+            "amount": "11.00",
+            "description": "Level up bonus for role: Fixture Gold",
+            "date": "<runtime-date>"
+        },
+        {
+            "id": 14,
+            "user_id": "customer",
+            "action": "order_reward",
+            "order_id": "failed",
+            "amount": "100.00",
+            "description": "Purchase an order - Level updated: loyf_gold",
+            "date": "<runtime-date>"
+        },
+        {
+            "id": 15,
+            "user_id": "customer",
+            "action": "points_deducted",
+            "order_id": "failed",
+            "amount": "100.00",
+            "description": "Order is failed - Level updated: customer",
+            "date": "<runtime-date>"
+        },
+        {
+            "id": 16,
+            "user_id": "customer",
+            "action": "level_up_reward",
+            "order_id": "none",
+            "amount": "11.00",
+            "description": "Level up bonus for role: Fixture Gold",
+            "date": "<runtime-date>"
+        },
+        {
+            "id": 17,
+            "user_id": "customer",
+            "action": "level_up_reward",
+            "order_id": "none",
+            "amount": "11.00",
+            "description": "Level up bonus for role: Fixture Gold",
+            "date": "<runtime-date>"
+        },
+        {
+            "id": 18,
+            "user_id": "customer",
+            "action": "points_used",
+            "order_id": "redemption",
+            "amount": "20.00",
+            "description": "Get a discount by using points",
+            "date": "<runtime-date>"
+        },
+        {
+            "id": 19,
+            "user_id": "customer",
+            "action": "points_return",
+            "order_id": "redemption",
+            "amount": "20.00",
+            "description": "Order is incomplete",
+            "date": "<runtime-date>"
+        }
+    ],
+    "markers": {
+        "cancelled": {
+            "_points_awarded": "100",
+            "_points_deducted": "100",
+            "_used_points": "",
+            "_used_points_discount": "",
+            "_loyalty_points_processed": ""
+        },
+        "refunded": {
+            "_points_awarded": "100",
+            "_points_deducted": "100",
+            "_used_points": "",
+            "_used_points_discount": "",
+            "_loyalty_points_processed": ""
+        },
+        "failed": {
+            "_points_awarded": "100",
+            "_points_deducted": "100",
+            "_used_points": "",
+            "_used_points_discount": "",
+            "_loyalty_points_processed": ""
+        },
+        "redemption": {
+            "_points_awarded": "",
+            "_points_deducted": "",
+            "_used_points": "",
+            "_used_points_discount": "2",
+            "_loyalty_points_processed": ""
+        }
+    },
+    "options": {
+        "loyalty_levels_roles": [
+            "customer",
+            "loyf_gold"
+        ],
+        "loyalty_levels_rules": {
+            "customer": {
+                "from": 0
+            },
+            "loyf_gold": {
+                "from": 100
+            }
+        },
+        "loyalty_points_earning_status": [
+            "wc-processing",
+            "wc-completed"
+        ],
+        "loyalty_points_deduction_status": [
+            "wc-cancelled",
+            "wc-refunded",
+            "wc-failed"
+        ],
+        "loyalty_points_earning_rules": {
+            "customer": {
+                "points": 10,
+                "amount": 10
+            },
+            "loyf_gold": {
+                "points": 10,
+                "amount": 10
+            }
+        },
+        "loyalty_points_earning_option": [],
+        "loyalty_points_rounding": "round_down",
+        "loyalty_points_using_rules": {
+            "points": 10,
+            "amount": 1
+        },
+        "loyalty_extra_points_rules": {
+            "signup_points": 5,
+            "login_points": 3,
+            "review_points": 7
+        },
+        "loyalty_extra_levelup_points_rules": {
+            "loyf_gold": {
+                "awarded": 11
+            }
+        },
+        "loyalty_customization_my_account": {
+            "my_account": "yes",
+            "my_account_label": "Fixture Rewards",
+            "my_account_slug": "fixture-rewards"
+        },
+        "loyalty_customization_message_icon": "https:\/\/example.invalid\/points.svg",
+        "loyalty_customization_membercard": {
+            "membercard_background_color": "#abcdef",
+            "membercard_border_color": "#123456"
+        },
+        "loyalty_notification_email": {
+            "points_update": "yes",
+            "level_update": "yes"
+        }
+    },
+    "events": [
+        {
+            "hook": "yoswc_loyalty_points_reward",
+            "args": [
+                "customer",
+                5,
+                5,
+                null
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_points_reward",
+            "args": [
+                "customer",
+                5,
+                10,
+                null
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_points_reward",
+            "args": [
+                "customer",
+                3,
+                13,
+                null
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_points_reward",
+            "args": [
+                "customer",
+                3,
+                16,
+                null
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_points_reward",
+            "args": [
+                "customer",
+                7,
+                23,
+                null
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_points_reward",
+            "args": [
+                "customer",
+                7,
+                30,
+                null
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_points_reward",
+            "args": [
+                "customer",
+                100,
+                130,
+                "cancelled"
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_points_reward",
+            "args": [
+                "customer",
+                11,
+                141,
+                null
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_level_update",
+            "args": [
+                "customer",
+                "loyf_gold",
+                130
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_points_deduct",
+            "args": [
+                "customer",
+                "100",
+                41,
+                "cancelled"
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_level_update",
+            "args": [
+                "customer",
+                "customer",
+                41
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_points_reward",
+            "args": [
+                "customer",
+                100,
+                141,
+                "refunded"
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_points_reward",
+            "args": [
+                "customer",
+                11,
+                152,
+                null
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_level_update",
+            "args": [
+                "customer",
+                "loyf_gold",
+                141
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_points_deduct",
+            "args": [
+                "customer",
+                "100",
+                52,
+                "refunded"
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_level_update",
+            "args": [
+                "customer",
+                "customer",
+                52
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_points_reward",
+            "args": [
+                "customer",
+                100,
+                152,
+                "failed"
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_points_reward",
+            "args": [
+                "customer",
+                11,
+                163,
+                null
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_level_update",
+            "args": [
+                "customer",
+                "loyf_gold",
+                152
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_points_deduct",
+            "args": [
+                "customer",
+                "100",
+                63,
+                "failed"
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_level_update",
+            "args": [
+                "customer",
+                "customer",
+                63
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_points_reward",
+            "args": [
+                "customer",
+                11,
+                74,
+                null
+            ]
+        },
+        {
+            "hook": "yoswc_loyalty_points_reward",
+            "args": [
+                "customer",
+                11,
+                85,
+                null
+            ]
+        }
+    ],
+    "emails": [
+        "You have earned new points!",
+        "You have earned new points!",
+        "You have earned new points!",
+        "You have earned new points!",
+        "You have earned new points!",
+        "You have earned new points!",
+        "You have earned new points!",
+        "You have earned new points!",
+        "Your loyalty level has been updated",
+        "You have deducted points!",
+        "Your loyalty level has been updated",
+        "You have earned new points!",
+        "You have earned new points!",
+        "Your loyalty level has been updated",
+        "You have deducted points!",
+        "Your loyalty level has been updated",
+        "You have earned new points!",
+        "You have earned new points!",
+        "Your loyalty level has been updated",
+        "You have deducted points!",
+        "Your loyalty level has been updated",
+        "You have earned new points!",
+        "You have earned new points!"
+    ],
+    "menu": {
+        "dashboard": "Dashboard",
+        "orders": "Orders",
+        "fixture-rewards": "Fixture Rewards",
+        "customer-logout": "Logout"
+    }
+}
