@@ -14,7 +14,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     assert.equal(cookie.value,f.token); assert.equal(cookie.httpOnly,true); assert.equal(cookie.sameSite,'Lax'); assert.equal(cookie.secure,false); assert.equal(cookie.path,'/');
     assert.ok(Math.abs(cookie.expires-before-30*86400)<15);
     const replaced = await capture(f.other_token); assert.equal((await replaced.json()).referrer,f.other_user);
-    for(const bad of [String(f.user),'malformed','<script>']) { await capture(bad); assert.equal((await context.cookies()).find(c=>c.name==='yowcl_ref').value,f.other_token); }
+    for(const bad of [String(f.user),'malformed','<script>','<b>'+f.token+'</b>']) { await capture(bad); assert.equal((await context.cookies()).find(c=>c.name==='yowcl_ref').value,f.other_token); }
     const ssl = await context.request.get(base+'/?loyf10_capture=1&loyf10_ssl=1&ref='+f.token);
     const setCookie = ssl.headers()['set-cookie']; assert.ok(/secure/i.test(setCookie)&&/httponly/i.test(setCookie)&&/samesite=lax/i.test(setCookie));
     const page = await context.newPage(); await page.goto(base+'/wp-login.php');
@@ -28,7 +28,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     const posts=[];page.on('request',r=>{if(r.method()==='POST')posts.push(r.url());});
     await button.click();await page.waitForFunction(()=>document.querySelector('#loyf-referral-bubble').parentElement.querySelector('[role="status"]').textContent==='Link copied');
     assert.equal(await page.evaluate(()=>navigator.clipboard.readText()),base+'/?ref='+f.token);assert.deepEqual(posts,[]);
-    await page.goto(base+'/?page_id='+f.account+'&my-points=1');
+    await page.goto(base+'/?page_id='+f.account+'&'+encodeURIComponent(f.account_slug)+'=1');
     assert.equal(await page.locator('#loyf-referral-account').inputValue(),base+'/?ref='+f.token);
     console.log('Native referral cookie/copy browser PASS Woo'+f.version+' '+f.storage);
   } finally { await browser.close(); }

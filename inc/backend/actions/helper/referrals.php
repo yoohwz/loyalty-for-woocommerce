@@ -113,7 +113,7 @@ class YOWCL_Helper_Referrals {
         if ( is_admin() ) { return; }
         if ( ! YOWCL_Free_Referral::settings()['enabled'] || empty( $_GET[ self::QUERY_VAR ] ) || ! is_string( $_GET[ self::QUERY_VAR ] ) ) { return; }
 
-	        $token    = sanitize_text_field( wp_unslash( $_GET[ self::QUERY_VAR ] ) );
+	        $token    = wp_unslash( $_GET[ self::QUERY_VAR ] );
 	        $user_id  = self::resolve_referrer_user_id( $token );
 	        if ( $user_id > 0 ) {
             self::set_referral_cookie( $token, 30 );

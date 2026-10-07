@@ -3444,7 +3444,7 @@
   },
   "inc/cores/helper/referral-rewards.php": {
     "input_sha256": "8cf98e7fadebcdeae8c1716e51de1ba584e18b8e622727b3f1b0751161d3ae78",
-    "selected_sha256": "be7b8808e70e5422311948265a1879c188e2a6e450044fda892ddf3eeebd50b1",
+    "selected_sha256": "c590e72ee3328976068624eb45dbd3140e1b937c551b4ff079fff454988af633",
     "spans": [
       {
         "start": 38,
@@ -3577,6 +3577,11 @@
         "replacement": "ICAgICAgICAgICAgICAgIC8vIE9ubHkgZmluYWwgY2hlY2tvdXQgYXR0YWNobWVudCBjYW4gcmVhZCBhIGNvb2tpZSBvciBhZG1pdCBwb3NpdGl2ZSB0ZXJtcy4KICAgICAgICAgICAgICAgIGlmICggaW5fYXJyYXkoICRzdGF0dXMsICRydWxlc1sncmV2ZXJzYWxfc3RhdHVzZXMnXSwgdHJ1ZSApICkgeyBZT1dDTF9PcmRlcl9SZXdhcmRzOjptZXRhKCAkb3JkZXIsIHNlbGY6OlRFUk1JTkFMLCAneWVzJyApOyB9CiAgICAgICAgICAgICAgICAkZG9uZSA9IHRydWU7IHJldHVybjsKICAgICAgICAgICAgfQo="
       },
       {
+        "start": 23891,
+        "end": 23891,
+        "replacement": "ICAgICAgICAgICAgLy8gQSBwcm92ZW4gc2luZ2xlIGNvbXBvbmVudCByZWNvdmVycy9yZXZlcnNlcyBiZWZvcmUgZWxpZ2liaWxpdHkgc3RvcmFnZSBvciBzZXR0aW5ncy4KICAgICAgICAgICAgaWYgKCAkdGVybXNbJ2V2ZW50cyddICkgewogICAgICAgICAgICAgICAgJGV2ZW50ID0gcmVzZXQoICR0ZXJtc1snZXZlbnRzJ10gKTsgJGNvbW1pdHRlZCA9IFlPV0NMX1BvaW50c19UcmFuc2FjdGlvbjo6ZmluZCggJGV2ZW50WydrZXknXSApOwogICAgICAgICAgICAgICAgaWYgKCAkY29tbWl0dGVkICkgewogICAgICAgICAgICAgICAgICAgIHNlbGY6OnByb3ZlKCAkY29tbWl0dGVkLCAkZXZlbnQsICRpZCApOwogICAgICAgICAgICAgICAgICAgIGlmICggWU9XQ0xfRnJlZV9SZWZlcnJhbDo6bWFya2VkKCAkb3JkZXIsIHNlbGY6OlRFUk1JTkFMICkgfHwgaW5fYXJyYXkoICRzdGF0dXMsICR0ZXJtc1sncmV2ZXJzYWxfc3RhdHVzZXMnXSwgdHJ1ZSApIHx8IGluX2FycmF5KCAnd2MtJyAuICRpbnRlbnQsICR0ZXJtc1sncmV2ZXJzYWxfc3RhdHVzZXMnXSwgdHJ1ZSApICkgewogICAgICAgICAgICAgICAgICAgICAgICAkb3duZXIoKTsgWU9XQ0xfT3JkZXJfUmV3YXJkczo6bWV0YSggJG9yZGVyLCBzZWxmOjpURVJNSU5BTCwgJ3llcycgKTsgc2VsZjo6cmV0YWluX2RlbGl2ZXJ5KCAkaWQsICRpbnRlbnQgKTsgc2VsZjo6cmV2ZXJzZSggJG9yZGVyLCAkdGVybXMsICRvd25lciApOwogICAgICAgICAgICAgICAgICAgIH0gZWxzZSB7IHNlbGY6OmZpbmlzaCggJG9yZGVyLCAkY29tbWl0dGVkLCAkZXZlbnQgKTsgJG93bmVyKCk7IFlPV0NMX09yZGVyX1Jld2FyZHM6Om1ldGEoICRvcmRlciwgJ195b19saW5rX3JlZmVycmFsX2F3YXJkZWQnLCAneWVzJyApOyB9CiAgICAgICAgICAgICAgICAgICAgJGRvbmUgPSB0cnVlOyByZXR1cm47CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0K"
+      },
+      {
         "start": 24513,
         "end": 24693,
         "replacement": "CQkJJHJldmVyc2UgPSBZT1dDTF9GcmVlX1JlZmVycmFsOjptYXJrZWQoICRvcmRlciwgc2VsZjo6VEVSTUlOQUwgKSB8fCBpbl9hcnJheSggJHN0YXR1cywgJHRlcm1zWydyZXZlcnNhbF9zdGF0dXNlcyddLCB0cnVlICkgfHwgaW5fYXJyYXkoICd3Yy0nIC4gJGludGVudCwgJHRlcm1zWydyZXZlcnNhbF9zdGF0dXNlcyddLCB0cnVlICk7Cg=="
@@ -3607,6 +3612,11 @@
         "replacement": "CQkJCg=="
       },
       {
+        "start": 28058,
+        "end": 28367,
+        "replacement": "CQlpZiAoICEgJHJvdyB8fCAhIGluX2FycmF5KCBZT1dDTF9MZWRnZXJfVjI6Omluc3BlY3QoICRyb3cgKVsna2luZCddLCBhcnJheSggJ3YyJywndHJhbnNhY3Rpb25fcHJlX3YyJyApLCB0cnVlICkgfHwgKGludCkgJHJvd1sndXNlcl9pZCddICE9PSAkZXZlbnRbJ3VzZXJfaWQnXSB8fCAkcm93WydhY3Rpb24nXSAhPT0gJGV2ZW50WydhY3Rpb24nXSB8fCAoaW50KSAkcm93WydvcmRlcl9pZCddICE9PSAoaW50KSAkaWQgfHwgKGludCkgJHJvd1snYXZhaWxhYmxlX2RlbHRhJ10gIT09ICRldmVudFsncG9pbnRzJ10gfHwgKGludCkgJHJvd1snZWFybmluZ19kZWx0YSddICE9PSAkZXZlbnRbJ3BvaW50cyddICkgeyB0aHJvdyBuZXcgUnVudGltZUV4Y2VwdGlvbiggJ3JlZmVycmFsX2V2ZW50X2NvbmZsaWN0JyApOyB9Cg=="
+      },
+      {
         "start": 28813,
         "end": 29413,
         "replacement": "ICAgIHByaXZhdGUgc3RhdGljIGZ1bmN0aW9uIG5vdGlmeSggYXJyYXkgJHJvdywgYXJyYXkgJHJlc3VsdCApIHsKICAgICAgICB0cnkgeyBZT1dDTF9Qb2ludHNfRXZlbnRzOjpyZXdhcmQoIChpbnQpICRyb3dbJ3VzZXJfaWQnXSwgKGludCkgJHJvd1snYXZhaWxhYmxlX2RlbHRhJ10sICRyZXN1bHRbJ25ld19wb2ludHMnXSwgKGludCkgJHJvd1snb3JkZXJfaWQnXSApOyB9CiAgICAgICAgY2F0Y2ggKCBUaHJvd2FibGUgJGUgKSB7IFlPV0NMX0NvcmVfUmV3YXJkczo6cmVwb3J0KCAkcm93WydldmVudF9rZXknXSwgJGUgKTsgfQogICAgfQo="
@@ -3620,7 +3630,7 @@
   },
   "inc/backend/actions/helper/referrals.php": {
     "input_sha256": "75195bca62eb763b311429dcee042f569cc7320888cbb765801f97ca5fb998e5",
-    "selected_sha256": "e2c41517a8c43af0ca196b718acd59ae129afcd448de4a24c7ee8af59661f131",
+    "selected_sha256": "33bf2227bbb6b91025d1ed4cfcf1fea24199dced7dedb9208909ea0fffdcfd71",
     "spans": [
       {
         "start": 574,
@@ -3661,6 +3671,11 @@
         "start": 4047,
         "end": 4108,
         "replacement": "ICAgICAgICBpZiAoICEgWU9XQ0xfRnJlZV9SZWZlcnJhbDo6c2V0dGluZ3MoKVsnZW5hYmxlZCddIHx8IGVtcHR5KCAkX0dFVFsgc2VsZjo6UVVFUllfVkFSIF0gKSB8fCAhIGlzX3N0cmluZyggJF9HRVRbIHNlbGY6OlFVRVJZX1ZBUiBdICkgKSB7IHJldHVybjsgfQo="
+      },
+      {
+        "start": 4109,
+        "end": 4193,
+        "replacement": "CSAgICAgICAgJHRva2VuICAgID0gd3BfdW5zbGFzaCggJF9HRVRbIHNlbGY6OlFVRVJZX1ZBUiBdICk7Cg=="
       },
       {
         "start": 4287,

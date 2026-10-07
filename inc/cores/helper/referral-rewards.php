@@ -172,6 +172,17 @@ class YOWCL_Referral_Rewards {
                 $done = true; return;
             }
 			$terms = self::terms( $order );
+            // A proven single component recovers/reverses before eligibility storage or settings.
+            if ( $terms['events'] ) {
+                $event = reset( $terms['events'] ); $committed = YOWCL_Points_Transaction::find( $event['key'] );
+                if ( $committed ) {
+                    self::prove( $committed, $event, $id );
+                    if ( YOWCL_Free_Referral::marked( $order, self::TERMINAL ) || in_array( $status, $terms['reversal_statuses'], true ) || in_array( 'wc-' . $intent, $terms['reversal_statuses'], true ) ) {
+                        $owner(); YOWCL_Order_Rewards::meta( $order, self::TERMINAL, 'yes' ); self::retain_delivery( $id, $intent ); self::reverse( $order, $terms, $owner );
+                    } else { self::finish( $order, $committed, $event ); $owner(); YOWCL_Order_Rewards::meta( $order, '_yo_link_referral_awarded', 'yes' ); }
+                    $done = true; return;
+                }
+            }
 			// Repair a interrupted attachment before any eligibility query/value.
 			$owner(); YOWCL_Order_Rewards::meta( $order, self::IDENTITY, $terms['identity'] );
 			// Retained native qualification survives a later terminal status before delivery.
@@ -239,7 +250,7 @@ class YOWCL_Referral_Rewards {
 	}
 
 	private static function prove( $row, array $event, $id ) {
-		if ( ! $row || (int) $row['user_id'] !== $event['user_id'] || $row['action'] !== $event['action'] || (int) $row['order_id'] !== (int) $id || (int) $row['available_delta'] !== $event['points'] || (int) $row['earning_delta'] !== $event['points'] ) { throw new RuntimeException( 'referral_event_conflict' ); }
+		if ( ! $row || ! in_array( YOWCL_Ledger_V2::inspect( $row )['kind'], array( 'v2','transaction_pre_v2' ), true ) || (int) $row['user_id'] !== $event['user_id'] || $row['action'] !== $event['action'] || (int) $row['order_id'] !== (int) $id || (int) $row['available_delta'] !== $event['points'] || (int) $row['earning_delta'] !== $event['points'] ) { throw new RuntimeException( 'referral_event_conflict' ); }
 	}
 
 	private static function finish( $order, array $row, array $event ) {
