@@ -41,11 +41,14 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
                     else await route.continue();
                 });
             }
+            const applyResponse = page.waitForResponse(response => extensionRequests(response.request()).some(data => data.action === 'apply' && data.points === '20'));
             await surface.getByRole('button', { name:'Apply points', exact:true }).click();
             if (target === fixture.cart) {
                 await surface.getByRole('button', { name:'Retry points update', exact:true }).click();
             }
+            assert.equal(await (await applyResponse).finished(), null, 'Apply replay response completed');
             await page.waitForFunction(() => [...document.querySelectorAll('.loyf-blocks-redemption')].some(node => /20 points applied/.test(node.textContent)));
+            await surface.getByRole('button', { name:'Apply points', exact:true }).waitFor();
             if (target === fixture.cart) { assert(updates.length >= replayStart + 2, 'Native extension batch observed'); assert.deepEqual(updates[replayStart], updates[replayStart + 1], 'Lost response retries original immutable UUID and terms'); }
             await page.reload();
             await surface.waitFor({ state:'visible' });
@@ -56,9 +59,12 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
                 if (!lostRemove && extensionRequests(route.request()).some(data => data.action === 'remove')) { lostRemove = true; await route.fetch(); await route.abort('failed'); }
                 else await route.continue();
             });
+            const removeResponse = page.waitForResponse(response => extensionRequests(response.request()).some(data => data.action === 'remove'));
             await surface.getByRole('button', { name:'Remove points', exact:true }).click();
             await surface.getByRole('button', { name:'Retry points update', exact:true }).click();
+            assert.equal(await (await removeResponse).finished(), null, 'Remove replay response completed');
             await page.waitForFunction(() => [...document.querySelectorAll('.loyf-blocks-redemption')].every(node => !/20 points applied/.test(node.textContent)));
+            await surface.getByRole('button', { name:'Apply points', exact:true }).waitFor();
             assert(lostRemove && updates.length >= removeStart + 2, 'Lost remove response replay observed');
             assert.deepEqual(updates[removeStart], updates[removeStart + 1], 'Empty input must replay the original remove request');
         }
