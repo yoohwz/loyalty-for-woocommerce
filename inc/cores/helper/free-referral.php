@@ -54,6 +54,12 @@ class YOWCL_Free_Referral {
         }
         return $t;
     }
+    public static function legacy_attribution( $order ) {
+        foreach ( array( '_yo_link_referrer_user_id','_yo_coupon_referrer_user_id','_yo_referrer_user_id','_yo_link_referral_awarded','_yo_coupon_referral_awarded','_yo_link_referrer_awarded','_yo_link_referee_awarded','_yo_coupon_referrer_awarded','_yo_referral_rewards_reversed' ) as $key ) {
+            foreach ( $order->get_meta( $key, false, 'edit' ) as $m ) { if ( $m->value ) { return true; } }
+        }
+        return false;
+    }
     public static function marked( $order, $key ) {
         foreach ( $order->get_meta( $key, false, 'edit' ) as $m ) { if ( 'yes' === $m->value ) { return true; } }
         return false;

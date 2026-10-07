@@ -23,7 +23,7 @@ class YOWCL_Referral_Rewards {
 		if ( ! $order instanceof WC_Order || ! YOWCL_Free_Core::owns() ) { return; }
 		$done = false;
 		YOWCL_Order_Rewards::locked( $order->get_id(), static function ( $fresh, $owner ) use ( &$done ) {
-			if ( '' === $fresh->get_meta( self::TERMS, true ) ) {
+			if ( '' === $fresh->get_meta( self::TERMS, true ) && ! YOWCL_Free_Referral::legacy_attribution( $fresh ) ) {
 				$terms = YOWCL_Free_Migrations::locked( static function () use ( $fresh ) { return self::discover( $fresh ); } );
 				$owner(); self::store_terms( $fresh, $terms );
 			}
@@ -38,6 +38,7 @@ class YOWCL_Referral_Rewards {
 		if ( ! YOWCL_Free_Core::owns() ) { return; }
 		$order = wc_get_order( $id );
 		if ( ! $order ) { return; }
+        if ( '' !== $order->get_meta( self::TERMS, true ) ) { self::terms( $order ); }
         if ( in_array( $new_status, array( 'failed', 'cancelled', 'refunded' ), true ) ) { YOWCL_Order_Rewards::meta( $order, self::TERMINAL, 'yes' ); }
         if ( in_array( $new_status, array( 'processing', 'completed' ), true ) ) {
             $raw = $order->get_meta( self::TERMS, true );

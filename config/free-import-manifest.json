@@ -257,7 +257,7 @@
       "target": "inc/cores/helper/referral-rewards.php",
       "transform": "wp-text-domain-v1",
       "sha256": "8cf98e7fadebcdeae8c1716e51de1ba584e18b8e622727b3f1b0751161d3ae78",
-      "output_sha256": "065e49ec55051d86458c1ec59fbbe78c8ac6de2d3bf67e9a8a34a701ee5dda0e",
+      "output_sha256": "f2a9119958739e6f7ea90fb45625fdedd65b470ebabec0df0565cbb62e8700c4",
       "domain_replacements": 1,
       "extraction": "inc/cores/helper/referral-rewards.php"
     },
@@ -495,7 +495,7 @@
     {
       "target": "inc/cores/helper/free-referral.php",
       "mode": "100644",
-      "sha256": "000a7145e0e0755493a87d33b2e4e0beaf08664538eca96ba82ec5dd4ac093eb"
+      "sha256": "d34f83145f60455132a1f56752572108889947c545e6855cd52c7be25552aea9"
     },
     {
       "target": "inc/cores/notices.php",
@@ -1768,6 +1768,6 @@
   "extractions": {
     "id": "byte-spans-v1",
     "path": "config/free-core-extractions.json",
-    "sha256": "11f0daf7150b2bfd81ba9ee4ae747bc64b41da4c8af3f06976042582468e9a56"
+    "sha256": "c96296305c08fda4a46632c311afa60b6ccf4f10bcc7161b542d079c4de5e1a4"
   }
 }
