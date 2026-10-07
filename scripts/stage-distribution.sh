@@ -25,6 +25,8 @@ if [[ "$(git -C "$repo" rev-parse HEAD)" != "$source_sha" ]] ||
 	exit 2
 fi
 
+PYTHONDONTWRITEBYTECODE=1 python3 "$repo/scripts/free-import.py" verify-source --root "$repo"
+
 # Audited distribution allowlist. git archive reads only committed content at source_sha.
 git -C "$repo" archive --format=tar --prefix=loyalty-for-woocommerce/ "$source_sha" -- \
 	loyalty-for-woocommerce.php readme.txt changelog.txt license.txt \

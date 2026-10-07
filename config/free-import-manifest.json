@@ -1,0 +1,1553 @@
+{
+  "schema_version": 1,
+  "phase": "contract-only",
+  "upstream": {
+    "repository": "yoohwz/wc-loyalty",
+    "sha": "9e3d663b9828a24eacd141216d5e6f6e22da8ca4",
+    "tree": "1041b353af2d6a86fc54c7973e9460c48050ea16"
+  },
+  "free": {
+    "repository": "yoohwz/loyalty-for-woocommerce",
+    "baseline_sha": "bc9b63c1c2d3cf5e73b42e4bfa51d7681ecb97d9",
+    "slug": "loyalty-for-woocommerce",
+    "main_file": "loyalty-for-woocommerce.php",
+    "text_domain": "loyalty-for-woocommerce",
+    "version": "1.2.2",
+    "plugin_name": "Loyalty for WooCommerce",
+    "plugin_uri": "https://wordpress.org/plugins/loyalty-for-woocommerce/"
+  },
+  "transform": {
+    "id": "wp-text-domain-v1",
+    "from": "wc-loyalty",
+    "to": "loyalty-for-woocommerce",
+    "rule": "Only literal domain arguments of supported WordPress translation calls; preserve every other byte."
+  },
+  "imports": [
+    {
+      "source": "inc/cores/helper/points-lock.php",
+      "target": "inc/cores/helper/points-lock.php",
+      "sha256": "fb5d20ff90a6446c780319cd1107bea32c63738ced742f440ee1c4050ed678cd",
+      "output_sha256": "fb5d20ff90a6446c780319cd1107bea32c63738ced742f440ee1c4050ed678cd",
+      "domain_replacements": 0,
+      "transform": "wp-text-domain-v1"
+    },
+    {
+      "source": "inc/cores/helper/points-log-cache.php",
+      "target": "inc/cores/helper/points-log-cache.php",
+      "sha256": "521a9fc6e6370852d07a1961b50b50b9c7cd2ea209015d76032b248ab1d0d7bb",
+      "output_sha256": "521a9fc6e6370852d07a1961b50b50b9c7cd2ea209015d76032b248ab1d0d7bb",
+      "domain_replacements": 0,
+      "transform": "wp-text-domain-v1"
+    },
+    {
+      "source": "inc/cores/helper/points-log.php",
+      "target": "inc/cores/helper/points-log.php",
+      "sha256": "22f44b04077e3e779c3884495e62fb874631aa24cbc503b34a313b03478868c4",
+      "output_sha256": "22f44b04077e3e779c3884495e62fb874631aa24cbc503b34a313b03478868c4",
+      "domain_replacements": 0,
+      "transform": "wp-text-domain-v1"
+    },
+    {
+      "source": "inc/cores/helper/role-claims.php",
+      "target": "inc/cores/helper/role-claims.php",
+      "sha256": "b26a01981c3e64e083a638341e5556dbd5af79be55ffdeece2642d7cb6cf01e1",
+      "output_sha256": "b26a01981c3e64e083a638341e5556dbd5af79be55ffdeece2642d7cb6cf01e1",
+      "domain_replacements": 0,
+      "transform": "wp-text-domain-v1"
+    },
+    {
+      "source": "inc/backend/actions/helper/roles.php",
+      "target": "inc/backend/actions/helper/roles.php",
+      "sha256": "8a0bbd014407c704b89543a8eecd03ed15d58383aed89fa895097d7d04de2964",
+      "output_sha256": "8a0bbd014407c704b89543a8eecd03ed15d58383aed89fa895097d7d04de2964",
+      "domain_replacements": 0,
+      "transform": "wp-text-domain-v1"
+    }
+  ],
+  "overlays": [
+    {
+      "target": "changelog.txt",
+      "sha256": "31a639983f4335fd7583137d0be5d64b14a47006221e9d7a6c34bfe543d8ab70",
+      "mode": "100644",
+      "role": "identity"
+    },
+    {
+      "target": "css/backend-style.css",
+      "sha256": "f448af97e7cc299abb4651655378f5e5332e432171b2e669b9d0407723d932c1",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "css/frontend-style.css",
+      "sha256": "1c1292285ba8cf282b2f24440f8e027fa0e64fbb437082ec6c2570d25ffafb43",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "img/reward.svg",
+      "sha256": "c23158bd3027bdca546b6c7d14791a3f7baf645c0dfa1678a354a01b224b8818",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/actions/deduct-points.php",
+      "sha256": "3358a55f16dfde110c07380d7a9dd1ef99d61f5449f11275dc3320f4ed0103bb",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/actions/earn-points.php",
+      "sha256": "ef316cb0e96a274a92809e631935e8c1ff27aeba0ce91bc57aaf936354e14ae0",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/actions/emails/notifications-email.php",
+      "sha256": "1788dc59f269f8f5f5228363c724ed775ec4e9c014d59a7a5111fcfb18400f7f",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/actions/extra-points/level-up.php",
+      "sha256": "47ce48d8d2274ac69a535df6705068e7919515d7b650d287e96b413eba1c8230",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/actions/extra-points/log-in.php",
+      "sha256": "bfa6957bcf0ce345bd7044ba57f3a8a65998149d713fb74449ad3fb963aea9fa",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/actions/extra-points/review.php",
+      "sha256": "671cea859a7be9ea045fa9610af46e4e804cce56cbcdb0be5ac5cf75087e4984",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/actions/extra-points/sign-up.php",
+      "sha256": "21e270295fcaf5bb4f96abe8318edcd2b9413a2653bf436c83468f2b8e8dfa5b",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/actions/return-points.php",
+      "sha256": "dbc25b5cc13a2e81bc18f706e71730e66c30827d5aad417dc323370cc3ddaec4",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/actions/use-points.php",
+      "sha256": "e20b884fd1d843282665046183ca14ef108a480c0be0442cd222a5704228ca8d",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/settings.php",
+      "sha256": "44ae31870af5b6f868b78791699d4ccb1ef46764783f4d0ef13a6455903be3d3",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/settings/customization.php",
+      "sha256": "d3fde7b5eefae46ec0563cce1c0f2215e3d8004b3567e4c84badd4db5f8274f8",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/settings/extra-points.php",
+      "sha256": "a9fda2efcbe877081a9c359a14a758dc5b9937c4c8669e9301319828d8493741",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/settings/files/yol_import_sample.csv",
+      "sha256": "e23c0e951ed4d6b97abf058e9511ddf039a7a133ab60fe40937ee21e53d8bf13",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/settings/general-add-remove-user-role.php",
+      "sha256": "5e195f744c40c199217e21847a0238e9571c5a546cf5ae67c4adaf293ed7128f",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/settings/general-earning-point-rules.php",
+      "sha256": "5e0f924f4993a89bb9c85f447a5f52ec1d50c06ffdd4a66c4f37a994cfa415f8",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/settings/general-level-rules.php",
+      "sha256": "7de0265acaf5674ce62de280c40af0feac65a26c4ec922485148c414fafa52f8",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/settings/general-multi-checkbox.php",
+      "sha256": "1c4050471905f430c79adc488b0cb3a1d48023bfa9df76368275008e33b02238",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/settings/general-using-point-rules.php",
+      "sha256": "6f8e745b865380d613df05c7005c7c18d597d407d6d5a652ffbf114591cd2f8d",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/settings/notification.php",
+      "sha256": "de8006c4d5aae63217a489e9e71b9353c75ed0ff55d852e874339b94b7c54c60",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/settings/referrals.php",
+      "sha256": "167c900d312e61202d4bfe54aa5e78ad0cdcc931bb7342a5d1e59c6eeba993dc",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/settings/tools.php",
+      "sha256": "3032378c980c84b49856fb93bdaf147ce8ed959f9b5a6306cede072d64eac719",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/users.php",
+      "sha256": "5ba6d51078b97aa54d062e296be001589bffee4423c2b5eeff2ca2452984f442",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/users/user-profile-points.php",
+      "sha256": "5d27b961152da98b68e4ca49e7cd849fda41336d74922d0633e28d2fb4520339",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/users/users-points.php",
+      "sha256": "45e6bf3aae9b21aa0ab822602fc73a3aa1360ef4bddd3000c03a4091f470ef3f",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/backend/yoohw-woo-settings-tabs-reorder.php",
+      "sha256": "490513fa2e66d310369f5ab90486646aa4a3a02c8c86db76be335e4d49508077",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/cores/api/push-subscription.php",
+      "sha256": "4ebb89d9f1b8b3102ae892650889407f90e7bc7e4c510737e9ff23f62157bf38",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/cores/backend.php",
+      "sha256": "9ea2fe0777f37eb3e042356570958b2dcd5436a1319c630a02cb375bf775d223",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/cores/database.php",
+      "sha256": "c3739c57944bb16307ba879805639d427167275821fdbc85927c06642cceb1ae",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/cores/frontend.php",
+      "sha256": "aac3d68451df91691b96a0259b0dfcf8b8931cc914d7fb0a88d45c2c3d5c3a07",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/cores/notices.php",
+      "sha256": "4222d94b067b2171111e3faabefcfe1efea63c84d8730dec592cdf6695728595",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/frontend/cart-checkout.php",
+      "sha256": "7ba47b807941a1dd4812a108297cda24e50289f604c650791724bfc0e2bb0f0f",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/frontend/loyalty-info-bubble.php",
+      "sha256": "84d0f3cc8247ea1c64e0ae0e2797fa946fa9be4542feb18eaf7effb3074855d7",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/frontend/my-account.php",
+      "sha256": "606809a61293f57f14d4ffb487cb9763975cc3c4dd725a663fc4fa8def201c70",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/frontend/product-message.php",
+      "sha256": "a704e553bc788a55696af2d82f20bde521d805024ad06b7e5edd60442fdffe2d",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "inc/frontend/shop-message.php",
+      "sha256": "ad1b81a147a090957c7b0a1599f6e5d3ca67d5a6568bb821720dcf1425c507c8",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "js/loyalty-info-bubble.js",
+      "sha256": "02508f02b34e2973f588f14bc58cb34cfe23b32ce1ca38d28c6bc31a59cc2e0a",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "js/my-acount-my-points.js",
+      "sha256": "1c50d372214055a9adc5336386e5199327aa98be0abc062297b3ca911c7b9362",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "js/settings-customzation.js",
+      "sha256": "69563d1418123f98325250b091d1c95b12cf8d1e641fa6249d77c4be4eca7a94",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "js/user-profile-points-modal.js",
+      "sha256": "6b8314de2a6777f167686493287ae859e9d29af630dff43e1f451062962ebb73",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "js/users-points-modal.js",
+      "sha256": "2dc317844c5589db94acdabad6edcdddbd285742b3ac633129d364ea4326febe",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "js/using-point-cart.js",
+      "sha256": "602ed691b2f5562d46ac679caad54245560a0109dfe5dc9be364d6e26f661c00",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "js/using-point-checkout.js",
+      "sha256": "a346eb5ee10beb5afa69474246ee8708ad058f7583b7f95edea38143e5ab7c7b",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "languages/loyalty-for-woocommerce.pot",
+      "sha256": "067ca3a0bf239699b8781d3bbbfae17ca25aa791865da45babf317e1ddbe4d35",
+      "mode": "100644",
+      "role": "legacy-overlay"
+    },
+    {
+      "target": "license.txt",
+      "sha256": "89d38fbd9dadc185be31d73d14f058aef796b06b1fb72990528170ed8383d62d",
+      "mode": "100644",
+      "role": "identity"
+    },
+    {
+      "target": "loyalty-for-woocommerce.php",
+      "sha256": "5f0db30b621288868e98b75b11898102b57d2449cc0aaa01e74196eb3aafa48c",
+      "mode": "100644",
+      "role": "identity"
+    },
+    {
+      "target": "readme.txt",
+      "sha256": "2b4b45748b562a5d10be9e8cdc13c552b09c8c5e6462edd45b3b4454e9a6a68e",
+      "mode": "100644",
+      "role": "identity"
+    }
+  ],
+  "blocked_mixed_modules": [
+    "inc/cores/database.php",
+    "inc/cores/helper/points-balance.php",
+    "inc/cores/helper/points-transaction.php",
+    "inc/cores/helper/points-allocation.php",
+    "inc/cores/helper/ledger-v2.php",
+    "inc/cores/helper/core-rewards.php",
+    "inc/cores/helper/order-rewards.php",
+    "inc/cores/helper/order-redemption.php",
+    "inc/cores/helper/points-events.php",
+    "inc/cores/helper/points-occurrences.php",
+    "inc/cores/helper/role-ownership.php",
+    "inc/backend/actions/extra/first-purchase.php",
+    "inc/backend/settings/tools.php"
+  ],
+  "forbidden_symbols": [
+    "YOWCL_License_Runtime",
+    "YOWCL_License_Update",
+    "YOWCL_License_Validator",
+    "YOWCL_Premium_Gate",
+    "YOWCL_Campaign_Rules",
+    "YOWCL_Campaigns_Admin",
+    "YOWCL_Actions_Points_Expiration",
+    "YOWCL_Helper_Points_Expiration",
+    "YOWCL_Actions_Level_Reset",
+    "YOWCL_Actions_Level_Discounts",
+    "YOWCL_Advanced_Rewards",
+    "YOWCL_Referral_Rewards",
+    "YOWCL_Actions_Referrals",
+    "YOWCL_Helper_Referrals",
+    "YOWCL_Coupon_Redemption",
+    "YOWCL_Frontend_Redeem_Product",
+    "YOWCL_Product_Earning_Rules"
+  ],
+  "compatibility": {
+    "internal_names": "Preserve canonical YOWCL_* and shared YOSWC_Role_Claims identities; never blanket rename symbols or stored keys.",
+    "legacy_names": "Explicit facade per legacy YOSWC_* class/constant, preserving callable signatures; no blind class_alias for different APIs.",
+    "hooks": "One-way post-commit observational bridges to yoswc_loyalty_* with original arguments; never bind both observer channels as economic producers.",
+    "persistence": "Keep balances/history IDs/options/order markers/session identifiers until the admitted LOYF-6 migration; no synthetic historical event identities.",
+    "edition_load": "Free bootstrap must refuse simultaneous canonical internals with active Premium before includes; no duplicate declarations or two economic engines.",
+    "domain": "Only WP translation domain arguments change; identifiers, paths, stored owner IDs, event keys and integration strings remain byte-equivalent."
+  },
+  "upstream_inventory": {
+    ".github/workflows/ci.yml": {
+      "mode": "100644",
+      "blob": "9ffa7e7b5ae85cb9b0b5be605db4b653b7fdfc20",
+      "decision": "excluded"
+    },
+    ".gitignore": {
+      "mode": "100644",
+      "blob": "7ee581d4225e299371376cbdec1d54f6b1228210",
+      "decision": "excluded"
+    },
+    "AGENTS.md": {
+      "mode": "100644",
+      "blob": "867e049de66506151412ef3c2e6a5397c61ceb27",
+      "decision": "excluded"
+    },
+    "TESTING.md": {
+      "mode": "100644",
+      "blob": "0dfc95f332f500bb3b55aaba3795ad0f439a2be4",
+      "decision": "excluded"
+    },
+    "changelog.txt": {
+      "mode": "100644",
+      "blob": "e978293dfa0861822cb7e547f2e4ef557a208024",
+      "decision": "excluded"
+    },
+    "css/backend-style.css": {
+      "mode": "100644",
+      "blob": "977c688333bf693e4385957adfcea1f6fa0105ae",
+      "decision": "reference-only"
+    },
+    "css/campaign-editor.css": {
+      "mode": "100644",
+      "blob": "33c038f8aea4436a91f3c96ac6db6acd4e7baa04",
+      "decision": "reference-only"
+    },
+    "css/frontend-style.css": {
+      "mode": "100644",
+      "blob": "ca1cbdbe382d398b617aefe95313f4b30d500ebb",
+      "decision": "reference-only"
+    },
+    "css/settings-customization.css": {
+      "mode": "100644",
+      "blob": "a47d77a87262ee2bb5c63b78e17f894a584f3f64",
+      "decision": "reference-only"
+    },
+    "css/settings-reconciliation.css": {
+      "mode": "100644",
+      "blob": "e1fb7925950e6c455d667fc309d1272b7010cbf4",
+      "decision": "reference-only"
+    },
+    "dist/wc-loyalty-1.2.1.zip": {
+      "mode": "100644",
+      "blob": "d1161bf4561ebb8e4b4bf8ad327aecf38e57d994",
+      "decision": "excluded"
+    },
+    "docs/ADVANCED-REWARDS.md": {
+      "mode": "100644",
+      "blob": "082968f085104ef44a3f967354291c4a94e6704b",
+      "decision": "excluded"
+    },
+    "docs/CORE-REWARDS.md": {
+      "mode": "100644",
+      "blob": "cfe3d4e527ea07a8694e57f0538fc5831b58ff10",
+      "decision": "excluded"
+    },
+    "docs/COUPON-REDEMPTION.md": {
+      "mode": "100644",
+      "blob": "4d7f79ab0587d7a289d17715623005aca5c04f99",
+      "decision": "excluded"
+    },
+    "docs/HPOS-COMPATIBILITY.md": {
+      "mode": "100644",
+      "blob": "e6f2eabec8196b81af7b06102ec3c38a5b5a6c72",
+      "decision": "excluded"
+    },
+    "docs/INTEGRATION-COMPATIBILITY.md": {
+      "mode": "100644",
+      "blob": "a757b8a5d671f5e3cd54ec30b02654ddda806a01",
+      "decision": "excluded"
+    },
+    "docs/LEDGER-V2.md": {
+      "mode": "100644",
+      "blob": "99a2e7709676a08330b01536b4750d088cfbd7f1",
+      "decision": "excluded"
+    },
+    "docs/ORDER-REDEMPTION.md": {
+      "mode": "100644",
+      "blob": "27959c22dfdbd984c2223a52aa59a03c23591b38",
+      "decision": "excluded"
+    },
+    "docs/POINTS-LIFECYCLE-CONTRACT.md": {
+      "mode": "100644",
+      "blob": "9d95554051338a6271ac72b52248c9911cafca05",
+      "decision": "excluded"
+    },
+    "docs/POINTS-TRANSACTION.md": {
+      "mode": "100644",
+      "blob": "36b209489dffef530c39baa28fab6945e39beb28",
+      "decision": "excluded"
+    },
+    "docs/REFERRAL-REWARDS.md": {
+      "mode": "100644",
+      "blob": "df26bfecc9d0597782b2afcea696e210dce90a86",
+      "decision": "excluded"
+    },
+    "docs/ROLE-OWNERSHIP-RETIREMENT.md": {
+      "mode": "100644",
+      "blob": "4d4dfc5cd0311072a5a0ba7ec7f1b03b9cb45a2f",
+      "decision": "excluded"
+    },
+    "docs/SECURITY-PRIVACY.md": {
+      "mode": "100644",
+      "blob": "c1880d8f208f26b1ac8afe377d7ccb4ea833c28d",
+      "decision": "excluded"
+    },
+    "docs/releasing.md": {
+      "mode": "100644",
+      "blob": "7fb872942b873ba1e1d1e99a1bb0bbdfc5a56dee",
+      "decision": "excluded"
+    },
+    "docs/workflow.md": {
+      "mode": "100644",
+      "blob": "b13b07de75beea146771004f9d03c5b5c2908be0",
+      "decision": "excluded"
+    },
+    "img/banner-1544x500.png": {
+      "mode": "100644",
+      "blob": "1eae258a8a25560bf68f78516ffa0469776a6380",
+      "decision": "reference-only"
+    },
+    "img/banner-772x250.png": {
+      "mode": "100644",
+      "blob": "feb2f440fe3c85a011ef507192e1f3133cc05bf9",
+      "decision": "reference-only"
+    },
+    "img/icon-128x128.png": {
+      "mode": "100644",
+      "blob": "e51ad2a5ee8c5490e3a314cfc95c9229c03c0fd3",
+      "decision": "reference-only"
+    },
+    "img/icon-256x256.png": {
+      "mode": "100644",
+      "blob": "fa862e6b247fff4677b4dd0b1b565db9013c66b7",
+      "decision": "reference-only"
+    },
+    "img/icon.svg": {
+      "mode": "100644",
+      "blob": "e8f249395dc3881714db7425ca42132fed1ab2e3",
+      "decision": "reference-only"
+    },
+    "img/reward.svg": {
+      "mode": "100644",
+      "blob": "1a69e551ec75f3f4a5f7db281a6d922b0857c316",
+      "decision": "reference-only"
+    },
+    "inc/backend/actions/deduct-points.php": {
+      "mode": "100644",
+      "blob": "2813d15b26c029d64d215b801e686c39a6f49c18",
+      "decision": "reference-only"
+    },
+    "inc/backend/actions/earn-points.php": {
+      "mode": "100644",
+      "blob": "faac4c721573b8e751bd98f8c3b040871f7ffd58",
+      "decision": "reference-only"
+    },
+    "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php": {
+      "mode": "100644",
+      "blob": "07edf2617021b1d6bd021e6988f37d658fed621c",
+      "decision": "reference-only"
+    },
+    "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-events.php": {
+      "mode": "100644",
+      "blob": "7e1e8148f72da82f7adffcdf7a5891bdb8526ccc",
+      "decision": "reference-only"
+    },
+    "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-level-update.php": {
+      "mode": "100644",
+      "blob": "53d47d2da6e14554c29897bd42a79ea0bb605ddd",
+      "decision": "reference-only"
+    },
+    "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-deduct.php": {
+      "mode": "100644",
+      "blob": "8185bc93c82ac950f628ebb783d8e4c58783e267",
+      "decision": "reference-only"
+    },
+    "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-reward.php": {
+      "mode": "100644",
+      "blob": "63e9806200394e1f20d22a0c426f656d080f0cf4",
+      "decision": "reference-only"
+    },
+    "inc/backend/actions/emails/email-notifications.php": {
+      "mode": "100644",
+      "blob": "eb89d6991646f56ad43974725ce7f743388e5ed4",
+      "decision": "reference-only"
+    },
+    "inc/backend/actions/extra/anniversary.php": {
+      "mode": "100644",
+      "blob": "ab82cdc755a33abe08090b499a4a522254696dc1",
+      "decision": "forbidden"
+    },
+    "inc/backend/actions/extra/birthday.php": {
+      "mode": "100644",
+      "blob": "a27c5c164f2344256414991a382c3c686c3c2f9d",
+      "decision": "forbidden"
+    },
+    "inc/backend/actions/extra/complete-profile.php": {
+      "mode": "100644",
+      "blob": "ab21f33ba160bd9fe3eb03f29784152729751599",
+      "decision": "forbidden"
+    },
+    "inc/backend/actions/extra/first-purchase.php": {
+      "mode": "100644",
+      "blob": "76155ac65aafa9163017a10d9cea71177883b892",
+      "decision": "reference-only"
+    },
+    "inc/backend/actions/extra/high-cart-value.php": {
+      "mode": "100644",
+      "blob": "5b8129c7ae21e4f24b190ead476cd0523cae3799",
+      "decision": "forbidden"
+    },
+    "inc/backend/actions/extra/inactivity.php": {
+      "mode": "100644",
+      "blob": "88c7d2f53f572f804b944d8dac15c52111939899",
+      "decision": "forbidden"
+    },
+    "inc/backend/actions/extra/level-up.php": {
+      "mode": "100644",
+      "blob": "785ccf1b2fca2f4216a150dcfa1314741df6f531",
+      "decision": "reference-only"
+    },
+    "inc/backend/actions/extra/log-in.php": {
+      "mode": "100644",
+      "blob": "a99797853ea9788bdd8dde925a0cd93d10a3a418",
+      "decision": "reference-only"
+    },
+    "inc/backend/actions/extra/milestone-purchases.php": {
+      "mode": "100644",
+      "blob": "cbb25ab44a5122435967e10d5641b03bb4c25a21",
+      "decision": "forbidden"
+    },
+    "inc/backend/actions/extra/payment-methods.php": {
+      "mode": "100644",
+      "blob": "dfb11a7c34e786a4a9cc062fb6099ef4d8c50a88",
+      "decision": "forbidden"
+    },
+    "inc/backend/actions/extra/review.php": {
+      "mode": "100644",
+      "blob": "bc89c66257de826b592522d4b6bb7f65bb1f0e39",
+      "decision": "reference-only"
+    },
+    "inc/backend/actions/extra/sign-up.php": {
+      "mode": "100644",
+      "blob": "b41269ef62406db58fb113baa48dea8dd20167b3",
+      "decision": "reference-only"
+    },
+    "inc/backend/actions/extra/spending-milestones.php": {
+      "mode": "100644",
+      "blob": "ca83ecd40da6923acfa246d7137a2c09c580034d",
+      "decision": "forbidden"
+    },
+    "inc/backend/actions/helper/birthdate.php": {
+      "mode": "100644",
+      "blob": "84811e5519c68d79791e469ce9f3bb8676230f28",
+      "decision": "reference-only"
+    },
+    "inc/backend/actions/helper/points-expiration.php": {
+      "mode": "100644",
+      "blob": "8558a21ff702a16889cda3b62aaa504342976d64",
+      "decision": "forbidden"
+    },
+    "inc/backend/actions/helper/referrals.php": {
+      "mode": "100644",
+      "blob": "5d03e9855a094f644f1351a4e0987c76c0f4a97a",
+      "decision": "forbidden"
+    },
+    "inc/backend/actions/helper/roles.php": {
+      "mode": "100644",
+      "blob": "b6329461134c5d42477602040b510a4b89dde624",
+      "decision": "import"
+    },
+    "inc/backend/actions/helper/subscriptions.php": {
+      "mode": "100644",
+      "blob": "2c8ca319272272bc7cb88171569502e7b59d493b",
+      "decision": "reference-only"
+    },
+    "inc/backend/actions/level-discounts.php": {
+      "mode": "100644",
+      "blob": "420bf30496a44993afca7f384e502856891b4e87",
+      "decision": "forbidden"
+    },
+    "inc/backend/actions/level-reset.php": {
+      "mode": "100644",
+      "blob": "8b1d017635f2fef75a8ab07fa3321e981a35fa10",
+      "decision": "forbidden"
+    },
+    "inc/backend/actions/points-expiration.php": {
+      "mode": "100644",
+      "blob": "1402bdd3e73e53ad55126d7d26c1e17e7aa63278",
+      "decision": "forbidden"
+    },
+    "inc/backend/actions/redeem-points.php": {
+      "mode": "100644",
+      "blob": "bee2a2e67fb4495eb6c0f8391534bcb251c7b676",
+      "decision": "forbidden"
+    },
+    "inc/backend/actions/referrals.php": {
+      "mode": "100644",
+      "blob": "0edeb03e043efca9dcc14db61787ecf84a08d8d5",
+      "decision": "forbidden"
+    },
+    "inc/backend/actions/return-points.php": {
+      "mode": "100644",
+      "blob": "5a21246d4ad03faf167a215f48749b4b754affdc",
+      "decision": "reference-only"
+    },
+    "inc/backend/actions/use-points.php": {
+      "mode": "100644",
+      "blob": "a6736b6bfb937532d6465211e97a1f10dcc16763",
+      "decision": "reference-only"
+    },
+    "inc/backend/admin-menu.php": {
+      "mode": "100644",
+      "blob": "21f250b5a3f485bb68155637a01f54ac3f659544",
+      "decision": "reference-only"
+    },
+    "inc/backend/campaigns.php": {
+      "mode": "100644",
+      "blob": "e090463e8e4f2cb650744b0d785edc7a6ba8dcfc",
+      "decision": "forbidden"
+    },
+    "inc/backend/orders/order-points.php": {
+      "mode": "100644",
+      "blob": "df37e1c4e7c76104930c6bffca83981be345e1da",
+      "decision": "reference-only"
+    },
+    "inc/backend/products/category-data.php": {
+      "mode": "100644",
+      "blob": "8929d49b9a35b12896cf273a92caf5ae77252af5",
+      "decision": "forbidden"
+    },
+    "inc/backend/products/product-data.php": {
+      "mode": "100644",
+      "blob": "8bf390700df0f68a235e838ccf44c96df48bcbad",
+      "decision": "forbidden"
+    },
+    "inc/backend/settings.php": {
+      "mode": "100644",
+      "blob": "a83925b9aedc6afedce0546cb836f8545df1f354",
+      "decision": "reference-only"
+    },
+    "inc/backend/settings/customization-preview.php": {
+      "mode": "100644",
+      "blob": "9f1aae07175cf6fe128e25199e28af56bd9ffc81",
+      "decision": "reference-only"
+    },
+    "inc/backend/settings/customization.php": {
+      "mode": "100644",
+      "blob": "ab5a65508bfc51646f0e89c37666222d6db13305",
+      "decision": "reference-only"
+    },
+    "inc/backend/settings/extra-points.php": {
+      "mode": "100644",
+      "blob": "aa329f7f9f11e0a59418f8e830adcee64e56875b",
+      "decision": "reference-only"
+    },
+    "inc/backend/settings/files/yol_import_sample.csv": {
+      "mode": "100644",
+      "blob": "68af9123c7092687932b84af48e4f91630dd2980",
+      "decision": "reference-only"
+    },
+    "inc/backend/settings/general-add-remove-user-role.php": {
+      "mode": "100644",
+      "blob": "d603121baea3faa86c6df5a54b3d5b74bd14c99c",
+      "decision": "reference-only"
+    },
+    "inc/backend/settings/general-earning-point-rules.php": {
+      "mode": "100644",
+      "blob": "3be9424583dd90ab02bc87056abebd04d2e58b5c",
+      "decision": "reference-only"
+    },
+    "inc/backend/settings/general-level-discounts-rules.php": {
+      "mode": "100644",
+      "blob": "5f8c1c70d0bb0a9c50808d3aefd71ac092a790d0",
+      "decision": "forbidden"
+    },
+    "inc/backend/settings/general-level-rules.php": {
+      "mode": "100644",
+      "blob": "356f21de1aa8899612b7c52257aba1ef2d29f5ae",
+      "decision": "reference-only"
+    },
+    "inc/backend/settings/general-multi-checkbox.php": {
+      "mode": "100644",
+      "blob": "dbed4658b33f20e6e1dc3cec411dc396e138566f",
+      "decision": "reference-only"
+    },
+    "inc/backend/settings/general-using-point-rules.php": {
+      "mode": "100644",
+      "blob": "5d3419693f1c3f0e23907665a59cbce877c13cda",
+      "decision": "reference-only"
+    },
+    "inc/backend/settings/notification.php": {
+      "mode": "100644",
+      "blob": "9e2a87285bb58d7ff281dd9256911f2c3de8a590",
+      "decision": "reference-only"
+    },
+    "inc/backend/settings/referrals.php": {
+      "mode": "100644",
+      "blob": "0fa5700255570c53c23510e8ecb597cb576ccede",
+      "decision": "reference-only"
+    },
+    "inc/backend/settings/tools.php": {
+      "mode": "100644",
+      "blob": "64b51f3931fade625a37780ba724466b20c9fe0d",
+      "decision": "reference-only"
+    },
+    "inc/backend/users.php": {
+      "mode": "100644",
+      "blob": "a432acd99b6a4856a53558c7ef5cbf938483e743",
+      "decision": "reference-only"
+    },
+    "inc/backend/users/points-history.php": {
+      "mode": "100644",
+      "blob": "cf2e70d76739685f33966166faa0c2e24bca3892",
+      "decision": "reference-only"
+    },
+    "inc/backend/users/user-list.php": {
+      "mode": "100644",
+      "blob": "17f2e2dd72c46a073c9a1091ef89c70f92263058",
+      "decision": "reference-only"
+    },
+    "inc/backend/users/user-profile.php": {
+      "mode": "100644",
+      "blob": "db1cd8164bbb636e16fe0127be18a034c939bc3d",
+      "decision": "reference-only"
+    },
+    "inc/backend/yoohw-dashboard.php": {
+      "mode": "100644",
+      "blob": "39a2ee54fd0b908b38fde23ceb6454c95bfad7ab",
+      "decision": "forbidden"
+    },
+    "inc/backend/yoohw-license.php": {
+      "mode": "100644",
+      "blob": "da2be4ad98a1b6aa221039bf493fae374dcc050b",
+      "decision": "forbidden"
+    },
+    "inc/backend/yoohw-settings.php": {
+      "mode": "100644",
+      "blob": "58ec04f454f714ca38abf7a9717cd6e692b9e7b9",
+      "decision": "forbidden"
+    },
+    "inc/backend/yoohw-woo-settings-tabs-reorder.php": {
+      "mode": "100644",
+      "blob": "d4219cfd8974381b7d6e55c9f0c4178e3e608dc7",
+      "decision": "reference-only"
+    },
+    "inc/cores/activation.php": {
+      "mode": "100644",
+      "blob": "869f9de69fce591524a7763351f0986b8d5b376a",
+      "decision": "reference-only"
+    },
+    "inc/cores/backend.php": {
+      "mode": "100644",
+      "blob": "826c812214175aa4447c0bb2696bdef20e0e8fa4",
+      "decision": "reference-only"
+    },
+    "inc/cores/checking.php": {
+      "mode": "100644",
+      "blob": "4bd6c89477fda714f391339f4b774611782c8811",
+      "decision": "forbidden"
+    },
+    "inc/cores/database.php": {
+      "mode": "100644",
+      "blob": "ecd5bd7f411ac0401df518a600d272747ab4dc55",
+      "decision": "reference-only"
+    },
+    "inc/cores/frontend.php": {
+      "mode": "100644",
+      "blob": "722210ca00af6e6f3822b121703f84f2dd641990",
+      "decision": "reference-only"
+    },
+    "inc/cores/helper/advanced-rewards.php": {
+      "mode": "100644",
+      "blob": "1f4f9548b7014557127d75a3656f7ea27abd391a",
+      "decision": "forbidden"
+    },
+    "inc/cores/helper/batch-monitor.php": {
+      "mode": "100644",
+      "blob": "1ee3abbb75f67fc03c36cab44ffe6122ded033ab",
+      "decision": "reference-only"
+    },
+    "inc/cores/helper/core-rewards.php": {
+      "mode": "100644",
+      "blob": "bad5233fae3fc957adae9d689fbbcb92655a0350",
+      "decision": "reference-only"
+    },
+    "inc/cores/helper/coupon-redemption.php": {
+      "mode": "100644",
+      "blob": "6a530790fcf6699b22fbc0b840aa0de674fdefe0",
+      "decision": "forbidden"
+    },
+    "inc/cores/helper/idempotency-harness.php": {
+      "mode": "100644",
+      "blob": "6e4eb33e32ad36a4b050a167fd17314434e9dc83",
+      "decision": "reference-only"
+    },
+    "inc/cores/helper/ledger-v2.php": {
+      "mode": "100644",
+      "blob": "4cf080ae166af7f81f5fc029ff303a7571d6d01a",
+      "decision": "reference-only"
+    },
+    "inc/cores/helper/order-redemption.php": {
+      "mode": "100644",
+      "blob": "c38408de45ccd0ad7a8ba1f34bfee27078fe35de",
+      "decision": "reference-only"
+    },
+    "inc/cores/helper/order-rewards.php": {
+      "mode": "100644",
+      "blob": "88a74ad909d926650c222ce25c11ba407fdbbed0",
+      "decision": "reference-only"
+    },
+    "inc/cores/helper/points-actions.php": {
+      "mode": "100644",
+      "blob": "f32b2a3370e9c40c5bea10a13ebf9a31add91fad",
+      "decision": "reference-only"
+    },
+    "inc/cores/helper/points-allocation.php": {
+      "mode": "100644",
+      "blob": "6a07a44756a6eae3aead42275a3ff68bc194a78a",
+      "decision": "reference-only"
+    },
+    "inc/cores/helper/points-balance.php": {
+      "mode": "100644",
+      "blob": "32d71b882abb9325b06b60d5241a49e90e642e7d",
+      "decision": "reference-only"
+    },
+    "inc/cores/helper/points-events.php": {
+      "mode": "100644",
+      "blob": "a1cee06de9fc52dcb74b19f3c705e6b036ddb034",
+      "decision": "reference-only"
+    },
+    "inc/cores/helper/points-lock.php": {
+      "mode": "100644",
+      "blob": "1ad6ed8bceb3b06cac196372de65c720aeb0b6f6",
+      "decision": "import"
+    },
+    "inc/cores/helper/points-log-cache.php": {
+      "mode": "100644",
+      "blob": "c5e5611ff18d50e831423234ec86a99b33600647",
+      "decision": "import"
+    },
+    "inc/cores/helper/points-log.php": {
+      "mode": "100644",
+      "blob": "21e97ccbd1ab8170c4ba93a1e86b162cfdeef382",
+      "decision": "import"
+    },
+    "inc/cores/helper/points-occurrences.php": {
+      "mode": "100644",
+      "blob": "aa6bcb2036c417c08b6e2f7029f7a94831c2ea33",
+      "decision": "reference-only"
+    },
+    "inc/cores/helper/points-transaction.php": {
+      "mode": "100644",
+      "blob": "07f7450e559346648ab464d41b5b7f1c66e05c5b",
+      "decision": "reference-only"
+    },
+    "inc/cores/helper/product-earning-rules.php": {
+      "mode": "100644",
+      "blob": "6f549459f68a69e217fe275a2e73c8e5f0a19baa",
+      "decision": "forbidden"
+    },
+    "inc/cores/helper/referral-rewards.php": {
+      "mode": "100644",
+      "blob": "23b0ee9d2a5174ccd480a88d8570c24c838ad01e",
+      "decision": "forbidden"
+    },
+    "inc/cores/helper/role-claims.php": {
+      "mode": "100644",
+      "blob": "56973b64676c20784edecd48bc192316897324c6",
+      "decision": "import"
+    },
+    "inc/cores/helper/role-ownership.php": {
+      "mode": "100644",
+      "blob": "94b053f2eccdc0f6144b3012d2d5d9480293a554",
+      "decision": "reference-only"
+    },
+    "inc/cores/helper/yoohw-debug-blob.php": {
+      "mode": "100644",
+      "blob": "c9aa47d2db969e5032fa4aa89c128bef928de3a9",
+      "decision": "reference-only"
+    },
+    "inc/cores/helper/yoohw-debug-log-email.php": {
+      "mode": "100644",
+      "blob": "ce66709f5c95ed7ea61fed65c95a29dc26ea939f",
+      "decision": "reference-only"
+    },
+    "inc/cores/helper/yoohw-diagnostic-log.php": {
+      "mode": "100644",
+      "blob": "d2a0f62ee6e719a173ba9f614956de9aa3eb2df6",
+      "decision": "reference-only"
+    },
+    "inc/cores/helper/yoohw-http-debug.php": {
+      "mode": "100644",
+      "blob": "10ffef1da707e29ef7e4c4cf4062050d14a88363",
+      "decision": "reference-only"
+    },
+    "inc/cores/information.php": {
+      "mode": "100644",
+      "blob": "afe6a730a05cc54e48217f283e16ad19e0ffaeb2",
+      "decision": "forbidden"
+    },
+    "inc/cores/notices.php": {
+      "mode": "100644",
+      "blob": "91b0fd11baff45e81291810b43df5d6e69cfb321",
+      "decision": "reference-only"
+    },
+    "inc/cores/premium-gate.php": {
+      "mode": "100644",
+      "blob": "32cbc9f677bf17eeb271dfc3e196bbd8f2cb7ed9",
+      "decision": "forbidden"
+    },
+    "inc/cores/runtime.php": {
+      "mode": "100644",
+      "blob": "c396858ea3a6a3c606029a0dc46347070588a0ac",
+      "decision": "forbidden"
+    },
+    "inc/cores/update.php": {
+      "mode": "100644",
+      "blob": "3bf61b95db54ca2d0967bea15c95cba233857aad",
+      "decision": "forbidden"
+    },
+    "inc/frontend/cart-checkout.php": {
+      "mode": "100644",
+      "blob": "3ac1606508bc379629c712e00283593b00353002",
+      "decision": "reference-only"
+    },
+    "inc/frontend/loyalty-info-bubble.php": {
+      "mode": "100644",
+      "blob": "710e6ca9eb601d8fc763405c7cb71341e02955c2",
+      "decision": "reference-only"
+    },
+    "inc/frontend/my-account.php": {
+      "mode": "100644",
+      "blob": "f8a5ddb0f2163f643da5d9ca4cd2e63b423dfe27",
+      "decision": "reference-only"
+    },
+    "inc/frontend/product-list.php": {
+      "mode": "100644",
+      "blob": "375fab174e83f4dd13afc4a6b15148fd2fd9d107",
+      "decision": "reference-only"
+    },
+    "inc/frontend/product.php": {
+      "mode": "100644",
+      "blob": "7e5c3c25e1d90561822b18211db1dc8c040aa979",
+      "decision": "reference-only"
+    },
+    "inc/frontend/redeem-product.php": {
+      "mode": "100644",
+      "blob": "b1105814636b7e63fbd943e03d7d12e2636df77a",
+      "decision": "forbidden"
+    },
+    "js/campaign-editor.js": {
+      "mode": "100644",
+      "blob": "92a0f6a6f8402140735532b5c9039919086d3d08",
+      "decision": "reference-only"
+    },
+    "js/loyalty-info-bubble.js": {
+      "mode": "100644",
+      "blob": "d88e8d39adf5de4c50f4b7f8769d137767b83c06",
+      "decision": "reference-only"
+    },
+    "js/my-acount-my-points.js": {
+      "mode": "100644",
+      "blob": "ee0f60ec0626bc79e262986d8570e9e321295127",
+      "decision": "reference-only"
+    },
+    "js/redeem-product.js": {
+      "mode": "100644",
+      "blob": "98b8f5961196b3cb25d93598e3eaf7a7a8fc4028",
+      "decision": "reference-only"
+    },
+    "js/settings-customzation.js": {
+      "mode": "100644",
+      "blob": "b90f3597ff447dd6e4c9ec1b7d47ed97ede84bde",
+      "decision": "reference-only"
+    },
+    "js/settings-reconciliation.js": {
+      "mode": "100644",
+      "blob": "ce98d4d532803aa2d4ca29c22c05c164d66a13d9",
+      "decision": "reference-only"
+    },
+    "js/user-profile-points-modal.js": {
+      "mode": "100644",
+      "blob": "8376fe0fd1960fbe51a8a496914b7de0076df50d",
+      "decision": "reference-only"
+    },
+    "js/users-points-modal.js": {
+      "mode": "100644",
+      "blob": "d0f0aee48b81457ae2a8503ba4d61875b3fc948c",
+      "decision": "reference-only"
+    },
+    "js/using-point-cart.js": {
+      "mode": "100644",
+      "blob": "a8e25765981ddcd0afcceda896f9e2f5c44b9494",
+      "decision": "reference-only"
+    },
+    "js/using-point-checkout.js": {
+      "mode": "100644",
+      "blob": "4496bfae9f59f434324734a5d0f3b1f460c6a3eb",
+      "decision": "reference-only"
+    },
+    "languages/wc-loyalty.pot": {
+      "mode": "100644",
+      "blob": "dca7afad288b6e3b2b125066e25e44bb2cd992e2",
+      "decision": "reference-only"
+    },
+    "license.txt": {
+      "mode": "100644",
+      "blob": "5e78571f6e27fcdb9473f24ae4406f12d85bf148",
+      "decision": "excluded"
+    },
+    "readme.txt": {
+      "mode": "100644",
+      "blob": "3115268da7121c0c210a3c8dc0e676d03588c797",
+      "decision": "excluded"
+    },
+    "scripts/ci-policy.py": {
+      "mode": "100644",
+      "blob": "869d0a1bc1e5ac44f6e7c5a5e27abceae21f6302",
+      "decision": "excluded"
+    },
+    "scripts/ci-provenance.py": {
+      "mode": "100644",
+      "blob": "0a15bb797d4b3cf7770e70f961bb3c6b9be37980",
+      "decision": "excluded"
+    },
+    "scripts/stage-distribution.sh": {
+      "mode": "100644",
+      "blob": "59f085b5f69373991d4bcf293bb45c3cd2d9ec4e",
+      "decision": "excluded"
+    },
+    "scripts/verify-distribution.py": {
+      "mode": "100644",
+      "blob": "1faf8e465f38fe5e78e74870e77050d186fb61f7",
+      "decision": "excluded"
+    },
+    "templates/emails/loyalty-event.php": {
+      "mode": "100644",
+      "blob": "775ec45551cc5e5e4cacdc7ff87eb111d8dd3136",
+      "decision": "reference-only"
+    },
+    "templates/emails/loyalty-level-update.php": {
+      "mode": "100644",
+      "blob": "b5852a14f75e8d7771a06f082beaa3ac27d2fee9",
+      "decision": "reference-only"
+    },
+    "templates/emails/loyalty-points-deduct.php": {
+      "mode": "100644",
+      "blob": "fc800e4170f7b336da92f9e84a66d444fe9cc921",
+      "decision": "reference-only"
+    },
+    "templates/emails/loyalty-points-reward.php": {
+      "mode": "100644",
+      "blob": "94c58a70e35e9c359ca5e489c0008444c2e86de4",
+      "decision": "reference-only"
+    },
+    "templates/emails/plain/loyalty-event.php": {
+      "mode": "100644",
+      "blob": "3be85fc407d74d970d8efa1b236c6e81c7f52c82",
+      "decision": "reference-only"
+    },
+    "templates/emails/plain/loyalty-level-update.php": {
+      "mode": "100644",
+      "blob": "7da70a5df8ebdcd4cc64e4ec1629045c54ea0ca4",
+      "decision": "reference-only"
+    },
+    "templates/emails/plain/loyalty-points-deduct.php": {
+      "mode": "100644",
+      "blob": "b38d09543dd734b8bf386e9a81d020a454736589",
+      "decision": "reference-only"
+    },
+    "templates/emails/plain/loyalty-points-reward.php": {
+      "mode": "100644",
+      "blob": "76519b079b9495eece5fcccac610cb0cd20752d3",
+      "decision": "reference-only"
+    },
+    "tests/advanced-descriptions.php": {
+      "mode": "100644",
+      "blob": "5f1051c4b32647ba88ee192331f56672080e6a23",
+      "decision": "excluded"
+    },
+    "tests/campaign-editor.php": {
+      "mode": "100644",
+      "blob": "504a11092263e7691e057b4eded110f9e76af83e",
+      "decision": "excluded"
+    },
+    "tests/ci/policy-test.py": {
+      "mode": "100644",
+      "blob": "3c93aa24d82734e644a4dd32eb41b9768ef0f7b0",
+      "decision": "excluded"
+    },
+    "tests/ci/provenance-test.py": {
+      "mode": "100644",
+      "blob": "725d400469afb84a59ca5ac909f82df97ad193bf",
+      "decision": "excluded"
+    },
+    "tests/ci/runtime-groups-test.py": {
+      "mode": "100644",
+      "blob": "6072337e51d554faedc79f6b9ca2bb836a5348b8",
+      "decision": "excluded"
+    },
+    "tests/complete-profile.php": {
+      "mode": "100644",
+      "blob": "7975a153ca9e54c115fd2b3a2437d310b701a49f",
+      "decision": "excluded"
+    },
+    "tests/customization-settings.php": {
+      "mode": "100644",
+      "blob": "17efbebcd8043412852c9803571a3f9c0efc8243",
+      "decision": "excluded"
+    },
+    "tests/frontend-assets.php": {
+      "mode": "100644",
+      "blob": "68e981587e66bca32b5904489709cca15bdf26a5",
+      "decision": "excluded"
+    },
+    "tests/js/admin-operations.cjs": {
+      "mode": "100644",
+      "blob": "bcbf3619f39a12e80f45a39922205555c82c9b54",
+      "decision": "excluded"
+    },
+    "tests/js/advanced-history.cjs": {
+      "mode": "100644",
+      "blob": "a36aa77e576fc788cf856af4a96d3415549e79fb",
+      "decision": "excluded"
+    },
+    "tests/js/cart-controls.cjs": {
+      "mode": "100644",
+      "blob": "7a2593bd013166ca837203d129d30bc776eaf59f",
+      "decision": "excluded"
+    },
+    "tests/js/customization-media.cjs": {
+      "mode": "100644",
+      "blob": "63e1091986cff1f0f350af64779510cd512bd30c",
+      "decision": "excluded"
+    },
+    "tests/js/frontend-accessibility.cjs": {
+      "mode": "100644",
+      "blob": "9c81a93260108253ddc4de3bed97e4e312c16cf6",
+      "decision": "excluded"
+    },
+    "tests/js/profile-order-links.cjs": {
+      "mode": "100644",
+      "blob": "fb878541f3ab87e4ea4757f2766675e9faaa90a3",
+      "decision": "excluded"
+    },
+    "tests/js/reconciliation-settings.cjs": {
+      "mode": "100644",
+      "blob": "3ce5cc0b6abb110b402d31be4b2e5e7bf6517566",
+      "decision": "excluded"
+    },
+    "tests/js/redeem-balance.cjs": {
+      "mode": "100644",
+      "blob": "87602f5317499bd282e6694bf7fbe404299088ff",
+      "decision": "excluded"
+    },
+    "tests/js/redemption-attempts.cjs": {
+      "mode": "100644",
+      "blob": "7104a21de37cea99bb768087a1b0b2fb3c14876d",
+      "decision": "excluded"
+    },
+    "tests/level-notifications.php": {
+      "mode": "100644",
+      "blob": "a0fcbef82ac9590fc39b16e8e3cf4f522c9746bc",
+      "decision": "excluded"
+    },
+    "tests/profile-order-links.php": {
+      "mode": "100644",
+      "blob": "1d26df4f2fb898d412f3637764a826183daa183f",
+      "decision": "excluded"
+    },
+    "tests/reconciliation-settings.php": {
+      "mode": "100644",
+      "blob": "ed702324219ce1cca263180c66b3cab0c5939ef9",
+      "decision": "excluded"
+    },
+    "tests/role-claims-preservation.php": {
+      "mode": "100644",
+      "blob": "bdbb53aa08df61180962e182e0c34b812be8b9c2",
+      "decision": "excluded"
+    },
+    "tests/role-ownership.php": {
+      "mode": "100644",
+      "blob": "7c8cde452ca1b3a3e05c6efe0178987025f51d9b",
+      "decision": "excluded"
+    },
+    "tests/runtime/advanced-rewards-common.php": {
+      "mode": "100644",
+      "blob": "e00faa97535b2990a8fddab4fc61f3e8271ced71",
+      "decision": "excluded"
+    },
+    "tests/runtime/advanced-rewards-race.php": {
+      "mode": "100644",
+      "blob": "9e45b6ccd05502bc844477c736f596b6e900ee22",
+      "decision": "excluded"
+    },
+    "tests/runtime/advanced-rewards-worker.php": {
+      "mode": "100644",
+      "blob": "3544bf773097649b58bfaefa40806b2c5ebdbaf8",
+      "decision": "excluded"
+    },
+    "tests/runtime/advanced-rewards.php": {
+      "mode": "100644",
+      "blob": "3e684c9d5e054b4e6792539deb35db31f2090fc3",
+      "decision": "excluded"
+    },
+    "tests/runtime/allocation-race.php": {
+      "mode": "100644",
+      "blob": "9b870fa3ed8c1f1d096dab3a2ad5bcc3b9061b3a",
+      "decision": "excluded"
+    },
+    "tests/runtime/allocation-worker.php": {
+      "mode": "100644",
+      "blob": "5ba5d4554f92c87d461b289670e74aa320008a63",
+      "decision": "excluded"
+    },
+    "tests/runtime/allocation.php": {
+      "mode": "100644",
+      "blob": "5ebd3d0adf5744377d85dc84d5a493ae4242a958",
+      "decision": "excluded"
+    },
+    "tests/runtime/core-rewards-common.php": {
+      "mode": "100644",
+      "blob": "fa486bd650a3f10d3424f6232ee19426cda0ce6c",
+      "decision": "excluded"
+    },
+    "tests/runtime/core-rewards-race.php": {
+      "mode": "100644",
+      "blob": "79d3f0c2d9ff0a12eb02a419db5200eb8f66881f",
+      "decision": "excluded"
+    },
+    "tests/runtime/core-rewards-worker.php": {
+      "mode": "100644",
+      "blob": "68018a2b048c5affe9b23f7a37c686b89af6ac86",
+      "decision": "excluded"
+    },
+    "tests/runtime/core-rewards.php": {
+      "mode": "100644",
+      "blob": "e7940e79484042d5a40855a3e05f7fc05aa5b2b1",
+      "decision": "excluded"
+    },
+    "tests/runtime/coupon-redemption.php": {
+      "mode": "100644",
+      "blob": "509bc0f27ec123ec15a19a1c0f9653ed4861c9d5",
+      "decision": "excluded"
+    },
+    "tests/runtime/customization.php": {
+      "mode": "100644",
+      "blob": "2815cc313919a90eda57469d9bdd87875c4e6890",
+      "decision": "excluded"
+    },
+    "tests/runtime/free-after.php": {
+      "mode": "100644",
+      "blob": "5909f614ba1b9d0000a1b90e8c4e14221daa7ba9",
+      "decision": "excluded"
+    },
+    "tests/runtime/free-before.php": {
+      "mode": "100644",
+      "blob": "76a8281918ed6e0b96a57c9132eab03470f1f0c1",
+      "decision": "excluded"
+    },
+    "tests/runtime/hpos.php": {
+      "mode": "100644",
+      "blob": "734bb20110a0381db984d0a58d160a27190aeb5e",
+      "decision": "excluded"
+    },
+    "tests/runtime/ledger-checkpoint-race.php": {
+      "mode": "100644",
+      "blob": "bcc6039abd2fc62071c3fa61b00c507247214a97",
+      "decision": "excluded"
+    },
+    "tests/runtime/ledger-checkpoint-worker.php": {
+      "mode": "100644",
+      "blob": "329d6377a7503e39523e67d2e1fee1e3743e5600",
+      "decision": "excluded"
+    },
+    "tests/runtime/ledger-v2.php": {
+      "mode": "100644",
+      "blob": "1188735a026604206a9c5b8e2f71c0bec5f3595e",
+      "decision": "excluded"
+    },
+    "tests/runtime/level-notifications.php": {
+      "mode": "100644",
+      "blob": "2abe5e83831717e3f4c565b61021720b5feacfbe",
+      "decision": "excluded"
+    },
+    "tests/runtime/mu-isolation.php": {
+      "mode": "100644",
+      "blob": "55159d97e33e557aa64409fef55d65fdf7d79942",
+      "decision": "excluded"
+    },
+    "tests/runtime/order-history-route.php": {
+      "mode": "100644",
+      "blob": "03264c1929d288ba98a1cb4a2f04e52a2e3ac845",
+      "decision": "excluded"
+    },
+    "tests/runtime/order-redemption-fixture.php": {
+      "mode": "100644",
+      "blob": "c885ef84a4ebf6a1508bf5fb8d9398901a314c38",
+      "decision": "excluded"
+    },
+    "tests/runtime/order-redemption-race.php": {
+      "mode": "100644",
+      "blob": "47fe61cbe83074daba34a62a270a690a31325668",
+      "decision": "excluded"
+    },
+    "tests/runtime/order-redemption-store-api-fixture.php": {
+      "mode": "100644",
+      "blob": "fdb327121e71bf35446d57699ce8648e5ca77447",
+      "decision": "excluded"
+    },
+    "tests/runtime/order-redemption-store-api.php": {
+      "mode": "100644",
+      "blob": "dccac68a481e66c779f435f16be643ae1a359fe2",
+      "decision": "excluded"
+    },
+    "tests/runtime/order-redemption-worker.php": {
+      "mode": "100644",
+      "blob": "f2e1cb3cb5d56c313a69b5810774d8d98e015c6d",
+      "decision": "excluded"
+    },
+    "tests/runtime/order-redemption.php": {
+      "mode": "100644",
+      "blob": "d86002aab987c9eaf2d93df9bbe5f9000728965d",
+      "decision": "excluded"
+    },
+    "tests/runtime/points-email-preview.php": {
+      "mode": "100644",
+      "blob": "dd6f85ab3110c0fc56d64c98d59cb3c891bf20f4",
+      "decision": "excluded"
+    },
+    "tests/runtime/redemption-common.php": {
+      "mode": "100644",
+      "blob": "3d8f8dfe16ca1402cf3f095cace14f2c5f64595f",
+      "decision": "excluded"
+    },
+    "tests/runtime/redemption-race.php": {
+      "mode": "100644",
+      "blob": "bd3d1353e22bf8b35c9c7c35fbc998b4ef8e235a",
+      "decision": "excluded"
+    },
+    "tests/runtime/redemption-worker.php": {
+      "mode": "100644",
+      "blob": "5ddca767d4e15bafbcba1e80f0ab55a7203b3859",
+      "decision": "excluded"
+    },
+    "tests/runtime/referrals-capture.php": {
+      "mode": "100644",
+      "blob": "b8a974de1679964dce2892f4e7c493f8c0af012c",
+      "decision": "excluded"
+    },
+    "tests/runtime/referrals-common.php": {
+      "mode": "100644",
+      "blob": "93e8494f6de55eedae226ddba92d80a077fd7f3b",
+      "decision": "excluded"
+    },
+    "tests/runtime/referrals-race.php": {
+      "mode": "100644",
+      "blob": "1afe0c23ededd383839c3cd47f645a25c040ba02",
+      "decision": "excluded"
+    },
+    "tests/runtime/referrals-worker.php": {
+      "mode": "100644",
+      "blob": "619923b0e50f44537dbe0f94a0bb941e8fa47d37",
+      "decision": "excluded"
+    },
+    "tests/runtime/referrals.php": {
+      "mode": "100644",
+      "blob": "606b24db62462622e74c903684cd9b38c775172c",
+      "decision": "excluded"
+    },
+    "tests/runtime/run.sh": {
+      "mode": "100644",
+      "blob": "35e614326b6241a3ebb94f14730ae2da8844e5c4",
+      "decision": "excluded"
+    },
+    "tests/runtime/scenarios.php": {
+      "mode": "100644",
+      "blob": "fa9e8a87518f7dae2b69ef4168aabebe3f40cf0c",
+      "decision": "excluded"
+    },
+    "tests/runtime/security-activation.php": {
+      "mode": "100644",
+      "blob": "e4cf3ab93886e922dc252d2650c4b69a0753c9b8",
+      "decision": "excluded"
+    },
+    "tests/runtime/security-cookie.php": {
+      "mode": "100644",
+      "blob": "52cf213f526b17089de93d456f5b269df224ae22",
+      "decision": "excluded"
+    },
+    "tests/runtime/security.php": {
+      "mode": "100644",
+      "blob": "0556de6734d9cea010fa8e135981ba14a3e4af91",
+      "decision": "excluded"
+    },
+    "tests/runtime/transaction-dashboard.php": {
+      "mode": "100644",
+      "blob": "9710e8cc50d603d9f9ebf486072430640146023e",
+      "decision": "excluded"
+    },
+    "tests/runtime/transaction-race.php": {
+      "mode": "100644",
+      "blob": "b43728856df5287620d039552c729fb36ffb3a4d",
+      "decision": "excluded"
+    },
+    "tests/runtime/transaction-reconciliation.php": {
+      "mode": "100644",
+      "blob": "dc15392ab3c3bc22beb2a291660f349cf6fa0f55",
+      "decision": "excluded"
+    },
+    "tests/runtime/transaction-regressions.php": {
+      "mode": "100644",
+      "blob": "eb353bec78f6fb33d6d0b5736adf768d18f95bba",
+      "decision": "excluded"
+    },
+    "tests/runtime/transaction-worker.php": {
+      "mode": "100644",
+      "blob": "1ff03a4478ecda7498cb2f01873eff6536077d07",
+      "decision": "excluded"
+    },
+    "tests/runtime/transactions.php": {
+      "mode": "100644",
+      "blob": "67183a38124c1f2b3c05c09b03b76fc1af8c3b47",
+      "decision": "excluded"
+    },
+    "wc-loyalty.php": {
+      "mode": "100644",
+      "blob": "d9afa3e9079ae92b4dd84206f48d6a7942439109",
+      "decision": "reference-only"
+    }
+  }
+}
