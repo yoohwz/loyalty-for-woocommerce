@@ -6,6 +6,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     const base = process.env.LOYF_BROWSER_URL;
     const browser = await chromium.launch({ headless: true, ...(process.env.LOYF_BROWSER_EXECUTABLE ? {executablePath:process.env.LOYF_BROWSER_EXECUTABLE}: {}) });
     const page = await browser.newPage();
+    page.setDefaultTimeout(30000);
     const calls = [], errors = [];
     page.on('pageerror', error => errors.push(error.message));
     page.on('request', request => { if (request.method()==='POST') calls.push(request.url()); });

@@ -519,7 +519,7 @@
     {
       "target": "inc/cores/helper/free-blocks-integration.php",
       "mode": "100644",
-      "sha256": "0d4a3b77a88e1416facc989fe2f5dfb26d2bea6985bb40cecca8c768e0787eee"
+      "sha256": "7e832d01a6ad70f7a4f876b4a736cdc5ad68f04384344301bf97b3f98338e260"
     },
     {
       "target": "js/blocks-redemption.js",
