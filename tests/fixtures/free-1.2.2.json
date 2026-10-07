@@ -1,0 +1,21 @@
+{
+  "free_sha": "3c1aac240df03101561b856cddb603b1501fa41b",
+  "upstream_sha": "9e3d663b9828a24eacd141216d5e6f6e22da8ca4",
+  "version": "1.2.2",
+  "options": {
+    "loyalty_levels_roles": ["customer", "loyf_gold"],
+    "loyalty_levels_rules": {"customer": {"from": 0}, "loyf_gold": {"from": 100}},
+    "loyalty_points_earning_status": ["wc-processing", "wc-completed"],
+    "loyalty_points_deduction_status": ["wc-cancelled", "wc-refunded", "wc-failed"],
+    "loyalty_points_earning_rules": {"customer": {"points": 10, "amount": 10}, "loyf_gold": {"points": 10, "amount": 10}},
+    "loyalty_points_earning_option": [],
+    "loyalty_points_rounding": "round_down",
+    "loyalty_points_using_rules": {"points": 10, "amount": 1},
+    "loyalty_extra_points_rules": {"signup_points": 5, "login_points": 3, "review_points": 7},
+    "loyalty_extra_levelup_points_rules": {"loyf_gold": {"awarded": 11}},
+    "loyalty_customization_my_account": {"my_account": "yes", "my_account_label": "Fixture Rewards", "my_account_slug": "fixture-rewards"},
+    "loyalty_customization_message_icon": "https://example.invalid/points.svg",
+    "loyalty_customization_membercard": {"membercard_background_color": "#abcdef", "membercard_border_color": "#123456"},
+    "loyalty_notification_email": {"points_update": "yes", "level_update": "yes"}
+  }
+}
