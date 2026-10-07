@@ -64,7 +64,7 @@ class ImportContractTest(unittest.TestCase):
 
     def test_current_manifest_and_source_identity(self):
         manifest = contract.load_manifest()
-        self.assertEqual(15, len(manifest['imports']))
+        self.assertEqual(25, len(manifest['imports']))
         self.assertEqual(len(manifest['overlays']) + len(manifest['imports']), contract.verify_tree(ROOT, manifest, source=True))
         self.assertEqual({'import', 'reference-only', 'forbidden', 'excluded'}, {row['decision'] for row in manifest['upstream_inventory'].values()})
 

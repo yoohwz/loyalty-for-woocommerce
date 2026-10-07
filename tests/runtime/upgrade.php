@@ -40,6 +40,20 @@ $source['review_points']='88'; update_option('loyalty_extra_points_rules', $sour
 YOWCL_Free_Migrations::run(); loyf_equal(0, YOWCL_Free_Core::extra('review'), 'Retry frozen zero disables conflicting canonical target');
 YOWCL_Free_Migrations::save('review', 'loyalty_extra_reviews_gamification_rules', array('review_enabled'=>'yes','review_points'=>'13'));
 YOWCL_Free_Migrations::run(); loyf_equal(13,YOWCL_Free_Core::extra('review'),'Witness rerun preserves merchant terms');
+// Negative legacy terms must never inherit positive dormant canonical enablement.
+loyf_reset_feature('signup');
+$source['signup_points']='0'; $source['signup_enabled']='yes'; update_option('loyalty_extra_points_rules',$source);
+YOWCL_Free_Migrations::run(); loyf_equal(0,YOWCL_Free_Core::extra('signup'),'Zero signup remains disabled');
+loyf_reset_feature('levelup');
+update_option('loyalty_extra_levelup_points_rules',array('loyf_gold'=>array('awarded'=>'0','unknown'=>'007')));
+$merged=get_option('loyalty_extra_reviews_gamification_rules'); $merged['levelup_enabled']='yes'; update_option('loyalty_extra_reviews_gamification_rules',$merged);
+YOWCL_Free_Migrations::run(); loyf_equal('no',get_option('loyalty_extra_reviews_gamification_rules')['levelup_enabled'],'Zero level map disabled');
+loyf_equal('007',get_option('loyalty_extra_reviews_gamification_rules')['levelup_points']['loyf_gold']['unknown'],'Exact nested role terms');
+// Real settings entry point writes canonical terms, preserves evidence and dormant keys.
+wp_set_current_user(1); $_POST=array('extra_points_settings_nonce'=>wp_create_nonce('save_extra_points_settings_action'),'loyalty_extra_signup_points'=>'9','loyalty_extra_login_points'=>'4','loyalty_extra_review_points'=>'12','loyalty_extra_levelup_loyf_gold'=>'6');
+$legacy_map=get_option('loyalty_extra_levelup_points_rules'); (new YOSWC_Loyalty_Settings_Extra_Points())->save_extra_points_settings(); $_POST=array();
+YOWCL_Free_Migrations::run(); loyf_equal(9,YOWCL_Free_Core::extra('signup'),'Authorized canonical signup save'); loyf_equal(12,YOWCL_Free_Core::extra('review'),'Review UI/runtime aligned');
+loyf_equal($legacy_map,get_option('loyalty_extra_levelup_points_rules'),'Legacy role evidence read-only'); loyf_equal('29',get_option('loyalty_extra_points_rules')['birthday_points'],'Save preserves dormant account'); loyf_equal(array('keep'=>'001'),get_option('loyalty_extra_reviews_gamification_rules')['context_rules'],'Save preserves dormant merged');
 // Both email directions; canonical customization and legacy preference retained.
 foreach (array('points_reward','points_deduct','level_update') as $family) { loyf_equal('yes', get_option('woocommerce_yowcl_loyalty_' . $family . '_settings')['enabled'], 'Legacy mail enabled'); }
 loyf_reset_feature('email_reward'); $legacy = get_option('loyalty_notification_email'); $original_legacy=$legacy; $legacy['points_update']=false; update_option('loyalty_notification_email',$legacy);
@@ -47,6 +61,9 @@ YOWCL_Free_Migrations::run(); $mail=get_option('woocommerce_yowcl_loyalty_points
 YOWCL_Free_Migrations::save('email_reward','woocommerce_yowcl_loyalty_points_reward_settings',array('enabled'=>'yes'));
 YOWCL_Free_Migrations::run(); loyf_equal('yes',get_option('woocommerce_yowcl_loyalty_points_reward_settings')['enabled'],'Merchant mail enablement authoritative');
 update_option('loyalty_notification_email',$original_legacy);
+// Already-warm native mailer recovers registration without duplicate instances/hooks.
+$warm=WC()->mailer(); $count=count($warm->get_emails()); $warm_ids=array_map('spl_object_hash',$warm->get_emails());
+$bridge=new YOSWC_Loyalty_Notifications_Email(); loyf_equal($count,count($warm->get_emails()),'Warm mailer count stable'); loyf_equal($warm_ids,array_map('spl_object_hash',$warm->get_emails()),'Warm instances reused');
 // One native transport for paired hooks, retaining public old observations.
 $mailer=WC()->mailer(); $emails=$mailer->get_emails();
 $families=array_filter(array_keys($emails),function($class){return 0===strpos($class,'YOWCL_WC_Email_Loyalty_');}); loyf_equal(3,count($families),'Only Free email families');
