@@ -439,7 +439,7 @@
     {
       "target": "inc/frontend/cart-checkout.php",
       "mode": "100644",
-      "sha256": "dcd233c5aa7f7dc1f606a63933fa88e7c744d2582091fc496629efb9a9067ab3"
+      "sha256": "6326c0029a990147d56702a433baf93a83e475f6ed3c62cffade522f33f50b19"
     },
     {
       "target": "inc/frontend/loyalty-info-bubble.php",

@@ -20,6 +20,7 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 	    }
 
     public function enqueue_scripts() {
+        if ( has_block( 'woocommerce/cart' ) || has_block( 'woocommerce/checkout' ) ) { return; }
         if (!wp_script_is('jquery', 'enqueued')) {
             wp_enqueue_script('jquery');
         }
