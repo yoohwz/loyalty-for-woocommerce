@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Exercise exact Git diffs, PR routing and the actual required-job shell gate."""
+import json
 import importlib.util
 import itertools
 import os
@@ -193,7 +194,7 @@ class PolicyTest(unittest.TestCase):
                                     env=dict(os.environ, LOY_HEAD=head), capture_output=True, text=True)
             self.assertEqual(0, result.returncode, result.stdout + result.stderr)
             self.assertIn('source_sha=' + head, result.stdout)
-            self.assertIn('files=50', result.stdout)
+            self.assertIn('files=' + str(len(json.loads((ROOT / 'config/free-import-manifest.json').read_text())['overlays']) + len(json.loads((ROOT / 'config/free-import-manifest.json').read_text())['imports'])), result.stdout)
 
     def test_package_step_preserved_and_failure_is_fatal(self):
         workflow = (ROOT / '.github/workflows/ci.yml').read_text()

@@ -35,7 +35,7 @@ case "$*" in
 esac
 exit 0
 ''',
-                'python3': '#!/bin/bash\necho 3c1aac240df03101561b856cddb603b1501fa41b\n',
+                'python3': '#!/bin/bash\nif [[ \"$*\" == *candidate.json* ]]; then exec ' + os.sys.executable + ' \"$@\"; fi\necho 3c1aac240df03101561b856cddb603b1501fa41b\n',
                 'mysql': '''#!/bin/bash
 echo "$*" >> "$CALLS"
 if [[ "$*" == *CREATE* && "$FAKE_FAIL" == create ]]; then exit 1; fi
@@ -45,9 +45,10 @@ if [[ "$*" == *DROP* && "$FAKE_FAIL" == cleanup ]]; then exit 1; fi
                 'php': '''#!/bin/bash
 echo "$*" >> "$CALLS"
 if [[ "$*" == *seed.php* && "$FAKE_FAIL" == seed ]]; then exit 1; fi
-if [[ "$*" == *characterization.php* ]]; then
+if [[ "$*" == *characterization.php* || "$*" == *hardened.php* ]]; then
  [[ "$FAKE_FAIL" != scenario ]] || exit 1
  echo '{"snapshot":"same"}' > "$LOYF_SNAPSHOT"
+ [[ "$*" != *hardened.php* ]] || echo '{"hardened_core":"PASS"}' > "$LOYF_SNAPSHOT"
  echo '{"raw":"same"}' > "$LOYF_RAW_SNAPSHOT"
  if [[ "$FAKE_FAIL" == mismatch && "$LOYF_SNAPSHOT" == *candidate.json ]]; then echo different > "$LOYF_SNAPSHOT"; fi
 fi
@@ -71,8 +72,9 @@ fi
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertEqual(2, calls.count('CREATE DATABASE'))
         self.assertEqual(2, calls.count('DROP DATABASE'))
-        self.assertEqual(2, calls.count('characterization.php'))
-        self.assertIn('baseline/candidate characterization PASS', result.stdout.decode())
+        self.assertEqual(1, calls.count('characterization.php'))
+        self.assertEqual(1, calls.count('hardened.php'))
+        self.assertIn('historical baseline and hardened candidate PASS', result.stdout.decode())
 
     def test_failure_cleanup_and_mismatch(self):
         for failure in ['create', 'seed', 'scenario', 'mismatch', 'cleanup']:

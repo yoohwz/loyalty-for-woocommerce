@@ -208,7 +208,8 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 	            wp_die();
 	        }
 	    
-	        $loyalty_points_input = isset($_POST['loyalty_points_input']) ? floatval( wp_unslash( $_POST['loyalty_points_input'] ) ) : 0;
+	        if ( ! YOWCL_Free_Core::owns() || ! isset( $_POST['loyalty_points_input'] ) || ! is_scalar( $_POST['loyalty_points_input'] ) || ! preg_match( '/^[0-9]+$/D', (string) $_POST['loyalty_points_input'] ) || strlen( (string) $_POST['loyalty_points_input'] ) > 8 ) { wp_send_json_error( array( 'message' => __( 'A valid whole points amount is required.', 'loyalty-for-woocommerce' ) ) ); }
+            $loyalty_points_input = isset($_POST['loyalty_points_input']) ? floatval( wp_unslash( $_POST['loyalty_points_input'] ) ) : 0;
 	    
 	        $user_id = get_current_user_id();
 	        $user_points = get_user_meta($user_id, 'user_points', true);
@@ -240,7 +241,7 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 	    }
 	    
 	    public function apply_points_to_cart_total($cart = null) {
-	        if (!is_user_logged_in()) {
+	        if (!is_user_logged_in() || ( defined( 'REST_REQUEST' ) && REST_REQUEST )) {
 	            return;
 	        }
 
@@ -260,7 +261,7 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 	        }
 
 	        $user_points = (float) get_user_meta(get_current_user_id(), 'user_points', true);
-	        if ($applied_points > $user_points) {
+	        if ($applied_points > $user_points + YOWCL_Order_Redemption::funded_selection_points()) {
 	            $this->clear_applied_points();
 	            return;
 	        }
@@ -287,7 +288,7 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 
 	    private function calculate_potential_earned_points($user_id) {
 	        $user = get_userdata($user_id);
-	        $user_role = !empty($user->roles) ? $user->roles[0] : '';
+	        $user_role = $user ? YOWCL_Helper_Roles::get_highest_loyalty_user_role( (int) $user->ID ) : 'customer';
 
         $earning_rules = maybe_unserialize(get_option('loyalty_points_earning_rules', []));
 
@@ -390,6 +391,7 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 	    }
 
 	    private function get_applied_points() {
+            if ( ! WC()->session || ! is_array( WC()->session->get( 'loyf_funded_selection' ) ) ) { return 0; }
 	        if (!WC()->session) {
 	            return 0.0;
 	        }
@@ -406,6 +408,11 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 	    }
 
 	    private function set_applied_points($points, $discount) {
+            if ( WC()->session ) {
+                $id = wp_generate_uuid4();
+                WC()->session->set( 'yowcl_checkout_id', $id );
+                WC()->session->set( 'loyf_funded_selection', array( 'id' => $id, 'points' => (int) $points, 'discount' => wc_format_decimal( $discount, wc_get_price_decimals() ), 'currency' => get_woocommerce_currency(), 'owner' => YOWCL_Order_Redemption::session_owner() ) );
+            }
 	        if (!WC()->session) {
 	            return;
 	        }
@@ -415,6 +422,7 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 	    }
 
 	    private function clear_applied_points() {
+            if ( WC()->session ) { WC()->session->set( 'loyf_funded_selection', null ); WC()->session->set( 'yowcl_checkout_id', null ); }
 	        if (!WC()->session) {
 	            return;
 	        }

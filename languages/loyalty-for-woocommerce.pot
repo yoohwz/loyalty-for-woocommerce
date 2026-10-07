@@ -9,49 +9,34 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-13T01:35:03+00:00\n"
+"POT-Creation-Date: 2026-10-07T04:58:31+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.9.0\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
 
 #. Plugin Name of the plugin
+#: loyalty-for-woocommerce.php
 msgid "Loyalty for WooCommerce"
 msgstr ""
 
 #. Plugin URI of the plugin
+#: loyalty-for-woocommerce.php
 msgid "https://wordpress.org/plugins/loyalty-for-woocommerce/"
 msgstr ""
 
 #. Description of the plugin
+#: loyalty-for-woocommerce.php
 msgid "Create a flexible loyalty program for WooCommerce—reward customers with points to boost repeat sales and customer retention."
 msgstr ""
 
 #. Author of the plugin
+#: loyalty-for-woocommerce.php
 msgid "YoOhw.com"
 msgstr ""
 
 #. Author URI of the plugin
+#: loyalty-for-woocommerce.php
 msgid "https://yoohw.com"
-msgstr ""
-
-#: inc/backend/actions/deduct-points.php:54
-msgid "Order is cancelled"
-msgstr ""
-
-#: inc/backend/actions/deduct-points.php:57
-msgid "Order is refunded"
-msgstr ""
-
-#: inc/backend/actions/deduct-points.php:60
-msgid "Order is failed"
-msgstr ""
-
-#: inc/backend/actions/deduct-points.php:63
-msgid "Order status change"
-msgstr ""
-
-#: inc/backend/actions/earn-points.php:73
-msgid "Purchase an order"
 msgstr ""
 
 #: inc/backend/actions/emails/notifications-email.php:39
@@ -65,6 +50,7 @@ msgstr ""
 
 #. translators: 1: Customer first name, 2: Earned points, 3: New total points, 4: Account URL
 #: inc/backend/actions/emails/notifications-email.php:44
+#, php-format
 msgid "Hi %1$s,<br><br>Your loyalty points have been updated!<br><br>You have earned <strong>%2$d points</strong> and now have a total of <strong>%3$d points</strong>.<br><br><a href=\"%4$s\">Click here to see points details.</a><br><br>Thank you for purchasing."
 msgstr ""
 
@@ -74,6 +60,7 @@ msgstr ""
 
 #. translators: 1: Customer first name, 2: Deducted points, 3: New total points, 4: Account URL
 #: inc/backend/actions/emails/notifications-email.php:88
+#, php-format
 msgid "Hi %1$s,<br><br>Your loyalty points have been updated!<br><br>You have deducted <strong>%2$d points</strong> and now have a total of <strong>%3$d points</strong>.<br><br><a href=\"%4$s\">Click here to see points details.</a><br><br>Thank you for reading."
 msgstr ""
 
@@ -87,31 +74,8 @@ msgstr ""
 
 #. translators: 1: Customer first name, 2: New loyalty level, 3: Total earned points, 4: Account URL
 #: inc/backend/actions/emails/notifications-email.php:136
+#, php-format
 msgid "Hi %1$s,<br><br>Your loyalty level has been updated to <strong>%2$s</strong>.<br><br>You have now earned a total of <strong>%3$d points</strong>.<br><br><a href=\"%4$s\">Click here to see your loyalty level details.</a><br><br>Keep up the great work and enjoy your rewards!"
-msgstr ""
-
-#: inc/backend/actions/extra-points/level-up.php:48
-msgid "Level up bonus for role:"
-msgstr ""
-
-#: inc/backend/actions/extra-points/log-in.php:40
-msgid "Daily login bonus"
-msgstr ""
-
-#: inc/backend/actions/extra-points/review.php:50
-msgid "Product review bonus"
-msgstr ""
-
-#: inc/backend/actions/extra-points/sign-up.php:27
-msgid "Sign-up bonus"
-msgstr ""
-
-#: inc/backend/actions/return-points.php:43
-msgid "Order is incomplete"
-msgstr ""
-
-#: inc/backend/actions/use-points.php:74
-msgid "Get a discount by using points"
 msgstr ""
 
 #: inc/backend/settings.php:26
@@ -205,7 +169,7 @@ msgid "Premium features"
 msgstr ""
 
 #: inc/backend/settings.php:240
-#: inc/backend/settings/general-add-remove-user-role.php:82
+#: inc/backend/settings/general-add-remove-user-role.php:72
 msgid "Loyalty levels"
 msgstr ""
 
@@ -666,6 +630,7 @@ msgstr ""
 
 #. translators: %s: Link to Permalink Settings page
 #: inc/backend/settings/customization.php:572
+#, php-format
 msgid "You may have to save changes at %s to make it work probably."
 msgstr ""
 
@@ -675,6 +640,7 @@ msgstr ""
 
 #. translators: %s: Link to Permalink Settings page
 #: inc/backend/settings/customization.php:584
+#, php-format
 msgid "You can setup %s."
 msgstr ""
 
@@ -706,10 +672,11 @@ msgstr ""
 
 #: inc/backend/settings/customization.php:642
 #: inc/backend/settings/extra-points.php:156
-#: inc/backend/settings/general-add-remove-user-role.php:18
-#: inc/backend/settings/general-add-remove-user-role.php:25
+#: inc/backend/settings/general-add-remove-user-role.php:19
+#: inc/backend/settings/general-add-remove-user-role.php:26
 #: inc/backend/settings/notification.php:49
-#: inc/backend/settings/tools.php:96
+#: inc/backend/settings/tools.php:130
+#: inc/backend/settings/tools.php:146
 msgid "Nonce verification failed. Please try again."
 msgstr ""
 
@@ -767,33 +734,33 @@ msgstr ""
 msgid "Inactivity win-back campaigns and achievement points"
 msgstr ""
 
-#: inc/backend/settings/general-add-remove-user-role.php:82
+#: inc/backend/settings/general-add-remove-user-role.php:72
 msgid "Add / Remove role"
 msgstr ""
 
-#: inc/backend/settings/general-add-remove-user-role.php:85
+#: inc/backend/settings/general-add-remove-user-role.php:75
 msgid "Add new"
 msgstr ""
 
-#: inc/backend/settings/general-add-remove-user-role.php:88
+#: inc/backend/settings/general-add-remove-user-role.php:78
 msgid "Role name"
 msgstr ""
 
-#: inc/backend/settings/general-add-remove-user-role.php:92
+#: inc/backend/settings/general-add-remove-user-role.php:82
 msgid "Role slug"
 msgstr ""
 
-#: inc/backend/settings/general-add-remove-user-role.php:97
+#: inc/backend/settings/general-add-remove-user-role.php:87
 msgid "Add new role"
 msgstr ""
 
-#: inc/backend/settings/general-add-remove-user-role.php:99
+#: inc/backend/settings/general-add-remove-user-role.php:89
 msgid "Remove"
 msgstr ""
 
-#: inc/backend/settings/general-add-remove-user-role.php:102
-#: inc/backend/settings/general-add-remove-user-role.php:121
-msgid "Remove role"
+#: inc/backend/settings/general-add-remove-user-role.php:92
+#: inc/backend/settings/general-add-remove-user-role.php:111
+msgid "Retire role"
 msgstr ""
 
 #: inc/backend/settings/general-earning-point-rules.php:22
@@ -813,7 +780,7 @@ msgstr ""
 #: inc/backend/settings/referrals.php:87
 #: inc/backend/settings/referrals.php:119
 #: inc/backend/settings/referrals.php:204
-#: inc/frontend/my-account.php:292
+#: inc/frontend/my-account.php:293
 msgid "points"
 msgstr ""
 
@@ -974,85 +941,129 @@ msgstr ""
 msgid "Premium adds referral links and referral coupons for referrer and referee rewards."
 msgstr ""
 
-#: inc/backend/settings/tools.php:23
-#: inc/backend/settings/tools.php:33
+#: inc/backend/settings/tools.php:26
+#: inc/backend/settings/tools.php:37
 msgid "Import"
 msgstr ""
 
-#: inc/backend/settings/tools.php:27
+#: inc/backend/settings/tools.php:30
 msgid "Import CSV"
 msgstr ""
 
+#: inc/backend/settings/tools.php:43
+msgid "Start another import"
+msgstr ""
+
+#: inc/backend/settings/tools.php:45
+msgid "Retry the original file to continue the current import. Start another import only after reviewing the previous results."
+msgstr ""
+
 #. translators: %1$s: URL to download the CSV sample file.
-#: inc/backend/settings/tools.php:41
+#: inc/backend/settings/tools.php:51
+#, php-format
 msgid "Download the <a href=\"%1$s\" target=\"_blank\" rel=\"noopener\">CSV sample file</a> and add the entries to the correct column."
 msgstr ""
 
-#: inc/backend/settings/tools.php:58
+#: inc/backend/settings/tools.php:68
 #: inc/frontend/loyalty-info-bubble.php:265
 msgid "Calculation"
 msgstr ""
 
-#: inc/backend/settings/tools.php:62
+#: inc/backend/settings/tools.php:72
 msgid "Loyalty level"
 msgstr ""
 
-#: inc/backend/settings/tools.php:65
+#: inc/backend/settings/tools.php:75
 msgid "Redefine"
 msgstr ""
 
-#: inc/backend/settings/tools.php:68
+#: inc/backend/settings/tools.php:78
 #: inc/frontend/my-account.php:207
 msgid "Loading..."
 msgstr ""
 
-#: inc/backend/settings/tools.php:69
+#: inc/backend/settings/tools.php:79
 msgid "Redefining... Please wait, DO NOT leave the page until finished."
 msgstr ""
 
-#: inc/backend/settings/tools.php:71
+#: inc/backend/settings/tools.php:81
 msgid "Redefine the loyalty levels based on the total earned points."
 msgstr ""
 
-#: inc/backend/settings/tools.php:100
+#: inc/backend/settings/tools.php:111
+msgid "Import recovery identity needs review."
+msgstr ""
+
+#: inc/backend/settings/tools.php:119
+#: inc/backend/settings/tools.php:150
 msgid "You do not have permission to import points."
 msgstr ""
 
-#: inc/backend/settings/tools.php:107
+#: inc/backend/settings/tools.php:120
+msgid "An import is running. Retry the current file later."
+msgstr ""
+
+#: inc/backend/settings/tools.php:134
+msgid "The current import changed. Reload and review its results."
+msgstr ""
+
+#: inc/backend/settings/tools.php:157
 msgid "No file was uploaded."
 msgstr ""
 
-#: inc/backend/settings/tools.php:113
+#: inc/backend/settings/tools.php:163
 msgid "Invalid file type. Please upload a CSV file."
 msgstr ""
 
-#: inc/backend/settings/tools.php:121
+#: inc/backend/settings/tools.php:171
 msgid "Could not initialize the WordPress filesystem."
 msgstr ""
 
-#: inc/backend/settings/tools.php:127
+#: inc/backend/settings/tools.php:177
 msgid "Could not open CSV file."
 msgstr ""
 
+#: inc/backend/settings/tools.php:182
+msgid "Invalid import identity or file size."
+msgstr ""
+
+#: inc/backend/settings/tools.php:186
+msgid "Import at most 500 rows per operation."
+msgstr ""
+
+#: inc/backend/settings/tools.php:191
+msgid "Invalid or duplicate CSV target. Whole non-negative balances are required."
+msgstr ""
+
+#: inc/backend/settings/tools.php:197
+msgid "This import identity belongs to different terms. Retry the original file."
+msgstr ""
+
+#: inc/backend/settings/tools.php:211
+msgid "Points imported from CSV."
+msgstr ""
+
 #. translators: %d: number of rows imported.
-#: inc/backend/settings/tools.php:160
+#: inc/backend/settings/tools.php:224
+#, php-format
 msgid "Successfully imported %d row(s)."
 msgstr ""
 
 #. translators: %d: number of rows that failed to import.
-#: inc/backend/settings/tools.php:170
+#: inc/backend/settings/tools.php:234
+#, php-format
 msgid "%d row(s) failed to import."
 msgstr ""
 
-#: inc/backend/settings/tools.php:181
+#: inc/backend/settings/tools.php:245
 msgid "You do not have permission to perform this action."
 msgstr ""
 
-#: inc/backend/settings/tools.php:242
+#: inc/backend/settings/tools.php:306
 msgid "Loyalty levels have been successfully redefined."
 msgstr ""
 
-#: inc/backend/settings/tools.php:250
+#: inc/backend/settings/tools.php:314
 msgid "An error occurred redefining loyalty levels."
 msgstr ""
 
@@ -1094,7 +1105,7 @@ msgid "User Points"
 msgstr ""
 
 #: inc/backend/users/user-profile-points.php:62
-#: inc/frontend/my-account.php:278
+#: inc/frontend/my-account.php:279
 msgid "Current points"
 msgstr ""
 
@@ -1111,12 +1122,12 @@ msgid "Points Log"
 msgstr ""
 
 #: inc/backend/users/user-profile-points.php:93
-#: inc/frontend/my-account.php:323
+#: inc/frontend/my-account.php:324
 msgid "Date"
 msgstr ""
 
 #: inc/backend/users/user-profile-points.php:94
-#: inc/frontend/my-account.php:326
+#: inc/frontend/my-account.php:327
 msgid "Amount"
 msgstr ""
 
@@ -1125,7 +1136,7 @@ msgid "Order ID"
 msgstr ""
 
 #: inc/backend/users/user-profile-points.php:96
-#: inc/frontend/my-account.php:325
+#: inc/frontend/my-account.php:326
 msgid "Description"
 msgstr ""
 
@@ -1174,54 +1185,32 @@ msgstr ""
 msgid "Advanced point history log"
 msgstr ""
 
-#. translators: %s: Loyalty level role.
-#: inc/backend/users/user-profile-points.php:202
-#: inc/backend/users/user-profile-points.php:269
-#: inc/backend/users/user-profile-points.php:351
-#: inc/backend/users/users-points.php:227
-#: inc/backend/users/users-points.php:295
-msgid "Level updated: %s"
-msgstr ""
-
-#: inc/backend/users/user-profile-points.php:224
-#: inc/backend/users/user-profile-points.php:291
-#: inc/backend/users/users-points.php:249
-#: inc/backend/users/users-points.php:317
-msgid "Could not log points action."
-msgstr ""
-
-#: inc/backend/users/user-profile-points.php:227
-#: inc/backend/users/users-points.php:252
-msgid "Points rewarded successfully!"
-msgstr ""
-
-#: inc/backend/users/user-profile-points.php:233
-#: inc/backend/users/user-profile-points.php:301
+#: inc/backend/users/user-profile-points.php:171
 #: inc/backend/users/users-points.php:173
-#: inc/backend/users/users-points.php:191
-#: inc/backend/users/users-points.php:259
+#: inc/cores/helper/free-admin.php:6
 msgid "Unauthorized user"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:294
-#: inc/backend/users/users-points.php:320
-msgid "Points deducted successfully!"
-msgstr ""
-
-#: inc/backend/users/user-profile-points.php:308
+#: inc/backend/users/user-profile-points.php:178
 msgid "Invalid user ID."
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:331
+#: inc/backend/users/user-profile-points.php:203
 msgid "Admin rewarded"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:333
+#: inc/backend/users/user-profile-points.php:205
 msgid "Admin deducted"
 msgstr ""
 
-#: inc/backend/users/user-profile-points.php:371
-#: inc/frontend/my-account.php:365
+#. translators: %s: Loyalty level role.
+#: inc/backend/users/user-profile-points.php:223
+#, php-format
+msgid "Level updated: %s"
+msgstr ""
+
+#: inc/backend/users/user-profile-points.php:243
+#: inc/frontend/my-account.php:368
 msgid "No points log found."
 msgstr ""
 
@@ -1245,6 +1234,129 @@ msgstr ""
 msgid "User not found"
 msgstr ""
 
+#: inc/cores/helper/free-admin.php:10
+msgid "A valid whole points amount and operation identity are required."
+msgstr ""
+
+#: inc/cores/helper/free-admin.php:15
+msgid "Points require recovery. Retry the same operation after resolving the reported condition."
+msgstr ""
+
+#: inc/cores/helper/free-admin.php:17
+msgid "Points were committed; level projection requires retry of the same operation."
+msgstr ""
+
+#: inc/cores/helper/free-admin.php:24
+msgid "Points deducted successfully!"
+msgstr ""
+
+#: inc/cores/helper/free-admin.php:24
+msgid "Points rewarded successfully!"
+msgstr ""
+
+#: inc/cores/helper/free-core.php:67
+msgid "Sign-up bonus"
+msgstr ""
+
+#: inc/cores/helper/free-core.php:67
+msgid "Daily login bonus"
+msgstr ""
+
+#: inc/cores/helper/free-core.php:67
+msgid "Product review bonus"
+msgstr ""
+
+#: inc/cores/helper/free-core.php:67
+msgid "Level up bonus"
+msgstr ""
+
+#: inc/cores/helper/free-core.php:76
+msgid "Level up bonus for role:"
+msgstr ""
+
+#: inc/cores/helper/free-core.php:82
+#: inc/frontend/cart-checkout.php:275
+msgid "Points used"
+msgstr ""
+
+#: inc/cores/helper/free-core.php:84
+msgid "Please remove point redemption or use Classic checkout to place this order."
+msgstr ""
+
+#: inc/cores/helper/free-order-actions.php:36
+msgid "Purchase an order"
+msgstr ""
+
+#: inc/cores/helper/order-deduction.php:39
+msgid "Order is cancelled"
+msgstr ""
+
+#: inc/cores/helper/order-deduction.php:39
+msgid "Order is refunded"
+msgstr ""
+
+#: inc/cores/helper/order-deduction.php:39
+msgid "Order is failed"
+msgstr ""
+
+#: inc/cores/helper/order-deduction.php:40
+msgid "Order status change"
+msgstr ""
+
+#: inc/cores/helper/order-redemption.php:212
+msgid "Please sign in and reapply your Loyalty redemption."
+msgstr ""
+
+#: inc/cores/helper/order-redemption.php:217
+msgid "This Loyalty redemption cannot be reused. Please start a new checkout."
+msgstr ""
+
+#: inc/cores/helper/order-redemption.php:245
+msgid "The points for this order were returned. Please create a new order."
+msgstr ""
+
+#: inc/cores/helper/order-redemption.php:266
+msgid "Get a discount by using points"
+msgstr ""
+
+#: inc/cores/helper/order-redemption.php:272
+msgid "Could not commit Loyalty points. Please retry this checkout."
+msgstr ""
+
+#: inc/cores/helper/order-redemption.php:352
+msgid "Order is incomplete; redeemed points returned"
+msgstr ""
+
+#: inc/cores/helper/order-redemption.php:383
+msgid "Historical Loyalty redemption has no atomic debit proof. Manual points-return review required."
+msgstr ""
+
+#: inc/cores/helper/order-redemption.php:409
+msgid "Loyalty payment outcome is uncertain. Points remain charged; merchant must reconcile the payment and order before returning points."
+msgstr ""
+
+#: inc/cores/helper/order-redemption.php:413
+msgid "Loyalty points return requires recovery. Retry the order status action after restoring storage."
+msgstr ""
+
+#: inc/cores/helper/order-redemption.php:445
+msgid "Your points were returned. Reapply redemption and start a new checkout."
+msgstr ""
+
+#: inc/cores/helper/order-redemption.php:467
+msgid "The points for this order were returned. Please start a new checkout."
+msgstr ""
+
+#: inc/cores/helper/order-redemption.php:481
+msgid "This Loyalty order cannot be paid. Please start a new checkout."
+msgstr ""
+
+#. translators: %s: Gateway transaction reference, when supplied.
+#: inc/cores/helper/order-redemption.php:516
+#, php-format
+msgid "Late payment after Loyalty redemption return or incomplete recovery; manual review required. Merchant must resolve the payment. Reference: %s"
+msgstr ""
+
 #: inc/cores/notices.php:46
 msgid "Loyalty for WooCommerce requires WooCommerce to be installed and active."
 msgstr ""
@@ -1252,12 +1364,14 @@ msgstr ""
 #. translators: %d: Minimum points.
 #: inc/frontend/cart-checkout.php:42
 #: inc/frontend/cart-checkout.php:65
+#, php-format
 msgid "You must apply at least %d points."
 msgstr ""
 
 #. translators: %d: Maximum points.
 #: inc/frontend/cart-checkout.php:44
 #: inc/frontend/cart-checkout.php:67
+#, php-format
 msgid "You cannot apply more than %d points."
 msgstr ""
 
@@ -1266,6 +1380,7 @@ msgstr ""
 #: inc/frontend/cart-checkout.php:73
 #: inc/frontend/cart-checkout.php:165
 #: inc/frontend/cart-checkout.php:190
+#, php-format
 msgid "You will earn %d points with this purchase."
 msgstr ""
 
@@ -1284,6 +1399,7 @@ msgstr ""
 
 #. translators: %d: Available points.
 #: inc/frontend/cart-checkout.php:130
+#, php-format
 msgid "You have %d points available."
 msgstr ""
 
@@ -1293,6 +1409,7 @@ msgstr ""
 
 #. translators: %d: Applied points.
 #: inc/frontend/cart-checkout.php:142
+#, php-format
 msgid "%d points are applied to this cart."
 msgstr ""
 
@@ -1305,37 +1422,37 @@ msgid "Apply points"
 msgstr ""
 
 #: inc/frontend/cart-checkout.php:202
-#: inc/frontend/cart-checkout.php:433
+#: inc/frontend/cart-checkout.php:441
 msgid "Nonce verification failed."
 msgstr ""
 
 #: inc/frontend/cart-checkout.php:207
-#: inc/frontend/cart-checkout.php:428
+#: inc/frontend/cart-checkout.php:436
 msgid "User not logged in."
 msgstr ""
 
-#: inc/frontend/cart-checkout.php:219
+#: inc/frontend/cart-checkout.php:211
+msgid "A valid whole points amount is required."
+msgstr ""
+
+#: inc/frontend/cart-checkout.php:220
 msgid "Point redemption is not configured."
 msgstr ""
 
-#: inc/frontend/cart-checkout.php:224
-#: inc/frontend/cart-checkout.php:230
+#: inc/frontend/cart-checkout.php:225
+#: inc/frontend/cart-checkout.php:231
 msgid "Invalid points amount."
 msgstr ""
 
-#: inc/frontend/cart-checkout.php:237
+#: inc/frontend/cart-checkout.php:238
 msgid "Points applied successfully."
 msgstr ""
 
-#: inc/frontend/cart-checkout.php:274
-msgid "Points used"
-msgstr ""
-
-#: inc/frontend/cart-checkout.php:279
+#: inc/frontend/cart-checkout.php:280
 msgid "User not logged in"
 msgstr ""
 
-#: inc/frontend/cart-checkout.php:442
+#: inc/frontend/cart-checkout.php:450
 msgid "Points removed successfully."
 msgstr ""
 
@@ -1361,6 +1478,7 @@ msgstr ""
 
 #. translators: %d: Number of visible reward details.
 #: inc/frontend/loyalty-info-bubble.php:109
+#, php-format
 msgid "%d details"
 msgstr ""
 
@@ -1400,6 +1518,7 @@ msgstr ""
 
 #. translators: %s: Points amount.
 #: inc/frontend/loyalty-info-bubble.php:226
+#, php-format
 msgid "Unlock at %s earned."
 msgstr ""
 
@@ -1446,6 +1565,7 @@ msgstr ""
 
 #. translators: 1: Loyalty level, 2: Points amount.
 #: inc/frontend/loyalty-info-bubble.php:284
+#, php-format
 msgid "Reach %1$s: %2$s"
 msgstr ""
 
@@ -1463,6 +1583,7 @@ msgstr ""
 
 #. translators: 1: Points amount, 2: Money amount.
 #: inc/frontend/loyalty-info-bubble.php:316
+#, php-format
 msgid "%1$s can be used for %2$s off."
 msgstr ""
 
@@ -1472,6 +1593,7 @@ msgstr ""
 
 #. translators: %s: Place list.
 #: inc/frontend/loyalty-info-bubble.php:337
+#, php-format
 msgid "Customers can use points on: %s."
 msgstr ""
 
@@ -1486,6 +1608,7 @@ msgstr ""
 
 #. translators: 1: Bonus label, 2: Points amount.
 #: inc/frontend/loyalty-info-bubble.php:361
+#, php-format
 msgid "%1$s: %2$s"
 msgstr ""
 
@@ -1496,11 +1619,13 @@ msgstr ""
 
 #. translators: 1: Loyalty level, 2: Points amount, 3: Money amount.
 #: inc/frontend/loyalty-info-bubble.php:383
+#, php-format
 msgid "%1$s members earn %2$s for every %3$s spent."
 msgstr ""
 
 #. translators: 1: Points amount, 2: Loyalty level.
 #: inc/frontend/loyalty-info-bubble.php:403
+#, php-format
 msgid "%1$s to reach %2$s."
 msgstr ""
 
@@ -1514,11 +1639,13 @@ msgstr ""
 
 #. translators: 1: Points number, 2: Point label.
 #: inc/frontend/loyalty-info-bubble.php:689
+#, php-format
 msgid "%1$s %2$s"
 msgstr ""
 
 #. translators: %s: Customer first name.
 #: inc/frontend/my-account.php:169
+#, php-format
 msgid "%s's Reward Summary"
 msgstr ""
 
@@ -1527,7 +1654,7 @@ msgid "My Reward Summary"
 msgstr ""
 
 #: inc/frontend/my-account.php:208
-#: inc/frontend/my-account.php:375
+#: inc/frontend/my-account.php:378
 msgid "Load more"
 msgstr ""
 
@@ -1539,41 +1666,48 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: inc/frontend/my-account.php:284
+#: inc/frontend/my-account.php:226
+msgid "Your points balance needs review. Please contact the store before using points."
+msgstr ""
+
+#: inc/frontend/my-account.php:285
 msgid "Earned points"
 msgstr ""
 
-#: inc/frontend/my-account.php:292
+#: inc/frontend/my-account.php:293
 msgid "To next level"
 msgstr ""
 
-#: inc/frontend/my-account.php:294
+#: inc/frontend/my-account.php:295
 msgid "Congratulations! You reached the highest level."
 msgstr ""
 
 #. translators: 1: Points left to reach next level, 2: Next level.
-#: inc/frontend/my-account.php:304
+#: inc/frontend/my-account.php:305
+#, php-format
 msgid "Earn %1$s points more to reach %2$s level."
 msgstr ""
 
-#: inc/frontend/my-account.php:312
+#: inc/frontend/my-account.php:313
 msgid "Thank you for your loyalty. Hope you enjoy the benefits!"
 msgstr ""
 
-#: inc/frontend/my-account.php:324
+#: inc/frontend/my-account.php:325
 msgid "Order"
 msgstr ""
 
-#: inc/frontend/my-account.php:402
+#: inc/frontend/my-account.php:405
 msgid "No more points log found."
 msgstr ""
 
 #. translators: %d: Points customers can earn by purchasing the product.
 #: inc/frontend/product-message.php:84
+#, php-format
 msgid "Earn<b>&nbsp;%d points&nbsp;</b>when you purchase this product"
 msgstr ""
 
 #. translators: Earning points.
 #: inc/frontend/shop-message.php:50
+#, php-format
 msgid "<b>%d&nbsp;</b> points"
 msgstr ""

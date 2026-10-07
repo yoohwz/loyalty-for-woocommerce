@@ -42,6 +42,7 @@ class ImportContractTest(unittest.TestCase):
         self.data = b"<?php\nclass Shared_Core { public static function label() { $owner = 'wc-loyalty'; return __('wc-loyalty', 'wc-loyalty'); } }\n"
         file.write_bytes(self.data); self.sha = commit(self.upstream)
         self.manifest = copy.deepcopy(contract.load_manifest())
+        self.manifest['phase'] = 'contract-only'
         self.manifest['upstream']['sha'] = self.sha
         self.manifest['upstream']['tree'] = git(self.upstream, 'rev-parse', self.sha + '^{tree}')
         self.manifest['upstream_inventory'] = {self.source: dict(contract.git_inventory(self.upstream, self.sha)[self.source], decision='import')}
@@ -63,8 +64,8 @@ class ImportContractTest(unittest.TestCase):
 
     def test_current_manifest_and_source_identity(self):
         manifest = contract.load_manifest()
-        self.assertEqual(5, len(manifest['imports']))
-        self.assertEqual(50, contract.verify_tree(ROOT, manifest, source=True))
+        self.assertEqual(15, len(manifest['imports']))
+        self.assertEqual(len(manifest['overlays']) + len(manifest['imports']), contract.verify_tree(ROOT, manifest, source=True))
         self.assertEqual({'import', 'reference-only', 'forbidden', 'excluded'}, {row['decision'] for row in manifest['upstream_inventory'].values()})
 
     def test_literal_translation_domain_only_and_determinism(self):
@@ -181,9 +182,9 @@ __ ('wc-loyalty', 'other-domain');
     def test_stage_reproducible_external_only_and_does_not_mutate_checkout(self):
         before = git(self.free, 'status', '--porcelain')
         result = contract.stage(self.upstream, self.sha, self.free, self.head, self.output, self.manifest)
-        self.assertEqual(51, result['files'])
+        self.assertEqual(len(self.manifest['overlays']) + 1, result['files'])
         root = self.output / 'loyalty-for-woocommerce'
-        self.assertEqual(51, contract.verify_tree(root, self.manifest, 'projection'))
+        self.assertEqual(len(self.manifest['overlays']) + 1, contract.verify_tree(root, self.manifest, 'projection'))
         other = self.work / 'other'; other.mkdir()
         contract.stage(self.upstream, self.sha, self.free, self.head, other, self.manifest)
         first = {str(p.relative_to(root)): p.read_bytes() for p in root.rglob('*') if p.is_file()}
@@ -232,7 +233,7 @@ __ ('wc-loyalty', 'other-domain');
 
     def test_package_rejects_metadata_junk_and_source_allows_untracked_os_junk(self):
         file = self.free / 'inc/.DS_Store'; file.write_bytes(b'OS metadata')
-        self.assertEqual(50, contract.verify_tree(self.free, self.manifest, source=True))
+        self.assertEqual(len(self.manifest['overlays']), contract.verify_tree(self.free, self.manifest, source=True))
         with self.assertRaises(ValueError): contract.verify_tree(self.free, self.manifest)
 
 

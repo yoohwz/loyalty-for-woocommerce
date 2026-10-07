@@ -114,7 +114,7 @@ class YOSWC_Loyalty_Frontend {
 
 	public function get_user_role() {
 		$user = wp_get_current_user();
-		return !empty($user->roles) ? $user->roles[0] : 'customer';
+		return YOWCL_Helper_Roles::get_highest_loyalty_user_role( (int) $user->ID ) ?: 'customer';
 	}
 	
 }

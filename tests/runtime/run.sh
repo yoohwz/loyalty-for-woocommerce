@@ -25,6 +25,7 @@ cleanup() {
 }
 trap cleanup EXIT
 export MYSQL_PWD="$LOY_DB_PASSWORD"
+export LOYF_WP_CLI_PHAR="$tmp/wp.phar"
 export LOYF_FIXTURE="$repo/tests/fixtures/free-1.2.2.json"
 curl -fsSL --retry 3 https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar -o "$tmp/wp.phar"
 wp() { php "$tmp/wp.phar" --path="$site" "$@"; }
@@ -51,18 +52,25 @@ for phase in baseline candidate; do
     wp config set DOING_AJAX true --raw --quiet
     wp plugin activate woocommerce --quiet
     wp eval-file "$repo/tests/runtime/seed.php" --quiet
+    if [[ "$phase" == candidate ]]; then wp eval-file "$repo/tests/runtime/pre-cutover.php" --quiet; fi
     wp plugin activate loyalty-for-woocommerce --quiet
     export LOYF_SNAPSHOT="$tmp/$phase.json" LOYF_RAW_SNAPSHOT="$tmp/$phase-raw.json"
     echo "phase=$phase candidate=$sha wp=6.8.3 woo=9.9.5 php=$(php -r 'echo PHP_VERSION;')"
-    wp eval-file "$repo/tests/runtime/characterization.php" --quiet
+    scenario=characterization.php
+    [[ "$phase" != candidate ]] || scenario=hardened.php
+    wp eval-file "$repo/tests/runtime/$scenario" --quiet
     test -s "$LOYF_SNAPSHOT" && test -s "$LOYF_RAW_SNAPSHOT"
 done
 cmp "$repo/tests/fixtures/free-1.2.2-expected.json" "$tmp/baseline.json"
-cmp "$tmp/baseline.json" "$tmp/candidate.json"
+python3 - "$tmp/candidate.json" <<'PYJSON'
+import json, sys
+with open(sys.argv[1]) as f: result=json.load(f)
+assert result == {'hardened_core': 'PASS'}, result
+PYJSON
 # Optional reusable evidence: raw stable IDs/dates/order/user data for later transition tasks.
 if [[ -n "${LOYF_RUNTIME_ARTIFACTS:-}" ]]; then
     [[ "$LOYF_RUNTIME_ARTIFACTS" == /* && "$LOYF_RUNTIME_ARTIFACTS" != "$repo"* ]] || { echo 'Artifacts must be outside source.' >&2; exit 2; }
     mkdir -p "$LOYF_RUNTIME_ARTIFACTS"
     cp "$tmp/"*.json "$LOYF_RUNTIME_ARTIFACTS/"
 fi
-echo 'FREE-1.2.2 baseline/candidate characterization PASS'
+echo 'FREE-1.2.2 historical baseline and hardened candidate PASS'

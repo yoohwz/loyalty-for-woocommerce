@@ -36,13 +36,14 @@ class YOSWC_Loyalty_User_Profile_Points {
 			$user = get_userdata($user_id);
 	
 			if ($user) {
-				$script_version = '1.2';
+				$script_version = hash_file( 'sha256', __DIR__ . '/../../../js/user-profile-points-modal.js' );
 					wp_enqueue_script('points-modal-script', plugin_dir_url(__FILE__) . '../../../js/user-profile-points-modal.js', ['jquery'], $script_version, true);
 	
 				wp_localize_script('points-modal-script', 'ajax_object', [
 					'user_id' => $user->ID,
 					'ajaxurl' => admin_url('admin-ajax.php'),
-					'security' => wp_create_nonce('ajax_nonce'), 
+					'actor_id' => get_current_user_id(),
+                    'security' => wp_create_nonce('ajax_nonce'),
 					'add_points_text' => esc_js(__('Add points to the user', 'loyalty-for-woocommerce')),
 					'remove_points_text' => esc_js(__('Remove points from the user', 'loyalty-for-woocommerce')),
 					'empty_points_alert' => esc_js(__('The points field cannot be empty.', 'loyalty-for-woocommerce')),
@@ -160,139 +161,9 @@ class YOSWC_Loyalty_User_Profile_Points {
 		return apply_filters( 'yoswc_loyalty_premium_url', 'https://yoohw.com/product/woocommerce-loyalty-points-and-rewards/' );
 	}
 
-	public function reward_user_points() {
-		check_ajax_referer('ajax_nonce', 'security');
-		if (!current_user_can('manage_options')) {
-			wp_send_json_error('Unauthorized user');
-			return;
-		}
+	public function reward_user_points() { YOWCL_Free_Admin::operate( false ); }
 	
-		$user_id = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
-		$earned_points = isset($_POST['points']) ? intval($_POST['points']) : 0;
-		$description = isset($_POST['description']) ? sanitize_text_field(wp_unslash($_POST['description'])) : '';		
-	
-		$current_points = intval(get_user_meta($user_id, 'user_points', true));
-		$earning_points = intval(get_user_meta($user_id, 'user_earning_points', true));
-		$new_points = $current_points + $earned_points;
-		$new_earning_points =  $earning_points + $earned_points;
-	
-		update_user_meta($user_id, 'user_points', $new_points);
-		update_user_meta($user_id, 'user_earning_points', $new_earning_points);
-
-		$loyalty_levels_rules = maybe_unserialize(get_option('loyalty_levels_rules', []));
-		if (is_array($loyalty_levels_rules)) {
-			$sorted_rules = [];
-			foreach ($loyalty_levels_rules as $level => $rule) {
-				$sorted_rules[$level] = (int) $rule['from'];
-			}
-			asort($sorted_rules);
-	
-			$updated_level = null;
-			foreach ($sorted_rules as $level => $threshold) {
-				if ($new_earning_points >= $threshold) {
-					$updated_level = $level;
-				}
-			}
-	
-			$user = new WP_User($user_id);
-			if ($updated_level && $user->roles[0] !== $updated_level) {
-				$user->set_role($updated_level);
-				$description .= sprintf(
-					/* translators: %s: Loyalty level role. */
-					__('Level updated: %s', 'loyalty-for-woocommerce'),
-					$updated_level
-				);
-
-				do_action('yoswc_loyalty_level_update', $user_id, $updated_level, $new_earning_points);
-			}
-		}
-
-		$order_id = null;
-
-		do_action('yoswc_loyalty_points_reward', $user_id, $earned_points, $new_points, $order_id);
-	
-		$log_status = YOSWC_Loyalty_Database::insert_points_log(
-			array(
-				'user_id' => $user_id,
-				'action' => 'admin_reward',
-				'amount' => $earned_points,
-				'description' => $description,
-			)
-		);
-	
-		if ($log_status === false) {
-			wp_send_json_error(__('Could not log points action.', 'loyalty-for-woocommerce'));
-		}
-	
-		wp_send_json_success(['message' => __('Points rewarded successfully!', 'loyalty-for-woocommerce')]);
-	}
-	
-	public function deduct_user_points() {
-		check_ajax_referer('ajax_nonce', 'security');
-		if (!current_user_can('manage_options')) {
-			wp_send_json_error(__('Unauthorized user', 'loyalty-for-woocommerce'));
-			return;
-		}
-	
-		$user_id = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
-		$deducted_points = isset($_POST['points']) ? intval($_POST['points']) : 0;
-		$description = isset($_POST['description']) ? sanitize_text_field(wp_unslash($_POST['description'])) : '';
-		
-		$current_points = intval(get_user_meta($user_id, 'user_points', true));
-		$earning_points = intval(get_user_meta($user_id, 'user_earning_points', true));
-		$new_points = max(0, $current_points - $deducted_points);
-		$new_earning_points = max(0, $earning_points - $deducted_points);
-	
-		update_user_meta($user_id, 'user_points', $new_points);
-		update_user_meta($user_id, 'user_earning_points', $new_earning_points);
-
-		$loyalty_levels_rules = maybe_unserialize(get_option('loyalty_levels_rules', []));
-		if (is_array($loyalty_levels_rules)) {
-			$sorted_rules = [];
-			foreach ($loyalty_levels_rules as $level => $rule) {
-				$sorted_rules[$level] = (int) $rule['from'];
-			}
-			asort($sorted_rules);
-	
-			$updated_level = null;
-			foreach ($sorted_rules as $level => $threshold) {
-				if ($new_earning_points >= $threshold) {
-					$updated_level = $level;
-				}
-			}
-	
-			$user = new WP_User($user_id);
-			if ($updated_level && $user->roles[0] !== $updated_level) {
-				$user->set_role($updated_level);
-					$description .= sprintf(
-						/* translators: %s: Loyalty level role. */
-						__('Level updated: %s', 'loyalty-for-woocommerce'),
-						$updated_level
-					);
-
-				do_action('yoswc_loyalty_level_update', $user_id, $updated_level, $new_earning_points);
-			}
-		}
-
-		$order_id = null;
-
-		do_action('yoswc_loyalty_points_deduct', $user_id, $deducted_points, $new_points, $order_id);
-	
-		$log_status = YOSWC_Loyalty_Database::insert_points_log(
-			array(
-				'user_id' => $user_id,
-				'action' => 'admin_deduct',
-				'amount' => $deducted_points,
-				'description' => $description,
-			)
-		);
-	
-		if ($log_status === false) {
-			wp_send_json_error(__('Could not log points action.', 'loyalty-for-woocommerce'));
-		}
-	
-		wp_send_json_success(['message' => __('Points deducted successfully!', 'loyalty-for-woocommerce')]);
-	}
+	public function deduct_user_points() { YOWCL_Free_Admin::operate( true ); }
 	
 	public function get_points_log() {
 		check_ajax_referer('ajax_nonce', 'security');
@@ -319,6 +190,8 @@ class YOSWC_Loyalty_User_Profile_Points {
 				$formatted_date = date_i18n(get_option('date_format') . ' ' . get_option('time_format'), strtotime($entry->date));
 	
 				$amount = (in_array($entry->action, ['admin_reward', 'order_reward', 'points_return', 'sign_up_reward', 'daily_login_reward', 'review_reward', 'level_up_reward']) ? '+' : '-') . abs($entry->amount);
+                $explicit_amount = YOWCL_Free_Core::history_amount( $entry );
+                if ( null !== $explicit_amount ) { $amount = $explicit_amount; }
 	
 				if ($entry->order_id == 0) {
 					$order_id = '-';
