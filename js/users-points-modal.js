@@ -64,20 +64,21 @@ jQuery(document).ready(function($) {
 		e.preventDefault(); // Prevent default action
 		const points = $('#points-amount').val(); // Get the points value
 		const description = $('#points-description').val();
-        const actorScope = window.location.origin + ':' + ajax_object.security + ':' + ($(this).data('user-id') || ajax_object.user_id) + ':' + actionType;
-        let retained = JSON.parse(sessionStorage.getItem('loyf-admin:' + actorScope) || 'null');
-        if (retained && (retained.points !== points || retained.description !== description)) { alert(ajax_object.request_error); return; }
-        if (!retained) { retained = {id: crypto.randomUUID(), points, description}; sessionStorage.setItem('loyf-admin:' + actorScope, JSON.stringify(retained)); }
-        const operationId = retained.id; // Get the description value
+ // Get the description value
 		const userId = $(this).data('user-id'); // Get the user ID from the button
 	
 		// Check if the points field is empty
-		if (!points || points <= 0) {
+		if (!/^[1-9][0-9]{0,7}$/.test(points)) {
 			alert(ajax_object.empty_points_alert); // Use the translatable alert message
 			return; // Exit the function
 		}
 	
-		if (actionType === 'reward') {
+		        const actorScope = window.location.origin + ':' + ajax_object.security + ':' + ($(this).data('user-id') || ajax_object.user_id) + ':' + actionType;
+        let retained = JSON.parse(sessionStorage.getItem('loyf-admin:' + actorScope) || 'null');
+        if (retained && (retained.points !== points || retained.description !== description)) { alert(ajax_object.request_error); return; }
+        if (!retained) { retained = {id: (crypto.randomUUID ? crypto.randomUUID() : '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16))), points, description}; sessionStorage.setItem('loyf-admin:' + actorScope, JSON.stringify(retained)); }
+        const operationId = retained.id;
+        if (actionType === 'reward') {
 			$.ajax({
 				url: ajax_object.ajaxurl,
 				type: 'POST',
@@ -91,7 +92,7 @@ jQuery(document).ready(function($) {
 				},
 				success: function(response) {
 					if (response.success) {
-						sessionStorage.removeItem('loyf-admin:' + actorScope);
+						if (JSON.parse(sessionStorage.getItem('loyf-admin:' + actorScope) || 'null')?.id === operationId) { sessionStorage.removeItem('loyf-admin:' + actorScope); }
                         alert(response.data.message); // Display success message
 						closeModal();
 						location.reload(); // Refresh the page after closing the modal
@@ -117,7 +118,7 @@ jQuery(document).ready(function($) {
 				},
 				success: function(response) {
 					if (response.success) {
-						sessionStorage.removeItem('loyf-admin:' + actorScope);
+						if (JSON.parse(sessionStorage.getItem('loyf-admin:' + actorScope) || 'null')?.id === operationId) { sessionStorage.removeItem('loyf-admin:' + actorScope); }
                         alert(response.data.message); // Display success message
 						closeModal();
 						location.reload(); // Refresh the page after closing the modal

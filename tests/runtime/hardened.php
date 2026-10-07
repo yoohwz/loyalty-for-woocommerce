@@ -63,6 +63,67 @@ foreach ( array( 'event_inserted', 'available_written', 'balances_written' ) as 
     loyf_equal( 'busy', $result['status'], 'Rollback retry classification' ); loyf_balance( $user, 26, 26, 'Rollback ' . $step );
     loyf_equal( null, YOWCL_Points_Transaction::find( 'fixture:rollback:' . $step ), 'Rollback removes event' );
 }
+// Post-commit observers cannot undo value or turn an applied operation into failure.
+$observer = function () { throw new RuntimeException( 'Observer failure' ); };
+add_action( 'yowcl_points_log_created', $observer );
+$result = YOWCL_Points_Transaction::apply( (int) $user, 1, 1, 'fixture:observer' );
+remove_action( 'yowcl_points_log_created', $observer );
+loyf_equal( 'applied', $result['status'], 'Observer cannot undo commit' ); loyf_balance( $user, 27, 27, 'Observer value committed' );
+// Privileged native AJAX uses the original nonce/capability and a stable canonical UUID.
+$operation = wp_generate_uuid4(); $admin_nonce = wp_create_nonce( 'ajax_nonce' );
+loyf_equal( false, loyf_ajax( 'wp_ajax_reward_user_points', array( 'security' => $admin_nonce, 'user_id' => $user, 'points' => '4', 'operation_id' => $operation ) )['success'], 'Customer admin denial' );
+loyf_balance( $user, 27, 27, 'Denied request no value' );
+wp_set_current_user( 1 ); $admin_nonce = wp_create_nonce( 'ajax_nonce' );
+$request = array( 'security' => $admin_nonce, 'user_id' => $user, 'points' => '4', 'operation_id' => $operation );
+loyf_equal( true, loyf_ajax( 'wp_ajax_reward_user_points', $request )['success'], 'Authorized manual credit' );
+loyf_equal( true, loyf_ajax( 'wp_ajax_reward_user_points', $request )['success'], 'Manual credit replay' );
+loyf_balance( $user, 31, 31, 'Manual credit once' );
+$request['points'] = '5'; loyf_equal( false, loyf_ajax( 'wp_ajax_reward_user_points', $request )['success'], 'Conflicting terms denied' ); loyf_balance( $user, 31, 31, 'Conflict no value' );
+// Same absolute import identity never erases a later healthy credit on replay.
+$import_key = 'import:1:' . wp_generate_uuid4() . ':' . $user;
+loyf_equal( 'applied', YOWCL_Points_Transaction::mutate( (int) $user, 40, 40, $import_key, array( 'action' => 'points_import' ), 'replace' )['status'], 'Import target' );
+YOWCL_Points_Transaction::apply( (int) $user, 5, 5, 'fixture:later-credit' );
+loyf_equal( 'already_applied', YOWCL_Points_Transaction::mutate( (int) $user, 40, 40, $import_key, array( 'action' => 'points_import' ), 'replace' )['status'], 'Import replay' ); loyf_balance( $user, 45, 45, 'Replay preserves later credit' );
+// Exercise the actual private CSV writer with native WP upload/type/nonce/capability APIs.
+$csv_path = tempnam( sys_get_temp_dir(), 'loyf-csv-' );
+$csv = "user_id,user_points,user_earning_points\n" . $user . ",50,50\n" . $pre['user'] . ",40,40\n";
+file_put_contents( $csv_path, $csv );
+$csv_operation = wp_generate_uuid4();
+$run_csv = function () use ( $csv_path, $csv_operation ) {
+    $_POST = array( 'wc_loyalty_import_nonce' => wp_create_nonce( 'wc_loyalty_import_action' ), 'operation_id' => $csv_operation );
+    $_FILES = array( 'import_file' => array( 'tmp_name' => $csv_path, 'name' => 'fixture.csv' ) );
+    $handler = new ReflectionMethod( 'YOSWC_Loyalty_Settings_Tools', 'import_csv' ); $handler->setAccessible( true );
+    ob_start(); try { $handler->invoke( new YOSWC_Loyalty_Settings_Tools() ); } finally { ob_end_clean(); $_POST = array(); $_FILES = array(); }
+};
+$run_csv(); loyf_balance( $user, 50, 50, 'CSV applies valid target' ); loyf_equal( '37.5', get_user_meta( $pre['user'], 'user_points', true ), 'CSV cannot normalize fractional storage' );
+YOWCL_Points_Transaction::apply( (int) $user, 5, 5, 'fixture:csv-later-credit' );
+$run_csv(); loyf_balance( $user, 55, 55, 'CSV replay preserves later credit' ); unlink( $csv_path );
+// Contention retains the producer's application retry with frozen terms.
+$rules = get_option( 'loyalty_extra_points_rules' ); $off = $rules; $off['signup_points'] = 0; update_option( 'loyalty_extra_points_rules', $off );
+$retry_user = wp_insert_user( array( 'user_login' => 'retry_user', 'user_email' => 'retry@example.invalid', 'user_pass' => 'disposable-only', 'role' => 'customer' ) );
+update_option( 'loyalty_extra_points_rules', $rules );
+$held = YOWCL_Points_Lock::acquire( (int) $retry_user ); do_action( 'user_register', $retry_user ); YOWCL_Points_Lock::release( $held );
+$pending = as_get_scheduled_actions( array( 'hook' => YOWCL_Core_Rewards::RETRY_HOOK, 'status' => 'pending', 'per_page' => 20 ), 'ids' );
+loyf_assert( count( $pending ) > 0, 'Retained native AS delivery' );
+update_option( 'loyalty_extra_points_rules', $off );
+foreach ( $pending as $action_id ) { $action = ActionScheduler::store()->fetch_action( $action_id ); do_action( $action->get_hook(), ...$action->get_args() ); }
+loyf_balance( $retry_user, 5, 5, 'Frozen signup recovered under disabled config' ); update_option( 'loyalty_extra_points_rules', $rules );
+// Independent PHP/WP processes prime caches, contend under the native lock, then converge.
+foreach ( array( true, false ) as $same ) {
+    $worker_user = wp_insert_user( array( 'user_login' => 'worker_' . ( $same ? 'same' : 'distinct' ), 'user_email' => ( $same ? 'same' : 'distinct' ) . '@example.invalid', 'user_pass' => 'disposable-only', 'role' => 'customer' ) );
+    YOWCL_Points_Transaction::apply( (int) $worker_user, 35, 35, 'fixture:worker-seed:' . $worker_user );
+    $barrier = tempnam( sys_get_temp_dir(), 'loyf-worker-' ); unlink( $barrier ); $workers = array();
+    foreach ( array( 0, 1 ) as $index ) {
+        $env = getenv(); $env['LOYF_WORKER_USER'] = (string) $worker_user; $env['LOYF_WORKER_KEY'] = 'fixture:concurrent:' . $worker_user . ':' . ( $same ? 0 : $index ); $env['LOYF_WORKER_BARRIER'] = $barrier; $env['LOYF_WORKER_INDEX'] = (string) $index;
+        $pipes = array(); $process = proc_open( array( PHP_BINARY, getenv( 'LOYF_WP_CLI_PHAR' ), '--path=' . ABSPATH, 'eval-file', __DIR__ . '/worker.php', '--quiet' ), array( 0 => array( 'pipe', 'r' ), 1 => array( 'pipe', 'w' ), 2 => array( 'pipe', 'w' ) ), $pipes, null, $env );
+        fclose( $pipes[0] ); $workers[] = array( $process, $pipes );
+    }
+    $statuses = array();
+    foreach ( $workers as $worker ) { $out = stream_get_contents( $worker[1][1] ); $err = stream_get_contents( $worker[1][2] ); fclose( $worker[1][1] ); fclose( $worker[1][2] ); loyf_equal( 0, proc_close( $worker[0] ), 'Worker exit: ' . $err ); $decoded = json_decode( $out, true ); loyf_assert( is_array( $decoded ), 'Worker JSON: ' . $out . $err ); $statuses[] = $decoded['status']; }
+    foreach ( array( 0, 1 ) as $index ) { if ( file_exists( $barrier . '.' . $index ) ) { unlink( $barrier . '.' . $index ); } }
+    sort( $statuses ); $expected = $same ? array( 'already_applied', 'applied' ) : array( 'applied', 'insufficient_balance' ); sort( $expected ); loyf_equal( $expected, $statuses, 'Independent concurrency outcome' );
+    wp_cache_delete( $worker_user, 'user_meta' ); loyf_balance( $worker_user, 10, 40, 'Concurrent strict debit' );
+}
 // Forbidden product surface is absent; generic primitive cannot enable its modes/actions.
 foreach ( array( 'YOWCL_Premium_Gate', 'YOWCL_Campaign_Rules', 'YOWCL_Actions_Points_Expiration', 'YOWCL_Helper_Product_Earning_Rules', 'YOWCL_Referral_Rewards', 'YOWCL_Coupon_Redemption' ) as $class ) { loyf_equal( false, class_exists( $class ), 'Forbidden class ' . $class ); }
 foreach ( array( 'expire', 'zero', 'reset' ) as $mode ) { loyf_equal( 'invalid_operation', YOWCL_Points_Transaction::mutate( (int) $user, 0, 0, 'fixture:' . $mode, array( 'action' => 'points_expired' ), $mode )['code'], 'Forbidden mutation mode' ); }

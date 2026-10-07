@@ -25,6 +25,7 @@ cleanup() {
 }
 trap cleanup EXIT
 export MYSQL_PWD="$LOY_DB_PASSWORD"
+export LOYF_WP_CLI_PHAR="$tmp/wp.phar"
 export LOYF_FIXTURE="$repo/tests/fixtures/free-1.2.2.json"
 curl -fsSL --retry 3 https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar -o "$tmp/wp.phar"
 wp() { php "$tmp/wp.phar" --path="$site" "$@"; }

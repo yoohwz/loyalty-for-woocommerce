@@ -357,6 +357,7 @@ class YOWCL_Order_Redemption {
 	}
 
 	public static function return_points( $order_id ) {
+        if ( ! YOWCL_Free_Core::owns() ) { return; }
 		$order = wc_get_order( $order_id );
 		if ( ! $order ) { return; }
 		if ( ! self::valid_id( self::id( $order ) ) ) {

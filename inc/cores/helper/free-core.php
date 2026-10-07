@@ -65,6 +65,13 @@ class YOWCL_Free_Core {
         $role = sanitize_key( $role );
         if ( '' !== $role ) { self::user_reward( $user, 'reward:level_up:' . (int) $user . ':' . $role, 'level_up_reward', (int) ( $rules[$role]['awarded'] ?? 0 ) ); }
     }
+    public static function history_amount( $row ) {
+        $row = (array) $row;
+        $value = $row['available_delta'] ?? null;
+        if ( null === $value ) { return null; }
+        if ( ! YOWCL_Ledger_V2::integer_valid( $value, 99999999 ) ) { return null; }
+        return ( (int) $value >= 0 ? '+' : '-' ) . abs( (int) $value );
+    }
     public static function extra( $kind ) {
         $rules = maybe_unserialize( get_option( 'loyalty_extra_points_rules', array() ) );
         if ( 'review' === $kind ) {

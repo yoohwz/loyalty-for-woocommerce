@@ -69,6 +69,7 @@ class YOWCL_Points_Transaction {
 
 	/** Locked, fresh projection recomputation. Never creates an economic event. */
 	private static function execute( $user_id, $available_delta, $earning_delta, $event_key, array $event, $mode = 'strict', $guard = null ) {
+        if ( ! YOWCL_Free_Core::owns() ) { return self::result( 'failed', 'free_owner_inactive' ); }
 		global $wpdb;
 		if ( self::$active ) {
 			return self::result( 'busy', 'nested_transaction' );

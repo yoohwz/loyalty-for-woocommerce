@@ -43,7 +43,6 @@ class YOSWC_Loyalty {
 
 		require_once plugin_dir_path(__FILE__) . 'inc/cores/helper/free-core.php';
 		if ( ! YOWCL_Free_Core::owns() ) { return; }
-		if ( ! defined( 'WC_LOYALTY_DB_VERSION' ) ) { define( 'WC_LOYALTY_DB_VERSION', '3' ); }
 		try { YOWCL_Free_Core::cutover(); } catch ( Throwable $e ) { return; }
 		foreach ( array( 'points-lock', 'points-log-cache', 'points-log', 'ledger-v2', 'points-allocation', 'points-transaction', 'role-claims', 'database', 'points-events', 'core-rewards', 'order-rewards', 'free-order-actions', 'order-deduction', 'order-redemption', 'free-admin' ) as $helper ) { require_once plugin_dir_path(__FILE__) . 'inc/cores/helper/' . $helper . '.php'; }
 		require_once plugin_dir_path(__FILE__) . 'inc/backend/actions/helper/roles.php';

@@ -9,7 +9,7 @@ class YOWCL_Database {
 	public function __construct() {
 		global $wpdb;
 		$this->table_name = $wpdb->prefix . 'yo_loyalty_points_log';
-		$this->version    = WC_LOYALTY_DB_VERSION;
+		$this->version    = '3';
 		register_activation_hook( YOSWC_LOYALTY_PLUGIN_FILE, [ $this, 'activate' ] );
 		add_action( 'admin_init', [ $this, 'check_version' ] );
 	}

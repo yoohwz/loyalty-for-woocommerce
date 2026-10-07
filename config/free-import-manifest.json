@@ -68,7 +68,7 @@
       "target": "inc/cores/helper/points-transaction.php",
       "transform": "wp-text-domain-v1",
       "sha256": "65514f221a43c6957ff04cd585aa63000637bab8598f1050374642acefce708e",
-      "output_sha256": "cf83d47d3f82e381653c1c8e7e6b7be5b0b72410b2d365f54ac5bbf10a147ec2",
+      "output_sha256": "57000e643f69037024af4154a5573e0b3f09517c7459ddff64ec4148ed634832",
       "domain_replacements": 0,
       "extraction": "inc/cores/helper/points-transaction.php"
     },
@@ -95,7 +95,7 @@
       "target": "inc/cores/helper/core-rewards.php",
       "transform": "wp-text-domain-v1",
       "sha256": "6fe59b532648e992689a9f6a4d1c5f02ed03812ba10d3b29d8147344e3029780",
-      "output_sha256": "f0e698cecf4bdbb0f6ed31ee240ec185982d3b614b2c6ad01ddda35871c2f3ea",
+      "output_sha256": "8f49848ddb4d7b57f94a64494b582bbc49e8f004cf2dedf44695ae4a5c17daae",
       "domain_replacements": 0,
       "extraction": "inc/cores/helper/core-rewards.php"
     },
@@ -122,7 +122,7 @@
       "target": "inc/cores/helper/database.php",
       "transform": "wp-text-domain-v1",
       "sha256": "d47837b6a1023e63f43ba10c8ae8807f4815f2cd8c588cc64bd05e4696778e82",
-      "output_sha256": "526a8237b5d9fb81238a1a984cb7d78aef4020e3fe4f924a19131112645dae67",
+      "output_sha256": "28043ae7b82883cf3f6bf08223276d0d1f056eceeec5219dc2f6ea45edd0a997",
       "domain_replacements": 0,
       "extraction": "inc/cores/database.php"
     },
@@ -140,8 +140,8 @@
       "target": "inc/cores/helper/order-redemption.php",
       "transform": "wp-text-domain-v1",
       "sha256": "cc4f1f15860ca8518b091ef31379abbdf655c661cdef875e8c80be31f3a40753",
-      "output_sha256": "0f31a631a9974815cf5fb97cf1e2377f7231df2269c080a9240d53f616b9979e",
-      "domain_replacements": 13,
+      "output_sha256": "eec01d8d3b755382069e162973c9215ebcafaec60b693e6a8d6349b5b929a5a1",
+      "domain_replacements": 0,
       "extraction": "inc/cores/helper/order-redemption.php"
     }
   ],
@@ -149,7 +149,7 @@
     {
       "target": "loyalty-for-woocommerce.php",
       "mode": "100644",
-      "sha256": "45ca6662e3cdf937bbb2f0820a5ece0b8fbf2e6c9157f4a0aeaf5a0f73833163"
+      "sha256": "a5130006e9cb25f6547d542f4802144b59e4a9dd2143dc0c61ee3057dc7c30e5"
     },
     {
       "target": "readme.txt",
@@ -334,7 +334,7 @@
     {
       "target": "inc/cores/helper/free-core.php",
       "mode": "100644",
-      "sha256": "21a1831291310bb577d874f64280010ce4e8aafbbd377ba2ecfab84978f5932f"
+      "sha256": "a4c8f1614e747c306af363769764d7d71cba2a7b1e4bd423be149fff38e6b1bb"
     },
     {
       "target": "inc/cores/helper/free-order-actions.php",
@@ -359,7 +359,7 @@
     {
       "target": "inc/frontend/my-account.php",
       "mode": "100644",
-      "sha256": "606809a61293f57f14d4ffb487cb9763975cc3c4dd725a663fc4fa8def201c70"
+      "sha256": "3f3b906b1ceb289965fd22dca2ffca9b9ad012c7d8ff9215a555a465d0ff8634"
     },
     {
       "target": "inc/frontend/product-message.php",
@@ -389,12 +389,12 @@
     {
       "target": "js/user-profile-points-modal.js",
       "mode": "100644",
-      "sha256": "f33545420905e692c85605d6e7a5de6b696e7395d401a74e2d2dba50470229e4"
+      "sha256": "29c01af94ba448aade7f430ff93463bd4c80c25979225f556aaee9e7b5f9f12c"
     },
     {
       "target": "js/users-points-modal.js",
       "mode": "100644",
-      "sha256": "b648be4ae49de90b30ea5149ff1005d0a0d704b00b43db900344942a2c37dcea"
+      "sha256": "93c85411a1f9dc878c72651bb34567bc5bafd0a854e6988c4e906f36388e1a4d"
     },
     {
       "target": "js/using-point-cart.js",
@@ -1599,6 +1599,6 @@
   "extractions": {
     "id": "byte-spans-v1",
     "path": "config/free-core-extractions.json",
-    "sha256": "9f51ee4ee8a2d69e08051729861a47a96239b936d6907813af4f3e64bfae07ac"
+    "sha256": "c6f21094686ee61f4f2599c958cd7ce42e6e51f7ae85af8ed9887b836e4902c3"
   }
 }

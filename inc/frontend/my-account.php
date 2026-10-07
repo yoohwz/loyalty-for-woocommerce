@@ -223,6 +223,7 @@ class YOSWC_Loyalty_My_Account_My_Points {
 		$wp_user_roles = get_option('wp_user_roles');
 		$next_level_display_name = isset($wp_user_roles[$next_level_name]['name']) ? $wp_user_roles[$next_level_name]['name'] : ucfirst($next_level_name);
 		$current_points = get_user_meta( $user_id, 'user_points', true );
+        if ( get_user_meta( $user_id, '_loyf_economic_hold', true ) ) { wc_print_notice( __( 'Your points balance needs review. Please contact the store before using points.', 'loyalty-for-woocommerce' ), 'notice' ); }
 		$current_points = ! empty( $current_points ) ? $current_points : 0;	
 		$earned_points = get_user_meta( $user_id, 'user_earning_points', true );
 		$earned_points = ! empty( $earned_points ) ? $earned_points : 0;
@@ -344,6 +345,8 @@ class YOSWC_Loyalty_My_Account_My_Points {
 						
 						$amount_color = ( in_array( $log['action'], ['admin_reward', 'order_reward', 'points_return', 'sign_up_reward', 'daily_login_reward', 'review_reward', 'level_up_reward'] ) ? '#00a32a' : '#d63638' );
 						$formatted_amount = ( in_array( $log['action'], ['admin_reward', 'order_reward', 'points_return', 'sign_up_reward', 'daily_login_reward', 'review_reward', 'level_up_reward'] ) ? '+' : '-' ) . abs( $log['amount'] );
+                        $explicit_amount = YOWCL_Free_Core::history_amount( $log );
+                        if ( null !== $explicit_amount ) { $formatted_amount = $explicit_amount; $amount_color = '+' === $explicit_amount[0] ? '#00a32a' : '#d63638'; }
 						?>
 						<tr>
 							<td><?php echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $log['date'] ) ) ); ?></td>
@@ -406,7 +409,10 @@ class YOSWC_Loyalty_My_Account_My_Points {
 		foreach ( $points_log as &$log ) {
 			$log['date'] = date_i18n( get_option( 'date_format' ), strtotime( $log['date'] ) );
 	
+            $explicit_amount = YOWCL_Free_Core::history_amount( $log );
 			$log['amount'] = ( in_array( $log['action'], ['admin_reward', 'order_reward', 'points_return'] ) ? '+' : '-' ) . abs( $log['amount'] );
+            if ( null !== $explicit_amount ) { $log['amount'] = $explicit_amount; }
+            foreach ( array( 'event_key', 'source_event_key', 'allocation_receipt', 'ledger_version', 'available_delta', 'earning_delta' ) as $internal ) { unset( $log[$internal] ); }
 	
 			$formatted_description = $log['description'];
 			if ( strpos( $formatted_description, 'Level updated: ' ) !== false ) {

@@ -1,7 +1,7 @@
 {
   "inc/cores/helper/points-transaction.php": {
     "input_sha256": "65514f221a43c6957ff04cd585aa63000637bab8598f1050374642acefce708e",
-    "selected_sha256": "cf83d47d3f82e381653c1c8e7e6b7be5b0b72410b2d365f54ac5bbf10a147ec2",
+    "selected_sha256": "57000e643f69037024af4154a5573e0b3f09517c7459ddff64ec4148ed634832",
     "spans": [
       {
         "start": 306,
@@ -29,9 +29,14 @@
         "replacement": ""
       },
       {
-        "start": 5310,
-        "end": 7434,
+        "start": 5313,
+        "end": 7437,
         "replacement": ""
+      },
+      {
+        "start": 7574,
+        "end": 7574,
+        "replacement": "CiAgICAgICAgaWYgKCAhIFlPV0NMX0ZyZWVfQ29yZTo6b3ducygpICkgeyByZXR1cm4gc2VsZjo6cmVzdWx0KCAnZmFpbGVkJywgJ2ZyZWVfb3duZXJfaW5hY3RpdmUnICk7IH0="
       },
       {
         "start": 8717,
@@ -314,8 +319,13 @@
   },
   "inc/cores/database.php": {
     "input_sha256": "d47837b6a1023e63f43ba10c8ae8807f4815f2cd8c588cc64bd05e4696778e82",
-    "selected_sha256": "526a8237b5d9fb81238a1a984cb7d78aef4020e3fe4f924a19131112645dae67",
+    "selected_sha256": "28043ae7b82883cf3f6bf08223276d0d1f056eceeec5219dc2f6ea45edd0a997",
     "spans": [
+      {
+        "start": 235,
+        "end": 256,
+        "replacement": "JzMn"
+      },
       {
         "start": 286,
         "end": 286,
@@ -335,17 +345,97 @@
   },
   "inc/cores/helper/core-rewards.php": {
     "input_sha256": "6fe59b532648e992689a9f6a4d1c5f02ed03812ba10d3b29d8147344e3029780",
-    "selected_sha256": "f0e698cecf4bdbb0f6ed31ee240ec185982d3b614b2c6ad01ddda35871c2f3ea",
+    "selected_sha256": "8f49848ddb4d7b57f94a64494b582bbc49e8f004cf2dedf44695ae4a5c17daae",
     "spans": [
       {
-        "start": 333,
-        "end": 361,
+        "start": 344,
+        "end": 372,
         "replacement": ""
       },
       {
-        "start": 1881,
-        "end": 2133,
+        "start": 492,
+        "end": 492,
+        "replacement": "CiAgICAgICAgaWYgKCAhIFlPV0NMX0ZyZWVfQ29yZTo6b3ducygpICkgeyByZXR1cm47IH0="
+      },
+      {
+        "start": 1879,
+        "end": 1885,
+        "replacement": "ICAgICAgICA="
+      },
+      {
+        "start": 1886,
+        "end": 1899,
+        "replacement": "Zg=="
+      },
+      {
+        "start": 1900,
+        "end": 1901,
+        "replacement": "KA=="
+      },
+      {
+        "start": 1902,
+        "end": 1932,
+        "replacement": "IQ=="
+      },
+      {
+        "start": 1939,
+        "end": 1940,
+        "replacement": "RnI="
+      },
+      {
+        "start": 1941,
+        "end": 1943,
         "replacement": ""
+      },
+      {
+        "start": 1944,
+        "end": 1944,
+        "replacement": "X0Nv"
+      },
+      {
+        "start": 1945,
+        "end": 1963,
+        "replacement": "ZQ=="
+      },
+      {
+        "start": 1965,
+        "end": 1965,
+        "replacement": "b3du"
+      },
+      {
+        "start": 1966,
+        "end": 1973,
+        "replacement": ""
+      },
+      {
+        "start": 1974,
+        "end": 2112,
+        "replacement": ""
+      },
+      {
+        "start": 2116,
+        "end": 2117,
+        "replacement": "ew=="
+      },
+      {
+        "start": 2118,
+        "end": 2119,
+        "replacement": "cg=="
+      },
+      {
+        "start": 2120,
+        "end": 2123,
+        "replacement": "dHU="
+      },
+      {
+        "start": 2124,
+        "end": 2128,
+        "replacement": ""
+      },
+      {
+        "start": 2130,
+        "end": 2130,
+        "replacement": "IH0="
       },
       {
         "start": 2536,
@@ -356,6 +446,11 @@
         "start": 2978,
         "end": 2978,
         "replacement": "CgkJCQlZT1dDTF9GcmVlX0NvcmU6OmhvbGQoICR1c2VyX2lkLCAkcmVzdWx0Wydjb2RlJ10gKTs="
+      },
+      {
+        "start": 4600,
+        "end": 4600,
+        "replacement": "ICAgICAgICBpZiAoICEgWU9XQ0xfRnJlZV9Db3JlOjpvd25zKCkgKSB7IHJldHVybjsgfQo="
       },
       {
         "start": 4615,
@@ -724,7 +819,7 @@
   },
   "inc/cores/helper/order-redemption.php": {
     "input_sha256": "cc4f1f15860ca8518b091ef31379abbdf655c661cdef875e8c80be31f3a40753",
-    "selected_sha256": "6e8f4fe1abfcd490f1d4c028a4495a9e7081991efbad145119c37271c4ef8091",
+    "selected_sha256": "eec01d8d3b755382069e162973c9215ebcafaec60b693e6a8d6349b5b929a5a1",
     "spans": [
       {
         "start": 1182,
@@ -1092,9 +1187,39 @@
         "replacement": ""
       },
       {
+        "start": 13940,
+        "end": 13943,
+        "replacement": ""
+      },
+      {
+        "start": 13950,
+        "end": 13950,
+        "replacement": "LWZvci13b29jb21tZXJjZQ=="
+      },
+      {
+        "start": 14384,
+        "end": 14387,
+        "replacement": ""
+      },
+      {
+        "start": 14394,
+        "end": 14394,
+        "replacement": "LWZvci13b29jb21tZXJjZQ=="
+      },
+      {
         "start": 14808,
         "end": 15003,
         "replacement": ""
+      },
+      {
+        "start": 15943,
+        "end": 15946,
+        "replacement": ""
+      },
+      {
+        "start": 15953,
+        "end": 15953,
+        "replacement": "LWZvci13b29jb21tZXJjZQ=="
       },
       {
         "start": 16724,
@@ -1107,9 +1232,44 @@
         "replacement": ""
       },
       {
-        "start": 17240,
-        "end": 17290,
+        "start": 17244,
+        "end": 17247,
         "replacement": ""
+      },
+      {
+        "start": 17254,
+        "end": 17270,
+        "replacement": "LWZvci13b29jb20="
+      },
+      {
+        "start": 17272,
+        "end": 17275,
+        "replacement": ""
+      },
+      {
+        "start": 17276,
+        "end": 17279,
+        "replacement": ""
+      },
+      {
+        "start": 17280,
+        "end": 17288,
+        "replacement": ""
+      },
+      {
+        "start": 17289,
+        "end": 17304,
+        "replacement": ""
+      },
+      {
+        "start": 17709,
+        "end": 17712,
+        "replacement": ""
+      },
+      {
+        "start": 17719,
+        "end": 17719,
+        "replacement": "LWZvci13b29jb21tZXJjZQ=="
       },
       {
         "start": 17926,
@@ -1352,6 +1512,16 @@
         "replacement": ""
       },
       {
+        "start": 30582,
+        "end": 30585,
+        "replacement": ""
+      },
+      {
+        "start": 30592,
+        "end": 30592,
+        "replacement": "LWZvci13b29jb21tZXJjZQ=="
+      },
+      {
         "start": 30997,
         "end": 31083,
         "replacement": ""
@@ -1367,6 +1537,21 @@
         "replacement": ""
       },
       {
+        "start": 32010,
+        "end": 32010,
+        "replacement": "CiAgICAgICAgaWYgKCAhIFlPV0NMX0ZyZWVfQ29yZTo6b3ducygpICkgeyByZXR1cm47IH0="
+      },
+      {
+        "start": 32462,
+        "end": 32465,
+        "replacement": ""
+      },
+      {
+        "start": 32472,
+        "end": 32472,
+        "replacement": "LWZvci13b29jb21tZXJjZQ=="
+      },
+      {
         "start": 33236,
         "end": 33243,
         "replacement": "PQ=="
@@ -1380,6 +1565,66 @@
         "start": 33284,
         "end": 33319,
         "replacement": ""
+      },
+      {
+        "start": 33810,
+        "end": 33813,
+        "replacement": ""
+      },
+      {
+        "start": 33820,
+        "end": 33820,
+        "replacement": "LWZvci13b29jb21tZXJjZQ=="
+      },
+      {
+        "start": 34056,
+        "end": 34059,
+        "replacement": ""
+      },
+      {
+        "start": 34066,
+        "end": 34066,
+        "replacement": "LWZvci13b29jb21tZXJjZQ=="
+      },
+      {
+        "start": 35793,
+        "end": 35796,
+        "replacement": ""
+      },
+      {
+        "start": 35803,
+        "end": 35803,
+        "replacement": "LWZvci13b29jb21tZXJjZQ=="
+      },
+      {
+        "start": 36801,
+        "end": 36804,
+        "replacement": ""
+      },
+      {
+        "start": 36811,
+        "end": 36811,
+        "replacement": "LWZvci13b29jb21tZXJjZQ=="
+      },
+      {
+        "start": 37432,
+        "end": 37435,
+        "replacement": ""
+      },
+      {
+        "start": 37442,
+        "end": 37442,
+        "replacement": "LWZvci13b29jb21tZXJjZQ=="
+      },
+      {
+        "start": 39744,
+        "end": 39747,
+        "replacement": ""
+      },
+      {
+        "start": 39754,
+        "end": 39754,
+        "replacement": "LWZvci13b29jb21tZXJjZQ=="
       }
     ]
   }

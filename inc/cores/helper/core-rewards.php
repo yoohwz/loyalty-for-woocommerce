@@ -8,6 +8,7 @@ class YOWCL_Core_Rewards {
 	const RETRY_GROUP = 'yowcl-core-rewards';
 	const USER_ACTIONS = array( 'sign_up_reward', 'daily_login_reward', 'review_reward', 'level_up_reward' );
 	public static function recover( $user_id, $key, $action, $project, $order_id = 0, $retry = null ) {
+        if ( ! YOWCL_Free_Core::owns() ) { return; }
 		try {
 			$row = YOWCL_Points_Transaction::find( $key );
 			if ( ! $row ) { return false; }
@@ -30,6 +31,7 @@ class YOWCL_Core_Rewards {
 	}
 
 	public static function award( $user_id, $points, $key, $action, $description, $project, $notify, $order_id = 0, $retry = null, $expiration = false, $expiration_policy = false ) {
+        if ( ! YOWCL_Free_Core::owns() ) { return; }
 		if ( ! $retry && 0 === (int) $order_id && in_array( $action, self::USER_ACTIONS, true ) ) {
 			$intent = array( 'user_id' => (int) $user_id, 'points' => (int) $points, 'key' => $key, 'action' => $action, 'description' => $description, 'expired_date' => $expiration, 'expiration_policy' => $expiration_policy );
 			$retry = static function () use ( $intent ) { self::queue_user( $intent ); };
@@ -73,6 +75,7 @@ class YOWCL_Core_Rewards {
 	}
 
 	public static function retry_user( array $intent ) {
+        if ( ! YOWCL_Free_Core::owns() ) { return; }
 		if ( ! YOWCL_Free_Core::admitted( $intent['user_id'], $intent['key'], $intent['action'] ) && ! YOWCL_Points_Transaction::find( $intent['key'] ) ) { return; }
 		$project = self::user_projection( $intent['user_id'], $intent['key'], $intent['action'] );
 		// A queued intent is not value proof; a newly observed legacy marker still guards history.
