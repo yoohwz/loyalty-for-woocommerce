@@ -40,7 +40,9 @@ class YOWCL_Free_First_Purchase {
             if ( ! ( $db instanceof mysqli ) || YOWCL_Points_Lock::has_transaction( $db ) || 'InnoDB' !== YOWCL_Points_Lock::scalar( $db, $wpdb->prepare( 'SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s', $wpdb->options ) ) ) { throw new RuntimeException( 'first_purchase_options_storage_required' ); }
             $raw = self::raw( self::RULES, $db ); $old = self::decode( $raw );
             $previous = maybe_unserialize( self::raw( self::WITNESS, $db ) );
-            $old_effective = 'yes' === ( $old['first_purchase_enabled'] ?? 'no' ) && self::points( $old['first_purchase_points'] ?? 0 ) > 0;
+            // Invalid dormant amounts are ineffective, not a veto of a valid authorized replacement.
+            try { $old_effective = 'yes' === ( $old['first_purchase_enabled'] ?? 'no' ) && self::points( $old['first_purchase_points'] ?? 0 ) > 0; }
+            catch ( DomainException $invalid_old_amount ) { $old_effective = false; }
             $rules = array_replace( $old, array( 'first_purchase_enabled'=>$enabled ? 'yes' : 'no', 'first_purchase_points'=>(string) $points ) );
             $effective = $enabled && $points > 0;
             $epoch = array( 'version'=>1, 'enabled'=>(bool) $effective, 'cutoff'=>$effective ? ( $old_effective && self::valid( $previous, $old ) ? $previous['cutoff'] : time() ) : 0, 'terms_hash'=>self::fingerprint( $rules ) );

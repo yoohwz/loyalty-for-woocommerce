@@ -547,7 +547,7 @@
     {
       "target": "inc/cores/helper/free-first-purchase.php",
       "mode": "100644",
-      "sha256": "fcaf99bed589333e9a3bbbcb7ac65078a3904a4c06cce68568312d911f34a6be"
+      "sha256": "2c9bca69c9be5fd77f625a80d0517be24b7cac2b69933cb01dbbf5b55e437455"
     }
   ],
   "blocked_mixed_modules": [
