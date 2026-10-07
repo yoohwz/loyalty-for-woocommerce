@@ -108,7 +108,7 @@ foreach (array('cancelled', 'refunded', 'failed') as $terminal) {
     loyf_equal('100', (string) get_post_meta($order->get_id(), '_points_deducted', true), 'Deduction marker');
     loyf_equal(array('customer'), array_values(get_userdata($id)->roles), 'Customer role restored');
     $count = count(loyf_rows($id));
-    do_action('woocommerce_order_status_changed', $order->get_id(), 'completed', $terminal);
+    do_action('woocommerce_order_status_changed', $order->get_id(), 'completed', $terminal, $order);
     loyf_equal($count, count(loyf_rows($id)), 'Deduction replay');
     $order->update_status('completed');
     loyf_equal($count, count(loyf_rows($id)), 'Award marker retained after cancellation/recompletion');
