@@ -34,8 +34,10 @@ loyf_reset_feature('review');
 $old_target=get_option('loyalty_extra_reviews_gamification_rules');
 $failure=function($sql) use($wpdb) { return false !== strpos($sql, 'SELECT option_value') && false !== strpos($sql, "'loyalty_extra_points_rules'") ? 'SELECT * FROM loyf_missing_source_table' : $sql; };
 $wpdb->suppress_errors(true); add_filter('query',$failure); YOWCL_Free_Migrations::run(); remove_filter('query',$failure); $wpdb->suppress_errors(false);
+$failure_bubble=new YOSWC_Loyalty_Info_Bubble(); $failure_method=new ReflectionMethod($failure_bubble,'get_earning_section'); $failure_method->setAccessible(true); loyf_assert(false===strpos(json_encode($failure_method->invoke($failure_bubble,'Points')),'Product review:'),'Bubble does not advertise held review feature');
 loyf_equal($old_target,get_option('loyalty_extra_reviews_gamification_rules'),'Failed source read cannot replace target'); loyf_assert(!YOWCL_Free_Migrations::ready('review'),'Failed read no witness');
 update_option('loyalty_extra_reviews_gamification_rules','malformed'); YOWCL_Free_Migrations::run(); loyf_assert(!YOWCL_Free_Migrations::ready('review'),'Malformed target held'); loyf_equal('malformed',get_option('loyalty_extra_reviews_gamification_rules'),'Malformed data not erased');
+ob_start(); (new YOSWC_Loyalty_Settings_Extra_Points())->display_extra_points_settings(); YOWCL_Free_Migrations::notices(); $malformed_ui=ob_get_clean(); loyf_assert(false!==strpos($malformed_ui,'Extra points settings'),'Malformed target renderer does not fatal');
 update_option('loyalty_extra_reviews_gamification_rules',$old_target);
 $old_target['review_points']='99'; update_option('loyalty_extra_reviews_gamification_rules',$old_target);
 $failure=function($sql) use($wpdb) { return false !== strpos($sql, "UPDATE {$wpdb->options}") && false !== strpos($sql, "'loyalty_extra_reviews_gamification_rules'") ? 'SELECT * FROM loyf_missing_target_table' : $sql; };
@@ -75,6 +77,22 @@ loyf_equal($canonical,get_option('loyalty_extra_points_rules'),'Denied save no m
 loyf_reset_feature('redemption'); $using=array('points'=>'10','amount'=>'1','unknown'=>array('exact'=>'009')); update_option('loyalty_points_using_rules',serialize($using)); YOWCL_Free_Migrations::run();
 $using_raw=YOWCL_Free_Migrations::read('loyalty_points_using_rules'); loyf_assert(is_serialized(maybe_unserialize($using_raw)),'Serialized wrapper retained');
 $using_after=maybe_unserialize(get_option('loyalty_points_using_rules')); loyf_equal($using['unknown'],$using_after['unknown'],'Wrapped unknown values retained');
+// Wrapped shared targets use canonical terms after witness/save; retained legacy never wins.
+$wrapped_account=get_option('loyalty_extra_points_rules'); update_option('loyalty_extra_points_rules',serialize($wrapped_account));
+$wrapped_merged=get_option('loyalty_extra_reviews_gamification_rules'); update_option('loyalty_extra_reviews_gamification_rules',serialize($wrapped_merged));
+update_option('loyalty_extra_levelup_points_rules',$before['options']['loyalty_extra_levelup_points_rules']);
+foreach(array('signup','login','review','levelup') as $feature) { loyf_reset_feature($feature); }
+YOWCL_Free_Migrations::run();
+wp_set_current_user(1); $_POST=array('extra_points_settings_nonce'=>wp_create_nonce('save_extra_points_settings_action'),'loyalty_extra_signup_points'=>'9','loyalty_extra_login_points'=>'4','loyalty_extra_review_points'=>'13','loyalty_extra_levelup_loyf_gold'=>'0');
+(new YOSWC_Loyalty_Settings_Extra_Points())->save_extra_points_settings(); $_POST=array();
+YOWCL_Free_Migrations::run(); loyf_equal(13,YOWCL_Free_Core::extra('review'),'Wrapped canonical review overrides retained legacy88');
+$wrapped_user=wp_insert_user(array('user_login'=>'wrapped_upgrade','user_email'=>'wrapped@example.invalid','user_pass'=>'disposable-only','role'=>'customer'));
+$wrapped_points=get_user_meta($wrapped_user,'user_points',true); YOWCL_Free_Core::level_bonus($wrapped_user,'loyf_gold'); loyf_equal($wrapped_points,get_user_meta($wrapped_user,'user_points',true),'Wrapped disabled level never reads retained legacy terms');
+ob_start(); (new YOSWC_Loyalty_Settings_Extra_Points())->display_extra_points_settings(); $wrapped_form=ob_get_clean(); loyf_assert(false!==strpos($wrapped_form,'value="13"'),'Wrapped canonical settings renderer');
+ob_start(); (new YOSWC_Loyalty_Settings_Using_Point_Rules())->render_using_point_field(array('name'=>'Fixture')); $using_form=ob_get_clean(); loyf_assert(false!==strpos($using_form,'value="10"'),'Wrapped redemption settings renderer');
+$bubble=new YOSWC_Loyalty_Info_Bubble(); $earning_method=new ReflectionMethod($bubble,'get_earning_section'); $earning_method->setAccessible(true); $earning_output=json_encode($earning_method->invoke($bubble,'Points'));
+loyf_assert(false!==strpos($earning_output,'Product review: 13 Points'),'Bubble canonical review terms'); loyf_assert(false===strpos($earning_output,'Reach Fixture Gold:'),'Bubble excludes disabled level reward');
+$wrapped_saved=get_option('loyalty_extra_reviews_gamification_rules'); delete_option('loyalty_extra_reviews_gamification_rules'); loyf_equal(0,YOWCL_Free_Core::extra('review'),'Missing witnessed canonical pair cannot reactivate legacy'); update_option('loyalty_extra_reviews_gamification_rules',$wrapped_saved);
 // Both email directions; canonical customization and legacy preference retained.
 foreach (array('points_reward','points_deduct','level_update') as $family) { loyf_equal('yes', get_option('woocommerce_yowcl_loyalty_' . $family . '_settings')['enabled'], 'Legacy mail enabled'); }
 loyf_reset_feature('email_reward'); $legacy = get_option('loyalty_notification_email'); $original_legacy=$legacy; $legacy['points_update']=false; update_option('loyalty_notification_email',$legacy);
@@ -82,6 +100,20 @@ YOWCL_Free_Migrations::run(); $mail=get_option('woocommerce_yowcl_loyalty_points
 YOWCL_Free_Migrations::save('email_reward','woocommerce_yowcl_loyalty_points_reward_settings',array('enabled'=>'yes'));
 YOWCL_Free_Migrations::run(); loyf_equal('yes',get_option('woocommerce_yowcl_loyalty_points_reward_settings')['enabled'],'Merchant mail enablement authoritative');
 update_option('loyalty_notification_email',$original_legacy);
+// Native settings wrappers retain canonical customization and enablement in Woo consumers.
+foreach(array('email_reward'=>'Points_Reward','email_deduct'=>'Points_Deduct','email_level'=>'Level_Update') as $feature=>$family) {
+    $id='yowcl_loyalty_' . strtolower($family); $option='woocommerce_' . $id . '_settings'; $native_wrapped=get_option($option); update_option($option,serialize($native_wrapped)); loyf_reset_feature($feature);
+}
+YOWCL_Free_Migrations::run();
+$native_classes=WC()->mailer()->get_emails();
+foreach(array('email_reward'=>'Points_Reward','email_deduct'=>'Points_Deduct','email_level'=>'Level_Update') as $feature=>$family) {
+    $class='YOWCL_WC_Email_Loyalty_' . $family; $probe=new $class();
+    loyf_assert(YOWCL_Free_Migrations::ready($feature) && $probe->is_enabled(),'Wrapped native family enabled ' . $family);
+    $stored=maybe_unserialize(get_option('woocommerce_' . $probe->id . '_settings'));
+    foreach(array('subject','heading','email_type','unknown') as $field) { if(isset($stored[$field])) { loyf_equal($stored[$field],$probe->get_option($field),'Wrapped native custom field ' . $family . ':' . $field); } }
+    foreach(array('yowcl_','woocommerce_') as $prefix) { remove_action($prefix . 'loyalty_' . strtolower($family),array($probe,'trigger'),10); }
+    remove_filter('woocommerce_settings_api_sanitized_fields_' . $probe->id,array($probe,'preserve_settings'));
+}
 // Already-warm native mailer recovers registration without duplicate instances/hooks.
 $warm=WC()->mailer(); $count=count($warm->get_emails()); $warm_ids=array_map('spl_object_hash',$warm->get_emails());
 $bridge=new YOSWC_Loyalty_Notifications_Email(); loyf_equal($count,count($warm->get_emails()),'Warm mailer count stable'); loyf_equal($warm_ids,array_map('spl_object_hash',$warm->get_emails()),'Warm instances reused');

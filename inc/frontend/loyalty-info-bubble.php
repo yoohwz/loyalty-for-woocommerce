@@ -264,8 +264,8 @@ class YOSWC_Loyalty_Info_Bubble {
 
 		$items[] = $this->row(__('Calculation', 'loyalty-for-woocommerce'), $option_lines);
 
-		$extra_points = maybe_unserialize(get_option('loyalty_extra_points_rules', array()));
-		$levelup_points = maybe_unserialize(get_option('loyalty_extra_levelup_points_rules', array()));
+		$extra_points = array('signup_points' => YOWCL_Free_Core::extra('signup'), 'login_points' => YOWCL_Free_Core::extra('login'), 'review_points' => YOWCL_Free_Core::extra('review'));
+		$levelup_points = YOWCL_Free_Core::level_rules();
 		$bonus_lines = array();
 
 		$this->append_bonus($bonus_lines, $extra_points, 'signup_points', __('Create an account', 'loyalty-for-woocommerce'), $point_label);

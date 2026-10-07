@@ -157,7 +157,7 @@
       "source": "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php",
       "target": "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php",
       "sha256": "a93524ad49541619ae2542e3b5fbc6c3f07aecfee357980bcb758973a5252f7a",
-      "output_sha256": "4227df8e0b6d81d1877c26f91f1ef15c9cd7e09ceedca70629a9265e86c50c4a",
+      "output_sha256": "622d41ac0a4ebf7b1bebfb903381a781930bde06a0c9252019838316b515714e",
       "domain_replacements": 0,
       "transform": "wp-text-domain-v1",
       "extraction": "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php"
@@ -324,7 +324,7 @@
     {
       "target": "inc/backend/settings/extra-points.php",
       "mode": "100644",
-      "sha256": "6b0db42b42141426ea41b16aeb082ff086432f35d5d9252907562276ceab9543"
+      "sha256": "0e72ec79545f652f08c1ab24e4d216bf9752039d31b8d4cde4ea6b530fae9280"
     },
     {
       "target": "inc/backend/settings/files/yol_import_sample.csv",
@@ -354,7 +354,7 @@
     {
       "target": "inc/backend/settings/general-using-point-rules.php",
       "mode": "100644",
-      "sha256": "6f8e745b865380d613df05c7005c7c18d597d407d6d5a652ffbf114591cd2f8d"
+      "sha256": "a77e2fa1ec74f550ab63a6c540e0573b7ab3058d2bc4768edad867179050677e"
     },
     {
       "target": "inc/backend/settings/notification.php",
@@ -424,7 +424,7 @@
     {
       "target": "inc/cores/helper/free-core.php",
       "mode": "100644",
-      "sha256": "6f8753935cff770dee45a323ffc924de6f32d66255c79ce6d02cb89e6fdc4524"
+      "sha256": "8d3aa9a9405586d44dc474272ceb71e746e77aea7b476204df52134c93bec7de"
     },
     {
       "target": "inc/cores/helper/free-order-actions.php",
@@ -444,7 +444,7 @@
     {
       "target": "inc/frontend/loyalty-info-bubble.php",
       "mode": "100644",
-      "sha256": "84d0f3cc8247ea1c64e0ae0e2797fa946fa9be4542feb18eaf7effb3074855d7"
+      "sha256": "5f9786cbad5c5e6be8924e6052c787943bb06b4063f7024f021fe3afedd97c2d"
     },
     {
       "target": "inc/frontend/my-account.php",
@@ -499,7 +499,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "645d216132bd4b295cf67b4419f138a311944b97bdc334b4e004321c741aa8c6"
+      "sha256": "ee02f52ec1226ad66d9605d4d6afbd89bbf97184ba7edd2a373f5fd862ecc513"
     },
     {
       "target": "inc/cores/helper/free-migrations.php",
@@ -1694,6 +1694,6 @@
   "extractions": {
     "id": "byte-spans-v1",
     "path": "config/free-core-extractions.json",
-    "sha256": "e3195a58d43b592a536e928d0aed0da99bf7e6d49c80d339c7070268867f7fec"
+    "sha256": "2346a712d442483449e61a26b137cd2c657a61b9204c343f266157e413bf6359"
   }
 }

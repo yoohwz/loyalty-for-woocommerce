@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-07T05:56:08+00:00\n"
+"POT-Creation-Date: 2026-10-07T06:08:36+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
@@ -39,20 +39,20 @@ msgstr ""
 msgid "https://yoohw.com"
 msgstr ""
 
-#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php:178
+#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php:183
 msgid "My points"
 msgstr ""
 
-#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php:208
+#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php:213
 msgid "Member"
 msgstr ""
 
-#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php:320
+#: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php:325
 #: inc/backend/settings.php:285
-#: inc/backend/settings/extra-points.php:45
-#: inc/backend/settings/extra-points.php:54
-#: inc/backend/settings/extra-points.php:63
-#: inc/backend/settings/extra-points.php:90
+#: inc/backend/settings/extra-points.php:47
+#: inc/backend/settings/extra-points.php:56
+#: inc/backend/settings/extra-points.php:65
+#: inc/backend/settings/extra-points.php:92
 #: inc/backend/users/users-points.php:20
 #: inc/frontend/loyalty-info-bubble.php:471
 msgid "Points"
@@ -142,7 +142,7 @@ msgid "Point expiration and advanced redemption rules"
 msgstr ""
 
 #: inc/backend/settings.php:120
-#: inc/backend/settings/extra-points.php:140
+#: inc/backend/settings/extra-points.php:142
 msgid "Birthday, account anniversary, and profile completion rewards"
 msgstr ""
 
@@ -172,7 +172,7 @@ msgstr ""
 
 #: inc/backend/settings.php:143
 #: inc/backend/settings.php:219
-#: inc/backend/settings/extra-points.php:146
+#: inc/backend/settings/extra-points.php:148
 #: inc/backend/settings/referrals.php:271
 #: inc/backend/users/user-profile-points.php:153
 #: inc/backend/users/users-points.php:136
@@ -386,13 +386,13 @@ msgid "Customization Settings"
 msgstr ""
 
 #: inc/backend/settings/customization.php:114
-#: inc/backend/settings/extra-points.php:23
+#: inc/backend/settings/extra-points.php:25
 #: inc/backend/settings/referrals.php:15
 msgid "Before start"
 msgstr ""
 
 #: inc/backend/settings/customization.php:117
-#: inc/backend/settings/extra-points.php:26
+#: inc/backend/settings/extra-points.php:28
 #: inc/backend/settings/referrals.php:18
 msgid "You have to set at least one role for the loyalty level to set this options."
 msgstr ""
@@ -680,7 +680,7 @@ msgid "Enable to display message in Checkout page."
 msgstr ""
 
 #: inc/backend/settings/customization.php:642
-#: inc/backend/settings/extra-points.php:159
+#: inc/backend/settings/extra-points.php:161
 #: inc/backend/settings/general-add-remove-user-role.php:19
 #: inc/backend/settings/general-add-remove-user-role.php:26
 #: inc/backend/settings/tools.php:130
@@ -688,62 +688,62 @@ msgstr ""
 msgid "Nonce verification failed. Please try again."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:19
-#: inc/backend/settings/extra-points.php:35
+#: inc/backend/settings/extra-points.php:21
+#: inc/backend/settings/extra-points.php:37
 msgid "Extra points settings"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:42
+#: inc/backend/settings/extra-points.php:44
 msgid "Sign-up"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:46
+#: inc/backend/settings/extra-points.php:48
 msgid "Points awarded to customers when they sign up."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:51
+#: inc/backend/settings/extra-points.php:53
 msgid "Log-in"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:55
+#: inc/backend/settings/extra-points.php:57
 msgid "Points awarded to customers when they log-in daily."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:60
+#: inc/backend/settings/extra-points.php:62
 #: inc/frontend/loyalty-info-bubble.php:273
 msgid "Product review"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:64
+#: inc/backend/settings/extra-points.php:66
 msgid "Points awarded to customers for leaving a product review."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:69
+#: inc/backend/settings/extra-points.php:71
 msgid "Level up"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:96
+#: inc/backend/settings/extra-points.php:98
 msgid "Points awarded to customers for reaching a level role."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:137
+#: inc/backend/settings/extra-points.php:139
 msgid "Automate more customer reward actions in Premium"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:138
+#: inc/backend/settings/extra-points.php:140
 msgid "These core rules cover sign-up, daily login, product review, and level-up rewards. Premium adds lifecycle and purchase-based automations for deeper retention workflows."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:141
+#: inc/backend/settings/extra-points.php:143
 msgid "First order, purchase milestone, and lifetime spend rewards"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:142
+#: inc/backend/settings/extra-points.php:144
 msgid "Inactivity win-back campaigns and achievement points"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:164
-#: inc/backend/settings/extra-points.php:171
+#: inc/backend/settings/extra-points.php:166
+#: inc/backend/settings/extra-points.php:173
 #: inc/frontend/cart-checkout.php:211
 msgid "A valid whole points amount is required."
 msgstr ""
@@ -790,7 +790,7 @@ msgid "Assign"
 msgstr ""
 
 #: inc/backend/settings/general-earning-point-rules.php:90
-#: inc/backend/settings/general-using-point-rules.php:54
+#: inc/backend/settings/general-using-point-rules.php:55
 #: inc/backend/settings/referrals.php:87
 #: inc/backend/settings/referrals.php:119
 #: inc/backend/settings/referrals.php:204
@@ -803,7 +803,7 @@ msgid "point(s) for each"
 msgstr ""
 
 #: inc/backend/settings/general-earning-point-rules.php:92
-#: inc/backend/settings/general-using-point-rules.php:56
+#: inc/backend/settings/general-using-point-rules.php:57
 msgid "amount"
 msgstr ""
 
@@ -824,11 +824,11 @@ msgstr ""
 msgid "point(s)."
 msgstr ""
 
-#: inc/backend/settings/general-using-point-rules.php:42
+#: inc/backend/settings/general-using-point-rules.php:43
 msgid "Set how many points to exchange for a discount to the customers."
 msgstr ""
 
-#: inc/backend/settings/general-using-point-rules.php:55
+#: inc/backend/settings/general-using-point-rules.php:56
 msgid "point(s) for"
 msgstr ""
 
@@ -1276,16 +1276,16 @@ msgstr ""
 msgid "Level up bonus"
 msgstr ""
 
-#: inc/cores/helper/free-core.php:77
+#: inc/cores/helper/free-core.php:80
 msgid "Level up bonus for role:"
 msgstr ""
 
-#: inc/cores/helper/free-core.php:83
+#: inc/cores/helper/free-core.php:86
 #: inc/frontend/cart-checkout.php:275
 msgid "Points used"
 msgstr ""
 
-#: inc/cores/helper/free-core.php:85
+#: inc/cores/helper/free-core.php:88
 msgid "Please remove point redemption or use Classic checkout to place this order."
 msgstr ""
 

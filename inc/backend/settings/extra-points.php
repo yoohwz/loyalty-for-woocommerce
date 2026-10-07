@@ -6,8 +6,10 @@ class YOSWC_Loyalty_Settings_Extra_Points {
 
     public function display_extra_points_settings() {
         $loyalty_roles = get_option('loyalty_levels_roles', array());
-        $extra_points = get_option('loyalty_extra_points_rules', array());
+        $extra_points = maybe_unserialize(get_option('loyalty_extra_points_rules', array()));
+        $extra_points = is_array($extra_points) ? $extra_points : array();
         $merged = maybe_unserialize(get_option('loyalty_extra_reviews_gamification_rules', array()));
+        $merged = is_array($merged) ? $merged : array();
         $extra_points['review_points'] = 'yes' === ($merged['review_enabled'] ?? 'no') ? ($merged['review_points'] ?? 0) : 0;
         foreach (array('signup', 'login') as $kind) { if ('yes' !== ($extra_points[$kind . '_enabled'] ?? 'no')) { $extra_points[$kind . '_points'] = 0; } }
         $levelup_points = 'yes' === ($merged['levelup_enabled'] ?? 'no') ? ($merged['levelup_points'] ?? array()) : array();

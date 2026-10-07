@@ -8,7 +8,8 @@ class YOSWC_Loyalty_Settings_Using_Point_Rules {
 	}
 
 	public function render_using_point_field( $value ) {
-		$saved_using_points = get_option('loyalty_points_using_rules', array('points' => '', 'amount' => ''));
+		$saved_using_points = maybe_unserialize(get_option('loyalty_points_using_rules', array('points' => '', 'amount' => '')));
+        $saved_using_points = is_array($saved_using_points) ? $saved_using_points : array('points' => '', 'amount' => '');
 
 		?>
 		<tr valign="top">

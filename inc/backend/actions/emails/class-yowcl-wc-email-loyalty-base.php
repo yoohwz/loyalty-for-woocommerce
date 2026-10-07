@@ -25,6 +25,11 @@ abstract class YOWCL_WC_Email_Loyalty_Base extends WC_Email {
 		add_filter( 'woocommerce_settings_api_sanitized_fields_' . $this->id, array( $this, 'preserve_settings' ) );
 	}
 
+    public function init_settings() {
+        parent::init_settings();
+        $stored = maybe_unserialize(get_option($this->get_option_key(), array()));
+        if (is_array($stored)) { $this->settings = array_replace($this->settings, $stored); }
+    }
     private function migration_feature() {
         return 'yowcl_loyalty_level_update' === $this->id ? 'email_level' : ('yowcl_loyalty_points_deduct' === $this->id ? 'email_deduct' : 'email_reward');
     }
