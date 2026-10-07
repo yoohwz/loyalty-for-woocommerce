@@ -524,7 +524,7 @@
     {
       "target": "js/blocks-redemption.js",
       "mode": "100644",
-      "sha256": "e60259efa99c97208e9022d3a81c4c9f2e406df7dd567f474b66a07e6ac6f2cf"
+      "sha256": "7f690c3fdc8caac51af34cabd2f2e55c9366c16f9a48899c7e72a8137a7fe9bb"
     }
   ],
   "blocked_mixed_modules": [

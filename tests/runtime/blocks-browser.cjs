@@ -7,6 +7,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     const browser = await chromium.launch({ headless: true, ...(process.env.LOYF_BROWSER_EXECUTABLE ? {executablePath:process.env.LOYF_BROWSER_EXECUTABLE}: {}) });
     const page = await browser.newPage();
     page.setDefaultTimeout(30000);
+    await page.addInitScript(() => { window.crypto.randomUUID = undefined; });
     const calls = [], errors = [], updates = [];
     function extensionRequests(request) {
         if (request.method() !== 'POST') return [];
@@ -50,7 +51,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
             await page.waitForFunction(() => [...document.querySelectorAll('.loyf-blocks-redemption')].every(node => !/20 points applied/.test(node.textContent)));
         }
         const denied = await page.evaluate(async () => {
-            const response = await fetch('/?rest_route=/wc/store/v1/cart/extensions', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({namespace:'loyf-redemption',data:{action:'apply',points:'20',operation_id:crypto.randomUUID()}})});
+            const response = await fetch('/?rest_route=/wc/store/v1/cart/extensions', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({namespace:'loyf-redemption',data:{action:'apply',points:'20',operation_id:'00000000-0000-4000-8000-000000000001'}})});
             return response.status;
         });
         assert(denied >= 400, 'Native browser transport requires Store API nonce');

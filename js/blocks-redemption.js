@@ -6,6 +6,13 @@
     const { __, sprintf } = wp.i18n;
     const { ExperimentalDiscountsMeta, extensionCartUpdate } = wc.blocksCheckout;
     if (!ExperimentalDiscountsMeta || !extensionCartUpdate) return;
+    function operationId() {
+        if (window.crypto.randomUUID) return window.crypto.randomUUID();
+        const bytes = window.crypto.getRandomValues(new Uint8Array(16));
+        bytes[6] = (bytes[6] & 15) | 64; bytes[8] = (bytes[8] & 63) | 128;
+        const hex = [...bytes].map(byte => byte.toString(16).padStart(2, '0')).join('');
+        return hex.slice(0, 8) + '-' + hex.slice(8, 12) + '-' + hex.slice(12, 16) + '-' + hex.slice(16, 20) + '-' + hex.slice(20);
+    }
     function Redemption() {
         const data = wp.data.useSelect(select => {
             const cart = select(wc.wcBlocksData.CART_STORE_KEY).getCartData();
@@ -24,7 +31,7 @@
             // A lost response retains the original immutable request until retry succeeds.
             if (!pending.current) pending.current = action === 'remove'
                 ? { action, operation_id: data.operation_id }
-                : { action, points, operation_id: window.crypto.randomUUID() };
+                : { action, points, operation_id: operationId() };
             const request = pending.current;
             setBusy(true); setError('');
             extensionCartUpdate({ namespace: 'loyf-redemption', data: request })

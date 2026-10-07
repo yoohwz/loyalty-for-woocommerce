@@ -12,7 +12,7 @@ function loyf8_user($name) {
 $merged=get_option('loyalty_extra_reviews_gamification_rules'); $merged['levelup_enabled']='no'; update_option('loyalty_extra_reviews_gamification_rules',$merged);
 $hpos='hpos'===getenv('LOYF_STORAGE');
 loyf_equal($hpos,Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled(),'Authoritative storage'); loyf_equal('no',get_option('woocommerce_custom_orders_table_data_sync_enabled'),'Sync disabled');
-foreach(array('custom_order_tables','cart_checkout_blocks') as $feature){loyf_assert(in_array(YOSWC_LOYALTY_PLUGIN_BASENAME,Automattic\WooCommerce\Utilities\FeaturesUtil::get_compatible_plugins_for_feature($feature),true),'Native compatibility declaration '.$feature);}
+foreach(array('custom_order_tables','cart_checkout_blocks') as $feature){loyf_assert(in_array(YOSWC_LOYALTY_PLUGIN_BASENAME,Automattic\WooCommerce\Utilities\FeaturesUtil::get_compatible_plugins_for_feature($feature)['compatible'],true),'Native compatibility declaration '.$feature);}
 $product=new WC_Product_Simple(); $product->set_name('Modern redemption'); $product->set_regular_price('100'); $product->set_virtual(true); $product->set_status('publish'); $product->save();
 $address=array('first_name'=>'Native','last_name'=>'Customer','address_1'=>'1 Test Road','city'=>'San Francisco','state'=>'CA','postcode'=>'94103','country'=>'US','email'=>'modern@example.invalid','phone'=>'4155550100');
 update_option('woocommerce_cod_settings',array('enabled'=>'yes')); WC()->payment_gateways=new WC_Payment_Gateways();
