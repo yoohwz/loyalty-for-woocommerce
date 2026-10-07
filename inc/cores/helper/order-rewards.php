@@ -32,6 +32,7 @@ class YOWCL_Order_Rewards {
 			return $callback( $order, $owner );
 		} catch ( Throwable $e ) {
 			YOWCL_Core_Rewards::report( 'reward:order:' . $order_id, $e );
+            if ( isset( $order ) && 'invalid_balance_storage' === $e->getMessage() ) { YOWCL_Free_Core::hold( $order->get_user_id(), $e->getMessage() ); }
 			if ( $retry ) { $retry( $e ); } elseif ( in_array( $e->getMessage(), array( 'order_reward_value_busy', 'reward_level_projection_busy', 'reward_level_projection_retry_required', 'reward_expiration_schedule_retry' ), true ) ) { self::defer( $order_id, $transition ); }
 		} finally {
 			if ( isset( self::$held[ $order_id ] ) ) {
@@ -157,19 +158,27 @@ class YOWCL_Order_Rewards {
 			$started = true;
 			$order->read_meta_data( true );
 			if ( $order->get_meta( $marker, true ) ) { return false; }
-			$points = (int) $order->get_meta( '_points_awarded', true );
+			$raw_points = $order->get_meta( '_points_awarded', true );
+            if ( ! is_scalar( $raw_points ) || ! preg_match( '/^[0-9]{1,8}$/D', (string) $raw_points ) ) { throw new RuntimeException( 'invalid_historical_award_storage' ); }
+            $points = (int) $raw_points;
 			if ( $points <= 0 ) { return false; }
-			$balances = array();
-			foreach ( array( 'user_points', 'user_earning_points' ) as $key ) {
-				$raw = YOWCL_Points_Lock::scalar( $db, $wpdb->prepare( "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key = %s ORDER BY umeta_id LIMIT 1 FOR UPDATE", $user_id, $key ) );
-				if ( null !== $raw && ( ! preg_match( '/^[0-9]+$/D', $raw ) || strlen( $raw ) > 18 ) ) { throw new RuntimeException( 'invalid_balance_storage' ); }
-				$balances[ $key ] = max( 0, (int) $raw - $points );
-				if ( null === $raw ) {
-					YOWCL_Points_Lock::query( $db, $wpdb->prepare( "INSERT INTO {$wpdb->usermeta} (user_id, meta_key, meta_value) VALUES (%d, %s, %s)", $user_id, $key, (string) $balances[ $key ] ) );
-				} else {
-					YOWCL_Points_Lock::query( $db, $wpdb->prepare( "UPDATE {$wpdb->usermeta} SET meta_value = %s WHERE user_id = %d AND meta_key = %s", (string) $balances[ $key ], $user_id, $key ) );
-				}
-			}
+            $balances = array(); $stored = array();
+            foreach ( array( 'user_points', 'user_earning_points' ) as $key ) {
+                $result = YOWCL_Points_Lock::query( $db, $wpdb->prepare( "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key = %s ORDER BY umeta_id FOR UPDATE", $user_id, $key ) );
+                $values = array();
+                while ( $row = mysqli_fetch_row( $result ) ) { $values[] = $row[0]; }
+                mysqli_free_result( $result );
+                if ( count( $values ) > 1 || ( $values && ( ! preg_match( '/^[0-9]+$/D', $values[0] ) || strlen( $values[0] ) > 18 ) ) ) { throw new RuntimeException( 'invalid_balance_storage' ); }
+                $stored[$key] = $values;
+                $balances[$key] = max( 0, (int) ( $values[0] ?? 0 ) - $points );
+            }
+            // Validate both complete storage sets before writing either balance.
+            foreach ( $balances as $key => $value ) {
+                $sql = $stored[$key]
+                    ? $wpdb->prepare( "UPDATE {$wpdb->usermeta} SET meta_value = %s WHERE user_id = %d AND meta_key = %s", (string) $value, $user_id, $key )
+                    : $wpdb->prepare( "INSERT INTO {$wpdb->usermeta} (user_id, meta_key, meta_value) VALUES (%d, %s, %s)", $user_id, $key, (string) $value );
+                YOWCL_Points_Lock::query( $db, $sql );
+            }
 			$data = array( 'user_id' => $user_id, 'action' => $action, 'order_id' => $order->get_id(), 'amount' => $points, 'description' => $description, 'date' => current_time( 'mysql' ) );
 			YOWCL_Points_Lock::query( $db, $wpdb->prepare( "INSERT INTO {$table} (user_id, action, order_id, amount, description, date) VALUES (%d, %s, %d, %d, %s, %s)", array_values( $data ) ) );
 			$log_id = (int) mysqli_insert_id( $db );

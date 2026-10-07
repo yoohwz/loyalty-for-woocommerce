@@ -88,16 +88,28 @@ loyf_equal( 'already_applied', YOWCL_Points_Transaction::mutate( (int) $user, 40
 $csv_path = tempnam( sys_get_temp_dir(), 'loyf-csv-' );
 $csv = "user_id,user_points,user_earning_points\n" . $user . ",50,50\n" . $pre['user'] . ",40,40\n";
 file_put_contents( $csv_path, $csv );
-$csv_operation = wp_generate_uuid4();
-$run_csv = function () use ( $csv_path, $csv_operation ) {
-    $_POST = array( 'wc_loyalty_import_nonce' => wp_create_nonce( 'wc_loyalty_import_action' ), 'operation_id' => $csv_operation );
+$csv_form_id = function () {
+    ob_start(); ( new YOSWC_Loyalty_Settings_Tools() )->display_tools_settings(); $html = ob_get_clean();
+    loyf_assert( 1 === preg_match( '/name="operation_id" value="([a-f0-9-]+)"/', $html, $match ), 'Native CSV form operation' );
+    return $match[1];
+};
+$csv_operation = $csv_form_id();
+$run_csv = function () use ( $csv_path, $csv_operation, $csv_form_id ) {
+    $rendered = $csv_form_id(); loyf_equal( $csv_operation, $rendered, 'CSV rendered recovery identity' );
+    $_POST = array( 'wc_loyalty_import_nonce' => wp_create_nonce( 'wc_loyalty_import_action' ), 'operation_id' => $rendered );
     $_FILES = array( 'import_file' => array( 'tmp_name' => $csv_path, 'name' => 'fixture.csv' ) );
     $handler = new ReflectionMethod( 'YOSWC_Loyalty_Settings_Tools', 'import_csv' ); $handler->setAccessible( true );
     ob_start(); try { $handler->invoke( new YOSWC_Loyalty_Settings_Tools() ); } finally { ob_end_clean(); $_POST = array(); $_FILES = array(); }
 };
 $run_csv(); loyf_balance( $user, 50, 50, 'CSV applies valid target' ); loyf_equal( '37.5', get_user_meta( $pre['user'], 'user_points', true ), 'CSV cannot normalize fractional storage' );
 YOWCL_Points_Transaction::apply( (int) $user, 5, 5, 'fixture:csv-later-credit' );
-$run_csv(); loyf_balance( $user, 55, 55, 'CSV replay preserves later credit' ); unlink( $csv_path );
+$run_csv(); loyf_balance( $user, 55, 55, 'CSV rendered retry preserves later credit' );
+$_POST = array( 'start_new_import' => 1, 'previous_operation_id' => $csv_operation, 'loyf_start_new_import_nonce' => wp_create_nonce( 'loyf_start_new_import' ) );
+$next_import = $csv_form_id(); $_POST = array();
+loyf_assert( $next_import !== $csv_operation, 'Explicit new operation is separate' );
+loyf_equal( hash( 'sha256', $csv ), get_option( 'loyf_import_1_' . $csv_operation ), 'Original immutable import witness retained' );
+loyf_assert( YOWCL_Points_Transaction::find( 'import:1:' . $csv_operation . ':' . $user ), 'Original import event retained' );
+loyf_balance( $user, 55, 55, 'New-operation rendering does not mutate value' ); unlink( $csv_path );
 // Contention retains the producer's application retry with frozen terms.
 $rules = get_option( 'loyalty_extra_points_rules' ); $off = $rules; $off['signup_points'] = 0; update_option( 'loyalty_extra_points_rules', $off );
 $retry_user = wp_insert_user( array( 'user_login' => 'retry_user', 'user_email' => 'retry@example.invalid', 'user_pass' => 'disposable-only', 'role' => 'customer' ) );

@@ -288,7 +288,7 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 
 	    private function calculate_potential_earned_points($user_id) {
 	        $user = get_userdata($user_id);
-	        $user_role = YOWCL_Helper_Roles::get_highest_loyalty_user_role( (int) $user->ID );
+	        $user_role = $user ? YOWCL_Helper_Roles::get_highest_loyalty_user_role( (int) $user->ID ) : 'customer';
 
         $earning_rules = maybe_unserialize(get_option('loyalty_points_earning_rules', []));
 

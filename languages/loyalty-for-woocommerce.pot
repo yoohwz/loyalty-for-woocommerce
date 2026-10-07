@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-07T04:47:10+00:00\n"
+"POT-Creation-Date: 2026-10-07T04:58:31+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
@@ -675,7 +675,8 @@ msgstr ""
 #: inc/backend/settings/general-add-remove-user-role.php:19
 #: inc/backend/settings/general-add-remove-user-role.php:26
 #: inc/backend/settings/notification.php:49
-#: inc/backend/settings/tools.php:97
+#: inc/backend/settings/tools.php:130
+#: inc/backend/settings/tools.php:146
 msgid "Nonce verification failed. Please try again."
 msgstr ""
 
@@ -940,108 +941,129 @@ msgstr ""
 msgid "Premium adds referral links and referral coupons for referrer and referee rewards."
 msgstr ""
 
-#: inc/backend/settings/tools.php:23
-#: inc/backend/settings/tools.php:34
+#: inc/backend/settings/tools.php:26
+#: inc/backend/settings/tools.php:37
 msgid "Import"
 msgstr ""
 
-#: inc/backend/settings/tools.php:27
+#: inc/backend/settings/tools.php:30
 msgid "Import CSV"
 msgstr ""
 
+#: inc/backend/settings/tools.php:43
+msgid "Start another import"
+msgstr ""
+
+#: inc/backend/settings/tools.php:45
+msgid "Retry the original file to continue the current import. Start another import only after reviewing the previous results."
+msgstr ""
+
 #. translators: %1$s: URL to download the CSV sample file.
-#: inc/backend/settings/tools.php:42
+#: inc/backend/settings/tools.php:51
 #, php-format
 msgid "Download the <a href=\"%1$s\" target=\"_blank\" rel=\"noopener\">CSV sample file</a> and add the entries to the correct column."
 msgstr ""
 
-#: inc/backend/settings/tools.php:59
+#: inc/backend/settings/tools.php:68
 #: inc/frontend/loyalty-info-bubble.php:265
 msgid "Calculation"
 msgstr ""
 
-#: inc/backend/settings/tools.php:63
+#: inc/backend/settings/tools.php:72
 msgid "Loyalty level"
 msgstr ""
 
-#: inc/backend/settings/tools.php:66
+#: inc/backend/settings/tools.php:75
 msgid "Redefine"
 msgstr ""
 
-#: inc/backend/settings/tools.php:69
+#: inc/backend/settings/tools.php:78
 #: inc/frontend/my-account.php:207
 msgid "Loading..."
 msgstr ""
 
-#: inc/backend/settings/tools.php:70
+#: inc/backend/settings/tools.php:79
 msgid "Redefining... Please wait, DO NOT leave the page until finished."
 msgstr ""
 
-#: inc/backend/settings/tools.php:72
+#: inc/backend/settings/tools.php:81
 msgid "Redefine the loyalty levels based on the total earned points."
 msgstr ""
 
-#: inc/backend/settings/tools.php:101
+#: inc/backend/settings/tools.php:111
+msgid "Import recovery identity needs review."
+msgstr ""
+
+#: inc/backend/settings/tools.php:119
+#: inc/backend/settings/tools.php:150
 msgid "You do not have permission to import points."
 msgstr ""
 
-#: inc/backend/settings/tools.php:108
+#: inc/backend/settings/tools.php:120
+msgid "An import is running. Retry the current file later."
+msgstr ""
+
+#: inc/backend/settings/tools.php:134
+msgid "The current import changed. Reload and review its results."
+msgstr ""
+
+#: inc/backend/settings/tools.php:157
 msgid "No file was uploaded."
 msgstr ""
 
-#: inc/backend/settings/tools.php:114
+#: inc/backend/settings/tools.php:163
 msgid "Invalid file type. Please upload a CSV file."
 msgstr ""
 
-#: inc/backend/settings/tools.php:122
+#: inc/backend/settings/tools.php:171
 msgid "Could not initialize the WordPress filesystem."
 msgstr ""
 
-#: inc/backend/settings/tools.php:128
+#: inc/backend/settings/tools.php:177
 msgid "Could not open CSV file."
 msgstr ""
 
-#: inc/backend/settings/tools.php:133
+#: inc/backend/settings/tools.php:182
 msgid "Invalid import identity or file size."
 msgstr ""
 
-#: inc/backend/settings/tools.php:137
+#: inc/backend/settings/tools.php:186
 msgid "Import at most 500 rows per operation."
 msgstr ""
 
-#: inc/backend/settings/tools.php:142
+#: inc/backend/settings/tools.php:191
 msgid "Invalid or duplicate CSV target. Whole non-negative balances are required."
 msgstr ""
 
-#: inc/backend/settings/tools.php:148
+#: inc/backend/settings/tools.php:197
 msgid "This import identity belongs to different terms. Retry the original file."
 msgstr ""
 
-#: inc/backend/settings/tools.php:161
+#: inc/backend/settings/tools.php:211
 msgid "Points imported from CSV."
 msgstr ""
 
 #. translators: %d: number of rows imported.
-#: inc/backend/settings/tools.php:174
+#: inc/backend/settings/tools.php:224
 #, php-format
 msgid "Successfully imported %d row(s)."
 msgstr ""
 
 #. translators: %d: number of rows that failed to import.
-#: inc/backend/settings/tools.php:184
+#: inc/backend/settings/tools.php:234
 #, php-format
 msgid "%d row(s) failed to import."
 msgstr ""
 
-#: inc/backend/settings/tools.php:195
+#: inc/backend/settings/tools.php:245
 msgid "You do not have permission to perform this action."
 msgstr ""
 
-#: inc/backend/settings/tools.php:256
+#: inc/backend/settings/tools.php:306
 msgid "Loyalty levels have been successfully redefined."
 msgstr ""
 
-#: inc/backend/settings/tools.php:264
+#: inc/backend/settings/tools.php:314
 msgid "An error occurred redefining loyalty levels."
 msgstr ""
 

@@ -4,7 +4,7 @@ defined('ABSPATH') || exit;
 
 class YOWCL_Actions_Deduct_Points {
 	const ORDER_LOCK_META = '_yowcl_points_deduct_lock';
-    
+
     public function __construct( $register = true ) {
         if ( $register ) { add_action('woocommerce_order_status_changed', [$this, 'on_order_status_changed'], 10, 3); }
     }
@@ -61,4 +61,3 @@ class YOWCL_Actions_Deduct_Points {
         }, array( $old_status, $new_status ) );
     }
 }
-

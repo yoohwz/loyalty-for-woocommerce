@@ -93,7 +93,7 @@ class YOSWC_Loyalty_Product_Message_Earning_Points {
 	private function calculate_earning_points( $product, $user_id ) {
 		// If we have a real user, use their role; otherwise default to 'customer'
 		$user = $user_id ? get_userdata( $user_id ) : false;
-		$user_role = YOWCL_Helper_Roles::get_highest_loyalty_user_role( (int) $user->ID ) ?: 'customer';
+		$user_role = $user ? ( YOWCL_Helper_Roles::get_highest_loyalty_user_role( (int) $user->ID ) ?: 'customer' ) : 'customer';
 	
 		$earning_rules   = maybe_unserialize( get_option( 'loyalty_points_earning_rules', [] ) );
 		$earned_points   = 0;

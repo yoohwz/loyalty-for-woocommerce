@@ -39,3 +39,29 @@ foreach ( array( 'customer', 'loyf_gold', 'loyf_owned' ) as $slug ) {
 loyf_equal( null, YOSWC_Role_Ownership::record( 'loyf_gold' ), 'No historical creator backfill' );
 loyf_equal( 'retired', YOSWC_Role_Ownership::record( 'loyf_owned' )['state'], 'Owned role retirement' );
 $_POST = array(); unset( $_SERVER['REQUEST_METHOD'] );
+
+// A native legacy cancellation must inspect every stored balance row before any write.
+foreach ( array( 'user_points', 'user_earning_points' ) as $key ) {
+    $duplicate_user = wp_insert_user( array( 'user_login' => 'duplicate_' . $key, 'user_email' => $key . '@example.invalid', 'user_pass' => 'disposable-only', 'role' => 'customer' ) );
+    update_user_meta( $duplicate_user, 'user_points', '37' ); update_user_meta( $duplicate_user, 'user_earning_points', '37' );
+    add_user_meta( $duplicate_user, $key, '37.5' );
+    $before = get_user_meta( $duplicate_user, $key, false ); $before_rows = loyf_rows( $duplicate_user );
+    $historical = loyf_order( $duplicate_user, $product ); $historical->update_meta_data( '_points_awarded', 10 ); $historical->save();
+    $historical->update_status( 'cancelled' );
+    wp_cache_delete( $duplicate_user, 'user_meta' );
+    loyf_equal( $before, get_user_meta( $duplicate_user, $key, false ), 'Historical cancellation preserves duplicate fractional ' . $key );
+    loyf_equal( $before_rows, loyf_rows( $duplicate_user ), 'Held cancellation creates no history' );
+    loyf_equal( '', wc_get_order( $historical->get_id() )->get_meta( '_points_deducted' ), 'Held cancellation creates no marker' );
+    loyf_equal( 'invalid_balance_storage', get_user_meta( $duplicate_user, '_loyf_economic_hold', true ), 'Cancellation diagnostic' );
+}
+// Native guest/missing-user product readers preserve the Customer rule without PHP warnings.
+wp_set_current_user( 0 );
+set_error_handler( function ( $severity, $message ) { throw new RuntimeException( $message ); }, E_WARNING );
+try {
+    foreach ( array( 'YOSWC_Loyalty_Product_Message_Earning_Points', 'YOSWC_Loyalty_Shop_Message_Earning_Points' ) as $class ) {
+        $reader = new ReflectionMethod( $class, 'calculate_earning_points' ); $reader->setAccessible( true );
+        foreach ( array( 0, 999999999 ) as $missing ) { loyf_assert( $reader->invoke( new $class(), $product, $missing ) >= 0, 'Native guest/missing-user calculation ' . $class ); }
+    }
+    $cart_reader = new ReflectionMethod( 'YOSWC_Loyalty_Using_Point_Cart_Checkout', 'calculate_potential_earned_points' ); $cart_reader->setAccessible( true );
+    loyf_assert( $cart_reader->invoke( new YOSWC_Loyalty_Using_Point_Cart_Checkout(), 0 ) >= 0, 'Guest cart calculation' );
+} finally { restore_error_handler(); wp_set_current_user( 1 ); }

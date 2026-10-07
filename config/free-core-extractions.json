@@ -707,8 +707,13 @@
   },
   "inc/cores/helper/order-rewards.php": {
     "input_sha256": "b6c99bb52947f4035ee4030122627ac861a6a12085f49d981aec681e08d89417",
-    "selected_sha256": "5e761727fbfe05c6d3ba6429d2fc4e8843a8fcd4e0355325c4b7520bfc1f95cc",
+    "selected_sha256": "61aa7182d873032f1a48edbae092d30dd70172fb43593aa53b8742c24de54e62",
     "spans": [
+      {
+        "start": 1693,
+        "end": 1693,
+        "replacement": "CiAgICAgICAgICAgIGlmICggaXNzZXQoICRvcmRlciApICYmICdpbnZhbGlkX2JhbGFuY2Vfc3RvcmFnZScgPT09ICRlLT5nZXRNZXNzYWdlKCkgKSB7IFlPV0NMX0ZyZWVfQ29yZTo6aG9sZCggJG9yZGVyLT5nZXRfdXNlcl9pZCgpLCAkZS0+Z2V0TWVzc2FnZSgpICk7IH0="
+      },
       {
         "start": 4358,
         "end": 4358,
@@ -815,19 +820,224 @@
         "replacement": ""
       },
       {
-        "start": 11495,
-        "end": 11520,
+        "start": 11480,
+        "end": 11480,
+        "replacement": "cmF3Xw=="
+      },
+      {
+        "start": 11488,
+        "end": 11519,
         "replacement": ""
       },
       {
-        "start": 11561,
+        "start": 11563,
         "end": 11563,
+        "replacement": "OwogICAgICAgICAgICBpZiAoICEgaXNfc2NhbGFyKCAkcmF3X3BvaW50cw=="
+      },
+      {
+        "start": 11565,
+        "end": 11565,
+        "replacement": "IHx8ICEgcHJlZ19tYXRjaCggJy9eWzAtOV17MSw4fSQvRCcsIChzdHJpbmcpICRyYXdfcG9pbnRzICkgKSB7IHRocm93IG5ldyBSdW50aW1lRXhjZXB0aW9uKCAnaW52YWxpZF9oaXN0b3JpY2FsX2F3YXJkX3N0b3JhZ2UnICk7IH0KICAgICAgICAgICAgJHBvaW50cyA9IChpbnQpICRyYXdfcG9pbnRz"
+      },
+      {
+        "start": 11608,
+        "end": 11611,
+        "replacement": "ICAgICAgICAgICAg"
+      },
+      {
+        "start": 11631,
+        "end": 11631,
+        "replacement": "ICRzdG9yZWQgPSBhcnJheSgpOw=="
+      },
+      {
+        "start": 11632,
+        "end": 11635,
+        "replacement": "ICAgICAgICAgICAg"
+      },
+      {
+        "start": 11703,
+        "end": 11707,
+        "replacement": "ICAgICAgICAgICAgICAgIA=="
+      },
+      {
+        "start": 11709,
+        "end": 11711,
+        "replacement": "ZXN1bHQ="
+      },
+      {
+        "start": 11733,
+        "end": 11738,
+        "replacement": "cXVl"
+      },
+      {
+        "start": 11739,
+        "end": 11739,
+        "replacement": "eQ=="
+      },
+      {
+        "start": 11859,
+        "end": 11867,
         "replacement": ""
       },
       {
-        "start": 11899,
-        "end": 11899,
-        "replacement": "CgkJCQlpZiAoIG51bGwgIT09ICRyYXcgJiYgKCAhIHByZWdfbWF0Y2goICcvXlswLTldKyQvRCcsICRyYXcgKSB8fCBzdHJsZW4oICRyYXcgKSA+IDE4ICkgKSB7IHRocm93IG5ldyBSdW50aW1lRXhjZXB0aW9uKCAnaW52YWxpZF9iYWxhbmNlX3N0b3JhZ2UnICk7IH0="
+        "start": 11900,
+        "end": 11904,
+        "replacement": "ICAgICAgICAgICAgICAgICR2YWx1ZXMgPSBhcnJheSgpOwogICAgICAgICAgICAgICAgd2hpbGUgKCAkcm93ID0gbXlzcWxpX2ZldGNoX3JvdyggJHJlc3VsdCApICkgeyAkdmFsdWVzW10gPSAkcm93WzBdOyB9CiAgICAgICAgICAgICAgICBteXNxbGlfZnJlZV9yZXN1bHQoICRyZXN1bHQgKTsKICAgICAgICAgICAgICAgIGlmICggY291bnQoICR2YWx1ZXMgKSA+IDEgfHwgKCAkdmFsdWVzICYmICggISBwcmVnX21hdGNoKCAnL15bMC05XSskL0QnLCAkdmFsdWVzWzBdICkgfHwgc3RybGVuKCAkdmFsdWVzWzBdICkgPiAxOCApICkgKSB7IHRocm93IG5ldyBSdW50aW1lRXhjZXB0aW9uKCAnaW52YWxpZF9iYWxhbmNlX3N0b3JhZ2UnICk7IH0KICAgICAgICAgICAgICAgICRzdG9yZWRbJGtleV0gPSAkdmFsdWVzOwogICAgICAgICAgICAgICAg"
+      },
+      {
+        "start": 11914,
+        "end": 11915,
+        "replacement": ""
+      },
+      {
+        "start": 11919,
+        "end": 11920,
+        "replacement": ""
+      },
+      {
+        "start": 11938,
+        "end": 11938,
+        "replacement": "KCA="
+      },
+      {
+        "start": 11939,
+        "end": 11940,
+        "replacement": "dg=="
+      },
+      {
+        "start": 11941,
+        "end": 11942,
+        "replacement": "bHVlc1swXSA/PyAwICk="
+      },
+      {
+        "start": 11956,
+        "end": 11960,
+        "replacement": "ICAgICAgICAgICAgfQogICAgICAgICAgICAvLyBWYWw="
+      },
+      {
+        "start": 11961,
+        "end": 11961,
+        "replacement": "ZGF0ZSBib3RoIGNvbXBsZXRlIHN0b3JhZ2Ugc2V0cyBiZQ=="
+      },
+      {
+        "start": 11962,
+        "end": 11962,
+        "replacement": "b3JlIHdyaXRpbmcgZWl0aGVyIGJhbGFuY2UuCiAgICAgICAgICAgIGZvcmVhY2g="
+      },
+      {
+        "start": 11965,
+        "end": 11965,
+        "replacement": "JGJhbGE="
+      },
+      {
+        "start": 11966,
+        "end": 11969,
+        "replacement": "Y2VzIGFzICRrZXk="
+      },
+      {
+        "start": 11971,
+        "end": 11973,
+        "replacement": "Pg=="
+      },
+      {
+        "start": 11975,
+        "end": 11976,
+        "replacement": "dg=="
+      },
+      {
+        "start": 11977,
+        "end": 11978,
+        "replacement": "bHVl"
+      },
+      {
+        "start": 11983,
+        "end": 11990,
+        "replacement": "ICAgICAgICAgICAgICAgICRzcWwgPSAkc3RvcmVkWyRrZXldCiAgICAgICAgICAgICAgICAgICAgPyAkd3BkYi0+cHJlcGFyZSggIlVQREFURSB7JHdwZGItPnVzZXJtZXRhfSBTRVQgbWV0YV92YWx1ZSA9ICVzIA=="
+      },
+      {
+        "start": 11991,
+        "end": 11993,
+        "replacement": "SEVSRSB1c2Vy"
+      },
+      {
+        "start": 11994,
+        "end": 11996,
+        "replacement": "aWQgPSAlZCBBTkQgbWV0YV9rZXkgPSAlcyIsIChzdHI="
+      },
+      {
+        "start": 11998,
+        "end": 12008,
+        "replacement": "ZykgJHZhbA=="
+      },
+      {
+        "start": 12010,
+        "end": 12013,
+        "replacement": "LA=="
+      },
+      {
+        "start": 12015,
+        "end": 12015,
+        "replacement": "dXNlcl9p"
+      },
+      {
+        "start": 12016,
+        "end": 12017,
+        "replacement": ""
+      },
+      {
+        "start": 12018,
+        "end": 12018,
+        "replacement": "ICRrZXkgKQogICAgICAgICAgICAgICAgICAgIDo="
+      },
+      {
+        "start": 12146,
+        "end": 12147,
+        "replacement": "dg=="
+      },
+      {
+        "start": 12149,
+        "end": 12152,
+        "replacement": "dQ=="
+      },
+      {
+        "start": 12153,
+        "end": 12164,
+        "replacement": ""
+      },
+      {
+        "start": 12168,
+        "end": 12173,
+        "replacement": ""
+      },
+      {
+        "start": 12174,
+        "end": 12178,
+        "replacement": ""
+      },
+      {
+        "start": 12179,
+        "end": 12186,
+        "replacement": "ICAgICAgICAgICAgICA="
+      },
+      {
+        "start": 12218,
+        "end": 12250,
+        "replacement": ""
+      },
+      {
+        "start": 12251,
+        "end": 12270,
+        "replacement": "cQ=="
+      },
+      {
+        "start": 12271,
+        "end": 12362,
+        "replacement": ""
+      },
+      {
+        "start": 12366,
+        "end": 12375,
+        "replacement": "ICAgICAgICAgICAg"
       },
       {
         "start": 12920,
@@ -838,8 +1048,13 @@
   },
   "inc/backend/actions/deduct-points.php": {
     "input_sha256": "aca14da80e8d8c2fe7ad990bfd52580ac0e9f434e3ed451edbb9284bca113fc8",
-    "selected_sha256": "896e0249352bce6dafd71440a941005bff532f2ad311b3716b97c70a67d3ea7e",
+    "selected_sha256": "63cd028696778529aefdf22c2e2cad1c819714a8370860ee5a9cc848d6c8fa96",
     "spans": [
+      {
+        "start": 126,
+        "end": 130,
+        "replacement": ""
+      },
       {
         "start": 184,
         "end": 285,
@@ -886,7 +1101,47 @@
         "replacement": "IA=="
       },
       {
-        "start": 4249,
+        "start": 2622,
+        "end": 2625,
+        "replacement": ""
+      },
+      {
+        "start": 2632,
+        "end": 2632,
+        "replacement": "LWZvci13b29jb21tZXJjZQ=="
+      },
+      {
+        "start": 2677,
+        "end": 2680,
+        "replacement": ""
+      },
+      {
+        "start": 2687,
+        "end": 2687,
+        "replacement": "LWZvci13b29jb21tZXJjZQ=="
+      },
+      {
+        "start": 2728,
+        "end": 2731,
+        "replacement": ""
+      },
+      {
+        "start": 2738,
+        "end": 2738,
+        "replacement": "LWZvci13b29jb21tZXJjZQ=="
+      },
+      {
+        "start": 2832,
+        "end": 2835,
+        "replacement": ""
+      },
+      {
+        "start": 2842,
+        "end": 2842,
+        "replacement": "LWZvci13b29jb21tZXJjZQ=="
+      },
+      {
+        "start": 4248,
         "end": 4284,
         "replacement": ""
       }
