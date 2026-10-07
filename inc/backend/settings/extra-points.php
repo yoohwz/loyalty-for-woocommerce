@@ -6,8 +6,13 @@ class YOSWC_Loyalty_Settings_Extra_Points {
 
     public function display_extra_points_settings() {
         $loyalty_roles = get_option('loyalty_levels_roles', array());
-        $extra_points = get_option('loyalty_extra_points_rules', array());
-        $levelup_points = get_option('loyalty_extra_levelup_points_rules', array());
+        $extra_points = maybe_unserialize(get_option('loyalty_extra_points_rules', array()));
+        $extra_points = is_array($extra_points) ? $extra_points : array();
+        $merged = maybe_unserialize(get_option('loyalty_extra_reviews_gamification_rules', array()));
+        $merged = is_array($merged) ? $merged : array();
+        $extra_points['review_points'] = 'yes' === ($merged['review_enabled'] ?? 'no') ? ($merged['review_points'] ?? 0) : 0;
+        foreach (array('signup', 'login') as $kind) { if ('yes' !== ($extra_points[$kind . '_enabled'] ?? 'no')) { $extra_points[$kind . '_points'] = 0; } }
+        $levelup_points = 'yes' === ($merged['levelup_enabled'] ?? 'no') ? ($merged['levelup_points'] ?? array()) : array();
 
         $is_premium = (bool) apply_filters( 'yoswc_loyalty_is_premium', false );
 
@@ -152,32 +157,29 @@ class YOSWC_Loyalty_Settings_Extra_Points {
     }
 
     public function save_extra_points_settings() {
-        if (!isset($_POST['extra_points_settings_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['extra_points_settings_nonce'])), 'save_extra_points_settings_action')) {
+        if (!current_user_can('manage_options') || !isset($_POST['extra_points_settings_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['extra_points_settings_nonce'])), 'save_extra_points_settings_action')) {
             wp_die(esc_html__('Nonce verification failed. Please try again.', 'loyalty-for-woocommerce'));
         }
-    
-        $signup_points = isset($_POST['loyalty_extra_signup_points']) ? sanitize_text_field(wp_unslash($_POST['loyalty_extra_signup_points'])) : 0;
-        $login_points = isset($_POST['loyalty_extra_login_points']) ? sanitize_text_field(wp_unslash($_POST['loyalty_extra_login_points'])) : 0;
-        $review_points = isset($_POST['loyalty_extra_review_points']) ? sanitize_text_field(wp_unslash($_POST['loyalty_extra_review_points'])) : 0;
-    
-        $extra_points = array(
-            'signup_points' => $signup_points,
-            'login_points' => $login_points,
-            'review_points' => $review_points,
-        );
-    
-        update_option('loyalty_extra_points_rules', $extra_points);
-
-        $loyalty_roles = get_option('loyalty_levels_roles', array());
-		$levelup_points = array();
-
-		foreach ($loyalty_roles as $role) {
-			$points_awarded = isset($_POST['loyalty_extra_levelup_' . $role]) ? sanitize_text_field(wp_unslash($_POST['loyalty_extra_levelup_' . $role])) : '';
-
-			$levelup_points[$role] = array(
-				'awarded' => $points_awarded,
-			);
-		}
-		update_option('loyalty_extra_levelup_points_rules', $levelup_points);
-    }    
+        $values = array();
+        foreach (array('signup', 'login', 'review') as $kind) {
+            $value = $_POST['loyalty_extra_' . $kind . '_points'] ?? '';
+            if (!is_scalar($value) || ('' !== (string) $value && (!preg_match('/^[0-9]+$/D', (string) $value) || strlen((string) $value) > 8))) { wp_die(esc_html__('A valid whole points amount is required.', 'loyalty-for-woocommerce')); }
+            $values[$kind] = (string) $value;
+        }
+        $merged = maybe_unserialize(get_option('loyalty_extra_reviews_gamification_rules', array()));
+        $map = $merged['levelup_points'] ?? array();
+        foreach ((array) get_option('loyalty_levels_roles', array()) as $role) {
+            $value = $_POST['loyalty_extra_levelup_' . $role] ?? '';
+            if (!is_scalar($value) || ('' !== (string) $value && (!preg_match('/^[0-9]+$/D', (string) $value) || strlen((string) $value) > 8))) { wp_die(esc_html__('A valid whole points amount is required.', 'loyalty-for-woocommerce')); }
+            $map[$role] = array_replace($map[$role] ?? array(), array('awarded' => (string) $value));
+        }
+        try {
+            foreach ($values as $kind => $value) {
+                YOWCL_Free_Migrations::save($kind, 'review' === $kind ? 'loyalty_extra_reviews_gamification_rules' : 'loyalty_extra_points_rules', array($kind . '_points' => $value, $kind . '_enabled' => (int) $value > 0 ? 'yes' : 'no'));
+            }
+            $enabled = false;
+            foreach ($map as $rule) { $enabled = $enabled || (int) ($rule['awarded'] ?? 0) > 0; }
+            YOWCL_Free_Migrations::save('levelup', 'loyalty_extra_reviews_gamification_rules', array('levelup_points' => $map, 'levelup_enabled' => $enabled ? 'yes' : 'no'));
+        } catch (Throwable $e) { wp_die(esc_html($e->getMessage())); }
+    }
 }

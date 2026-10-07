@@ -145,7 +145,8 @@ require __DIR__ . '/cutover-boundaries.php';
 // Forbidden product surface is absent; generic primitive cannot enable its modes/actions.
 foreach ( array( 'YOWCL_Premium_Gate', 'YOWCL_Campaign_Rules', 'YOWCL_Actions_Points_Expiration', 'YOWCL_Helper_Product_Earning_Rules', 'YOWCL_Referral_Rewards', 'YOWCL_Coupon_Redemption' ) as $class ) { loyf_equal( false, class_exists( $class ), 'Forbidden class ' . $class ); }
 foreach ( array( 'expire', 'zero', 'reset' ) as $mode ) { loyf_equal( 'invalid_operation', YOWCL_Points_Transaction::mutate( (int) $user, 0, 0, 'fixture:' . $mode, array( 'action' => 'points_expired' ), $mode )['code'], 'Forbidden mutation mode' ); }
-foreach ( array( 'loyalty_extra_points_rules', 'loyalty_extra_levelup_points_rules', 'loyalty_customization' ) as $option ) { $fixture = json_decode( file_get_contents( getenv( 'LOYF_FIXTURE' ) ), true ); if ( isset( $fixture['options'][$option] ) ) { loyf_equal( $fixture['options'][$option], get_option( $option ), 'No option migration' ); } }
+foreach ( array( 'loyalty_extra_levelup_points_rules', 'loyalty_customization' ) as $option ) { $fixture = json_decode( file_get_contents( getenv( 'LOYF_FIXTURE' ) ), true ); if ( isset( $fixture['options'][$option] ) ) { loyf_equal( $fixture['options'][$option], get_option( $option ), 'No option migration' ); } }
+foreach (array('signup_points','login_points','review_points') as $key) { loyf_equal($fixture['options']['loyalty_extra_points_rules'][$key], get_option('loyalty_extra_points_rules')[$key], 'Legacy account terms preserved'); }
 file_put_contents( getenv( 'LOYF_SNAPSHOT' ), json_encode( array( 'hardened_core' => 'PASS' ) ) );
 file_put_contents( getenv( 'LOYF_RAW_SNAPSHOT' ), json_encode( array( 'rows' => loyf_rows( $user ), 'cutover' => YOWCL_Free_Core::cutover() ) ) );
 echo "Hardened candidate native boundaries PASS\n";

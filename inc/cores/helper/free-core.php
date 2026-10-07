@@ -68,10 +68,14 @@ class YOWCL_Free_Core {
             YOWCL_Core_Rewards::award( $user, (int) $points, $key, $action, $description ?? $labels[$action], $project, array( 'YOWCL_Core_Rewards', 'notify_user' ) );
         } catch ( Throwable $e ) { self::hold( $user, $e->getMessage() ); }
     }
+    public static function level_rules() {
+        if ( ! YOWCL_Free_Migrations::ready( 'levelup' ) ) { return array(); }
+        $merged = maybe_unserialize( get_option( 'loyalty_extra_reviews_gamification_rules', array() ) );
+        return is_array( $merged ) && 'yes' === ( $merged['levelup_enabled'] ?? 'no' ) && is_array( $merged['levelup_points'] ?? null ) ? $merged['levelup_points'] : array();
+    }
     public static function level_bonus( $user, $role ) {
-        $rules = maybe_unserialize( get_option( 'loyalty_extra_levelup_points_rules', array() ) );
-        $merged = get_option( 'loyalty_extra_reviews_gamification_rules', array() );
-        if ( isset( $merged['levelup_enabled'] ) ) { $rules = 'yes' === $merged['levelup_enabled'] ? ( $merged['levelup_points'] ?? array() ) : array(); }
+        if ( ! YOWCL_Free_Migrations::ready( 'levelup' ) ) { return; }
+        $rules = self::level_rules();
         $role = sanitize_key( $role );
         if ( '' !== $role ) { self::user_reward( $user, 'reward:level_up:' . (int) $user . ':' . $role, 'level_up_reward', (int) ( $rules[$role]['awarded'] ?? 0 ), __( 'Level up bonus for role:', 'loyalty-for-woocommerce' ) . ' ' . ( wp_roles()->roles[$role]['name'] ?? $role ) ); }
     }
@@ -92,13 +96,14 @@ class YOWCL_Free_Core {
         return ( (int) $value >= 0 ? '+' : '-' ) . abs( (int) $value );
     }
     public static function extra( $kind ) {
+        if ( ! YOWCL_Free_Migrations::ready( $kind ) ) { return 0; }
         $rules = maybe_unserialize( get_option( 'loyalty_extra_points_rules', array() ) );
         if ( 'review' === $kind ) {
-            $merged = get_option( 'loyalty_extra_reviews_gamification_rules', array() );
-            return isset( $merged['review_enabled'] ) ? ( 'yes' === $merged['review_enabled'] ? (int) ( $merged['review_points'] ?? 0 ) : 0 ) : (int) ( $rules['review_points'] ?? 0 );
+            $merged = maybe_unserialize( get_option( 'loyalty_extra_reviews_gamification_rules', array() ) );
+            return is_array( $merged ) && 'yes' === ( $merged['review_enabled'] ?? 'no' ) ? (int) ( $merged['review_points'] ?? 0 ) : 0;
         }
         $flag = 'signup' === $kind ? 'signup_enabled' : 'login_enabled';
-        if ( isset( $rules[$flag] ) && 'yes' !== $rules[$flag] ) { return 0; }
+        if ( ! is_array( $rules ) || 'yes' !== ( $rules[$flag] ?? 'no' ) ) { return 0; }
         return (int) ( $rules[$kind . '_points'] ?? 0 );
     }
 }

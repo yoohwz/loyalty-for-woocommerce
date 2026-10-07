@@ -340,7 +340,7 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 
 	    private function get_using_rules() {
 	        $rules = maybe_unserialize(get_option('loyalty_points_using_rules'));
-	        if (!is_array($rules) || empty($rules['points']) || empty($rules['amount'])) {
+	        if (!YOWCL_Free_Migrations::ready( 'redemption' ) || !is_array($rules) || empty($rules['points']) || empty($rules['amount'])) {
 	            return array();
 	        }
 
@@ -391,6 +391,7 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 	    }
 
 	    private function get_applied_points() {
+        YOWCL_Free_Migrations::session();
             if ( ! WC()->session || ! is_array( WC()->session->get( 'loyf_funded_selection' ) ) ) { return 0; }
 	        if (!WC()->session) {
 	            return 0.0;

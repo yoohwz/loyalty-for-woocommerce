@@ -2088,5 +2088,66 @@
         "replacement": ""
       }
     ]
+  },
+  "inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php": {
+    "input_sha256": "a93524ad49541619ae2542e3b5fbc6c3f07aecfee357980bcb758973a5252f7a",
+    "selected_sha256": "622d41ac0a4ebf7b1bebfb903381a781930bde06a0c9252019838316b515714e",
+    "spans": [
+      {
+        "start": 526,
+        "end": 526,
+        "replacement": "WU9T"
+      },
+      {
+        "start": 645,
+        "end": 645,
+        "replacement": "CWFkZF9maWx0ZXIoICd3b29jb21tZXJjZV9zZXR0aW5nc19hcGlfc2FuaXRpemVkX2ZpZWxkc18nIC4gJHRoaXMtPmlkLCBhcnJheSggJHRoaXMsICdwcmVzZXJ2ZV9zZXR0aW5ncycgKSApOwoJ"
+      },
+      {
+        "start": 647,
+        "end": 647,
+        "replacement": "CiAgICBwdWJsaWMgZnVuY3Rpb24gaW5pdF9zZXR0aW5ncygpIHsKICAgICAgICBwYXJlbnQ6OmluaXRfc2V0dGluZ3MoKTsKICAgICAgICAkc3RvcmVkID0gbWF5YmVfdW5zZXJpYWxpemUoZ2V0X29wdGlvbigkdGhpcy0+Z2V0X29wdGlvbl9rZXkoKSwgYXJyYXkoKSkpOwogICAgICAgIGlmIChpc19hcnJheSgkc3RvcmVkKSkgeyAkdGhpcy0+c2V0dGluZ3MgPSBhcnJheV9yZXBsYWNlKCR0aGlzLT5zZXR0aW5ncywgJHN0b3JlZCk7IH0KICAgIH0KICAgIHByaXZhdGUgZnVuY3Rpb24gbWlncmF0aW9uX2ZlYXR1cmUoKSB7CiAgICAgICAgcmV0dXJuICd5b3djbF9sb3lhbHR5X2xldmVsX3VwZGF0ZScgPT09ICR0aGlzLT5pZCA/ICdlbWFpbF9sZXZlbCcgOiAoJ3lvd2NsX2xveWFsdHlfcG9pbnRzX2RlZHVjdCcgPT09ICR0aGlzLT5pZCA/ICdlbWFpbF9kZWR1Y3QnIDogJ2VtYWlsX3Jld2FyZCcpOwogICAgfQogICAgcHVibGljIGZ1bmN0aW9uIGlzX2VuYWJsZWQoKSB7CiAgICAgICAgcmV0dXJuIFlPV0NMX0ZyZWVfTWlncmF0aW9uczo6cmVhZHkoJHRoaXMtPm1pZ3JhdGlvbl9mZWF0dXJlKCkpICYmIHBhcmVudDo6aXNfZW5hYmxlZCgpOwogICAgfQogICAgcHVibGljIGZ1bmN0aW9uIHByZXNlcnZlX3NldHRpbmdzKCRzZXR0aW5ncykgewogICAgICAgICRleGlzdGluZyA9IG1heWJlX3Vuc2VyaWFsaXplKGdldF9vcHRpb24oJ3dvb2NvbW1lcmNlXycgLiAkdGhpcy0+aWQgLiAnX3NldHRpbmdzJywgYXJyYXkoKSkpOwogICAgICAgIHJldHVybiBhcnJheV9yZXBsYWNlKGlzX2FycmF5KCRleGlzdGluZykgPyAkZXhpc3RpbmcgOiBhcnJheSgpLCAkc2V0dGluZ3MpOwogICAgfQogICAgcHVibGljIGZ1bmN0aW9uIHByb2Nlc3NfYWRtaW5fb3B0aW9ucygpIHsKICAgICAgICBpZiAoIWN1cnJlbnRfdXNlcl9jYW4oJ21hbmFnZV93b29jb21tZXJjZScpIHx8ICFZT1dDTF9GcmVlX01pZ3JhdGlvbnM6OnJlYWR5KCR0aGlzLT5taWdyYXRpb25fZmVhdHVyZSgpKSkgeyByZXR1cm4gZmFsc2U7IH0KICAgICAgICByZXR1cm4gcGFyZW50Ojpwcm9jZXNzX2FkbWluX29wdGlvbnMoKTsKICAgIH0="
+      },
+      {
+        "start": 4088,
+        "end": 4088,
+        "replacement": "YXJyYXlfcmVwbGFjZSggJGRlZmF1bHRzLCA="
+      },
+      {
+        "start": 4159,
+        "end": 4159,
+        "replacement": "KSA="
+      },
+      {
+        "start": 5892,
+        "end": 5895,
+        "replacement": ""
+      },
+      {
+        "start": 5902,
+        "end": 5902,
+        "replacement": "LWZvci13b29jb21tZXJjZQ=="
+      },
+      {
+        "start": 6620,
+        "end": 6623,
+        "replacement": ""
+      },
+      {
+        "start": 6630,
+        "end": 6630,
+        "replacement": "LWZvci13b29jb21tZXJjZQ=="
+      },
+      {
+        "start": 10725,
+        "end": 10728,
+        "replacement": ""
+      },
+      {
+        "start": 10735,
+        "end": 10735,
+        "replacement": "LWZvci13b29jb21tZXJjZQ=="
+      }
+    ]
   }
 }

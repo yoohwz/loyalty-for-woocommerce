@@ -30,6 +30,6 @@ PYTHONDONTWRITEBYTECODE=1 python3 "$repo/scripts/free-import.py" verify-source -
 # Audited distribution allowlist. git archive reads only committed content at source_sha.
 git -C "$repo" archive --format=tar --prefix=loyalty-for-woocommerce/ "$source_sha" -- \
 	loyalty-for-woocommerce.php readme.txt changelog.txt license.txt \
-	css img inc js languages | tar -xf - -C "$output"
+	css img inc js languages templates | tar -xf - -C "$output"
 
 echo "Staged loyalty-for-woocommerce/ from $source_sha"

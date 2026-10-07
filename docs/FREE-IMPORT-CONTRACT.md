@@ -8,9 +8,9 @@ The executable `config/free-import-manifest.json` inventories every upstream Git
 
 ## Core runtime and extraction
 
-The phase is `core-runtime`: 15 explicit imports plus 53 Free product overlays form the complete 68-file distribution. Source, stage, ZIP and extracted-tree checks require this same boundary. The historical CLI mode name `legacy` automatically includes imports in this phase; it cannot waive core-runtime verification.
+The phase is `core-runtime`: 25 explicit imports plus 54 Free product overlays form the complete 79-file distribution. Source, stage, ZIP and extracted-tree checks require this same boundary. The historical CLI mode name `legacy` automatically includes imports in this phase; it cannot waive core-runtime verification.
 
-Five imports retain whole canonical source bytes: `points-lock.php`, `points-log-cache.php`, `points-log.php`, `role-claims.php` and `inc/backend/actions/helper/roles.php`. Ten mixed modules use reviewed exact-byte extraction recipes:
+Five imports retain whole canonical source bytes: `points-lock.php`, `points-log-cache.php`, `points-log.php`, `role-claims.php` and `inc/backend/actions/helper/roles.php`. The core mixed modules use reviewed exact-byte extraction recipes:
 
 | Canonical source | Free purpose / excluded closure |
 | --- | --- |
@@ -32,6 +32,8 @@ Helper names above resolve under `inc/cores/helper/` unless qualified. Canonical
 `wp-text-domain-v1` uses PHP tokenization to change only literal domain arguments of supported global WordPress translation calls. All other bytes remain unchanged. Namespaced sources are refused; dynamic/qualified domains are not guessed. Free runtime strings and the regenerated POT use `loyalty-for-woocommerce`; owner strings and persisted identities are not translation domains.
 
 Premium licensing/updater, campaigns, expiration, advanced rewards/referrals, redeem-products/free-shipping/coupon conversion, advanced earning, level discounts/reset and reconciliation repair remain absent/unreachable. Dormant data is preserved, not deleted or treated as permission to execute excluded behavior.
+
+LOYF-6 additionally admits only the canonical email base, Points Reward, Points Deduct and Level Update classes and their six HTML/plain templates. The base extraction substitutes the Free template root, retains Woo-version palette fallbacks, gates failed migrations and preserves unrelated native settings on authorized Woo saves. The Free registration adapter owns only those three families; retained legacy preferences never register a second sender. Other email families remain excluded.
 
 ## Overlay and persisted boundary
 
