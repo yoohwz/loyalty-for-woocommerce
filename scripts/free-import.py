@@ -193,6 +193,9 @@ def stage(repo, sha, source, head, output, manifest):
     for protected in (source, Path(repo).resolve(), ROOT):
         if output == protected or protected in output.parents: fail('Output must be outside source and upstream')
     if not SHA.fullmatch(head) or git(source, 'rev-parse', 'HEAD').decode().strip() != head or git(source, 'status', '--porcelain', '--untracked-files=all').strip(): fail('Free source must be a clean exact-head checkout')
+    origin = git(source, 'remote', 'get-url', 'origin').decode().strip()
+    if origin not in {'https://github.com/yoohwz/loyalty-for-woocommerce.git', 'https://github.com/yoohwz/loyalty-for-woocommerce', 'git@github.com:yoohwz/loyalty-for-woocommerce.git'}: fail('Free repository binding mismatch')
+    git(source, 'merge-base', '--is-ancestor', manifest['free']['baseline_sha'], head)
     verify_tree(source, manifest, 'legacy', source=True)
     imports = transformed_imports(repo, sha, manifest)
     overlays = {}

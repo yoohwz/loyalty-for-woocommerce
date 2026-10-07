@@ -152,6 +152,15 @@ __ ('wc-loyalty', 'other-domain');
         self.assertEqual(before, git(self.free, 'status', '--porcelain'))
         self.assertEqual(self.head, git(self.free, 'rev-parse', 'HEAD'))
 
+    def test_free_provenance_binding_and_admitted_baseline(self):
+        git(self.free, 'remote', 'set-url', 'origin', 'https://github.com/other/free.git')
+        with self.assertRaisesRegex(ValueError, 'Free repository binding'): contract.stage(self.upstream, self.sha, self.free, self.head, self.output, self.manifest)
+        self.assertEqual([], list(self.output.iterdir()))
+        git(self.free, 'remote', 'set-url', 'origin', 'https://github.com/yoohwz/loyalty-for-woocommerce.git')
+        manifest = copy.deepcopy(self.manifest); manifest['free']['baseline_sha'] = '0' * 40
+        with self.assertRaises(subprocess.CalledProcessError): contract.stage(self.upstream, self.sha, self.free, self.head, self.output, manifest)
+        self.assertEqual([], list(self.output.iterdir()))
+
     def test_fail_closed_before_staging_writes(self):
         inside = self.free / 'output'; inside.mkdir()
         with self.assertRaises(ValueError): contract.stage(self.upstream, self.sha, self.free, self.head, inside, self.manifest)
