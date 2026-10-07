@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "phase": "contract-only",
+  "phase": "core-runtime",
   "upstream": {
     "repository": "yoohwz/wc-loyalty",
     "sha": "9e3d663b9828a24eacd141216d5e6f6e22da8ca4",
@@ -8,7 +8,7 @@
   },
   "free": {
     "repository": "yoohwz/loyalty-for-woocommerce",
-    "baseline_sha": "bc9b63c1c2d3cf5e73b42e4bfa51d7681ecb97d9",
+    "baseline_sha": "3ee1ba4841615c0fc23f3e4d6680d442ea276d1b",
     "slug": "loyalty-for-woocommerce",
     "main_file": "loyalty-for-woocommerce.php",
     "text_domain": "loyalty-for-woocommerce",
@@ -26,344 +26,390 @@
     {
       "source": "inc/cores/helper/points-lock.php",
       "target": "inc/cores/helper/points-lock.php",
+      "transform": "wp-text-domain-v1",
       "sha256": "fb5d20ff90a6446c780319cd1107bea32c63738ced742f440ee1c4050ed678cd",
       "output_sha256": "fb5d20ff90a6446c780319cd1107bea32c63738ced742f440ee1c4050ed678cd",
-      "domain_replacements": 0,
-      "transform": "wp-text-domain-v1"
+      "domain_replacements": 0
     },
     {
       "source": "inc/cores/helper/points-log-cache.php",
       "target": "inc/cores/helper/points-log-cache.php",
+      "transform": "wp-text-domain-v1",
       "sha256": "521a9fc6e6370852d07a1961b50b50b9c7cd2ea209015d76032b248ab1d0d7bb",
       "output_sha256": "521a9fc6e6370852d07a1961b50b50b9c7cd2ea209015d76032b248ab1d0d7bb",
-      "domain_replacements": 0,
-      "transform": "wp-text-domain-v1"
+      "domain_replacements": 0
     },
     {
       "source": "inc/cores/helper/points-log.php",
       "target": "inc/cores/helper/points-log.php",
+      "transform": "wp-text-domain-v1",
       "sha256": "22f44b04077e3e779c3884495e62fb874631aa24cbc503b34a313b03478868c4",
       "output_sha256": "22f44b04077e3e779c3884495e62fb874631aa24cbc503b34a313b03478868c4",
-      "domain_replacements": 0,
-      "transform": "wp-text-domain-v1"
+      "domain_replacements": 0
     },
     {
       "source": "inc/cores/helper/role-claims.php",
       "target": "inc/cores/helper/role-claims.php",
+      "transform": "wp-text-domain-v1",
       "sha256": "b26a01981c3e64e083a638341e5556dbd5af79be55ffdeece2642d7cb6cf01e1",
       "output_sha256": "b26a01981c3e64e083a638341e5556dbd5af79be55ffdeece2642d7cb6cf01e1",
-      "domain_replacements": 0,
-      "transform": "wp-text-domain-v1"
+      "domain_replacements": 0
     },
     {
       "source": "inc/backend/actions/helper/roles.php",
       "target": "inc/backend/actions/helper/roles.php",
+      "transform": "wp-text-domain-v1",
       "sha256": "8a0bbd014407c704b89543a8eecd03ed15d58383aed89fa895097d7d04de2964",
       "output_sha256": "8a0bbd014407c704b89543a8eecd03ed15d58383aed89fa895097d7d04de2964",
+      "domain_replacements": 0
+    },
+    {
+      "source": "inc/cores/helper/points-transaction.php",
+      "target": "inc/cores/helper/points-transaction.php",
+      "transform": "wp-text-domain-v1",
+      "sha256": "65514f221a43c6957ff04cd585aa63000637bab8598f1050374642acefce708e",
+      "output_sha256": "cf83d47d3f82e381653c1c8e7e6b7be5b0b72410b2d365f54ac5bbf10a147ec2",
       "domain_replacements": 0,
-      "transform": "wp-text-domain-v1"
+      "extraction": "inc/cores/helper/points-transaction.php"
+    },
+    {
+      "source": "inc/cores/helper/ledger-v2.php",
+      "target": "inc/cores/helper/ledger-v2.php",
+      "transform": "wp-text-domain-v1",
+      "sha256": "65fbc41fa671a00d337a046b3254173ee31bd053ca80de511d45c79d958fcf02",
+      "output_sha256": "c0ca998c72d953ee45d430142e56d5e87c1fff4fd883bc123685366f955a9d15",
+      "domain_replacements": 0,
+      "extraction": "inc/cores/helper/ledger-v2.php"
+    },
+    {
+      "source": "inc/cores/helper/points-allocation.php",
+      "target": "inc/cores/helper/points-allocation.php",
+      "transform": "wp-text-domain-v1",
+      "sha256": "8ef2547a5ab5a0068863fdcf7dc1f02b544ae5f85c753a8f8f59f77ffb41bb25",
+      "output_sha256": "24d3c10cf8de038836cd16a3ad6425532348716a0e7e81962c48e77d0098d647",
+      "domain_replacements": 0,
+      "extraction": "inc/cores/helper/points-allocation.php"
+    },
+    {
+      "source": "inc/cores/helper/core-rewards.php",
+      "target": "inc/cores/helper/core-rewards.php",
+      "transform": "wp-text-domain-v1",
+      "sha256": "6fe59b532648e992689a9f6a4d1c5f02ed03812ba10d3b29d8147344e3029780",
+      "output_sha256": "f0e698cecf4bdbb0f6ed31ee240ec185982d3b614b2c6ad01ddda35871c2f3ea",
+      "domain_replacements": 0,
+      "extraction": "inc/cores/helper/core-rewards.php"
+    },
+    {
+      "source": "inc/cores/helper/points-events.php",
+      "target": "inc/cores/helper/points-events.php",
+      "transform": "wp-text-domain-v1",
+      "sha256": "878ba2aeea66853e18ddea7458588a47998a6365bece28394419b5ec7f091ad1",
+      "output_sha256": "b5ab8e4fcf19440c1655ac0d0b41bf255b06116f4044633ca3a631fede0f5a07",
+      "domain_replacements": 0,
+      "extraction": "inc/cores/helper/points-events.php"
+    },
+    {
+      "source": "inc/cores/helper/order-rewards.php",
+      "target": "inc/cores/helper/order-rewards.php",
+      "transform": "wp-text-domain-v1",
+      "sha256": "b6c99bb52947f4035ee4030122627ac861a6a12085f49d981aec681e08d89417",
+      "output_sha256": "c5990bde5a42e94fc1aa1df4aada60d6f6b2eb2bb3e4d9fbb462842eac047bb9",
+      "domain_replacements": 0,
+      "extraction": "inc/cores/helper/order-rewards.php"
+    },
+    {
+      "source": "inc/cores/database.php",
+      "target": "inc/cores/helper/database.php",
+      "transform": "wp-text-domain-v1",
+      "sha256": "d47837b6a1023e63f43ba10c8ae8807f4815f2cd8c588cc64bd05e4696778e82",
+      "output_sha256": "526a8237b5d9fb81238a1a984cb7d78aef4020e3fe4f924a19131112645dae67",
+      "domain_replacements": 0,
+      "extraction": "inc/cores/database.php"
+    },
+    {
+      "source": "inc/backend/actions/deduct-points.php",
+      "target": "inc/cores/helper/order-deduction.php",
+      "transform": "wp-text-domain-v1",
+      "sha256": "aca14da80e8d8c2fe7ad990bfd52580ac0e9f434e3ed451edbb9284bca113fc8",
+      "output_sha256": "53013d41b2441ab2fab8fbf9c325b7aa0171a783e248da94e8cda255f0835f6c",
+      "domain_replacements": 4,
+      "extraction": "inc/backend/actions/deduct-points.php"
+    },
+    {
+      "source": "inc/cores/helper/order-redemption.php",
+      "target": "inc/cores/helper/order-redemption.php",
+      "transform": "wp-text-domain-v1",
+      "sha256": "cc4f1f15860ca8518b091ef31379abbdf655c661cdef875e8c80be31f3a40753",
+      "output_sha256": "0f31a631a9974815cf5fb97cf1e2377f7231df2269c080a9240d53f616b9979e",
+      "domain_replacements": 13,
+      "extraction": "inc/cores/helper/order-redemption.php"
     }
   ],
   "overlays": [
     {
-      "target": "changelog.txt",
-      "sha256": "31a639983f4335fd7583137d0be5d64b14a47006221e9d7a6c34bfe543d8ab70",
-      "mode": "100644",
-      "role": "identity"
-    },
-    {
-      "target": "css/backend-style.css",
-      "sha256": "f448af97e7cc299abb4651655378f5e5332e432171b2e669b9d0407723d932c1",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "css/frontend-style.css",
-      "sha256": "1c1292285ba8cf282b2f24440f8e027fa0e64fbb437082ec6c2570d25ffafb43",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "img/reward.svg",
-      "sha256": "c23158bd3027bdca546b6c7d14791a3f7baf645c0dfa1678a354a01b224b8818",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/actions/deduct-points.php",
-      "sha256": "3358a55f16dfde110c07380d7a9dd1ef99d61f5449f11275dc3320f4ed0103bb",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/actions/earn-points.php",
-      "sha256": "ef316cb0e96a274a92809e631935e8c1ff27aeba0ce91bc57aaf936354e14ae0",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/actions/emails/notifications-email.php",
-      "sha256": "1788dc59f269f8f5f5228363c724ed775ec4e9c014d59a7a5111fcfb18400f7f",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/actions/extra-points/level-up.php",
-      "sha256": "47ce48d8d2274ac69a535df6705068e7919515d7b650d287e96b413eba1c8230",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/actions/extra-points/log-in.php",
-      "sha256": "bfa6957bcf0ce345bd7044ba57f3a8a65998149d713fb74449ad3fb963aea9fa",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/actions/extra-points/review.php",
-      "sha256": "671cea859a7be9ea045fa9610af46e4e804cce56cbcdb0be5ac5cf75087e4984",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/actions/extra-points/sign-up.php",
-      "sha256": "21e270295fcaf5bb4f96abe8318edcd2b9413a2653bf436c83468f2b8e8dfa5b",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/actions/return-points.php",
-      "sha256": "dbc25b5cc13a2e81bc18f706e71730e66c30827d5aad417dc323370cc3ddaec4",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/actions/use-points.php",
-      "sha256": "e20b884fd1d843282665046183ca14ef108a480c0be0442cd222a5704228ca8d",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/settings.php",
-      "sha256": "44ae31870af5b6f868b78791699d4ccb1ef46764783f4d0ef13a6455903be3d3",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/settings/customization.php",
-      "sha256": "d3fde7b5eefae46ec0563cce1c0f2215e3d8004b3567e4c84badd4db5f8274f8",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/settings/extra-points.php",
-      "sha256": "a9fda2efcbe877081a9c359a14a758dc5b9937c4c8669e9301319828d8493741",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/settings/files/yol_import_sample.csv",
-      "sha256": "e23c0e951ed4d6b97abf058e9511ddf039a7a133ab60fe40937ee21e53d8bf13",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/settings/general-add-remove-user-role.php",
-      "sha256": "5e195f744c40c199217e21847a0238e9571c5a546cf5ae67c4adaf293ed7128f",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/settings/general-earning-point-rules.php",
-      "sha256": "5e0f924f4993a89bb9c85f447a5f52ec1d50c06ffdd4a66c4f37a994cfa415f8",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/settings/general-level-rules.php",
-      "sha256": "7de0265acaf5674ce62de280c40af0feac65a26c4ec922485148c414fafa52f8",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/settings/general-multi-checkbox.php",
-      "sha256": "1c4050471905f430c79adc488b0cb3a1d48023bfa9df76368275008e33b02238",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/settings/general-using-point-rules.php",
-      "sha256": "6f8e745b865380d613df05c7005c7c18d597d407d6d5a652ffbf114591cd2f8d",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/settings/notification.php",
-      "sha256": "de8006c4d5aae63217a489e9e71b9353c75ed0ff55d852e874339b94b7c54c60",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/settings/referrals.php",
-      "sha256": "167c900d312e61202d4bfe54aa5e78ad0cdcc931bb7342a5d1e59c6eeba993dc",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/settings/tools.php",
-      "sha256": "3032378c980c84b49856fb93bdaf147ce8ed959f9b5a6306cede072d64eac719",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/users.php",
-      "sha256": "5ba6d51078b97aa54d062e296be001589bffee4423c2b5eeff2ca2452984f442",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/users/user-profile-points.php",
-      "sha256": "5d27b961152da98b68e4ca49e7cd849fda41336d74922d0633e28d2fb4520339",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/users/users-points.php",
-      "sha256": "45e6bf3aae9b21aa0ab822602fc73a3aa1360ef4bddd3000c03a4091f470ef3f",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/backend/yoohw-woo-settings-tabs-reorder.php",
-      "sha256": "490513fa2e66d310369f5ab90486646aa4a3a02c8c86db76be335e4d49508077",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/cores/api/push-subscription.php",
-      "sha256": "4ebb89d9f1b8b3102ae892650889407f90e7bc7e4c510737e9ff23f62157bf38",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/cores/backend.php",
-      "sha256": "9ea2fe0777f37eb3e042356570958b2dcd5436a1319c630a02cb375bf775d223",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/cores/database.php",
-      "sha256": "c3739c57944bb16307ba879805639d427167275821fdbc85927c06642cceb1ae",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/cores/frontend.php",
-      "sha256": "aac3d68451df91691b96a0259b0dfcf8b8931cc914d7fb0a88d45c2c3d5c3a07",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/cores/notices.php",
-      "sha256": "4222d94b067b2171111e3faabefcfe1efea63c84d8730dec592cdf6695728595",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/frontend/cart-checkout.php",
-      "sha256": "7ba47b807941a1dd4812a108297cda24e50289f604c650791724bfc0e2bb0f0f",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/frontend/loyalty-info-bubble.php",
-      "sha256": "84d0f3cc8247ea1c64e0ae0e2797fa946fa9be4542feb18eaf7effb3074855d7",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/frontend/my-account.php",
-      "sha256": "606809a61293f57f14d4ffb487cb9763975cc3c4dd725a663fc4fa8def201c70",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/frontend/product-message.php",
-      "sha256": "a704e553bc788a55696af2d82f20bde521d805024ad06b7e5edd60442fdffe2d",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "inc/frontend/shop-message.php",
-      "sha256": "ad1b81a147a090957c7b0a1599f6e5d3ca67d5a6568bb821720dcf1425c507c8",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "js/loyalty-info-bubble.js",
-      "sha256": "02508f02b34e2973f588f14bc58cb34cfe23b32ce1ca38d28c6bc31a59cc2e0a",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "js/my-acount-my-points.js",
-      "sha256": "1c50d372214055a9adc5336386e5199327aa98be0abc062297b3ca911c7b9362",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "js/settings-customzation.js",
-      "sha256": "69563d1418123f98325250b091d1c95b12cf8d1e641fa6249d77c4be4eca7a94",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "js/user-profile-points-modal.js",
-      "sha256": "6b8314de2a6777f167686493287ae859e9d29af630dff43e1f451062962ebb73",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "js/users-points-modal.js",
-      "sha256": "2dc317844c5589db94acdabad6edcdddbd285742b3ac633129d364ea4326febe",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "js/using-point-cart.js",
-      "sha256": "602ed691b2f5562d46ac679caad54245560a0109dfe5dc9be364d6e26f661c00",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "js/using-point-checkout.js",
-      "sha256": "a346eb5ee10beb5afa69474246ee8708ad058f7583b7f95edea38143e5ab7c7b",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "languages/loyalty-for-woocommerce.pot",
-      "sha256": "067ca3a0bf239699b8781d3bbbfae17ca25aa791865da45babf317e1ddbe4d35",
-      "mode": "100644",
-      "role": "legacy-overlay"
-    },
-    {
-      "target": "license.txt",
-      "sha256": "89d38fbd9dadc185be31d73d14f058aef796b06b1fb72990528170ed8383d62d",
-      "mode": "100644",
-      "role": "identity"
-    },
-    {
       "target": "loyalty-for-woocommerce.php",
-      "sha256": "5f0db30b621288868e98b75b11898102b57d2449cc0aaa01e74196eb3aafa48c",
       "mode": "100644",
-      "role": "identity"
+      "sha256": "45ca6662e3cdf937bbb2f0820a5ece0b8fbf2e6c9157f4a0aeaf5a0f73833163"
     },
     {
       "target": "readme.txt",
-      "sha256": "2b4b45748b562a5d10be9e8cdc13c552b09c8c5e6462edd45b3b4454e9a6a68e",
       "mode": "100644",
-      "role": "identity"
+      "sha256": "2b4b45748b562a5d10be9e8cdc13c552b09c8c5e6462edd45b3b4454e9a6a68e"
+    },
+    {
+      "target": "changelog.txt",
+      "mode": "100644",
+      "sha256": "31a639983f4335fd7583137d0be5d64b14a47006221e9d7a6c34bfe543d8ab70"
+    },
+    {
+      "target": "license.txt",
+      "mode": "100644",
+      "sha256": "89d38fbd9dadc185be31d73d14f058aef796b06b1fb72990528170ed8383d62d"
+    },
+    {
+      "target": "css/backend-style.css",
+      "mode": "100644",
+      "sha256": "f448af97e7cc299abb4651655378f5e5332e432171b2e669b9d0407723d932c1"
+    },
+    {
+      "target": "css/frontend-style.css",
+      "mode": "100644",
+      "sha256": "1c1292285ba8cf282b2f24440f8e027fa0e64fbb437082ec6c2570d25ffafb43"
+    },
+    {
+      "target": "img/reward.svg",
+      "mode": "100644",
+      "sha256": "c23158bd3027bdca546b6c7d14791a3f7baf645c0dfa1678a354a01b224b8818"
+    },
+    {
+      "target": "inc/backend/actions/deduct-points.php",
+      "mode": "100644",
+      "sha256": "41d42ed3f340de223a1e71b9b62cb7536a4ce4319bfc820352ec98637918cde4"
+    },
+    {
+      "target": "inc/backend/actions/earn-points.php",
+      "mode": "100644",
+      "sha256": "9944a7e07cb4650049ee404dc7fa044d6fe41b4fb28453329e6b032e48ab58ce"
+    },
+    {
+      "target": "inc/backend/actions/emails/notifications-email.php",
+      "mode": "100644",
+      "sha256": "1788dc59f269f8f5f5228363c724ed775ec4e9c014d59a7a5111fcfb18400f7f"
+    },
+    {
+      "target": "inc/backend/actions/extra-points/level-up.php",
+      "mode": "100644",
+      "sha256": "83bea506d2d88540ea0a7e9544259756bb84d814011cbcfa2faf6a5fa72ce2dc"
+    },
+    {
+      "target": "inc/backend/actions/extra-points/log-in.php",
+      "mode": "100644",
+      "sha256": "d7f821b6bd3de6a97190cb8085e446195a389b905b18c24be10a3974fa678d35"
+    },
+    {
+      "target": "inc/backend/actions/extra-points/review.php",
+      "mode": "100644",
+      "sha256": "a6bc15d9f06b296e574b3c42f381dd0f6b234dd04427010a17f13b6308f8a0ff"
+    },
+    {
+      "target": "inc/backend/actions/extra-points/sign-up.php",
+      "mode": "100644",
+      "sha256": "98a2efbecfb1738f50cd8292a39b101d7171f9d1974f4f7686dcd4ce84c001a0"
+    },
+    {
+      "target": "inc/backend/actions/return-points.php",
+      "mode": "100644",
+      "sha256": "98ea9f6071d0c5ccbdbda38b2003bd5d74d7f2eefc0c2585ed5e2fef35c3b16b"
+    },
+    {
+      "target": "inc/backend/actions/use-points.php",
+      "mode": "100644",
+      "sha256": "1e3d91ec8213484f25795a84963137a3e94a1afc328fb3c67304832ac3191af2"
+    },
+    {
+      "target": "inc/backend/settings/customization.php",
+      "mode": "100644",
+      "sha256": "d3fde7b5eefae46ec0563cce1c0f2215e3d8004b3567e4c84badd4db5f8274f8"
+    },
+    {
+      "target": "inc/backend/settings/extra-points.php",
+      "mode": "100644",
+      "sha256": "a9fda2efcbe877081a9c359a14a758dc5b9937c4c8669e9301319828d8493741"
+    },
+    {
+      "target": "inc/backend/settings/files/yol_import_sample.csv",
+      "mode": "100644",
+      "sha256": "e23c0e951ed4d6b97abf058e9511ddf039a7a133ab60fe40937ee21e53d8bf13"
+    },
+    {
+      "target": "inc/backend/settings/general-add-remove-user-role.php",
+      "mode": "100644",
+      "sha256": "5e195f744c40c199217e21847a0238e9571c5a546cf5ae67c4adaf293ed7128f"
+    },
+    {
+      "target": "inc/backend/settings/general-earning-point-rules.php",
+      "mode": "100644",
+      "sha256": "5e0f924f4993a89bb9c85f447a5f52ec1d50c06ffdd4a66c4f37a994cfa415f8"
+    },
+    {
+      "target": "inc/backend/settings/general-level-rules.php",
+      "mode": "100644",
+      "sha256": "7de0265acaf5674ce62de280c40af0feac65a26c4ec922485148c414fafa52f8"
+    },
+    {
+      "target": "inc/backend/settings/general-multi-checkbox.php",
+      "mode": "100644",
+      "sha256": "1c4050471905f430c79adc488b0cb3a1d48023bfa9df76368275008e33b02238"
+    },
+    {
+      "target": "inc/backend/settings/general-using-point-rules.php",
+      "mode": "100644",
+      "sha256": "6f8e745b865380d613df05c7005c7c18d597d407d6d5a652ffbf114591cd2f8d"
+    },
+    {
+      "target": "inc/backend/settings/notification.php",
+      "mode": "100644",
+      "sha256": "de8006c4d5aae63217a489e9e71b9353c75ed0ff55d852e874339b94b7c54c60"
+    },
+    {
+      "target": "inc/backend/settings/referrals.php",
+      "mode": "100644",
+      "sha256": "167c900d312e61202d4bfe54aa5e78ad0cdcc931bb7342a5d1e59c6eeba993dc"
+    },
+    {
+      "target": "inc/backend/settings/tools.php",
+      "mode": "100644",
+      "sha256": "2fda8fa6a20c1857e110ca7217a30681cf909d6ac5904a80f465421e031cafa4"
+    },
+    {
+      "target": "inc/backend/settings.php",
+      "mode": "100644",
+      "sha256": "44ae31870af5b6f868b78791699d4ccb1ef46764783f4d0ef13a6455903be3d3"
+    },
+    {
+      "target": "inc/backend/users/user-profile-points.php",
+      "mode": "100644",
+      "sha256": "bbd06c2046c4e9f84f34dd80fc98eee6d718e31a521e21f5b5e817868e25855c"
+    },
+    {
+      "target": "inc/backend/users/users-points.php",
+      "mode": "100644",
+      "sha256": "4ba79e078e1952ec7e2a5334988703af97d9ba9ccb080ebc7d8c67fb644055bb"
+    },
+    {
+      "target": "inc/backend/users.php",
+      "mode": "100644",
+      "sha256": "5ba6d51078b97aa54d062e296be001589bffee4423c2b5eeff2ca2452984f442"
+    },
+    {
+      "target": "inc/backend/yoohw-woo-settings-tabs-reorder.php",
+      "mode": "100644",
+      "sha256": "490513fa2e66d310369f5ab90486646aa4a3a02c8c86db76be335e4d49508077"
+    },
+    {
+      "target": "inc/cores/api/push-subscription.php",
+      "mode": "100644",
+      "sha256": "4ebb89d9f1b8b3102ae892650889407f90e7bc7e4c510737e9ff23f62157bf38"
+    },
+    {
+      "target": "inc/cores/backend.php",
+      "mode": "100644",
+      "sha256": "9ea2fe0777f37eb3e042356570958b2dcd5436a1319c630a02cb375bf775d223"
+    },
+    {
+      "target": "inc/cores/database.php",
+      "mode": "100644",
+      "sha256": "4a1001508b27197ce35a2d2649306e5482d1e8144847de8698d77f3b43aac9d4"
+    },
+    {
+      "target": "inc/cores/frontend.php",
+      "mode": "100644",
+      "sha256": "aac3d68451df91691b96a0259b0dfcf8b8931cc914d7fb0a88d45c2c3d5c3a07"
+    },
+    {
+      "target": "inc/cores/helper/free-admin.php",
+      "mode": "100644",
+      "sha256": "f49bb3630356dfbd387320c8194367406cd7ddbfc423dddaee6f1ce4926d2972"
+    },
+    {
+      "target": "inc/cores/helper/free-core.php",
+      "mode": "100644",
+      "sha256": "21a1831291310bb577d874f64280010ce4e8aafbbd377ba2ecfab84978f5932f"
+    },
+    {
+      "target": "inc/cores/helper/free-order-actions.php",
+      "mode": "100644",
+      "sha256": "7732db3aef5ce3aff7776fa06bc678d3316a87787a4b4c4be338b0f9c556f699"
+    },
+    {
+      "target": "inc/cores/notices.php",
+      "mode": "100644",
+      "sha256": "4222d94b067b2171111e3faabefcfe1efea63c84d8730dec592cdf6695728595"
+    },
+    {
+      "target": "inc/frontend/cart-checkout.php",
+      "mode": "100644",
+      "sha256": "a3da61d93f309cf8ea4ed37ba3144591ae0722970b79f833ad88f3245cd1b8bf"
+    },
+    {
+      "target": "inc/frontend/loyalty-info-bubble.php",
+      "mode": "100644",
+      "sha256": "84d0f3cc8247ea1c64e0ae0e2797fa946fa9be4542feb18eaf7effb3074855d7"
+    },
+    {
+      "target": "inc/frontend/my-account.php",
+      "mode": "100644",
+      "sha256": "606809a61293f57f14d4ffb487cb9763975cc3c4dd725a663fc4fa8def201c70"
+    },
+    {
+      "target": "inc/frontend/product-message.php",
+      "mode": "100644",
+      "sha256": "a704e553bc788a55696af2d82f20bde521d805024ad06b7e5edd60442fdffe2d"
+    },
+    {
+      "target": "inc/frontend/shop-message.php",
+      "mode": "100644",
+      "sha256": "ad1b81a147a090957c7b0a1599f6e5d3ca67d5a6568bb821720dcf1425c507c8"
+    },
+    {
+      "target": "js/loyalty-info-bubble.js",
+      "mode": "100644",
+      "sha256": "02508f02b34e2973f588f14bc58cb34cfe23b32ce1ca38d28c6bc31a59cc2e0a"
+    },
+    {
+      "target": "js/my-acount-my-points.js",
+      "mode": "100644",
+      "sha256": "1c50d372214055a9adc5336386e5199327aa98be0abc062297b3ca911c7b9362"
+    },
+    {
+      "target": "js/settings-customzation.js",
+      "mode": "100644",
+      "sha256": "69563d1418123f98325250b091d1c95b12cf8d1e641fa6249d77c4be4eca7a94"
+    },
+    {
+      "target": "js/user-profile-points-modal.js",
+      "mode": "100644",
+      "sha256": "f33545420905e692c85605d6e7a5de6b696e7395d401a74e2d2dba50470229e4"
+    },
+    {
+      "target": "js/users-points-modal.js",
+      "mode": "100644",
+      "sha256": "b648be4ae49de90b30ea5149ff1005d0a0d704b00b43db900344942a2c37dcea"
+    },
+    {
+      "target": "js/using-point-cart.js",
+      "mode": "100644",
+      "sha256": "602ed691b2f5562d46ac679caad54245560a0109dfe5dc9be364d6e26f661c00"
+    },
+    {
+      "target": "js/using-point-checkout.js",
+      "mode": "100644",
+      "sha256": "a346eb5ee10beb5afa69474246ee8708ad058f7583b7f95edea38143e5ab7c7b"
+    },
+    {
+      "target": "languages/loyalty-for-woocommerce.pot",
+      "mode": "100644",
+      "sha256": "067ca3a0bf239699b8781d3bbbfae17ca25aa791865da45babf317e1ddbe4d35"
     }
   ],
   "blocked_mixed_modules": [
@@ -567,7 +613,7 @@
     "inc/backend/actions/deduct-points.php": {
       "mode": "100644",
       "blob": "2813d15b26c029d64d215b801e686c39a6f49c18",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "inc/backend/actions/earn-points.php": {
       "mode": "100644",
@@ -882,7 +928,7 @@
     "inc/cores/database.php": {
       "mode": "100644",
       "blob": "ecd5bd7f411ac0401df518a600d272747ab4dc55",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "inc/cores/frontend.php": {
       "mode": "100644",
@@ -902,7 +948,7 @@
     "inc/cores/helper/core-rewards.php": {
       "mode": "100644",
       "blob": "bad5233fae3fc957adae9d689fbbcb92655a0350",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "inc/cores/helper/coupon-redemption.php": {
       "mode": "100644",
@@ -917,17 +963,17 @@
     "inc/cores/helper/ledger-v2.php": {
       "mode": "100644",
       "blob": "4cf080ae166af7f81f5fc029ff303a7571d6d01a",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "inc/cores/helper/order-redemption.php": {
       "mode": "100644",
       "blob": "c38408de45ccd0ad7a8ba1f34bfee27078fe35de",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "inc/cores/helper/order-rewards.php": {
       "mode": "100644",
       "blob": "88a74ad909d926650c222ce25c11ba407fdbbed0",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "inc/cores/helper/points-actions.php": {
       "mode": "100644",
@@ -937,7 +983,7 @@
     "inc/cores/helper/points-allocation.php": {
       "mode": "100644",
       "blob": "6a07a44756a6eae3aead42275a3ff68bc194a78a",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "inc/cores/helper/points-balance.php": {
       "mode": "100644",
@@ -947,7 +993,7 @@
     "inc/cores/helper/points-events.php": {
       "mode": "100644",
       "blob": "a1cee06de9fc52dcb74b19f3c705e6b036ddb034",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "inc/cores/helper/points-lock.php": {
       "mode": "100644",
@@ -972,7 +1018,7 @@
     "inc/cores/helper/points-transaction.php": {
       "mode": "100644",
       "blob": "07f7450e559346648ab464d41b5b7f1c66e05c5b",
-      "decision": "reference-only"
+      "decision": "import"
     },
     "inc/cores/helper/product-earning-rules.php": {
       "mode": "100644",
@@ -1549,5 +1595,10 @@
       "blob": "d9afa3e9079ae92b4dd84206f48d6a7942439109",
       "decision": "reference-only"
     }
+  },
+  "extractions": {
+    "id": "byte-spans-v1",
+    "path": "config/free-core-extractions.json",
+    "sha256": "9f51ee4ee8a2d69e08051729861a47a96239b936d6907813af4f3e64bfae07ac"
   }
 }

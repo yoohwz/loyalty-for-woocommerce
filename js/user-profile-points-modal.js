@@ -34,6 +34,11 @@ jQuery(document).ready(function($) {
         e.preventDefault(); // Prevent default action
         const points = $('#points-amount').val();
         const description = $('#points-description').val();
+        const actorScope = window.location.origin + ':' + ajax_object.security + ':' + ($(this).data('user-id') || ajax_object.user_id) + ':' + actionType;
+        let retained = JSON.parse(sessionStorage.getItem('loyf-admin:' + actorScope) || 'null');
+        if (retained && (retained.points !== points || retained.description !== description)) { alert(ajax_object.request_error); return; }
+        if (!retained) { retained = {id: crypto.randomUUID(), points, description}; sessionStorage.setItem('loyf-admin:' + actorScope, JSON.stringify(retained)); }
+        const operationId = retained.id;
     
         // Check if the points field is empty
         if (!points || points <= 0) {
@@ -49,11 +54,13 @@ jQuery(document).ready(function($) {
                     action: 'reward_user_points',
                     user_id: ajax_object.user_id, // Ensure this is the correct user ID
                     points: points,
+                    operation_id: operationId,
                     description: description,
                     security: ajax_object.security // Include nonce here
                 },
                 success: function(response) {
                     if (response.success) {
+                        sessionStorage.removeItem('loyf-admin:' + actorScope);
                         alert(response.data.message); // Display success message
                         closeModal();
                         location.reload(); // Refresh the page after closing the modal
@@ -73,11 +80,13 @@ jQuery(document).ready(function($) {
                     action: 'deduct_user_points',
                     user_id: ajax_object.user_id, // Ensure this is the correct user ID
                     points: points,
+                    operation_id: operationId,
                     description: description,
                     security: ajax_object.security // Include nonce here
                 },
                 success: function(response) {
                     if (response.success) {
+                        sessionStorage.removeItem('loyf-admin:' + actorScope);
                         alert(response.data.message); // Display success message
                         closeModal();
                         location.reload(); // Refresh the page after closing the modal

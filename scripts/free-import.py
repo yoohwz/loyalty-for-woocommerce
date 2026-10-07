@@ -61,7 +61,7 @@ def load_manifest(path=MANIFEST):
             result[key] = value
         return result
     manifest = json.loads(Path(path).read_text(), object_pairs_hook=unique_pairs)
-    if manifest['schema_version'] != 1 or manifest['phase'] != 'contract-only': fail('Unsupported import contract')
+    if manifest['schema_version'] != 1 or manifest['phase'] not in {'contract-only', 'core-runtime'}: fail('Unsupported import contract')
     if manifest['upstream']['repository'] != 'yoohwz/wc-loyalty' or not SHA.fullmatch(manifest['upstream']['sha']) or not SHA.fullmatch(manifest['upstream']['tree']): fail('Invalid upstream identity')
     free = manifest['free']
     if (free['repository'], free['slug'], free['main_file'], free['text_domain']) != ('yoohwz/loyalty-for-woocommerce', 'loyalty-for-woocommerce', 'loyalty-for-woocommerce.php', 'loyalty-for-woocommerce'): fail('Free package identity changed')
@@ -81,13 +81,19 @@ def load_manifest(path=MANIFEST):
         if not target.endswith('.php') or target.split('/')[0] not in PRODUCT_DIRS: fail('Invalid import target')
     if sources != {path for path, row in inventory.items() if row['decision'] == 'import'}: fail('Incomplete import inventory')
     for path in manifest['blocked_mixed_modules']:
-        if inventory[safe_path(path)]['decision'] != 'reference-only': fail('Mixed module cannot be imported as a whole: ' + path)
+        if inventory[safe_path(path)]['decision'] != 'reference-only' and not any(row['source'] == path and row.get('extraction') == path for row in manifest['imports']): fail('Mixed module cannot be imported as a whole: ' + path)
     for row in manifest['overlays']:
         path = safe_path(row['target'])
         if path in targets: fail('Overlay/import collision: ' + path)
         targets.add(path)
         if (path not in PRODUCT_FILES and path.split('/')[0] not in PRODUCT_DIRS) or row['mode'] not in {'100644', '100755'} or not DIGEST.fullmatch(row['sha256']): fail('Invalid overlay')
     if not PRODUCT_FILES <= targets or not manifest['imports'] or not manifest['forbidden_symbols']: fail('Incomplete boundary')
+    if any('extraction' in row for row in manifest['imports']):
+        encoded = (ROOT / 'config/free-core-extractions.json').read_bytes()
+        if manifest.get('extractions') != {'id': 'byte-spans-v1', 'path': 'config/free-core-extractions.json', 'sha256': digest(encoded)}: fail('Invalid extraction binding')
+        recipes = json.loads(encoded)
+        for row in manifest['imports']:
+            if 'extraction' in row and (row['extraction'] != row['source'] or recipes[row['source']]['input_sha256'] != row['sha256']): fail('Invalid extraction source')
     validate_targets(manifest)
     return manifest
 
@@ -126,13 +132,32 @@ def transform(data):
     return base64.b64decode(payload['source'], validate=True), payload['replacements']
 
 
+def extract(data, row, manifest):
+    if 'extraction' not in row: return data
+    config = manifest['extractions']
+    if config['id'] != 'byte-spans-v1' or config['path'] != 'config/free-core-extractions.json': fail('Unknown extraction contract')
+    encoded = (ROOT / config['path']).read_bytes()
+    if digest(encoded) != config['sha256']: fail('Extraction recipe drift')
+    recipes = json.loads(encoded)
+    recipe = recipes[row['extraction']]
+    if row['extraction'] != row['source'] or digest(data) != recipe['input_sha256']: fail('Extraction source mismatch')
+    selected = bytearray(); last = 0
+    for span in recipe['spans']:
+        a, b = span['start'], span['end']
+        if type(a) is not int or type(b) is not int or not 0 <= last <= a <= b <= len(data): fail('Invalid extraction span')
+        selected.extend(data[last:a]); selected.extend(base64.b64decode(span['replacement'], validate=True)); last = b
+    selected.extend(data[last:]); selected = bytes(selected)
+    if digest(selected) != recipe['selected_sha256']: fail('Extraction result drift')
+    return selected
+
+
 def transformed_imports(repo, sha, manifest):
     inventory = verify_upstream(repo, sha, manifest)
     output = {}
     for row in manifest['imports']:
         data = git(repo, 'cat-file', 'blob', inventory[row['source']]['blob'])
         if digest(data) != row['sha256']: fail('Upstream content drift: ' + row['source'])
-        converted, count = transform(data)
+        converted, count = transform(extract(data, row, manifest))
         if digest(converted) != row['output_sha256'] or count != row['domain_replacements']: fail('Transformation drift: ' + row['source'])
         scan_forbidden(row['target'], converted, manifest)
         output[row['target']] = converted
@@ -172,9 +197,9 @@ def tree_files(root, source=False):
 def verify_tree(root, manifest, mode='legacy', source=False):
     if mode not in {'legacy', 'projection'}: fail('Unsupported source mode')
     expected = {row['target']: row['sha256'] for row in manifest['overlays']}
-    if mode == 'projection': expected.update({row['target']: row['output_sha256'] for row in manifest['imports']})
+    if mode == 'projection' or manifest['phase'] == 'core-runtime': expected.update({row['target']: row['output_sha256'] for row in manifest['imports']})
     modes = {row['target']: row['mode'] for row in manifest['overlays']}
-    if mode == 'projection': modes.update({row['target']: manifest['upstream_inventory'][row['source']]['mode'] for row in manifest['imports']})
+    if mode == 'projection' or manifest['phase'] == 'core-runtime': modes.update({row['target']: manifest['upstream_inventory'][row['source']]['mode'] for row in manifest['imports']})
     files = tree_files(root, source)
     if set(files) != set(expected): fail('Source/package inventory drift: ' + json.dumps({'added': sorted(set(files) - set(expected)), 'missing': sorted(set(expected) - set(files))}))
     for path, file in files.items():

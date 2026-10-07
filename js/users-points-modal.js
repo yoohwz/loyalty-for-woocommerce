@@ -63,7 +63,12 @@ jQuery(document).ready(function($) {
 	$('#submit-points').on('click', function(e) {
 		e.preventDefault(); // Prevent default action
 		const points = $('#points-amount').val(); // Get the points value
-		const description = $('#points-description').val(); // Get the description value
+		const description = $('#points-description').val();
+        const actorScope = window.location.origin + ':' + ajax_object.security + ':' + ($(this).data('user-id') || ajax_object.user_id) + ':' + actionType;
+        let retained = JSON.parse(sessionStorage.getItem('loyf-admin:' + actorScope) || 'null');
+        if (retained && (retained.points !== points || retained.description !== description)) { alert(ajax_object.request_error); return; }
+        if (!retained) { retained = {id: crypto.randomUUID(), points, description}; sessionStorage.setItem('loyf-admin:' + actorScope, JSON.stringify(retained)); }
+        const operationId = retained.id; // Get the description value
 		const userId = $(this).data('user-id'); // Get the user ID from the button
 	
 		// Check if the points field is empty
@@ -80,12 +85,14 @@ jQuery(document).ready(function($) {
 					action: 'reward_user_points',
 					user_id: userId, // Use the user ID from the button
 					points: points,
+                    operation_id: operationId,
 					description: description,
 					security: ajax_object.security // Include nonce here
 				},
 				success: function(response) {
 					if (response.success) {
-						alert(response.data.message); // Display success message
+						sessionStorage.removeItem('loyf-admin:' + actorScope);
+                        alert(response.data.message); // Display success message
 						closeModal();
 						location.reload(); // Refresh the page after closing the modal
 					} else {
@@ -104,12 +111,14 @@ jQuery(document).ready(function($) {
 					action: 'deduct_user_points',
 					user_id: userId, // Use the user ID from the button
 					points: points,
+                    operation_id: operationId,
 					description: description,
 					security: ajax_object.security // Include nonce here
 				},
 				success: function(response) {
 					if (response.success) {
-						alert(response.data.message); // Display success message
+						sessionStorage.removeItem('loyf-admin:' + actorScope);
+                        alert(response.data.message); // Display success message
 						closeModal();
 						location.reload(); // Refresh the page after closing the modal
 					} else {

@@ -30,6 +30,7 @@ class YOSWC_Loyalty_Settings_Tools {
 						<span class="yobm-upload-form">
 							<input type="file" name="import_file" id="import_file" accept=".csv">
 							<?php wp_nonce_field('wc_loyalty_import_action', 'wc_loyalty_import_nonce'); ?>
+                            <input type="hidden" name="operation_id" value="<?php echo esc_attr( wp_generate_uuid4() ); ?>">
 							<input type="submit" name="import_csv" id="import_csv" class="button-primary" value="<?php esc_attr_e('Import', 'loyalty-for-woocommerce'); ?>" disabled>
 						</span>
 					</form>
@@ -128,9 +129,23 @@ class YOSWC_Loyalty_Settings_Tools {
 			return;
 		}
 
+		$operation = $_POST['operation_id'] ?? '';
+		if ( ! YOWCL_Free_Core::owns() || ! is_string( $operation ) || ! YOWCL_Order_Redemption::valid_id( $operation ) || strlen( $csv_contents ) > 1048576 ) { wp_die( esc_html__( 'Invalid import identity or file size.', 'loyalty-for-woocommerce' ) ); }
 		$rows = preg_split('/\r\n|\r|\n/', trim($csv_contents));
 		array_shift($rows);
 
+        if ( count( $rows ) > 500 ) { wp_die( esc_html__( 'Import at most 500 rows per operation.', 'loyalty-for-woocommerce' ) ); }
+        $targets = array();
+        foreach ( $rows as $line ) {
+            if ( '' === trim( $line ) ) { continue; }
+            $row = str_getcsv( $line, ',' );
+            if ( 3 !== count( $row ) || ! preg_match( '/^[1-9][0-9]{0,17}$/D', $row[0] ) || ! preg_match( '/^[0-9]{1,8}$/D', $row[1] ) || ! preg_match( '/^[0-9]{1,18}$/D', $row[2] ) || isset( $targets[$row[0]] ) || ! get_userdata( (int) $row[0] ) ) { wp_die( esc_html__( 'Invalid or duplicate CSV target. Whole non-negative balances are required.', 'loyalty-for-woocommerce' ) ); }
+            $targets[$row[0]] = true;
+        }
+        $witness = 'loyf_import_' . get_current_user_id() . '_' . $operation;
+        $hash = hash( 'sha256', $csv_contents );
+        add_option( $witness, $hash, '', false );
+        if ( get_option( $witness ) !== $hash ) { wp_die( esc_html__( 'This import identity belongs to different terms. Retry the original file.', 'loyalty-for-woocommerce' ) ); }
 		$rows_imported = 0;
 		$rows_failed = 0;
 
@@ -145,9 +160,10 @@ class YOSWC_Loyalty_Settings_Tools {
 			$user_earning_points = isset($row[2]) ? max(0, (float) $row[2]) : 0;
 
 			if (get_userdata($user_id)) {
-				update_user_meta($user_id, 'user_points', $user_points);
-				update_user_meta($user_id, 'user_earning_points', $user_earning_points);
-				$rows_imported++;
+                $result = YOWCL_Points_Transaction::mutate( $user_id, (int) $row[1], (int) $row[2], 'import:' . get_current_user_id() . ':' . $operation . ':' . $user_id, array( 'action' => 'points_import', 'description' => __( 'Points imported from CSV.', 'loyalty-for-woocommerce' ) ), 'replace' );
+                if ( in_array( $result['status'], array( 'applied', 'already_applied' ), true ) ) { $rows_imported++; }
+                else { $rows_failed++; YOWCL_Free_Core::hold( $user_id, $result['code'] ); }
+
 			} else {
 				$rows_failed++;
 			}
@@ -227,7 +243,7 @@ class YOSWC_Loyalty_Settings_Tools {
 			}
 
 			if (!in_array($new_role, $current_roles, true)) {
-				$wp_user_object->set_role($new_role);
+				YOWCL_Order_Rewards::level( (int) $user_id, (array) $loyalty_levels );
 			}
 		}
 
