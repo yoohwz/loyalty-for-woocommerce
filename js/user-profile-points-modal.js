@@ -1,7 +1,22 @@
 jQuery(document).ready(function($) {
     let actionType;
 
+    function operationScope(user, action) {
+        if (!/^[1-9][0-9]*$/.test(String(ajax_object.actor_id))) { return null; }
+        return JSON.stringify([1, window.location.origin, ajax_object.ajaxurl, String(ajax_object.actor_id), String(user), action]);
+    }
+    function restoreOperation(user, action) {
+        const scope = operationScope(user, action);
+        if (!scope) { return; }
+        try {
+            const pending = JSON.parse(sessionStorage.getItem('loyf-admin:' + scope) || 'null');
+            if (pending) { $('#points-amount').val(pending.points); $('#points-description').val(pending.description); }
+        } catch (e) { alert(ajax_object.request_error); }
+    }
+
+
     function openModal() {
+        restoreOperation(ajax_object.user_id, actionType);
         $('#points-modal').show();
     }
 
@@ -42,7 +57,8 @@ jQuery(document).ready(function($) {
             return; // Exit the function
         }
     
-                const actorScope = window.location.origin + ':' + ajax_object.security + ':' + ($(this).data('user-id') || ajax_object.user_id) + ':' + actionType;
+                const actorScope = operationScope(ajax_object.user_id, actionType);
+        if (!actorScope) { alert(ajax_object.request_error); return; }
         let retained = JSON.parse(sessionStorage.getItem('loyf-admin:' + actorScope) || 'null');
         if (retained && (retained.points !== points || retained.description !== description)) { alert(ajax_object.request_error); return; }
         if (!retained) { retained = {id: (crypto.randomUUID ? crypto.randomUUID() : '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16))), points, description}; sessionStorage.setItem('loyf-admin:' + actorScope, JSON.stringify(retained)); }

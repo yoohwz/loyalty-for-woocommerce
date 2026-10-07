@@ -65,3 +65,32 @@ try {
     $cart_reader = new ReflectionMethod( 'YOSWC_Loyalty_Using_Point_Cart_Checkout', 'calculate_potential_earned_points' ); $cart_reader->setAccessible( true );
     loyf_assert( $cart_reader->invoke( new YOSWC_Loyalty_Using_Point_Cart_Checkout(), 0 ) >= 0, 'Guest cart calculation' );
 } finally { restore_error_handler(); wp_set_current_user( 1 ); }
+// A funded pending Classic attempt remains retryable at zero balance until gateway completion.
+$pending_user = wp_insert_user( array( 'user_login' => 'pending_retry', 'user_email' => 'pending@example.invalid', 'user_pass' => 'disposable-only', 'role' => 'customer' ) );
+YOWCL_Points_Transaction::apply( (int) $pending_user, 20, 20, 'fixture:pending-seed' );
+wp_set_current_user( $pending_user ); WC()->cart->empty_cart(); WC()->cart->add_to_cart( $product->get_id(), 1 );
+loyf_equal( true, loyf_ajax( 'wp_ajax_applying_points', array( 'loyalty_points_nonce' => wp_create_nonce( 'apply_loyalty_points' ), 'loyalty_points_input' => '25' ) )['success'], 'Pending retry selection' );
+$pending_id = WC()->session->get( 'yowcl_checkout_id' );
+$_POST['yowcl_checkout_id'] = $pending_id;
+$pending_checkout = WC()->checkout()->create_order( array( 'billing_email' => 'pending@example.invalid', 'payment_method' => 'cod' ) );
+loyf_assert( ! is_wp_error( $pending_checkout ), 'Pending native order' );
+loyf_balance( $pending_user, 0, 25, 'Pending fully debited' );
+loyf_assert( is_array( WC()->session->get( 'loyf_funded_selection' ) ), 'Pending selection retained' );
+$pending_hash = WC()->cart->get_cart_hash(); WC()->cart->calculate_totals();
+loyf_equal( $pending_hash, WC()->cart->get_cart_hash(), 'Pending zero-balance totals preserve original terms' );
+$pending_retry = WC()->checkout()->create_order( array( 'billing_email' => 'pending@example.invalid', 'payment_method' => 'cod' ) );
+loyf_equal( $pending_checkout, $pending_retry, 'Native same-identity pending retry reuses order' );
+loyf_balance( $pending_user, 0, 25, 'Pending retry does not debit twice' );
+$earning_statuses = get_option( 'loyalty_points_earning_status' ); update_option( 'loyalty_points_earning_status', array() );
+$cod = WC()->payment_gateways()->payment_gateways()['cod']; $payment = $cod->process_payment( $pending_checkout );
+loyf_equal( 'success', $payment['result'], 'Native COD completion' );
+loyf_equal( null, WC()->session->get( 'loyf_funded_selection' ), 'Gateway completion retires selection' );
+loyf_balance( $pending_user, 0, 25, 'Gateway does not duplicate debit' );
+WC()->cart->add_to_cart( $product->get_id(), 1 ); WC()->cart->calculate_totals();
+loyf_equal( 0, count( WC()->cart->get_fees() ), 'Next identical cart has no stale points fee' );
+unset( $_POST['yowcl_checkout_id'] );
+$ordinary_next = WC()->checkout()->create_order( array( 'billing_email' => 'pending@example.invalid', 'payment_method' => 'cod' ) );
+loyf_assert( ! is_wp_error( $ordinary_next ) && $ordinary_next !== $pending_checkout, 'Next ordinary native order is distinct' );
+loyf_equal( '', wc_get_order( $ordinary_next )->get_meta( '_used_points' ), 'Next ordinary order has no stale redemption' );
+loyf_balance( $pending_user, 0, 25, 'Next ordinary order creates no points debit' );
+update_option( 'loyalty_points_earning_status', $earning_statuses ); wp_set_current_user( 1 );

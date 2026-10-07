@@ -79,6 +79,11 @@ loyf_equal( true, loyf_ajax( 'wp_ajax_reward_user_points', $request )['success']
 loyf_equal( true, loyf_ajax( 'wp_ajax_reward_user_points', $request )['success'], 'Manual credit replay' );
 loyf_balance( $user, 31, 31, 'Manual credit once' );
 $request['points'] = '5'; loyf_equal( false, loyf_ajax( 'wp_ajax_reward_user_points', $request )['success'], 'Conflicting terms denied' ); loyf_balance( $user, 31, 31, 'Conflict no value' );
+foreach ( array( '1junk', array( $user ), '-1', '0' ) as $invalid_user ) {
+    $invalid_request = $request; $invalid_request['user_id'] = $invalid_user;
+    loyf_equal( false, loyf_ajax( 'wp_ajax_reward_user_points', $invalid_request )['success'], 'Malformed admin target denied' );
+    loyf_balance( $user, 31, 31, 'Malformed target changes no value' );
+}
 // Same absolute import identity never erases a later healthy credit on replay.
 $import_key = 'import:1:' . wp_generate_uuid4() . ':' . $user;
 loyf_equal( 'applied', YOWCL_Points_Transaction::mutate( (int) $user, 40, 40, $import_key, array( 'action' => 'points_import' ), 'replace' )['status'], 'Import target' );

@@ -140,7 +140,7 @@
       "target": "inc/cores/helper/order-redemption.php",
       "transform": "wp-text-domain-v1",
       "sha256": "cc4f1f15860ca8518b091ef31379abbdf655c661cdef875e8c80be31f3a40753",
-      "output_sha256": "491aca8151e12d244f1571d621ecae7ca2f30518e62eaa941337b9e830ea596c",
+      "output_sha256": "c1487eb70c28208e7701d46b7ee0ce2413ba8c0a6d400cdde42310929a64dfa5",
       "domain_replacements": 0,
       "extraction": "inc/cores/helper/order-redemption.php"
     },
@@ -298,12 +298,12 @@
     {
       "target": "inc/backend/users/user-profile-points.php",
       "mode": "100644",
-      "sha256": "a96f247fc88f21425d12c4a5cfeb9ec617250e6713a390f9ae25dcccba91f456"
+      "sha256": "12319959313d2b2545412808531499b21fb59ef67cc773513f8845b0915ed4a5"
     },
     {
       "target": "inc/backend/users/users-points.php",
       "mode": "100644",
-      "sha256": "4ba79e078e1952ec7e2a5334988703af97d9ba9ccb080ebc7d8c67fb644055bb"
+      "sha256": "2144ed163a0992b94ff784d0da461d75d89a706f37d9429579961e00ca1d27fe"
     },
     {
       "target": "inc/backend/users.php",
@@ -338,7 +338,7 @@
     {
       "target": "inc/cores/helper/free-admin.php",
       "mode": "100644",
-      "sha256": "f49bb3630356dfbd387320c8194367406cd7ddbfc423dddaee6f1ce4926d2972"
+      "sha256": "852998afbf4b11c87d82e9b08818f2c0b205d922ae619bd3bcabb7abd45686e4"
     },
     {
       "target": "inc/cores/helper/free-core.php",
@@ -398,12 +398,12 @@
     {
       "target": "js/user-profile-points-modal.js",
       "mode": "100644",
-      "sha256": "29c01af94ba448aade7f430ff93463bd4c80c25979225f556aaee9e7b5f9f12c"
+      "sha256": "c9337d501eaa4ab827e66a640607b83cfdf85d414408a42bbcec0b30202ca217"
     },
     {
       "target": "js/users-points-modal.js",
       "mode": "100644",
-      "sha256": "93c85411a1f9dc878c72651bb34567bc5bafd0a854e6988c4e906f36388e1a4d"
+      "sha256": "6153fc3007af5077b77793c0149b911fb56b2f61d7bc8332a141025788c03d36"
     },
     {
       "target": "js/using-point-cart.js",
@@ -1608,6 +1608,6 @@
   "extractions": {
     "id": "byte-spans-v1",
     "path": "config/free-core-extractions.json",
-    "sha256": "da04dfc68215cfd252a666c764b3786905981f255adf11dbdad98a2894dcd47a"
+    "sha256": "a87e158d4334d314b26916576888e32a7ca759e9a6749b41a87a98d164fdf5e8"
   }
 }

@@ -36,13 +36,14 @@ class YOSWC_Loyalty_User_Profile_Points {
 			$user = get_userdata($user_id);
 	
 			if ($user) {
-				$script_version = '1.2';
+				$script_version = hash_file( 'sha256', __DIR__ . '/../../../js/user-profile-points-modal.js' );
 					wp_enqueue_script('points-modal-script', plugin_dir_url(__FILE__) . '../../../js/user-profile-points-modal.js', ['jquery'], $script_version, true);
 	
 				wp_localize_script('points-modal-script', 'ajax_object', [
 					'user_id' => $user->ID,
 					'ajaxurl' => admin_url('admin-ajax.php'),
-					'security' => wp_create_nonce('ajax_nonce'), 
+					'actor_id' => get_current_user_id(),
+                    'security' => wp_create_nonce('ajax_nonce'),
 					'add_points_text' => esc_js(__('Add points to the user', 'loyalty-for-woocommerce')),
 					'remove_points_text' => esc_js(__('Remove points from the user', 'loyalty-for-woocommerce')),
 					'empty_points_alert' => esc_js(__('The points field cannot be empty.', 'loyalty-for-woocommerce')),

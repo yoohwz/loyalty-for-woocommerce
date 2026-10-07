@@ -4,7 +4,9 @@ class YOWCL_Free_Admin {
     public static function operate( $deduct = false ) {
         check_ajax_referer( 'ajax_nonce', 'security' );
         if ( ! current_user_can( 'manage_options' ) || ! YOWCL_Free_Core::owns() ) { wp_send_json_error( __( 'Unauthorized user', 'loyalty-for-woocommerce' ) ); }
-        $user = absint( $_POST['user_id'] ?? 0 );
+        $raw_user = $_POST['user_id'] ?? '';
+        if ( ! is_scalar( $raw_user ) || ! preg_match( '/^[1-9][0-9]{0,17}$/D', (string) $raw_user ) ) { wp_send_json_error( __( 'Unauthorized user', 'loyalty-for-woocommerce' ) ); }
+        $user = (int) $raw_user;
         $raw = $_POST['points'] ?? '';
         $id = $_POST['operation_id'] ?? '';
         if ( ! is_string( $raw ) || ! preg_match( '/^[1-9][0-9]{0,7}$/D', $raw ) || ! is_string( $id ) || ! YOWCL_Order_Redemption::valid_id( $id ) || ! get_userdata( $user ) ) { wp_send_json_error( __( 'A valid whole points amount and operation identity are required.', 'loyalty-for-woocommerce' ) ); }

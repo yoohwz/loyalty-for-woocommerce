@@ -5,14 +5,14 @@ const vm = require('node:vm');
 const assert = require('node:assert/strict');
 for (const file of ['users-points-modal.js', 'user-profile-points-modal.js']) {
   const bindings = new Map(), values = new Map(), stored = new Map(), requests = [];
-  let sequence = 0, alerts = 0;
+  let sequence = 0, alerts = 0, selectedUser = 7;
   const document = {}, window = {location: {origin: 'https://fixture.invalid'}};
   class Element {
     constructor(key) { this.key = key; }
     ready(fn) { fn(query); return this; }
     on(event, selector, fn) { if (typeof selector === 'function') { fn = selector; selector = this.key; } bindings.set(event + '|' + selector, fn); return this; }
     val(value) { if (value === undefined) return values.get(this.key) || ''; values.set(this.key, value); return this; }
-    data(name, value) { if (value === undefined) return name === 'user-id' ? 7 : undefined; return this; }
+    data(name, value) { if (value === undefined) return name === 'user-id' ? selectedUser : undefined; if (name === 'user-id') selectedUser = value; return this; }
     show() { return this; } hide() { return this; } text() { return this; } is() { return false; }
   }
   function query(selector) { if (selector instanceof Element) return selector; return new Element(selector === document ? 'document' : selector === window ? 'window' : selector); }
@@ -22,7 +22,7 @@ for (const file of ['users-points-modal.js', 'user-profile-points-modal.js']) {
   };
   const context = {
     jQuery: query, document, window, console, Uint8Array, JSON,
-    ajax_object: {user_id: 7, security: 'actor-nonce', ajaxurl: '/admin-ajax.php'},
+    ajax_object: {actor_id: 1, user_id: 7, security: 'actor-nonce', ajaxurl: '/admin-ajax.php'},
     crypto: {randomUUID: () => '00000000-0000-4000-8000-' + String(++sequence).padStart(12, '0')},
     sessionStorage: {getItem: key => stored.get(key) || null, setItem: (key, val) => stored.set(key, val), removeItem: key => stored.delete(key)},
     alert: () => { alerts++; }, location: {reload() {}}
@@ -36,6 +36,15 @@ for (const file of ['users-points-modal.js', 'user-profile-points-modal.js']) {
   values.set('#points-amount', '4'); click('#submit-points');
   const first = requests.at(-1); first.error(); click('#submit-points'); const retry = requests.at(-1);
   assert.equal(first.data.operation_id, retry.data.operation_id, 'Unknown reply retains identity');
+  // A reload refreshes credentials, but the unresolved business intent survives.
+  context.ajax_object.security = 'refreshed-nonce';
+  values.set('#points-amount', ''); values.set('#points-description', '');
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../../js', file), 'utf8'), context, {filename: file});
+  click(file.startsWith('users-') ? '.reward-points' : '#reward-points');
+  assert.equal(values.get('#points-amount'), '4'); assert.equal(values.get('#points-description'), 'Original');
+  click('#submit-points');
+  assert.equal(requests.at(-1).data.operation_id, first.data.operation_id, 'Nonce-refresh reload retains UUID');
+  assert.equal(requests.at(-1).data.security, 'refreshed-nonce', 'Retry uses current credential');
   const count = requests.length; values.set('#points-amount', '5'); click('#submit-points');
   assert.equal(requests.length, count, 'Edited terms cannot become another unknown operation');
   values.set('#points-amount', '4'); first.success({success: true, data: {message: 'Committed'}});
@@ -43,6 +52,22 @@ for (const file of ['users-points-modal.js', 'user-profile-points-modal.js']) {
   const next = requests.at(-1); assert.notEqual(next.data.operation_id, first.data.operation_id);
   retry.success({success: true, data: {message: 'Old reply'}});
   assert.equal(JSON.parse([...stored.values()][0]).id, next.data.operation_id, 'Late reply cannot clear a newer operation');
+  context.ajax_object.actor_id = 2;
+  click(file.startsWith('users-') ? '.reward-points' : '#reward-points');
+  values.set('#points-amount', '4'); values.set('#points-description', 'Original'); click('#submit-points');
+  assert.notEqual(requests.at(-1).data.operation_id, next.data.operation_id, 'Different actor has a separate operation');
+  context.ajax_object.actor_id = 1;
+  click(file.startsWith('users-') ? '.reward-points' : '#reward-points'); click('#submit-points');
+  assert.equal(requests.at(-1).data.operation_id, next.data.operation_id, 'Original actor recovers its pending operation');
+  context.ajax_object.ajaxurl = '/other-site/admin-ajax.php';
+  click(file.startsWith('users-') ? '.reward-points' : '#reward-points');
+  values.set('#points-amount', '4'); values.set('#points-description', 'Original'); click('#submit-points');
+  assert.notEqual(requests.at(-1).data.operation_id, next.data.operation_id, 'Different site has a separate operation');
+  context.ajax_object.ajaxurl = '/admin-ajax.php';
+  selectedUser = 8; context.ajax_object.user_id = 8;
+  click(file.startsWith('users-') ? '.reward-points' : '#reward-points');
+  values.set('#points-amount', '4'); values.set('#points-description', 'Original'); click('#submit-points');
+  assert.notEqual(requests.at(-1).data.operation_id, next.data.operation_id, 'Different target has a separate operation');
   assert.ok(alerts > 0);
 }
 console.log('Admin replay handlers PASS');

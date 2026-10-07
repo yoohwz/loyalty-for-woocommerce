@@ -145,7 +145,7 @@ class YOSWC_Loyalty_Users_Points {
 	}
 
 	public function enqueue_scripts() {
-		$script_version = '1.1';
+		$script_version = hash_file( 'sha256', __DIR__ . '/../../../js/users-points-modal.js' );
 		$screen = get_current_screen();
 		if (is_admin() && isset($screen) && $screen->id === 'users') {
 			wp_enqueue_script('users-points-modal-script', plugin_dir_url(__FILE__) . '../../../js/users-points-modal.js', ['jquery'], $script_version, true);
@@ -153,7 +153,8 @@ class YOSWC_Loyalty_Users_Points {
 			wp_localize_script('users-points-modal-script', 'ajax_object', [
 				'user_id' => get_current_user_id(),
 				'ajaxurl' => admin_url('admin-ajax.php'), 
-				'security' => wp_create_nonce('ajax_nonce'),
+				'actor_id' => get_current_user_id(),
+                    'security' => wp_create_nonce('ajax_nonce'),
 				'add_points_text' => esc_js(__('Add points to the user', 'loyalty-for-woocommerce')),
 				'remove_points_text' => esc_js(__('Remove points from the user', 'loyalty-for-woocommerce')), 
 				'empty_points_alert' => esc_js(__('The points field cannot be empty.', 'loyalty-for-woocommerce')),

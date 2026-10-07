@@ -293,8 +293,8 @@ class YOWCL_Order_Redemption {
 			return 0;
 		} );
 
-        self::retire_order_session( $order->get_id() );
 	}
+
 
 	private static function request_owner() {}
 	private static function assert_identity( $order ) {
