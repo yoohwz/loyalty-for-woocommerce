@@ -47,8 +47,20 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
             }
             await page.waitForFunction(() => [...document.querySelectorAll('.loyf-blocks-redemption')].some(node => /20 points applied/.test(node.textContent)));
             if (target === fixture.cart) { assert(updates.length >= replayStart + 2, 'Native extension batch observed'); assert.deepEqual(updates[replayStart], updates[replayStart + 1], 'Lost response retries original immutable UUID and terms'); }
+            await page.reload();
+            await surface.waitFor({ state:'visible' });
+            await page.waitForFunction(() => [...document.querySelectorAll('.loyf-blocks-redemption')].some(node => /20 points applied/.test(node.textContent)));
+            assert.equal(await surface.getByLabel('Points to apply').inputValue(), '', 'Fresh selected page starts with an empty input');
+            const removeStart = updates.length; let lostRemove = false;
+            await page.route('**/*', async route => {
+                if (!lostRemove && extensionRequests(route.request()).some(data => data.action === 'remove')) { lostRemove = true; await route.fetch(); await route.abort('failed'); }
+                else await route.continue();
+            });
             await surface.getByRole('button', { name:'Remove points', exact:true }).click();
+            await surface.getByRole('button', { name:'Retry points update', exact:true }).click();
             await page.waitForFunction(() => [...document.querySelectorAll('.loyf-blocks-redemption')].every(node => !/20 points applied/.test(node.textContent)));
+            assert(lostRemove && updates.length >= removeStart + 2, 'Lost remove response replay observed');
+            assert.deepEqual(updates[removeStart], updates[removeStart + 1], 'Empty input must replay the original remove request');
         }
         const denied = await page.evaluate(async () => {
             const response = await fetch('/?rest_route=/wc/store/v1/cart/extensions', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({namespace:'loyf-redemption',data:{action:'apply',points:'20',operation_id:'00000000-0000-4000-8000-000000000001'}})});

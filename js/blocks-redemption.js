@@ -25,7 +25,7 @@
         if (!data || (!data.enabled && !data.message)) return null;
         function update(action) {
             if (busy) return;
-            if (action === 'apply' && !/^[0-9]{1,8}$/.test(points)) {
+            if (!pending.current && action === 'apply' && !/^[0-9]{1,8}$/.test(points)) {
                 setError(__('Enter a whole points amount.', 'loyalty-for-woocommerce')); return;
             }
             // A lost response retains the original immutable request until retry succeeds.
