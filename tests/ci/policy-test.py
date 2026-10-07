@@ -179,6 +179,22 @@ class PolicyTest(unittest.TestCase):
         self.assertIn('github.event.pull_request.number || github.ref', workflow)
         self.assertIn('cancel-in-progress: true', workflow)
 
+    def test_actual_workflow_package_step_succeeds(self):
+        workflow = (ROOT / '.github/workflows/ci.yml').read_text()
+        block = workflow.split('      - name: Stage, archive, extract and verify\n')[1].split('      - name: Repository integrity')[0]
+        shell = '\n'.join(line[10:] for line in block.split('        run: |\n')[1].splitlines())
+        # Execute the actual workflow step against a clean committed source, not a
+        # rewritten local package command. Wrong staging/archive slugs must fail.
+        with tempfile.TemporaryDirectory(prefix='loyf-package-contract-') as directory:
+            checkout = Path(directory) / 'source'
+            subprocess.run(['git', 'clone', '--no-hardlinks', '--quiet', str(ROOT), str(checkout)], check=True)
+            head = git(checkout, 'rev-parse', 'HEAD')
+            result = subprocess.run(['bash', '-c', shell], cwd=checkout,
+                                    env=dict(os.environ, LOY_HEAD=head), capture_output=True, text=True)
+            self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+            self.assertIn('source_sha=' + head, result.stdout)
+            self.assertIn('files=50', result.stdout)
+
     def test_package_step_preserved_and_failure_is_fatal(self):
         workflow = (ROOT / '.github/workflows/ci.yml').read_text()
         block = workflow.split('      - name: Stage, archive, extract and verify\n')[1].split('      - name: Repository integrity')[0]

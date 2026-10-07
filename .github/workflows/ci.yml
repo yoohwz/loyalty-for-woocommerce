@@ -116,7 +116,7 @@ jobs:
           trap 'rm -rf "$work"' EXIT
           mkdir "$work/stage" "$work/extracted"
           bash scripts/stage-distribution.sh "$LOY_HEAD" "$work/stage"
-          (cd "$work/stage" && zip -qr "$work/loyalty-for-woocommerce-$version.zip" wc-loyalty)
+          (cd "$work/stage" && zip -qr "$work/loyalty-for-woocommerce-$version.zip" loyalty-for-woocommerce)
           unzip -q "$work/loyalty-for-woocommerce-$version.zip" -d "$work/extracted"
           python3 scripts/verify-distribution.py \
             --source "$PWD" --sha "$LOY_HEAD" --version "$version" \
