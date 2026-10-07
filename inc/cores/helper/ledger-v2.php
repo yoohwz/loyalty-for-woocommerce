@@ -27,10 +27,11 @@ class YOWCL_Ledger_V2 {
 			self::integer_valid( $row['available_delta'] ?? null, 99999999 ) && self::integer_valid( $row['earning_delta'] ?? null ) &&
 			self::integer_valid( $row['user_id'] ?? null ) && (int) $row['user_id'] > 0 &&
 			in_array( $row['action'] ?? null, self::actions(), true );
+		// An advertised receipt is proof-bearing even on an unversioned compatibility row.
+		if ( null !== ( $row['allocation_receipt'] ?? null ) ) { try { YOWCL_Points_Allocation::decode( $row['allocation_receipt'] ); } catch ( DomainException $e ) { return 'malformed_v2'; } }
 		if ( null !== $version ) {
 			if ( ! in_array( $version, array( 2, '2' ), true ) || ! $complete ||
 				( null !== ( $row['source_event_key'] ?? null ) && ( ! self::key_valid( $row['source_event_key'] ) || $row['source_event_key'] === $row['event_key'] ) ) ) { return 'malformed_v2'; }
-			if ( null !== ( $row['allocation_receipt'] ?? null ) ) { try { YOWCL_Points_Allocation::decode( $row['allocation_receipt'] ); } catch ( DomainException $e ) { return 'malformed_v2'; } }
 			return 'v2';
 		}
 		return $complete && null === ( $row['source_event_key'] ?? null ) ? 'transaction_pre_v2' : 'legacy';

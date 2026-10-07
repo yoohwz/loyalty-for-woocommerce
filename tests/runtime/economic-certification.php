@@ -128,6 +128,17 @@ $bad_history=loyf_ajax('wp_ajax_load_more_points_log',array('security'=>wp_creat
 $pre_v2=$malformed; $pre_v2['ledger_version']=null; $pre_v2['source_event_key']=null; loyf_equal('+5',YOWCL_Free_Core::history_amount($pre_v2),'Valid pre-v2 receipt compatibility');
 loyf_equal(1,$wpdb->update(YOWCL_Points_Log::table_name(),array('allocation_receipt'=>null),array('id'=>$malformed['id'])),'Native genuine pre-v2 receipt absence');
 $pre_v2_history=loyf_ajax('wp_ajax_load_more_points_log',array('security'=>wp_create_nonce('load_more_points_nonce'),'offset'=>0)); loyf_equal('+5',$pre_v2_history['data'][0]['amount'],'Genuine pre-v2 native history retains delta');
+// Actual Classic cancellation cannot credit from an advertised malformed pre-v2 source.
+$bad_debit_user=loyf7_user('bad_debit'); YOWCL_Points_Transaction::apply($bad_debit_user,45,45,'cert7:bad_debit_seed'); wp_set_current_user($bad_debit_user);
+WC()->cart->empty_cart(); WC()->cart->add_to_cart($product->get_id(),1); $bad_apply=array('loyalty_points_nonce'=>wp_create_nonce('apply_loyalty_points'),'loyalty_points_input'=>'20');
+loyf_equal(true,loyf_ajax('wp_ajax_applying_points',$bad_apply)['success'],'Malformed debit selection'); $bad_attempt=WC()->session->get('yowcl_checkout_id'); $bad_order_id=WC()->checkout()->create_order(array('billing_email'=>'bad-debit@example.invalid','payment_method'=>'cod')); loyf_assert(!is_wp_error($bad_order_id),'Actual malformed source checkout');
+$bad_debit=loyf7_row('checkout_redeem:'.$bad_attempt,-20,0); loyf_balance($bad_debit_user,25,45,'Funded debit before corruption');
+loyf_equal(1,$wpdb->update(YOWCL_Points_Log::table_name(),array('ledger_version'=>null,'allocation_receipt'=>'{'),array('id'=>$bad_debit['id'])),'Native malformed unversioned debit');
+$bad_source=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.YOWCL_Points_Log::table_name().' WHERE id=%d',$bad_debit['id']),ARRAY_A); loyf_equal('malformed_v2',YOWCL_Ledger_V2::inspect($bad_source)['kind'],'Shared classifier rejects malformed unversioned receipt');
+wc_get_order($bad_order_id)->update_status('cancelled'); loyf_balance($bad_debit_user,25,45,'Malformed source cancellation cannot credit'); loyf_assert(!YOWCL_Points_Transaction::find('checkout_redeem:'.$bad_attempt.':return'),'No return from malformed proof'); loyf_equal('returning',YOWCL_Order_Redemption::record($bad_attempt)['state'],'Malformed return intent stays recoverable');
+// Explicit disposable repair to genuine pre-v2 evidence permits the same return key once.
+loyf_equal(1,$wpdb->update(YOWCL_Points_Log::table_name(),array('allocation_receipt'=>null),array('id'=>$bad_debit['id'])),'Genuine pre-v2 debit evidence'); YOWCL_Order_Redemption::return_points($bad_order_id); loyf_balance($bad_debit_user,45,45,'Valid pre-v2 source recovery'); $identity_rows[]=loyf7_row('checkout_redeem:'.$bad_attempt.':return',20,0);
+YOWCL_Points_Transaction::apply($bad_debit_user,5,5,'cert7:after_source_repair'); YOWCL_Order_Redemption::return_points($bad_order_id); loyf_balance($bad_debit_user,50,50,'Source recovery replay preserves later credit');
 // Include committed native CSV entries from the mandatory hardened writer scenario.
 foreach($wpdb->get_results("SELECT * FROM ".YOWCL_Points_Log::table_name()." WHERE action='points_import' AND event_key IS NOT NULL",ARRAY_A) as $row){$identity_rows[]=$row;}
 // Consumers and public legacy observations cannot write accounting or reinterpret nullable history.
