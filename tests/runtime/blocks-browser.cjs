@@ -19,8 +19,8 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     page.on('request', request => { if (request.method()==='POST') calls.push(request.url()); updates.push(...extensionRequests(request)); });
     try {
         await page.goto(base + '/wp-login.php');
-        await page.locator('#user_login').fill('blocks_browser');
-        await page.locator('#user_pass').fill('disposable-only');
+        // WordPress schedules delayed username focus; set both fixture fields atomically.
+        await page.evaluate(() => { document.querySelector('#user_login').value = 'blocks_browser'; document.querySelector('#user_pass').value = 'disposable-only'; });
         await Promise.all([page.waitForURL(url => !url.pathname.includes('wp-login')), page.locator('#wp-submit').click()]);
         await page.goto(base + '/?add-to-cart=' + fixture.product);
         for (const target of [fixture.cart, fixture.checkout]) {
