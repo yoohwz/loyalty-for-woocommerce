@@ -21,6 +21,9 @@ $merged = get_option('loyalty_extra_reviews_gamification_rules');
 loyf_equal($before['options']['loyalty_extra_levelup_points_rules'], $merged['levelup_points'], 'Exact role map');
 loyf_equal(array('keep'=>'001'), $merged['context_rules'], 'Dormant merged keys');
 loyf_equal('29', get_option('loyalty_extra_points_rules')['birthday_points'], 'Dormant account');
+loyf_equal(serialize($before['options']['loyalty_extra_points_rules']['unknown_object']),serialize(get_option('loyalty_extra_points_rules')['unknown_object']),'Unknown account object values preserved');
+loyf_equal(serialize($before['options']['loyalty_extra_reviews_gamification_rules']['unknown_object']),serialize($merged['unknown_object']),'Unknown merged object values preserved');
+YOWCL_Free_Migrations::run(); loyf_assert(YOWCL_Free_Migrations::ready('signup') && YOWCL_Free_Migrations::ready('login'),'Valid object fields cannot cause perpetual holds');
 loyf_equal('3', get_option('wc_loyalty_db_version'), 'Existing canonical schema certification');
 $old_signup = get_option('loyf_migration_signup_v1_before');
 loyf_equal('no', maybe_unserialize($old_signup['before'])['signup_enabled'], 'Pre-target rollback evidence');
@@ -35,14 +38,14 @@ $old_target=get_option('loyalty_extra_reviews_gamification_rules');
 $failure=function($sql) use($wpdb) { return false !== strpos($sql, 'SELECT option_value') && false !== strpos($sql, "'loyalty_extra_points_rules'") ? 'SELECT * FROM loyf_missing_source_table' : $sql; };
 $wpdb->suppress_errors(true); add_filter('query',$failure); YOWCL_Free_Migrations::run(); remove_filter('query',$failure); $wpdb->suppress_errors(false);
 $failure_bubble=new YOSWC_Loyalty_Info_Bubble(); $failure_method=new ReflectionMethod($failure_bubble,'get_earning_section'); $failure_method->setAccessible(true); loyf_assert(false===strpos(json_encode($failure_method->invoke($failure_bubble,'Points')),'Product review:'),'Bubble does not advertise held review feature');
-loyf_equal($old_target,get_option('loyalty_extra_reviews_gamification_rules'),'Failed source read cannot replace target'); loyf_assert(!YOWCL_Free_Migrations::ready('review'),'Failed read no witness');
+loyf_equal(serialize($old_target),serialize(get_option('loyalty_extra_reviews_gamification_rules')),'Failed source read cannot replace target'); loyf_assert(!YOWCL_Free_Migrations::ready('review'),'Failed read no witness');
 update_option('loyalty_extra_reviews_gamification_rules','malformed'); YOWCL_Free_Migrations::run(); loyf_assert(!YOWCL_Free_Migrations::ready('review'),'Malformed target held'); loyf_equal('malformed',get_option('loyalty_extra_reviews_gamification_rules'),'Malformed data not erased');
 ob_start(); (new YOSWC_Loyalty_Settings_Extra_Points())->display_extra_points_settings(); YOWCL_Free_Migrations::notices(); $malformed_ui=ob_get_clean(); loyf_assert(false!==strpos($malformed_ui,'Extra points settings'),'Malformed target renderer does not fatal');
 update_option('loyalty_extra_reviews_gamification_rules',$old_target);
 $old_target['review_points']='99'; update_option('loyalty_extra_reviews_gamification_rules',$old_target);
 $failure=function($sql) use($wpdb) { return false !== strpos($sql, "UPDATE {$wpdb->options}") && false !== strpos($sql, "'loyalty_extra_reviews_gamification_rules'") ? 'SELECT * FROM loyf_missing_target_table' : $sql; };
 $wpdb->suppress_errors(true); add_filter('query',$failure); YOWCL_Free_Migrations::run(); remove_filter('query',$failure); $wpdb->suppress_errors(false);
-loyf_assert(!YOWCL_Free_Migrations::ready('review'),'Failed target write no witness'); loyf_equal($old_target,get_option('loyalty_extra_reviews_gamification_rules'),'Failed target write retains bytes');
+loyf_assert(!YOWCL_Free_Migrations::ready('review'),'Failed target write no witness'); loyf_equal(serialize($old_target),serialize(get_option('loyalty_extra_reviews_gamification_rules')),'Failed target write retains bytes');
 loyf_reset_feature('review');
 $source = get_option('loyalty_extra_points_rules'); $source['review_points'] = '0'; update_option('loyalty_extra_points_rules', $source);
 $merged['review_enabled']='yes'; $merged['review_points']='99'; update_option('loyalty_extra_reviews_gamification_rules', $merged);
@@ -72,7 +75,7 @@ $canonical=get_option('loyalty_extra_points_rules'); wp_set_current_user((int)$b
 $_POST=array('extra_points_settings_nonce'=>$nonce,'loyalty_extra_signup_points'=>'99');
 $die=function(){return function(){throw new LOYF_Test_Die();};}; add_filter('wp_die_handler',$die,PHP_INT_MAX); add_filter('wp_die_ajax_handler',$die,PHP_INT_MAX);
 try {(new YOSWC_Loyalty_Settings_Extra_Points())->save_extra_points_settings(); throw new RuntimeException('Denied save admitted');} catch(LOYF_Test_Die $e) {} finally {remove_filter('wp_die_handler',$die,PHP_INT_MAX);remove_filter('wp_die_ajax_handler',$die,PHP_INT_MAX);$_POST=array();}
-loyf_equal($canonical,get_option('loyalty_extra_points_rules'),'Denied save no mutation');
+loyf_equal(serialize($canonical),serialize(get_option('loyalty_extra_points_rules')),'Denied save no mutation');
 // Existing legacy serialization wrappers retain unknown bytes/semantics through narrow merge.
 loyf_reset_feature('redemption'); $using=array('points'=>'10','amount'=>'1','unknown'=>array('exact'=>'009')); update_option('loyalty_points_using_rules',serialize($using)); YOWCL_Free_Migrations::run();
 $using_raw=YOWCL_Free_Migrations::read('loyalty_points_using_rules'); loyf_assert(is_serialized(maybe_unserialize($using_raw)),'Serialized wrapper retained');
@@ -110,7 +113,7 @@ foreach(array('email_reward'=>'Points_Reward','email_deduct'=>'Points_Deduct','e
     $class='YOWCL_WC_Email_Loyalty_' . $family; $probe=new $class();
     loyf_assert(YOWCL_Free_Migrations::ready($feature) && $probe->is_enabled(),'Wrapped native family enabled ' . $family);
     $stored=maybe_unserialize(get_option('woocommerce_' . $probe->id . '_settings'));
-    foreach(array('subject','heading','email_type','unknown') as $field) { if(isset($stored[$field])) { loyf_equal($stored[$field],$probe->get_option($field),'Wrapped native custom field ' . $family . ':' . $field); } }
+    foreach(array('subject','heading','email_type','unknown','unknown_object') as $field) { if(isset($stored[$field])) { loyf_equal(serialize($stored[$field]),serialize($probe->get_option($field)),'Wrapped native custom field ' . $family . ':' . $field); } }
     foreach(array('yowcl_','woocommerce_') as $prefix) { remove_action($prefix . 'loyalty_' . strtolower($family),array($probe,'trigger'),10); }
     remove_filter('woocommerce_settings_api_sanitized_fields_' . $probe->id,array($probe,'preserve_settings'));
 }

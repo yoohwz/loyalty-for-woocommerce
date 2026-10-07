@@ -5,9 +5,10 @@ global $wpdb;
 $account = maybe_unserialize(get_option('loyalty_extra_points_rules'));
 $account['signup_enabled'] = 'no'; $account['login_enabled'] = 'no';
 $account['birthday_points'] = '29'; $account['unknown'] = array('exact' => '07');
+$account['unknown_object'] = (object) array('exact' => '007');
 update_option('loyalty_extra_points_rules', $account);
-update_option('loyalty_extra_reviews_gamification_rules', array('review_enabled' => 'no', 'review_points' => '99', 'levelup_enabled' => 'no', 'levelup_points' => array('loyf_gold' => array('awarded' => '99')), 'context_rules' => array('keep' => '001')));
-update_option('woocommerce_yowcl_loyalty_points_reward_settings', array('enabled' => 'no', 'subject' => 'Custom {earned_points}', 'heading' => 'Fixture heading', 'email_type' => 'plain', 'unknown' => '001'));
+update_option('loyalty_extra_reviews_gamification_rules', array('review_enabled' => 'no', 'review_points' => '99', 'levelup_enabled' => 'no', 'levelup_points' => array('loyf_gold' => array('awarded' => '99')), 'context_rules' => array('keep' => '001'), 'unknown_object' => (object) array('exact' => '009')));
+update_option('woocommerce_yowcl_loyalty_points_reward_settings', array('enabled' => 'no', 'subject' => 'Custom {earned_points}', 'heading' => 'Fixture heading', 'email_type' => 'plain', 'unknown' => '001', 'unknown_object' => (object) array('exact' => '011')));
 update_option('woocommerce_yowcl_loyalty_points_deduct_settings', array('enabled' => 'no', 'subject' => 'Deduct fixture'));
 update_option('woocommerce_yowcl_loyalty_level_update_settings', array('enabled' => 'no', 'heading' => 'Level fixture'));
 $state = array(

@@ -109,7 +109,7 @@ class YOWCL_Free_Migrations {
         $current = self::decode( $before );
         $expected = array_replace( $current, $spec['patch'] );
         self::put( $spec['target'], self::encode( $expected, $before ), $before );
-        if ( self::decode( self::read( $spec['target'] ) ) !== $expected ) { throw new RuntimeException( 'migration_semantics_readback_failed' ); }
+        if ( serialize( self::decode( self::read( $spec['target'] ) ) ) !== serialize( $expected ) ) { throw new RuntimeException( 'migration_semantics_readback_failed' ); }
         self::put( $name, '1', null );
     }
     public static function run() {

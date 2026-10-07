@@ -504,7 +504,7 @@
     {
       "target": "inc/cores/helper/free-migrations.php",
       "mode": "100644",
-      "sha256": "5b0ab69b975b373b345fd20e03c2f5ef4fe0ccf1025b336207f1f887de88d449"
+      "sha256": "64067daeedbc4b506400fbc0a9608858e04787f95e169078c6dcbad51496633c"
     }
   ],
   "blocked_mixed_modules": [
