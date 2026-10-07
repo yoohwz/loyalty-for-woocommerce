@@ -9,6 +9,7 @@ function loyf8_user($name) {
     $rules=get_option('loyalty_extra_points_rules'); $off=$rules; $off['signup_enabled']='no'; update_option('loyalty_extra_points_rules',$off);
     $user=wp_insert_user(array('user_login'=>'modern_'.$name,'user_email'=>'modern_'.$name.'@example.invalid','user_pass'=>'disposable-only','role'=>'customer')); loyf_assert(!is_wp_error($user),'Native modern customer'); update_option('loyalty_extra_points_rules',$rules); return (int)$user;
 }
+$merged=get_option('loyalty_extra_reviews_gamification_rules'); $merged['levelup_enabled']='no'; update_option('loyalty_extra_reviews_gamification_rules',$merged);
 $hpos='hpos'===getenv('LOYF_STORAGE');
 loyf_equal($hpos,Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled(),'Authoritative storage'); loyf_equal('no',get_option('woocommerce_custom_orders_table_data_sync_enabled'),'Sync disabled');
 $product=new WC_Product_Simple(); $product->set_name('Modern redemption'); $product->set_regular_price('100'); $product->set_virtual(true); $product->set_status('publish'); $product->save();
