@@ -39,7 +39,7 @@ class YOWCL_Free_Core {
         if ( $code ) { update_user_meta( (int) $user, '_loyf_economic_hold', sanitize_key( $code ) ); }
         do_action( 'loyf_economic_recovery_required', (int) $user, $code );
     }
-    public static function user_reward( $user, $key, $action, $points ) {
+    public static function user_reward( $user, $key, $action, $points, $description = null ) {
         if ( ! self::owns() ) { return; }
         $user = (int) $user;
         try {
@@ -55,7 +55,7 @@ class YOWCL_Free_Core {
             if ( 'level_up_reward' === $action && in_array( substr( $key, strlen( 'reward:level_up:' . $user . ':' ) ), (array) get_user_meta( $user, '_yo_loyalty_levelup_awarded_roles', true ), true ) ) { return; }
             if ( $points <= 0 ) { return; }
             $labels = array( 'sign_up_reward' => __( 'Sign-up bonus', 'loyalty-for-woocommerce' ), 'daily_login_reward' => __( 'Daily login bonus', 'loyalty-for-woocommerce' ), 'review_reward' => __( 'Product review bonus', 'loyalty-for-woocommerce' ), 'level_up_reward' => __( 'Level up bonus', 'loyalty-for-woocommerce' ) );
-            YOWCL_Core_Rewards::award( $user, (int) $points, $key, $action, $labels[$action], $project, array( 'YOWCL_Core_Rewards', 'notify_user' ) );
+            YOWCL_Core_Rewards::award( $user, (int) $points, $key, $action, $description ?? $labels[$action], $project, array( 'YOWCL_Core_Rewards', 'notify_user' ) );
         } catch ( Throwable $e ) { self::hold( $user, $e->getMessage() ); }
     }
     public static function level_bonus( $user, $role ) {
@@ -63,7 +63,7 @@ class YOWCL_Free_Core {
         $merged = get_option( 'loyalty_extra_reviews_gamification_rules', array() );
         if ( isset( $merged['levelup_enabled'] ) ) { $rules = 'yes' === $merged['levelup_enabled'] ? ( $merged['levelup_points'] ?? array() ) : array(); }
         $role = sanitize_key( $role );
-        if ( '' !== $role ) { self::user_reward( $user, 'reward:level_up:' . (int) $user . ':' . $role, 'level_up_reward', (int) ( $rules[$role]['awarded'] ?? 0 ) ); }
+        if ( '' !== $role ) { self::user_reward( $user, 'reward:level_up:' . (int) $user . ':' . $role, 'level_up_reward', (int) ( $rules[$role]['awarded'] ?? 0 ), __( 'Level up bonus for role:', 'loyalty-for-woocommerce' ) . ' ' . ( wp_roles()->roles[$role]['name'] ?? $role ) ); }
     }
     public static function history_amount( $row ) {
         $row = (array) $row;

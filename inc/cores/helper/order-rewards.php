@@ -76,7 +76,9 @@ class YOWCL_Order_Rewards {
 		$changed = false;
 		try {
 			global $wpdb;
-			$earning = (int) YOWCL_Points_Lock::scalar( $lock['db'], $wpdb->prepare( "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key = 'user_earning_points' ORDER BY umeta_id LIMIT 1", $user_id ) );
+			$stored_earning = YOWCL_Points_Lock::scalar( $lock['db'], $wpdb->prepare( "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key = 'user_earning_points' ORDER BY umeta_id LIMIT 1", $user_id ) );
+            if ( null !== $stored_earning && ( ! preg_match( '/^[0-9]+$/D', $stored_earning ) || strlen( $stored_earning ) > 18 ) ) { throw new RuntimeException( 'invalid_balance_storage' ); }
+            $earning = (int) $stored_earning;
 			wp_cache_delete( $user_id, 'user_meta' );
 			$sorted = array();
 			foreach ( $rules as $role => $rule ) { $sorted[ $role ] = (int) ( $rule['from'] ?? 0 ); }

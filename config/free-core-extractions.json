@@ -1,7 +1,7 @@
 {
   "inc/cores/helper/points-transaction.php": {
     "input_sha256": "65514f221a43c6957ff04cd585aa63000637bab8598f1050374642acefce708e",
-    "selected_sha256": "57000e643f69037024af4154a5573e0b3f09517c7459ddff64ec4148ed634832",
+    "selected_sha256": "d0612b67f7d89ac601be02f8f0aac528ae3ee041fb9e6588554d5975005c9c8d",
     "spans": [
       {
         "start": 306,
@@ -232,6 +232,11 @@
         "start": 18506,
         "end": 19043,
         "replacement": ""
+      },
+      {
+        "start": 22607,
+        "end": 22607,
+        "replacement": "ICAgICAgICAgICAgdHJ5IHsgZGVsZXRlX3VzZXJfbWV0YSggJHVzZXJfaWQsICdfbG95Zl9lY29ub21pY19ob2xkJyApOyB9IGNhdGNoICggVGhyb3dhYmxlICRpZ25vcmVkICkge30K"
       },
       {
         "start": 23187,
@@ -652,8 +657,23 @@
   },
   "inc/cores/helper/order-rewards.php": {
     "input_sha256": "b6c99bb52947f4035ee4030122627ac861a6a12085f49d981aec681e08d89417",
-    "selected_sha256": "c5990bde5a42e94fc1aa1df4aada60d6f6b2eb2bb3e4d9fbb462842eac047bb9",
+    "selected_sha256": "5aa346444dd49687469f231d538880405c1f780a8fbc19c59a544bee740934f2",
     "spans": [
+      {
+        "start": 4358,
+        "end": 4358,
+        "replacement": "c3RvcmVkXw=="
+      },
+      {
+        "start": 4367,
+        "end": 4373,
+        "replacement": ""
+      },
+      {
+        "start": 4568,
+        "end": 4568,
+        "replacement": "OwogICAgICAgICAgICBpZiAoIG51bGwgIT09ICRzdG9yZWRfZWFybmluZyAmJiAoICEgcHJlZ19tYXRjaCggJy9eWzAtOV0rJC9EJywgJHN0b3JlZF9lYXJuaW5nICkgfHwgc3RybGVuKCAkc3RvcmVkX2Vhcm5pbmcgKSA+IDE4ICkgKSB7IHRocm93IG5ldyBSdW50aW1lRXhjZXB0aW9uKCAnaW52YWxpZF9iYWxhbmNlX3N0b3JhZ2UnICk7IH0KICAgICAgICAgICAgJGVhcm5pbmcgPSAoaW50KSAkc3RvcmVkX2Vhcm5pbmc="
+      },
       {
         "start": 7365,
         "end": 7365,

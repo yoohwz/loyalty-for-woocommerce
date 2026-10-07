@@ -229,6 +229,7 @@ class YOWCL_Points_Transaction {
 			}
 		}
 		if ( 'applied' === $result['status'] ) {
+            try { delete_user_meta( $user_id, '_loyf_economic_hold' ); } catch ( Throwable $ignored ) {}
 			try {
 				YOWCL_Points_Log_Cache::invalidate_user( $user_id );
 			} catch ( Throwable $e ) {

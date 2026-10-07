@@ -26,7 +26,8 @@ function loyf_order($id, $product) {
 }
 class LOYF_Test_Die extends RuntimeException {}
 function loyf_ajax($hook, $fields) {
-    $_POST = $fields;
+    $old_request = $_REQUEST;
+    $_POST = $fields; $_REQUEST = $fields;
     $die = function () { return function () { throw new LOYF_Test_Die(); }; };
     add_filter('wp_die_handler', $die, PHP_INT_MAX);
     add_filter('wp_die_ajax_handler', $die, PHP_INT_MAX);
@@ -36,7 +37,7 @@ function loyf_ajax($hook, $fields) {
         $json = ob_get_clean();
         remove_filter('wp_die_handler', $die, PHP_INT_MAX);
         remove_filter('wp_die_ajax_handler', $die, PHP_INT_MAX);
-        $_POST = array();
+        $_POST = array(); $_REQUEST = $old_request;
     }
     $result = json_decode($json, true);
     loyf_assert(is_array($result) && isset($result['success']), 'Native AJAX response: ' . $json);

@@ -68,7 +68,7 @@
       "target": "inc/cores/helper/points-transaction.php",
       "transform": "wp-text-domain-v1",
       "sha256": "65514f221a43c6957ff04cd585aa63000637bab8598f1050374642acefce708e",
-      "output_sha256": "57000e643f69037024af4154a5573e0b3f09517c7459ddff64ec4148ed634832",
+      "output_sha256": "d0612b67f7d89ac601be02f8f0aac528ae3ee041fb9e6588554d5975005c9c8d",
       "domain_replacements": 0,
       "extraction": "inc/cores/helper/points-transaction.php"
     },
@@ -113,7 +113,7 @@
       "target": "inc/cores/helper/order-rewards.php",
       "transform": "wp-text-domain-v1",
       "sha256": "b6c99bb52947f4035ee4030122627ac861a6a12085f49d981aec681e08d89417",
-      "output_sha256": "c5990bde5a42e94fc1aa1df4aada60d6f6b2eb2bb3e4d9fbb462842eac047bb9",
+      "output_sha256": "5aa346444dd49687469f231d538880405c1f780a8fbc19c59a544bee740934f2",
       "domain_replacements": 0,
       "extraction": "inc/cores/helper/order-rewards.php"
     },
@@ -289,7 +289,7 @@
     {
       "target": "inc/backend/users/user-profile-points.php",
       "mode": "100644",
-      "sha256": "bbd06c2046c4e9f84f34dd80fc98eee6d718e31a521e21f5b5e817868e25855c"
+      "sha256": "a96f247fc88f21425d12c4a5cfeb9ec617250e6713a390f9ae25dcccba91f456"
     },
     {
       "target": "inc/backend/users/users-points.php",
@@ -334,7 +334,7 @@
     {
       "target": "inc/cores/helper/free-core.php",
       "mode": "100644",
-      "sha256": "a4c8f1614e747c306af363769764d7d71cba2a7b1e4bd423be149fff38e6b1bb"
+      "sha256": "1b61725854f7326658ded65348bbfe5ce9cad1c0e645e5c3f1716398d7c26f78"
     },
     {
       "target": "inc/cores/helper/free-order-actions.php",
@@ -409,7 +409,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "067ca3a0bf239699b8781d3bbbfae17ca25aa791865da45babf317e1ddbe4d35"
+      "sha256": "c7e36490a467e2261896c8c08154dc669a1d2d7a399da0cce2ea075f2245487e"
     }
   ],
   "blocked_mixed_modules": [
@@ -1599,6 +1599,6 @@
   "extractions": {
     "id": "byte-spans-v1",
     "path": "config/free-core-extractions.json",
-    "sha256": "c6f21094686ee61f4f2599c958cd7ce42e6e51f7ae85af8ed9887b836e4902c3"
+    "sha256": "92aaebc52668b2f79ad781ee302a7e32bd9086decd35c7e8cedbd5a65b171b5c"
   }
 }

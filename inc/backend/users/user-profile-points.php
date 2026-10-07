@@ -189,6 +189,8 @@ class YOSWC_Loyalty_User_Profile_Points {
 				$formatted_date = date_i18n(get_option('date_format') . ' ' . get_option('time_format'), strtotime($entry->date));
 	
 				$amount = (in_array($entry->action, ['admin_reward', 'order_reward', 'points_return', 'sign_up_reward', 'daily_login_reward', 'review_reward', 'level_up_reward']) ? '+' : '-') . abs($entry->amount);
+                $explicit_amount = YOWCL_Free_Core::history_amount( $entry );
+                if ( null !== $explicit_amount ) { $amount = $explicit_amount; }
 	
 				if ($entry->order_id == 0) {
 					$order_id = '-';
