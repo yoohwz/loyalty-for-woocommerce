@@ -90,8 +90,7 @@ class YOWCL_Advanced_Rewards {
 		$user = $intent['user_id'];
 		$meta = self::projection( $intent );
 		if ( $meta ) {
-			$old = maybe_unserialize( YOWCL_Points_Lock::scalar( $db, $wpdb->prepare( "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key = %s ORDER BY umeta_id LIMIT 1 FOR UPDATE", $user, $meta[0] ) ) );
-			if ( $old ) { return false; }
+			if ( self::legacy_marked( $db, $wpdb->prepare( "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key = %s FOR UPDATE", $user, $meta[0] ) ) ) { return false; }
 		}
 		if ( $intent['order_id'] ) {
 			$hpos = \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled();
@@ -103,11 +102,22 @@ class YOWCL_Advanced_Rewards {
 			if ( ! in_array( $status, array( 'wc-processing', 'wc-completed' ), true ) ) { return false; }
 			$table = $hpos ? $wpdb->prefix . 'wc_orders_meta' : $wpdb->postmeta;
 			$id_column = $hpos ? 'order_id' : 'post_id';
-			$old = YOWCL_Points_Lock::scalar( $db, $wpdb->prepare( "SELECT meta_value FROM {$table} WHERE {$id_column} = %d AND meta_key = %s LIMIT 1", $intent['order_id'], $marker ) );
-			if ( 'first_purchase_reward' === $intent['action'] ? 'yes' === $old : (bool) $old ) { return false; }
+			if ( self::legacy_marked( $db, $wpdb->prepare( "SELECT meta_value FROM {$table} WHERE {$id_column} = %d AND meta_key = %s FOR UPDATE", $intent['order_id'], $marker ), true ) ) { return false; }
 		}
 		return true;
 	}
+
+    /** Every persisted row participates: a false duplicate cannot hide legacy suppression. */
+    private static function legacy_marked( $db, $sql, $order_marker = false ) {
+        $result = YOWCL_Points_Lock::query( $db, $sql );
+        try {
+            while ( $row = $result->fetch_assoc() ) {
+                $value = maybe_unserialize( $row['meta_value'] );
+                if ( $order_marker ? 'yes' === $value : (bool) $value ) { return true; }
+            }
+            return false;
+        } finally { $result->free(); }
+    }
 
 	private static function deliver( array $intent, $marker = '', $owner = null ) {
 		try {

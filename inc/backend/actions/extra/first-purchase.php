@@ -54,8 +54,8 @@ class YOWCL_Extra_Points_First_Purchase {
         if ( YOWCL_Free_First_Purchase::skipped( $order ) ) { return; }
 
 		// Skip if already handled for this order (idempotency)
-		if ( 'yes' === $order->get_meta( self::ORDER_FLAG_META ) ) {
-			return;
+		foreach ( $order->get_meta( self::ORDER_FLAG_META, false, 'edit' ) as $legacy ) {
+			if ( 'yes' === $legacy->value ) { return; }
 		}
 
 		// Only logged-in customers (guests have no user account to credit)
@@ -88,11 +88,8 @@ class YOWCL_Extra_Points_First_Purchase {
         $this->epoch = $config['epoch'];
 
 		// Has the user already received this bonus?
-		$already = get_user_meta( $user_id, self::USER_FLAG_META, true );
-		if ( $already ) {
-			// Mark order to prevent repeated checks
-			$this->terminal = 'yes';
-			return;
+		foreach ( get_user_meta( $user_id, self::USER_FLAG_META, false ) as $already ) {
+			if ( $already ) { $this->terminal = 'yes'; return; }
 		}
 
         if ( YOWCL_Free_First_Purchase::prior( $order ) ) { $this->terminal = 'yes'; return; }
