@@ -11,7 +11,7 @@ for($attempt=0;$attempt<20;++$attempt) {
         case 'login': $account=get_userdata($user); do_action('wp_login',$account->user_login,$account); break;
         case 'review': do_action('comment_post',$object,1); break;
         case 'level': get_userdata($user)->set_role('loyf_gold'); do_action('set_user_role',$user,'loyf_gold',array('customer')); break;
-        case 'order': do_action('woocommerce_order_status_changed',$object,'pending','processing'); break;
+        case 'order': do_action('woocommerce_order_status_changed',$object,'pending','processing',wc_get_order($object)); break;
         default: throw new RuntimeException('Unknown producer');
     }
     if(YOWCL_Points_Transaction::find($key)) { break; } usleep(100000);
