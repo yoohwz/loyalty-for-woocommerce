@@ -4,7 +4,7 @@ global $wpdb;
 function loyf8_api($method,$route,$body=array()) {
     $_POST=array(); $request=new WP_REST_Request($method,'/wc/store/v1/'.$route); $request->set_header('Nonce',wp_create_nonce('wc_store_api')); $request->set_body_params($body); return rest_do_request($request);
 }
-function loyf8_ok($response) { loyf_assert($response->get_status()<300,'Native Store API: '.wp_json_encode($response->get_data())); return $response->get_data(); }
+function loyf8_ok($response) { loyf_assert($response->get_status()<300,'Native Store API: '.wp_json_encode($response->get_data())); return json_decode(wp_json_encode($response->get_data()),true); }
 function loyf8_user($name) {
     $rules=get_option('loyalty_extra_points_rules'); $off=$rules; $off['signup_enabled']='no'; update_option('loyalty_extra_points_rules',$off);
     $user=wp_insert_user(array('user_login'=>'modern_'.$name,'user_email'=>'modern_'.$name.'@example.invalid','user_pass'=>'disposable-only','role'=>'customer')); loyf_assert(!is_wp_error($user),'Native modern customer'); update_option('loyalty_extra_points_rules',$rules); return (int)$user;
@@ -13,6 +13,7 @@ $hpos='hpos'===getenv('LOYF_STORAGE');
 loyf_equal($hpos,Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled(),'Authoritative storage'); loyf_equal('no',get_option('woocommerce_custom_orders_table_data_sync_enabled'),'Sync disabled');
 $product=new WC_Product_Simple(); $product->set_name('Modern redemption'); $product->set_regular_price('100'); $product->set_virtual(true); $product->set_status('publish'); $product->save();
 $address=array('first_name'=>'Native','last_name'=>'Customer','address_1'=>'1 Test Road','city'=>'San Francisco','state'=>'CA','postcode'=>'94103','country'=>'US','email'=>'modern@example.invalid','phone'=>'4155550100');
+update_option('woocommerce_cod_settings',array('enabled'=>'yes')); WC()->payment_gateways=new WC_Payment_Gateways();
 $body=array('billing_address'=>$address,'shipping_address'=>$address,'payment_method'=>'cod');
 $pay=function($context,&$result){if('cod'===$context->payment_method){$result->set_status('success');$result->set_redirect_url($context->order->get_checkout_order_received_url());}};
 add_action('woocommerce_rest_checkout_process_payment_with_context',$pay,1,2);
