@@ -51,5 +51,5 @@
             data.selected > 0 && h(wp.components.Button, { variant: 'tertiary', disabled: busy || !!pending.current, onClick: () => update('remove') }, __('Remove points', 'loyalty-for-woocommerce')),
             error && h('p', { role: 'alert' }, error));
     }
-    wp.plugins.registerPlugin('loyf-redemption', { scope: 'woocommerce-checkout', render: () => h(ExperimentalDiscountsMeta, null, props => h(Redemption, { context: props.context })) });
+    wp.plugins.registerPlugin('loyf-redemption', { scope: 'woocommerce-checkout', render: () => h(ExperimentalDiscountsMeta, null, h(Redemption)) });
 })(window.wp, window.wc);
