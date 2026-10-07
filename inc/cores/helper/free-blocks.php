@@ -15,12 +15,15 @@ class YOWCL_Free_Blocks {
     }
     public static function schema() {
         $schema = array();
-        foreach ( array( 'enabled'=>'boolean', 'available'=>'integer', 'selected'=>'integer', 'minimum'=>'integer', 'earned'=>'integer', 'discount'=>'string', 'operation_id'=>'string', 'message'=>'string' ) as $key=>$type ) { $schema[$key] = array( 'type'=>$type, 'readonly'=>true ); }
+        foreach ( array( 'enabled'=>'boolean', 'available'=>'integer', 'selected'=>'integer', 'minimum'=>'integer', 'earned'=>'integer', 'show_earned_cart'=>'boolean', 'show_earned_checkout'=>'boolean', 'discount'=>'string', 'operation_id'=>'string', 'message'=>'string' ) as $key=>$type ) { $schema[$key] = array( 'type'=>$type, 'readonly'=>true ); }
         return $schema;
     }
     public static function data() {
-        $data = array( 'enabled'=>false, 'available'=>0, 'selected'=>0, 'minimum'=>1, 'earned'=>0, 'discount'=>'', 'operation_id'=>'', 'message'=>'' );
+        $data = array( 'enabled'=>false, 'available'=>0, 'selected'=>0, 'minimum'=>1, 'earned'=>0, 'show_earned_cart'=>false, 'show_earned_checkout'=>false, 'discount'=>'', 'operation_id'=>'', 'message'=>'' );
         if ( ! is_user_logged_in() || ! YOWCL_Free_Core::owns() ) { return $data; }
+        $display = maybe_unserialize( get_option( 'loyalty_customization_cart_checkout', array() ) );
+        $data['show_earned_cart'] = is_array( $display ) && isset( $display['cart'] ) && 1 == $display['cart'];
+        $data['show_earned_checkout'] = is_array( $display ) && isset( $display['checkout'] ) && 1 == $display['checkout'];
         try {
             $rules = YOWCL_Free_Cart::rules(); $balance = YOWCL_Free_Cart::balance(); $selection = YOWCL_Free_Cart::selection();
             $data['available'] = $balance['available']; $data['enabled'] = (bool) $rules;

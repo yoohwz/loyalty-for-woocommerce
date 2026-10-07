@@ -514,7 +514,7 @@
     {
       "target": "inc/cores/helper/free-blocks.php",
       "mode": "100644",
-      "sha256": "4e5b9dde0e585ec49fa9efa52136336ac7e4870621bc0efeef4a6a54cf7f5d85"
+      "sha256": "125645ca54b280054f9fc5239a09a6a13b29be92ed4587c44a6ab573b808eb10"
     },
     {
       "target": "inc/cores/helper/free-blocks-integration.php",
@@ -524,7 +524,7 @@
     {
       "target": "js/blocks-redemption.js",
       "mode": "100644",
-      "sha256": "7403968ca568ee65005ffdad1e33a362d86db03d5988fa3dc0335f88abb7faf3"
+      "sha256": "ce4c807a5830f451d3a956a4e240a7633743c9c1598cfd4e5953318ef86a5f7c"
     }
   ],
   "blocked_mixed_modules": [

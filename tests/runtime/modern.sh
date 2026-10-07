@@ -59,9 +59,16 @@ for versions in '6.8.3:9.9.5' '7.0:11.1.2'; do
       wp config delete DOING_AJAX --quiet
       export LOYF_BROWSER_URL="http://127.0.0.1:${LOYF_BROWSER_PORT:-18088}" LOYF_BROWSER_FIXTURE="$task_tmp/browser-fixture.json"
       wp option update siteurl "$LOYF_BROWSER_URL" --quiet; wp option update home "$LOYF_BROWSER_URL" --quiet
+      wp option update loyalty_customization_cart_checkout '{"cart":0,"checkout":0}' --format=json --quiet
       wp eval-file "$repo/tests/runtime/browser-seed.php" --quiet
       php -S "127.0.0.1:${LOYF_BROWSER_PORT:-18088}" -t "$site" "$repo/tests/runtime/browser-router.php" > "$task_tmp/browser-server.log" 2>&1 & server_pid=$!
       node "$repo/tests/runtime/blocks-browser.cjs"
+      wp option update loyalty_points_using_rules '[]' --format=json --quiet
+      for display in '1:0' '0:1' '0:0'; do
+        export LOYF_SHOW_EARNED_CART=${display%:*} LOYF_SHOW_EARNED_CHECKOUT=${display#*:}
+        wp option update loyalty_customization_cart_checkout "{\"cart\":$LOYF_SHOW_EARNED_CART,\"checkout\":$LOYF_SHOW_EARNED_CHECKOUT}" --format=json --quiet
+        node "$repo/tests/runtime/blocks-earning-browser.cjs"
+      done
       kill "$server_pid"; wait "$server_pid" 2>/dev/null || true; server_pid=
       wp eval 'if (50 !== (int)get_user_meta(get_user_by("login","blocks_browser")->ID,"user_points",true)) { throw new RuntimeException("Browser selection mutated value"); }' --quiet
     fi
