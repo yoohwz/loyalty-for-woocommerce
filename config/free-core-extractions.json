@@ -1164,12 +1164,37 @@
   },
   "inc/cores/helper/order-redemption.php": {
     "input_sha256": "cc4f1f15860ca8518b091ef31379abbdf655c661cdef875e8c80be31f3a40753",
-    "selected_sha256": "c1487eb70c28208e7701d46b7ee0ce2413ba8c0a6d400cdde42310929a64dfa5",
+    "selected_sha256": "e64a2077cdd6e7e5ae45c5570499ccb044f7c7fbe175ac3e5ea9befd056e75a4",
     "spans": [
       {
-        "start": 1182,
-        "end": 1852,
-        "replacement": ""
+        "start": 1192,
+        "end": 1194,
+        "replacement": "ICAgICAgICA="
+      },
+      {
+        "start": 1306,
+        "end": 1308,
+        "replacement": "ICAgICAgICA="
+      },
+      {
+        "start": 1410,
+        "end": 1412,
+        "replacement": "ICAgICAgICA="
+      },
+      {
+        "start": 1510,
+        "end": 1512,
+        "replacement": "ICAgICAgICA="
+      },
+      {
+        "start": 1630,
+        "end": 1632,
+        "replacement": "ICAgICAgICA="
+      },
+      {
+        "start": 1739,
+        "end": 1741,
+        "replacement": "ICAgICAgICA="
       },
       {
         "start": 4776,
@@ -1643,28 +1668,73 @@
       },
       {
         "start": 18664,
-        "end": 19027,
+        "end": 18723,
         "replacement": ""
       },
       {
-        "start": 19031,
-        "end": 20134,
+        "start": 18724,
+        "end": 19025,
         "replacement": ""
       },
       {
-        "start": 20178,
-        "end": 20273,
+        "start": 19028,
+        "end": 19030,
         "replacement": ""
       },
       {
-        "start": 20274,
-        "end": 20924,
+        "start": 20827,
+        "end": 21323,
         "replacement": ""
       },
       {
-        "start": 21329,
-        "end": 26594,
+        "start": 23422,
+        "end": 23422,
+        "replacement": "CiAgICAgICAgaWYgKCAhIFlPV0NMX0ZyZWVfQ29yZTo6b3ducygpICkgeyByZXR1cm47IH0KICAgICAgICBpZiAoIChmbG9hdCkgJG9yZGVyLT5nZXRfbWV0YSggJ191c2VkX3BvaW50cycgKSA8PSAwICYmICEgc2VsZjo6cmVjb3JkKCBzZWxmOjppZCggJG9yZGVyICkgKSApIHsgJG9yZGVyLT5kZWxldGVfbWV0YV9kYXRhKCBzZWxmOjpNRVRBICk7ICRvcmRlci0+ZGVsZXRlX21ldGFfZGF0YSggJ195b3djbF9yZWRlbXB0aW9uX3N0YXRlJyApOyByZXR1cm47IH0="
+      },
+      {
+        "start": 25579,
+        "end": 25582,
+        "replacement": "ICAgICAgICAgICAgWU8="
+      },
+      {
+        "start": 25584,
+        "end": 25589,
+        "replacement": "TF9Gcg=="
+      },
+      {
+        "start": 25590,
+        "end": 25598,
         "replacement": ""
+      },
+      {
+        "start": 25599,
+        "end": 25608,
+        "replacement": ""
+      },
+      {
+        "start": 25609,
+        "end": 25610,
+        "replacement": "Qw=="
+      },
+      {
+        "start": 25613,
+        "end": 25614,
+        "replacement": "Ojo="
+      },
+      {
+        "start": 25615,
+        "end": 25625,
+        "replacement": ""
+      },
+      {
+        "start": 25626,
+        "end": 25628,
+        "replacement": "ZWFyKA=="
+      },
+      {
+        "start": 26593,
+        "end": 26593,
+        "replacement": "Cglwcml2YXRlIHN0YXRpYyBmdW5jdGlvbiBhc3NlcnRfaWRlbnRpdHkoICRvcmRlciApIHsKCQlpZiAoICEgJG9yZGVyIHx8ICEgJG9yZGVyLT5nZXRfaWQoKSApIHsgcmV0dXJuOyB9CgkJJGZyZXNoID0gc2VsZjo6ZnJlc2hfb3JkZXIoICRvcmRlci0+Z2V0X2lkKCkgKTsKCQkkaWQgPSAkZnJlc2ggPyBzZWxmOjppZCggJGZyZXNoICkgOiAnJzsKCQkkcmVjb3JkID0gc2VsZjo6cmVjb3JkKCAkaWQgKTsKCQlpZiAoICRyZWNvcmQgJiYgJHJlY29yZFsnb3JkZXJfaWQnXSA9PT0gJG9yZGVyLT5nZXRfaWQoKSAmJiAkaWQgIT09IHNlbGY6OmlkKCAkb3JkZXIgKSApIHsgdGhyb3cgbmV3IFJ1bnRpbWVFeGNlcHRpb24oICdvcmRlcl9yZWRlbXB0aW9uX29yZGVyX2lkZW50aXR5X2NvbmZsaWN0JyApOyB9Cgl9Cgo="
       },
       {
         "start": 26975,

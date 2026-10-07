@@ -20,6 +20,12 @@ class YOWCL_Order_Redemption {
 		add_action( 'woocommerce_checkout_create_order', array( __CLASS__, 'prepare' ), PHP_INT_MAX, 2 );
 		add_action( 'woocommerce_checkout_order_created', array( __CLASS__, 'commit' ), PHP_INT_MAX );
 		add_action( 'woocommerce_checkout_order_exception', array( __CLASS__, 'checkout_exception' ), 1 );
+        add_filter( 'rest_request_after_callbacks', array( __CLASS__, 'store_api_request_finished' ), PHP_INT_MAX, 3 );
+        add_filter( 'rest_request_before_callbacks', array( __CLASS__, 'store_api_before_request' ), 10, 3 );
+        add_action( 'woocommerce_remove_order_items', array( __CLASS__, 'store_api_before_remove' ), 1 );
+        add_action( 'woocommerce_store_api_checkout_update_order_meta', array( __CLASS__, 'store_api_stage' ), PHP_INT_MAX );
+        add_action( 'woocommerce_store_api_checkout_order_processed', array( __CLASS__, 'store_api_commit' ), 1 );
+        add_action( 'woocommerce_store_api_checkout_update_customer_from_request', array( __CLASS__, 'store_api_recover' ), 1 );
 		foreach ( array( 'failed', 'cancelled', 'refunded' ) as $status ) {
 			add_action( 'woocommerce_order_status_' . $status, array( __CLASS__, 'return_points' ), 1 );
 		}
@@ -296,7 +302,146 @@ class YOWCL_Order_Redemption {
 	}
 
 
-	private static function request_owner() {}
+	/** Serialize native Store API staging by order before an attempt UUID exists. */
+	private static function store_api_request_lock( $request ) {
+		global $wpdb;
+		if ( ! WC()->session ) { return; }
+		$order_id = (int) WC()->session->get( 'store_api_draft_order' );
+		if ( ! $order_id ) {
+			$record = self::record( WC()->session->get( 'yowcl_checkout_id' ) );
+			$order_id = $record ? (int) $record['order_id'] : 0;
+		}
+		if ( ! $order_id ) { return; }
+		$db = $wpdb->dbh;
+		$name = 'yowcl_b_' . hash( 'sha224', DB_NAME . ':' . $wpdb->options . ':' . $order_id );
+		if ( self::$request_lock || ! ( $db instanceof mysqli ) || YOWCL_Points_Lock::has_transaction( $db ) || '1' !== (string) YOWCL_Points_Lock::scalar( $db, $wpdb->prepare( 'SELECT GET_LOCK(%s, 0)', $name ) ) ) { throw new RuntimeException( 'order_redemption_order_busy' ); }
+		self::$request_lock = array( $db, $name, spl_object_hash( $request ) );
+		register_shutdown_function( array( __CLASS__, 'store_api_request_unlock' ) );
+		self::request_owner();
+		self::fresh_order( $order_id );
+		self::checkpoint( 'store_api_request_owned' );
+	}
+
+	private static function request_owner() {
+		if ( self::$request_lock ) { self::owner( self::$request_lock[0], self::$request_lock[1] ); }
+	}
+
+	public static function store_api_request_unlock() {
+		global $wpdb;
+		if ( ! self::$request_lock ) { return; }
+		list( $db, $name ) = self::$request_lock;
+		self::$request_lock = null;
+		try { YOWCL_Points_Lock::scalar( $db, $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $name ) ); } catch ( Throwable $ignored ) {}
+	}
+
+	public static function store_api_request_finished( $response, $handler, $request ) {
+		if ( self::$request_lock && self::$request_lock[2] === spl_object_hash( $request ) ) { self::store_api_request_unlock(); }
+		return $response;
+	}
+
+	/** Reject a changed frozen cart before Woo can delete or persist original order items. */
+	public static function store_api_before_request( $response, $handler, $request ) {
+		if ( null !== $response || ( '/wc/store/v1/checkout' !== $request->get_route() && 0 !== strpos( $request->get_route(), '/wc/store/v1/cart' ) ) ) { return $response; }
+		try {
+			$controller = new \Automattic\WooCommerce\StoreApi\Utilities\CartController();
+			$controller->load_cart();
+			self::store_api_request_lock( $request );
+			$controller->calculate_totals();
+			$id = WC()->session ? WC()->session->get( 'yowcl_checkout_id' ) : '';
+			$record = self::record( $id );
+			if ( $record && $record['order_id'] && in_array( $record['state'], array( 'prepared', 'active' ), true ) ) {
+				// Cart routes otherwise sync/deletes items on the frozen checkout-draft too.
+				if ( 0 === strpos( $request->get_route(), '/wc/store/v1/cart' ) ) { WC()->session->set( 'store_api_draft_order', null ); return $response; }
+				if ( ! empty( $record['payment_guard'] ) ) { throw new Exception( 'order_redemption_payment_recovery_required' ); }
+				self::verify_order( $record['terms'], self::fresh_order( $record['order_id'] ) );
+				if ( $record['terms']['cart_hash'] !== WC()->cart->get_cart_hash() ) { throw new Exception( 'order_redemption_retry_terms_conflict' ); }
+				WC()->session->set( 'store_api_draft_order', $record['order_id'] );
+			}
+		} catch ( Throwable $e ) { return new WP_Error( 'order_redemption_retry_blocked', $e->getMessage(), array( 'status' => 409 ) ); }
+		return $response;
+	}
+
+	public static function store_api_before_remove( $order ) {
+		$record = self::record( self::id( $order ) );
+		if ( $record && $record['order_id'] === $order->get_id() && in_array( $record['state'], array( 'prepared', 'active' ), true ) && WC()->cart && $record['terms']['cart_hash'] !== WC()->cart->get_cart_hash() ) {
+			throw new Exception( 'order_redemption_retry_terms_conflict' );
+		}
+	}
+
+	/** GET/PUT drafts remain editable. Freeze only the Place order boundary. */
+	public static function store_api_stage( $order ) {
+        if ( ! YOWCL_Free_Core::owns() ) { return; }
+        if ( (float) $order->get_meta( '_used_points' ) <= 0 && ! self::record( self::id( $order ) ) ) { $order->delete_meta_data( self::META ); $order->delete_meta_data( '_yowcl_redemption_state' ); return; }
+		self::request_owner();
+		self::assert_identity( $order );
+		$id = self::id( $order );
+		$record = self::record( $id );
+		if ( $record ) { self::prepare( $order ); return; }
+		// No frozen attempt/debit exists: follow an explicit new selection on this editable draft.
+		$selected = WC()->session ? WC()->session->get( 'yowcl_checkout_id' ) : '';
+		if ( self::valid_id( $selected ) ) { $id = $selected; }
+		if ( ! self::valid_id( $id ) ) { $id = wp_generate_uuid4(); }
+		if ( self::record( $id ) ) {
+			$order->update_meta_data( self::META, $id );
+			self::prepare( $order );
+			return;
+		}
+		$terms = self::terms( $order, $id );
+		if ( ! $terms['cart'] && ! $terms['product'] ) {
+			$order->delete_meta_data( self::META );
+			$order->delete_meta_data( '_yowcl_redemption_state' );
+			return;
+		}
+		$order->update_meta_data( self::META, $id );
+		$order->update_meta_data( '_yowcl_redemption_state', 'draft' );
+		$order->set_status( 'checkout-draft' );
+		if ( WC()->session ) { WC()->session->set( 'yowcl_checkout_id', $id ); }
+	}
+
+	public static function store_api_commit( $order ) {
+		try {
+			self::prepare( $order );
+			if ( self::valid_id( self::id( $order ) ) ) { $order->save(); }
+			self::commit( $order );
+		}
+		catch ( Throwable $e ) {
+			// An ambiguous/partial debit remains recoverable on the same core draft.
+			$record = self::record( self::id( $order ) );
+			if ( $record && 'prepared' === $record['state'] ) { $order->set_status( 'checkout-draft' ); $order->save(); }
+			throw $e;
+		}
+	}
+
+	public static function store_api_recover() {
+		self::retire_paid_session();
+		if ( ! WC()->session ) { return; }
+		$id = WC()->session->get( 'yowcl_checkout_id' );
+		$record = self::record( $id );
+		if ( ! $record ) { return; }
+		if ( $record['terms']['user'] !== get_current_user_id() || $record['terms']['owner'] !== self::session_owner() ) { throw new Exception( 'order_redemption_owner_conflict' ); }
+		if ( in_array( $record['state'], array( 'returning', 'returned' ), true ) ) {
+			WC()->session->set( 'store_api_draft_order', null );
+			WC()->session->set( 'order_awaiting_payment', null );
+			WC()->session->set( 'yowcl_checkout_id', null );
+            YOWCL_Free_Cart::clear();
+			return;
+		}
+		if ( ! $record['order_id'] ) { return; }
+		self::locked( $id, static function ( $db, $name ) use ( $id ) {
+			$record = self::record( $id, $db );
+			if ( ! empty( $record['payment_guard'] ) ) { throw new Exception( 'order_redemption_payment_recovery_required' ); }
+			$order = self::fresh_order( $record['order_id'] );
+			if ( in_array( $record['state'], array( 'returning', 'returned' ), true ) || $order->is_paid() || ! $order->has_status( array( 'pending', 'failed', 'checkout-draft' ) ) ) { return; }
+			self::verify_order( $record['terms'], $order );
+			if ( $order->get_cart_hash() !== WC()->cart->get_cart_hash() ) { throw new Exception( 'order_redemption_retry_terms_conflict' ); }
+			// Core recognizes checkout-draft even for a zero-total or non-payable preparation.
+			$order->set_status( 'checkout-draft' ); $order->save();
+			self::owner( $db, $name );
+			WC()->session->set( 'store_api_draft_order', $order->get_id() );
+		} );
+	}
+
+
 	private static function assert_identity( $order ) {
 		if ( ! $order || ! $order->get_id() ) { return; }
 		$fresh = self::fresh_order( $order->get_id() );
