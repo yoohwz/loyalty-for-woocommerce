@@ -1,7 +1,7 @@
 {
   "inc/cores/helper/points-transaction.php": {
     "input_sha256": "65514f221a43c6957ff04cd585aa63000637bab8598f1050374642acefce708e",
-    "selected_sha256": "f98c88a1947bb8d4b8b7fd082f97b9f2923e782eb63ddc07382dea8ad6f54eb1",
+    "selected_sha256": "2edae12e3292b7107010e5d80d92b791df7db028fa6ec491de3a65f0cca983b3",
     "spans": [
       {
         "start": 306,
@@ -239,6 +239,11 @@
         "replacement": ""
       },
       {
+        "start": 21466,
+        "end": 21466,
+        "replacement": "c2VsZjo6Y2hlY2twb2ludCggJ2NvbW1pdF9yZXNwb25zZScgKTsKCQkJ"
+      },
+      {
         "start": 22607,
         "end": 22607,
         "replacement": "ICAgICAgICAgICAgdHJ5IHsgZGVsZXRlX3VzZXJfbWV0YSggJHVzZXJfaWQsICdfbG95Zl9lY29ub21pY19ob2xkJyApOyB9IGNhdGNoICggVGhyb3dhYmxlICRpZ25vcmVkICkge30K"
@@ -252,7 +257,7 @@
   },
   "inc/cores/helper/ledger-v2.php": {
     "input_sha256": "65fbc41fa671a00d337a046b3254173ee31bd053ca80de511d45c79d958fcf02",
-    "selected_sha256": "c0ca998c72d953ee45d430142e56d5e87c1fff4fd883bc123685366f955a9d15",
+    "selected_sha256": "a1202246651a0ecbb577b561700493a6d04e300dc43956d2f3adc8e7fdeed42e",
     "spans": [
       {
         "start": 344,
@@ -267,6 +272,16 @@
       {
         "start": 435,
         "end": 515,
+        "replacement": ""
+      },
+      {
+        "start": 1614,
+        "end": 1614,
+        "replacement": "Ly8gQW4gYWR2ZXJ0aXNlZCByZWNlaXB0IGlzIHByb29mLWJlYXJpbmcgZXZlbiBvbiBhbiB1bnZlcnNpb25lZCBjb21wYXRpYmlsaXR5IHJvdy4KCQlpZiAoIG51bGwgIT09ICggJHJvd1snYWxsb2NhdGlvbl9yZWNlaXB0J10gPz8gbnVsbCApICkgeyB0cnkgeyBZT1dDTF9Qb2ludHNfQWxsb2NhdGlvbjo6ZGVjb2RlKCAkcm93WydhbGxvY2F0aW9uX3JlY2VpcHQnXSApOyB9IGNhdGNoICggRG9tYWluRXhjZXB0aW9uICRlICkgeyByZXR1cm4gJ21hbGZvcm1lZF92Mic7IH0gfQoJCQ=="
+      },
+      {
+        "start": 1896,
+        "end": 2085,
         "replacement": ""
       }
     ]

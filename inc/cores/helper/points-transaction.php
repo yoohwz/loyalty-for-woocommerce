@@ -202,6 +202,7 @@ class YOWCL_Points_Transaction {
 			self::checkpoint( 'balances_written' );
 			$committing = true;
 			YOWCL_Points_Lock::query( $db, 'COMMIT' );
+			self::checkpoint( 'commit_response' );
 			$started = false;
 			$result = array(
 				'status' => 'applied', 'code' => '', 'log_id' => $log_id,
