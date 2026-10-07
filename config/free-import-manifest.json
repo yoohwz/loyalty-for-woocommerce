@@ -68,7 +68,7 @@
       "target": "inc/cores/helper/points-transaction.php",
       "transform": "wp-text-domain-v1",
       "sha256": "65514f221a43c6957ff04cd585aa63000637bab8598f1050374642acefce708e",
-      "output_sha256": "6d51644b8fcb57103fcb9e8148b14dec017b45e99e65644512d285ab82bbded5",
+      "output_sha256": "b2c61b2b8f35e65d27d0dbdf8ec72f4adec4eda054ac0ccf6d0f863be1a987d9",
       "domain_replacements": 0,
       "extraction": "inc/cores/helper/points-transaction.php"
     },
@@ -77,7 +77,7 @@
       "target": "inc/cores/helper/ledger-v2.php",
       "transform": "wp-text-domain-v1",
       "sha256": "65fbc41fa671a00d337a046b3254173ee31bd053ca80de511d45c79d958fcf02",
-      "output_sha256": "a1202246651a0ecbb577b561700493a6d04e300dc43956d2f3adc8e7fdeed42e",
+      "output_sha256": "7f27d807c334413df5a53109fbdfb3293ee5923b92eb3de31327ecc8c390a031",
       "domain_replacements": 0,
       "extraction": "inc/cores/helper/ledger-v2.php"
     },
@@ -251,13 +251,31 @@
       "output_sha256": "869bae3620ee832f29c4fc6e235278d72f650dc71fcf45cdd0f8f910d0a85141",
       "domain_replacements": 0,
       "extraction": "inc/backend/actions/extra/first-purchase.php"
+    },
+    {
+      "source": "inc/cores/helper/referral-rewards.php",
+      "target": "inc/cores/helper/referral-rewards.php",
+      "transform": "wp-text-domain-v1",
+      "sha256": "8cf98e7fadebcdeae8c1716e51de1ba584e18b8e622727b3f1b0751161d3ae78",
+      "output_sha256": "46bd64cee6ee14f4886b95c8ffedfa109cce81a3e544b56ae140dcc10998859d",
+      "domain_replacements": 1,
+      "extraction": "inc/cores/helper/referral-rewards.php"
+    },
+    {
+      "source": "inc/backend/actions/helper/referrals.php",
+      "target": "inc/backend/actions/helper/referrals.php",
+      "transform": "wp-text-domain-v1",
+      "sha256": "75195bca62eb763b311429dcee042f569cc7320888cbb765801f97ca5fb998e5",
+      "output_sha256": "e2c41517a8c43af0ca196b718acd59ae129afcd448de4a24c7ee8af59661f131",
+      "domain_replacements": 0,
+      "extraction": "inc/backend/actions/helper/referrals.php"
     }
   ],
   "overlays": [
     {
       "target": "loyalty-for-woocommerce.php",
       "mode": "100644",
-      "sha256": "b74d50d2ac8276384b08c9994efe0eb910786af63b70461067f434b40759223f"
+      "sha256": "e1ce5289ea191feeec96cffa66af4fad270346d9cce0c1e8c2470267b322b4a7"
     },
     {
       "target": "readme.txt",
@@ -382,7 +400,7 @@
     {
       "target": "inc/backend/settings/referrals.php",
       "mode": "100644",
-      "sha256": "167c900d312e61202d4bfe54aa5e78ad0cdcc931bb7342a5d1e59c6eeba993dc"
+      "sha256": "d41cae258c2a4cbd1ab27adc1d469c993d4482e69a175e567b538d02840a36d3"
     },
     {
       "target": "inc/backend/settings/tools.php",
@@ -440,14 +458,44 @@
       "sha256": "852998afbf4b11c87d82e9b08818f2c0b205d922ae619bd3bcabb7abd45686e4"
     },
     {
+      "target": "inc/cores/helper/free-blocks-integration.php",
+      "mode": "100644",
+      "sha256": "778fa7963f2041ff2e5c461c7e2bd90351ab5d1fe814900294e4a96ad318233b"
+    },
+    {
+      "target": "inc/cores/helper/free-blocks.php",
+      "mode": "100644",
+      "sha256": "125645ca54b280054f9fc5239a09a6a13b29be92ed4587c44a6ab573b808eb10"
+    },
+    {
+      "target": "inc/cores/helper/free-cart.php",
+      "mode": "100644",
+      "sha256": "98bfc52c6417d5dc9950f6883eba23445dcfdcb941104b5173f6c252d94d04f6"
+    },
+    {
       "target": "inc/cores/helper/free-core.php",
       "mode": "100644",
       "sha256": "b2336339d93396b857fb6a7ebcce8155af5fdbce16972f4178eaccdfac87026d"
     },
     {
+      "target": "inc/cores/helper/free-first-purchase.php",
+      "mode": "100644",
+      "sha256": "2c9bca69c9be5fd77f625a80d0517be24b7cac2b69933cb01dbbf5b55e437455"
+    },
+    {
+      "target": "inc/cores/helper/free-migrations.php",
+      "mode": "100644",
+      "sha256": "64067daeedbc4b506400fbc0a9608858e04787f95e169078c6dcbad51496633c"
+    },
+    {
       "target": "inc/cores/helper/free-order-actions.php",
       "mode": "100644",
       "sha256": "7732db3aef5ce3aff7776fa06bc678d3316a87787a4b4c4be338b0f9c556f699"
+    },
+    {
+      "target": "inc/cores/helper/free-referral.php",
+      "mode": "100644",
+      "sha256": "39ebe85fd3f6291798dc250b82606b7e36bebf3f9c22fa75d82d3c216e4f6f92"
     },
     {
       "target": "inc/cores/notices.php",
@@ -462,12 +510,12 @@
     {
       "target": "inc/frontend/loyalty-info-bubble.php",
       "mode": "100644",
-      "sha256": "5f9786cbad5c5e6be8924e6052c787943bb06b4063f7024f021fe3afedd97c2d"
+      "sha256": "cdb87dd0ef4a5bdb303aa0b3d039cf0085b9cd65521232316c80699ebafb9774"
     },
     {
       "target": "inc/frontend/my-account.php",
       "mode": "100644",
-      "sha256": "80bde91fa712cb01e5ae4667e6baf1b70306b98e93880a35c1db098ed62b39c2"
+      "sha256": "469d2343e741062a1a7cda1872a8e66f788ad1984c000187216d43ee31ebf47f"
     },
     {
       "target": "inc/frontend/product-message.php",
@@ -480,6 +528,11 @@
       "sha256": "bc334948932b7303078b68149d8d5fd29ffd7e7165ac7d675bc484746a655676"
     },
     {
+      "target": "js/blocks-redemption.js",
+      "mode": "100644",
+      "sha256": "8e458aa89c1dc1f476fa0cccf9a2de930c6f953e3e638e5345cd3251cddbfeaf"
+    },
+    {
       "target": "js/loyalty-info-bubble.js",
       "mode": "100644",
       "sha256": "02508f02b34e2973f588f14bc58cb34cfe23b32ce1ca38d28c6bc31a59cc2e0a"
@@ -488,6 +541,11 @@
       "target": "js/my-acount-my-points.js",
       "mode": "100644",
       "sha256": "1c50d372214055a9adc5336386e5199327aa98be0abc062297b3ca911c7b9362"
+    },
+    {
+      "target": "js/referral-lite.js",
+      "mode": "100644",
+      "sha256": "daf1d6ca948df3700209ab24d643fee5bffbc8c9a31871d0c65ba2a476bec874"
     },
     {
       "target": "js/settings-customzation.js",
@@ -518,36 +576,6 @@
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
       "sha256": "ee02f52ec1226ad66d9605d4d6afbd89bbf97184ba7edd2a373f5fd862ecc513"
-    },
-    {
-      "target": "inc/cores/helper/free-migrations.php",
-      "mode": "100644",
-      "sha256": "64067daeedbc4b506400fbc0a9608858e04787f95e169078c6dcbad51496633c"
-    },
-    {
-      "target": "inc/cores/helper/free-cart.php",
-      "mode": "100644",
-      "sha256": "98bfc52c6417d5dc9950f6883eba23445dcfdcb941104b5173f6c252d94d04f6"
-    },
-    {
-      "target": "inc/cores/helper/free-blocks.php",
-      "mode": "100644",
-      "sha256": "125645ca54b280054f9fc5239a09a6a13b29be92ed4587c44a6ab573b808eb10"
-    },
-    {
-      "target": "inc/cores/helper/free-blocks-integration.php",
-      "mode": "100644",
-      "sha256": "778fa7963f2041ff2e5c461c7e2bd90351ab5d1fe814900294e4a96ad318233b"
-    },
-    {
-      "target": "js/blocks-redemption.js",
-      "mode": "100644",
-      "sha256": "8e458aa89c1dc1f476fa0cccf9a2de930c6f953e3e638e5345cd3251cddbfeaf"
-    },
-    {
-      "target": "inc/cores/helper/free-first-purchase.php",
-      "mode": "100644",
-      "sha256": "2c9bca69c9be5fd77f625a80d0517be24b7cac2b69933cb01dbbf5b55e437455"
     }
   ],
   "blocked_mixed_modules": [
@@ -577,9 +605,7 @@
     "YOWCL_Helper_Points_Expiration",
     "YOWCL_Actions_Level_Reset",
     "YOWCL_Actions_Level_Discounts",
-    "YOWCL_Referral_Rewards",
     "YOWCL_Actions_Referrals",
-    "YOWCL_Helper_Referrals",
     "YOWCL_Coupon_Redemption",
     "YOWCL_Frontend_Redeem_Product",
     "YOWCL_Product_Earning_Rules",
@@ -871,7 +897,7 @@
     "inc/backend/actions/helper/referrals.php": {
       "mode": "100644",
       "blob": "5d03e9855a094f644f1351a4e0987c76c0f4a97a",
-      "decision": "forbidden"
+      "decision": "import"
     },
     "inc/backend/actions/helper/roles.php": {
       "mode": "100644",
@@ -1171,7 +1197,7 @@
     "inc/cores/helper/referral-rewards.php": {
       "mode": "100644",
       "blob": "23b0ee9d2a5174ccd480a88d8570c24c838ad01e",
-      "decision": "forbidden"
+      "decision": "import"
     },
     "inc/cores/helper/role-claims.php": {
       "mode": "100644",
@@ -1742,6 +1768,6 @@
   "extractions": {
     "id": "byte-spans-v1",
     "path": "config/free-core-extractions.json",
-    "sha256": "212870fa6376e6382d2d8f108deda1feede6a2d5bf51228c05fcb1a506e80306"
+    "sha256": "36c5d444112997b1909097add9bba10adc07329f8369c4fca395bbf359c5aa22"
   }
 }

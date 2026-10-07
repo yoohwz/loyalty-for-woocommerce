@@ -5,7 +5,7 @@ defined( 'ABSPATH' ) || exit;
 /** Narrow atomic points primitive; callers still own authorization and business eligibility. */
 class YOWCL_Points_Transaction {
 	private static $active = false;
-	const REWARD_ACTIONS = array( 'order_reward', 'sign_up_reward', 'daily_login_reward', 'review_reward', 'level_up_reward', 'first_purchase_reward' );
+	const REWARD_ACTIONS = array( 'order_reward', 'sign_up_reward', 'daily_login_reward', 'review_reward', 'level_up_reward', 'first_purchase_reward', 'referral_link_referrer_reward' );
 
 	/** Recovery reads fail closed: a database/schema error is never a missing event. */
 	public static function find( $event_key ) {
@@ -52,6 +52,17 @@ class YOWCL_Points_Transaction {
 	}
 
 	/** Referral-only sibling: the exact original component supplies recipient and clamp limits. */
+	public static function reverse_referral_reward( $user_id, $order_id, $original_key, $original_action, $description ) {
+		if ( 'referral_link_referrer_reward' !== $original_action ||
+			! is_string( $original_key ) || ! preg_match( '/^referral:link:' . (int) $order_id . ':referrer$/D', $original_key ) ) { return self::result( 'failed', 'invalid_referral_original' ); }
+		$key = $original_key . ':reversal';
+		try { $event = self::replay_event( $key, array(
+			'action' => 'referral_reward_reversal', 'order_id' => $order_id, 'description' => $description,
+			'original_key' => $original_key, 'original_action' => $original_action, 'source_event_key' => $original_key,
+		) ); } catch ( Throwable $e ) { return self::result( 'busy', 'reversal_read_failed' ); }
+		return self::execute( $user_id, 0, 0, $key, $event, 'reversal' );
+	}
+
 	/**
 	 * Opaque event keys are global to this site's log and case/byte sensitive (1..191 bytes).
 	 * No value artifact or business marker should be created until status is applied.

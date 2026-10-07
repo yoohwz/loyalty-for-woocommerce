@@ -44,7 +44,8 @@ class YOSWC_Loyalty {
 		require_once plugin_dir_path(__FILE__) . 'inc/cores/helper/free-core.php';
 		if ( ! YOWCL_Free_Core::owns() ) { return; }
 		try { YOWCL_Free_Core::cutover(); } catch ( Throwable $e ) { return; }
-		foreach ( array( 'points-lock', 'points-log-cache', 'points-log', 'ledger-v2', 'points-allocation', 'points-transaction', 'role-claims', 'role-ownership', 'database', 'points-events', 'core-rewards', 'order-rewards', 'free-order-actions', 'order-deduction', 'order-redemption', 'free-admin', 'free-cart', 'free-blocks', 'free-first-purchase', 'advanced-rewards' ) as $helper ) { require_once plugin_dir_path(__FILE__) . 'inc/cores/helper/' . $helper . '.php'; }
+		foreach ( array( 'points-lock', 'points-log-cache', 'points-log', 'ledger-v2', 'points-allocation', 'points-transaction', 'role-claims', 'role-ownership', 'database', 'points-events', 'core-rewards', 'order-rewards', 'free-order-actions', 'order-deduction', 'order-redemption', 'free-admin', 'free-cart', 'free-blocks', 'free-first-purchase', 'advanced-rewards', 'referral-rewards', 'free-referral' ) as $helper ) { require_once plugin_dir_path(__FILE__) . 'inc/cores/helper/' . $helper . '.php'; }
+        require_once plugin_dir_path(__FILE__) . 'inc/backend/actions/helper/referrals.php';
 		require_once plugin_dir_path(__FILE__) . 'inc/backend/actions/helper/roles.php';
 		require_once plugin_dir_path(__FILE__) . 'inc/cores/database.php';
 		( new YOWCL_Database() )->check_version();

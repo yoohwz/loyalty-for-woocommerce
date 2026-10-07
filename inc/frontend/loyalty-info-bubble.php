@@ -67,6 +67,7 @@ class YOSWC_Loyalty_Info_Bubble {
 				aria-labelledby="yoswc-loyalty-info-title"
 				hidden
 			>
+				<?php YOWCL_Free_Referral::render_link( 'bubble' ); ?>
 				<div class="yoswc-loyalty-info__header">
 					<div>
 						<p class="yoswc-loyalty-info__eyebrow"><?php esc_html_e('Rewards program', 'loyalty-for-woocommerce'); ?></p>
