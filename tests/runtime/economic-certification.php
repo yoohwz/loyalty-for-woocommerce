@@ -122,6 +122,12 @@ $partial_bad=$bad; $partial_bad['ledger_version']=null; $partial_bad['available_
 $legacy=$bad; foreach(array('event_key','available_delta','earning_delta','ledger_version','source_event_key','allocation_receipt') as $field){$legacy[$field]=null;} loyf_equal(null,YOWCL_Free_Core::history_amount($legacy),'Nullable historical sign/amount retained');
 do_action('user_register',$malformed_user); loyf_balance($malformed_user,5,5,'Malformed existing event cannot admit new value');
 wp_set_current_user($malformed_user); $bad_history=loyf_ajax('wp_ajax_load_more_points_log',array('security'=>wp_create_nonce('load_more_points_nonce'),'offset'=>0)); loyf_equal(true,$bad_history['success'],'Malformed native history remains readable'); loyf_equal('Unavailable',$bad_history['data'][0]['amount'],'Native consumer refuses reinterpretation');
+// NULL version alone cannot make an advertised malformed receipt valid pre-v2 evidence.
+loyf_equal(1,$wpdb->update(YOWCL_Points_Log::table_name(),array('ledger_version'=>null),array('id'=>$malformed['id'])),'Native pre-v2-shaped malformed receipt');
+$bad_history=loyf_ajax('wp_ajax_load_more_points_log',array('security'=>wp_create_nonce('load_more_points_nonce'),'offset'=>0)); loyf_equal('Unavailable',$bad_history['data'][0]['amount'],'NULL-version malformed native history fails closed');
+$pre_v2=$malformed; $pre_v2['ledger_version']=null; $pre_v2['source_event_key']=null; loyf_equal('+5',YOWCL_Free_Core::history_amount($pre_v2),'Valid pre-v2 receipt compatibility');
+loyf_equal(1,$wpdb->update(YOWCL_Points_Log::table_name(),array('allocation_receipt'=>null),array('id'=>$malformed['id'])),'Native genuine pre-v2 receipt absence');
+$pre_v2_history=loyf_ajax('wp_ajax_load_more_points_log',array('security'=>wp_create_nonce('load_more_points_nonce'),'offset'=>0)); loyf_equal('+5',$pre_v2_history['data'][0]['amount'],'Genuine pre-v2 native history retains delta');
 // Include committed native CSV entries from the mandatory hardened writer scenario.
 foreach($wpdb->get_results("SELECT * FROM ".YOWCL_Points_Log::table_name()." WHERE action='points_import' AND event_key IS NOT NULL",ARRAY_A) as $row){$identity_rows[]=$row;}
 // Consumers and public legacy observations cannot write accounting or reinterpret nullable history.

@@ -96,6 +96,10 @@ class YOWCL_Free_Core {
         }
         if ( ! $canonical ) { return null; }
         if ( ! in_array( YOWCL_Ledger_V2::inspect( $row )['kind'], array( 'v2', 'transaction_pre_v2' ), true ) ) { return __( 'Unavailable', 'loyalty-for-woocommerce' ); }
+        if ( null !== ( $row['allocation_receipt'] ?? null ) ) {
+            try { YOWCL_Points_Allocation::decode( $row['allocation_receipt'] ); }
+            catch ( DomainException $e ) { return __( 'Unavailable', 'loyalty-for-woocommerce' ); }
+        }
         $value = (int) $row['available_delta'];
         return ( $value >= 0 ? '+' : '-' ) . abs( $value );
     }
