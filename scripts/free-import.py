@@ -10,6 +10,7 @@ import re
 import stat
 import subprocess
 import sys
+import unicodedata
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / 'config/free-import-manifest.json'
@@ -36,6 +37,20 @@ def safe_path(path):
     if any(part in {'', '.', '..'} for part in parts) or PurePosixPath(path).is_absolute():
         fail('Unsafe path: ' + path)
     return path
+
+
+def validate_targets(manifest):
+    # Treat all targets as files on a portable case-insensitive/NFC filesystem.
+    # Reject the whole conflicting path family before any output can be written.
+    targets = {}
+    for row in manifest['imports'] + manifest['overlays']:
+        target = safe_path(row['target'])
+        normalized = unicodedata.normalize('NFC', target).casefold()
+        if normalized in targets: fail('Target collision: ' + target + ' and ' + targets[normalized])
+        targets[normalized] = target
+    for normalized, target in targets.items():
+        for ancestor in PurePosixPath(normalized).parents:
+            if str(ancestor) in targets: fail('File/directory target collision: ' + target + ' and ' + targets[str(ancestor)])
 
 
 def load_manifest(path=MANIFEST):
@@ -73,6 +88,7 @@ def load_manifest(path=MANIFEST):
         targets.add(path)
         if (path not in PRODUCT_FILES and path.split('/')[0] not in PRODUCT_DIRS) or row['mode'] not in {'100644', '100755'} or not DIGEST.fullmatch(row['sha256']): fail('Invalid overlay')
     if not PRODUCT_FILES <= targets or not manifest['imports'] or not manifest['forbidden_symbols']: fail('Incomplete boundary')
+    validate_targets(manifest)
     return manifest
 
 
@@ -187,11 +203,14 @@ def drift(repo, sha, manifest):
 
 
 def stage(repo, sha, source, head, output, manifest):
+    validate_targets(manifest)
     source = Path(source).resolve(); output = Path(output)
     if not output.is_absolute() or output.is_symlink() or not output.is_dir() or any(output.iterdir()): fail('Output must be an empty absolute external directory')
     output = output.resolve()
     for protected in (source, Path(repo).resolve(), ROOT):
-        if output == protected or protected in output.parents: fail('Output must be outside source and upstream')
+        output_key = unicodedata.normalize('NFC', str(output)).casefold()
+        protected_key = unicodedata.normalize('NFC', str(protected)).casefold()
+        if output_key == protected_key or output_key.startswith(protected_key.rstrip('/') + '/'): fail('Output must be outside source and upstream')
     if not SHA.fullmatch(head) or git(source, 'rev-parse', 'HEAD').decode().strip() != head or git(source, 'status', '--porcelain', '--untracked-files=all').strip(): fail('Free source must be a clean exact-head checkout')
     origin = git(source, 'remote', 'get-url', 'origin').decode().strip()
     if origin not in {'https://github.com/yoohwz/loyalty-for-woocommerce.git', 'https://github.com/yoohwz/loyalty-for-woocommerce', 'git@github.com:yoohwz/loyalty-for-woocommerce.git'}: fail('Free repository binding mismatch')

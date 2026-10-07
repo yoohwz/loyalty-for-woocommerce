@@ -129,6 +129,20 @@ __ ('wc-loyalty', 'other-domain');
         path = self.work / 'duplicate.json'; path.write_text('{"schema_version":1,"schema_version":1}')
         with self.assertRaisesRegex(ValueError, 'Duplicate'): contract.load_manifest(path)
 
+    def test_file_directory_and_portable_target_collisions_deny_before_writes(self):
+        for target in ['inc/cores/database.php/nested.php', 'inc/cores/Database.php',
+                       'inc/CORES/Database.php/nested.php', 'inc/cores']:
+            with self.subTest(target=target):
+                manifest = copy.deepcopy(self.manifest)
+                manifest['imports'][0]['target'] = target
+                with self.assertRaises(ValueError): self.load_fixture(manifest)
+                # Exercise staging's own admission too: callers cannot bypass the
+                # pre-write invariant by passing a modified in-memory manifest.
+                with self.assertRaisesRegex(ValueError, 'collision'):
+                    contract.stage(self.upstream, self.sha, self.free, self.head, self.output, manifest)
+                self.assertEqual([], list(self.output.iterdir()))
+                self.assertEqual('', git(self.free, 'status', '--porcelain'))
+
     def test_exact_sha_origin_tree_and_transform_proof(self):
         self.assertEqual({self.source}, set(contract.transformed_imports(self.upstream, self.sha, self.manifest)))
         for sha in ['main', self.sha[:12], '0' * 40]:
@@ -197,6 +211,13 @@ __ ('wc-loyalty', 'other-domain');
         (self.free / 'inc/forged.php').write_text('<?php class YOWCL_License_Runtime {}')
         with self.assertRaises(ValueError): contract.stage(self.upstream, self.sha, self.free, self.head, self.output, self.manifest)
         self.assertEqual([], list(self.output.iterdir()))
+
+    def test_case_alias_of_protected_checkout_output_is_refused(self):
+        output = self.work / 'FREE/.git/output'
+        output.mkdir(parents=True)
+        with self.assertRaisesRegex(ValueError, 'outside source'):
+            contract.stage(self.upstream, self.sha, self.free, self.head, output, self.manifest)
+        self.assertEqual([], list(output.iterdir()))
 
     def test_renamed_or_obfuscated_premium_and_source_drift_denied(self):
         file = self.free / 'inc/cores/database.php'; original = file.read_bytes()
