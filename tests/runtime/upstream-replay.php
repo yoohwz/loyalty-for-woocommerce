@@ -4,6 +4,7 @@
 foreach($identity_rows as $row) {
     $key=$row['event_key']; $event=array('action'=>$row['action'],'order_id'=>(int)$row['order_id'],'source_event_key'=>$row['source_event_key']);
     if(in_array($row['action'],YOWCL_Points_Transaction::REWARD_ACTIONS,true)) { $result=YOWCL_Points_Transaction::reward((int)$row['user_id'],(int)$row['available_delta'],$key,$event); }
+    elseif('referral_reward_reversal'===$row['action']) {$source=YOWCL_Points_Transaction::find($row['source_event_key']);$result=YOWCL_Points_Transaction::reverse_referral_reward((int)$row['user_id'],(int)$row['order_id'],$row['source_event_key'],$source['action'],'Replay');}
     elseif('points_deducted'===$row['action']) {$result=YOWCL_Points_Transaction::reverse_order_reward((int)$row['user_id'],(int)$row['order_id'],'Replay');}
     elseif(in_array($row['action'],array('admin_reward','admin_deduct','points_import'),true)) {
         $request=YOWCL_Points_Allocation::decode($row['allocation_receipt'])['request'];
@@ -30,6 +31,7 @@ $balances=$wpdb->get_results("SELECT * FROM {$wpdb->usermeta} WHERE meta_key IN 
 foreach($identity_rows as $row) {
     $event=array('action'=>$row['action'],'order_id'=>(int)$row['order_id'],'source_event_key'=>$row['source_event_key']); $key=$row['event_key'];
     if(in_array($row['action'],LOYF7_Upstream_Transaction::REWARD_ACTIONS,true)) {$result=LOYF7_Upstream_Transaction::reward((int)$row['user_id'],(int)$row['available_delta'],$key,$event);}
+    elseif('referral_reward_reversal'===$row['action']) {$source=YOWCL_Points_Transaction::find($row['source_event_key']);$result=LOYF7_Upstream_Transaction::reverse_referral_reward((int)$row['user_id'],(int)$row['order_id'],$row['source_event_key'],$source['action'],'Replay');}
     elseif('points_deducted'===$row['action']){$result=LOYF7_Upstream_Transaction::reverse_order_reward((int)$row['user_id'],(int)$row['order_id'],'Replay');}
     elseif(in_array($row['action'],array('admin_reward','admin_deduct','points_import'),true)) {
         $request=YOWCL_Points_Allocation::decode($row['allocation_receipt'])['request'];

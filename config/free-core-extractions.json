@@ -3444,7 +3444,7 @@
   },
   "inc/cores/helper/referral-rewards.php": {
     "input_sha256": "8cf98e7fadebcdeae8c1716e51de1ba584e18b8e622727b3f1b0751161d3ae78",
-    "selected_sha256": "461baeada46097332dd076ad43ad11ae89c2e45175bf8e679cb3c597804bad4f",
+    "selected_sha256": "be7b8808e70e5422311948265a1879c188e2a6e450044fda892ddf3eeebd50b1",
     "spans": [
       {
         "start": 38,
@@ -3514,7 +3514,7 @@
       {
         "start": 13466,
         "end": 14280,
-        "replacement": "ICAgICAgICAgICAgJGNsYWltcyA9IFlPV0NMX1BvaW50c19Mb2NrOjpxdWVyeSggJGRiLCAkd3BkYi0+cHJlcGFyZSggIlNFTEVDVCBtZXRhX3ZhbHVlIEZST00geyR3cGRiLT51c2VybWV0YX0gV0hFUkUgdXNlcl9pZD0lZCBBTkQgbWV0YV9rZXk9JXMiLCAkdXNlciwgc2VsZjo6VVNFUl9XSU5ORVIgKSApOwogICAgICAgICAgICAkdmFsdWVzID0gYXJyYXkoKTsgd2hpbGUgKCAkciA9ICRjbGFpbXMtPmZldGNoX2Fzc29jKCkgKSB7ICR2YWx1ZXNbXSA9ICRyWydtZXRhX3ZhbHVlJ107IH0gJGNsYWltcy0+ZnJlZSgpOwogICAgICAgICAgICBpZiAoICR2YWx1ZXMgKSB7CiAgICAgICAgICAgICAgICBpZiAoIDEgIT09IGNvdW50KCAkdmFsdWVzICkgfHwgISBjdHlwZV9kaWdpdCggJHZhbHVlc1swXSApIHx8IChpbnQpICR2YWx1ZXNbMF0gPD0gMCApIHsgdGhyb3cgbmV3IFJ1bnRpbWVFeGNlcHRpb24oICdyZWZlcnJhbF9jbGFpbV9pbnZhbGlkJyApOyB9CiAgICAgICAgICAgICAgICByZXR1cm4gc2VsZjo6ZGVsaXZlcl93aW5uZXIoIChpbnQpICR2YWx1ZXNbMF0sICRvcmRlci0+Z2V0X2lkKCkgKTsKICAgICAgICAgICAgfQo="
+        "replacement": "ICAgICAgICAgICAgJGNsYWltcyA9IFlPV0NMX1BvaW50c19Mb2NrOjpxdWVyeSggJGRiLCAkd3BkYi0+cHJlcGFyZSggIlNFTEVDVCBtZXRhX3ZhbHVlIEZST00geyR3cGRiLT51c2VybWV0YX0gV0hFUkUgdXNlcl9pZD0lZCBBTkQgbWV0YV9rZXk9JXMiLCAkdXNlciwgc2VsZjo6VVNFUl9XSU5ORVIgKSApOwogICAgICAgICAgICAkdmFsdWVzID0gYXJyYXkoKTsgd2hpbGUgKCAkciA9ICRjbGFpbXMtPmZldGNoX2Fzc29jKCkgKSB7ICR2YWx1ZXNbXSA9ICRyWydtZXRhX3ZhbHVlJ107IH0gJGNsYWltcy0+ZnJlZSgpOwogICAgICAgICAgICBpZiAoICR2YWx1ZXMgKSB7CiAgICAgICAgICAgICAgICBpZiAoIDEgIT09IGNvdW50KCAkdmFsdWVzICkgfHwgISBjdHlwZV9kaWdpdCggJHZhbHVlc1swXSApIHx8IChpbnQpICR2YWx1ZXNbMF0gPD0gMCApIHsgdGhyb3cgbmV3IERvbWFpbkV4Y2VwdGlvbiggJ3JlZmVycmFsX2NsYWltX2ludmFsaWQnICk7IH0KICAgICAgICAgICAgICAgIHJldHVybiBzZWxmOjpkZWxpdmVyX3dpbm5lciggKGludCkgJHZhbHVlc1swXSwgJG9yZGVyLT5nZXRfaWQoKSApOwogICAgICAgICAgICB9Cg=="
       },
       {
         "start": 14373,
@@ -3562,9 +3562,9 @@
         "replacement": "CQlpZiAoICEgWU9XQ0xfRnJlZV9Db3JlOjpvd25zKCkgfHwgKGludCkgJGlkIDw9IDAgKSB7IHJldHVybjsgfQo="
       },
       {
-        "start": 21642,
+        "start": 21562,
         "end": 22020,
-        "replacement": "Cg=="
+        "replacement": "CQkkcmV0cnkgPSBzdGF0aWMgZnVuY3Rpb24gKCAkZXJyb3IgPSBudWxsICkgdXNlICggJGlkLCAkaW50ZW50LCAmJGRlZmVycmVkLCAmJGRvbmUgKSB7CgogICAgICAgICAgICBpZiAoICRlcnJvciBpbnN0YW5jZW9mIERvbWFpbkV4Y2VwdGlvbiApIHsgJGRvbmUgPSB0cnVlOyByZXR1cm47IH0K"
       },
       {
         "start": 22208,

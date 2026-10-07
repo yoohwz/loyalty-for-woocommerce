@@ -102,7 +102,7 @@ class YOWCL_Referral_Rewards {
             $claims = YOWCL_Points_Lock::query( $db, $wpdb->prepare( "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id=%d AND meta_key=%s", $user, self::USER_WINNER ) );
             $values = array(); while ( $r = $claims->fetch_assoc() ) { $values[] = $r['meta_value']; } $claims->free();
             if ( $values ) {
-                if ( 1 !== count( $values ) || ! ctype_digit( $values[0] ) || (int) $values[0] <= 0 ) { throw new RuntimeException( 'referral_claim_invalid' ); }
+                if ( 1 !== count( $values ) || ! ctype_digit( $values[0] ) || (int) $values[0] <= 0 ) { throw new DomainException( 'referral_claim_invalid' ); }
                 return self::deliver_winner( (int) $values[0], $order->get_id() );
             }
 			// Query customer orders before referral filtering: a non-referred first order also wins.
@@ -153,8 +153,9 @@ class YOWCL_Referral_Rewards {
 		if ( ! YOWCL_Free_Core::owns() || (int) $id <= 0 ) { return; }
 		if ( '' !== $intent ) { self::record_transition( $id, $intent ); }
 		$done = null; $deferred = false;
-		$retry = static function ( $error = null ) use ( $id, $intent, &$deferred ) {
+		$retry = static function ( $error = null ) use ( $id, $intent, &$deferred, &$done ) {
 
+            if ( $error instanceof DomainException ) { $done = true; return; }
 			self::queue( $id, $intent ); $deferred = true;
 		};
 		YOWCL_Order_Rewards::locked( (int) $id, static function ( $order, $owner ) use ( $id, $intent, $retry, &$done ) {

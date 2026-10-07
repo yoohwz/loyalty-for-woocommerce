@@ -38,7 +38,7 @@ class YOWCL_Free_Referral {
         return $terms;
     }
     public static function terms( $order ) {
-        $rows = $order->get_meta( YOWCL_Referral_Rewards::TERMS, false, 'edit' );
+        $rows = array_values( $order->get_meta( YOWCL_Referral_Rewards::TERMS, false, 'edit' ) );
         if ( 1 !== count( $rows ) ) { throw new DomainException( 'referral_terms_ambiguous' ); }
         $t = $rows[0]->value;
         if ( ! is_array( $t ) || 1 !== ( $t['version'] ?? null ) || ! in_array( $t['channel'] ?? null, array( 'none','link' ), true ) ||
@@ -76,7 +76,7 @@ add_action( 'woocommerce_store_api_checkout_order_processed', array( 'YOWCL_Refe
 add_action( 'woocommerce_order_status_changed', static function ( $id, $old, $new ) {
     if ( ! YOWCL_Free_Core::owns() ) { return; }
     try { YOWCL_Referral_Rewards::record_transition( $id, $new ); YOWCL_Referral_Rewards::process( $id, $new ); }
-    catch ( Throwable $e ) { YOWCL_Core_Rewards::report( 'referral:order:' . $id, $e ); YOWCL_Referral_Rewards::queue( $id, $new ); }
+    catch ( Throwable $e ) { YOWCL_Core_Rewards::report( 'referral:order:' . $id, $e ); if ( ! $e instanceof DomainException ) { YOWCL_Referral_Rewards::queue( $id, $new ); } }
 }, 20, 3 );
 add_action( 'woocommerce_payment_complete', static function ( $id ) {
     try { YOWCL_Referral_Rewards::process( $id ); } catch ( Throwable $e ) { YOWCL_Core_Rewards::report( 'referral:order:' . $id, $e ); }
