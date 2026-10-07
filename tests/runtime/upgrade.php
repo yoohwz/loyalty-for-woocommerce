@@ -26,7 +26,7 @@ $old_signup = get_option('loyf_migration_signup_v1_before');
 loyf_equal('no', maybe_unserialize($old_signup['before'])['signup_enabled'], 'Pre-target rollback evidence');
 // Existing users/reviews/level ambiguity never becomes an automatic re-award.
 foreach ($before['meta'] as $meta) { if ('user_points' === $meta['meta_key']) { do_action('user_register', (int)$meta['user_id']); YOWCL_Free_Core::level_bonus((int)$meta['user_id'], 'loyf_gold'); } }
-loyf_equal($before['meta'], $wpdb->get_results("SELECT * FROM {$wpdb->usermeta} ORDER BY umeta_id", ARRAY_A), 'No historical re-award/meta rewrite');
+loyf_equal(array_values(array_filter($before['meta'], function($row) { return 'dismissed_wp_pointers' !== $row['meta_key']; })), $wpdb->get_results("SELECT * FROM {$wpdb->usermeta} WHERE meta_key <> 'dismissed_wp_pointers' ORDER BY umeta_id", ARRAY_A), 'Historical economic/role metadata preserved (Woo user_register may append dismissed pointers)');
 loyf_equal(count($rows), (int)$wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}yo_loyalty_points_log"), 'No historical reward event');
 // Read-back failure after target persistence cannot make a witness. Retry uses frozen source.
 function loyf_reset_feature($feature) { delete_option(YOWCL_Free_Migrations::witness($feature)); delete_option(YOWCL_Free_Migrations::witness($feature) . '_before'); }
