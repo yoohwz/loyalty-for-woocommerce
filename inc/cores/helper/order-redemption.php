@@ -302,7 +302,7 @@ class YOWCL_Order_Redemption {
 	}
 
 
-	/** Serialize native Store API staging by order before an attempt UUID exists. */
+	/** Serialize native Store API staging by selection UUID, with an order fallback. */
 	private static function store_api_request_lock( $request ) {
 		global $wpdb;
 		if ( ! WC()->session ) { return; }

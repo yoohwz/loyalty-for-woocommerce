@@ -140,7 +140,7 @@
       "target": "inc/cores/helper/order-redemption.php",
       "transform": "wp-text-domain-v1",
       "sha256": "cc4f1f15860ca8518b091ef31379abbdf655c661cdef875e8c80be31f3a40753",
-      "output_sha256": "e30165d859172cb4bd98c10c4ddd937030e8b3ca264ac7a87a8637fc5f419148",
+      "output_sha256": "a59b4606dbd304a192d513e81e6c15146ee485e09f5f930cbde37f16dcdec461",
       "domain_replacements": 0,
       "extraction": "inc/cores/helper/order-redemption.php"
     },
@@ -239,7 +239,7 @@
     {
       "target": "loyalty-for-woocommerce.php",
       "mode": "100644",
-      "sha256": "8083f8ca67cf7e26d18ba84765875fcd6633368c14bb894696ed1765f506efd2"
+      "sha256": "ec7208efd109c23f384cb236bbe8a63c521d719a87f45a7808847335757c9329"
     },
     {
       "target": "readme.txt",
@@ -509,7 +509,7 @@
     {
       "target": "inc/cores/helper/free-cart.php",
       "mode": "100644",
-      "sha256": "3cc97471be356080dad42e9f64d613f7de4a3402024e00389746ca414e9b8c20"
+      "sha256": "98bfc52c6417d5dc9950f6883eba23445dcfdcb941104b5173f6c252d94d04f6"
     },
     {
       "target": "inc/cores/helper/free-blocks.php",
@@ -519,7 +519,7 @@
     {
       "target": "inc/cores/helper/free-blocks-integration.php",
       "mode": "100644",
-      "sha256": "d0e67acad4b175027aa1526b0ea31fc84184866dd939f9aa6714d344c7cf779e"
+      "sha256": "778fa7963f2041ff2e5c461c7e2bd90351ab5d1fe814900294e4a96ad318233b"
     },
     {
       "target": "js/blocks-redemption.js",
@@ -1714,6 +1714,6 @@
   "extractions": {
     "id": "byte-spans-v1",
     "path": "config/free-core-extractions.json",
-    "sha256": "ad9c2c5b5a4a45861499169f7e271e3f9e0f77993e97a42dd9113a078922e491"
+    "sha256": "3ec7a3c54eb162a16b3df1541fbdd1350ff6537e54dc3be6cd0607cd8314a213"
   }
 }

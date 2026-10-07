@@ -1164,7 +1164,7 @@
   },
   "inc/cores/helper/order-redemption.php": {
     "input_sha256": "cc4f1f15860ca8518b091ef31379abbdf655c661cdef875e8c80be31f3a40753",
-    "selected_sha256": "e30165d859172cb4bd98c10c4ddd937030e8b3ca264ac7a87a8637fc5f419148",
+    "selected_sha256": "a59b4606dbd304a192d513e81e6c15146ee485e09f5f930cbde37f16dcdec461",
     "spans": [
       {
         "start": 1192,
@@ -1680,6 +1680,26 @@
         "start": 19028,
         "end": 19030,
         "replacement": ""
+      },
+      {
+        "start": 19075,
+        "end": 19075,
+        "replacement": "c2VsZWN0aW9uIFVVSUQsIHdpdGggYW4g"
+      },
+      {
+        "start": 19081,
+        "end": 19081,
+        "replacement": "ZmFsbA=="
+      },
+      {
+        "start": 19082,
+        "end": 19088,
+        "replacement": ""
+      },
+      {
+        "start": 19089,
+        "end": 19110,
+        "replacement": "Y2s="
       },
       {
         "start": 19452,

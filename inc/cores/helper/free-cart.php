@@ -13,6 +13,7 @@ class YOWCL_Free_Cart {
     public static function rules() {
         $rules = maybe_unserialize( get_option( 'loyalty_points_using_rules' ) );
         if ( ! YOWCL_Free_Migrations::ready( 'redemption' ) || ! is_array( $rules ) || (float) ( $rules['points'] ?? 0 ) <= 0 || (float) ( $rules['amount'] ?? 0 ) <= 0 ) { return array(); }
+        foreach ( array( 'points', 'amount' ) as $key ) { if ( ! is_numeric( $rules[$key] ) || ! is_finite( (float) $rules[$key] ) ) { return array(); } }
         return array( 'points' => (float) $rules['points'], 'amount' => (float) $rules['amount'] );
     }
     private static function signature() {

@@ -27,7 +27,12 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
             const surface = page.locator('.loyf-blocks-redemption');
             await surface.waitFor({ state:'visible', timeout:30000 });
             assert.match(await surface.innerText(), /Available points: 50/);
+            await surface.getByLabel('Points to apply').fill('9999');
+            await surface.getByRole('button', { name:'Apply points', exact:true }).click();
+            await surface.getByRole('alert').waitFor();
+            await surface.getByRole('button', { name:'Apply points', exact:true }).waitFor();
             await surface.getByLabel('Points to apply').fill('20');
+            const replayStart = updates.length;
             if (target === fixture.cart) {
                 let lost = false;
                 await page.route('**/*', async route => {
@@ -40,10 +45,21 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
                 await surface.getByRole('button', { name:'Retry points update', exact:true }).click();
             }
             await page.waitForFunction(() => [...document.querySelectorAll('.loyf-blocks-redemption')].some(node => /20 points applied/.test(node.textContent)));
-            if (target === fixture.cart) { assert(updates.length >= 2, 'Native extension batch observed'); assert.deepEqual(updates[0], updates[1], 'Lost response retries original immutable UUID and terms'); }
+            if (target === fixture.cart) { assert(updates.length >= replayStart + 2, 'Native extension batch observed'); assert.deepEqual(updates[replayStart], updates[replayStart + 1], 'Lost response retries original immutable UUID and terms'); }
             await surface.getByRole('button', { name:'Remove points', exact:true }).click();
             await page.waitForFunction(() => [...document.querySelectorAll('.loyf-blocks-redemption')].every(node => !/20 points applied/.test(node.textContent)));
         }
+        const denied = await page.evaluate(async () => {
+            const response = await fetch('/?rest_route=/wc/store/v1/cart/extensions', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({namespace:'loyf-redemption',data:{action:'apply',points:'20',operation_id:crypto.randomUUID()}})});
+            return response.status;
+        });
+        assert(denied >= 400, 'Native browser transport requires Store API nonce');
+        const guest = await browser.newContext();
+        const anonymous = await guest.request.get(base + '/?rest_route=/wc/store/v1/cart');
+        const guestData = (await anonymous.json()).extensions['loyf-redemption'];
+        assert.equal(guestData.enabled, false); assert.equal(guestData.available, 0); assert.equal(guestData.operation_id, '');
+        assert.deepEqual(Object.keys(guestData).sort(), ['available','discount','earned','enabled','message','minimum','operation_id','selected']);
+        await guest.close();
         assert(updates.length >= 5, 'Shipped client must use native Store API extension updates, including native batching');
         assert(!calls.some(url => url.includes('admin-ajax.php')), 'Blocks must not send Classic AJAX');
         assert.equal(errors.length, 0, 'Native browser exceptions: ' + errors.join('; '));

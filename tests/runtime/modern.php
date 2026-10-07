@@ -12,6 +12,7 @@ function loyf8_user($name) {
 $merged=get_option('loyalty_extra_reviews_gamification_rules'); $merged['levelup_enabled']='no'; update_option('loyalty_extra_reviews_gamification_rules',$merged);
 $hpos='hpos'===getenv('LOYF_STORAGE');
 loyf_equal($hpos,Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled(),'Authoritative storage'); loyf_equal('no',get_option('woocommerce_custom_orders_table_data_sync_enabled'),'Sync disabled');
+foreach(array('custom_order_tables','cart_checkout_blocks') as $feature){loyf_assert(in_array(YOSWC_LOYALTY_PLUGIN_BASENAME,Automattic\WooCommerce\Utilities\FeaturesUtil::get_compatible_plugins_for_feature($feature),true),'Native compatibility declaration '.$feature);}
 $product=new WC_Product_Simple(); $product->set_name('Modern redemption'); $product->set_regular_price('100'); $product->set_virtual(true); $product->set_status('publish'); $product->save();
 $address=array('first_name'=>'Native','last_name'=>'Customer','address_1'=>'1 Test Road','city'=>'San Francisco','state'=>'CA','postcode'=>'94103','country'=>'US','email'=>'modern@example.invalid','phone'=>'4155550100');
 update_option('woocommerce_cod_settings',array('enabled'=>'yes')); WC()->payment_gateways=new WC_Payment_Gateways();
@@ -26,9 +27,11 @@ foreach(array('classic','store') as $adapter) {
     $cart=loyf8_ok(loyf8_api('POST','cart/extensions',$apply)); loyf_equal(20,$cart['extensions'][YOWCL_Free_Blocks::NS]['selected'],'Native extension selection'); loyf_balance($user,100,100,'Selection no debit');
     loyf8_ok(loyf8_api('POST','cart/extensions',$apply)); loyf_equal($id,WC()->session->get('yowcl_checkout_id'),'Apply same operation replay');
     $conflict=$apply; $conflict['data']['points']='21'; loyf_assert(loyf8_api('POST','cart/extensions',$conflict)->get_status()>=400,'Changed same-ID terms denied');
+    $replacement=$apply;$id=wp_generate_uuid4();$replacement['data']['operation_id']=$id;$replacement['data']['points']='30';$changed=loyf8_ok(loyf8_api('POST','cart/extensions',$replacement));loyf_equal(30,$changed['extensions'][YOWCL_Free_Blocks::NS]['selected'],'Explicit new selection changes points');loyf_balance($user,100,100,'Selection change no debit');
     loyf8_ok(loyf8_api('POST','cart/extensions',array('namespace'=>YOWCL_Free_Blocks::NS,'data'=>array('action'=>'remove','operation_id'=>$id)))); loyf_balance($user,100,100,'Remove no debit');
     $nonce=wp_create_nonce('apply_loyalty_points'); loyf_equal(true,loyf_ajax('wp_ajax_applying_points',array('loyalty_points_nonce'=>$nonce,'loyalty_points_input'=>'20'))['success'],'Classic selection for both adapters'); $id=WC()->session->get('yowcl_checkout_id');
     $selection=YOWCL_Free_Cart::selection(); $rules=get_option('loyalty_points_using_rules'); $changed=$rules; $changed['amount']=99; update_option('loyalty_points_using_rules',$changed); WC()->cart->calculate_totals(); loyf_equal(null,YOWCL_Free_Cart::selection(),'Rule drift requires reapply'); loyf_balance($user,100,100,'Rule drift no debit'); update_option('loyalty_points_using_rules',$rules); WC()->cart->calculate_totals(); loyf_equal($selection['id'],YOWCL_Free_Cart::selection()['id'],'Original selection recovery');
+    foreach(array('owner'=>'wrong-session','currency'=>'EUR') as $field=>$wrong){$bad=$selection;$bad[$field]=$wrong;WC()->session->set('loyf_funded_selection',$bad);WC()->cart->calculate_totals();loyf_equal(null,YOWCL_Free_Cart::selection(),'Selection ownership/currency drift held');loyf_balance($user,100,100,'Ownership/currency drift no value');}WC()->session->set('loyf_funded_selection',$selection);WC()->cart->calculate_totals();
     if('classic'===$adapter) {$order_id=WC()->checkout()->create_order(array('billing_email'=>$address['email'],'payment_method'=>'cod')); loyf_assert(!is_wp_error($order_id),'Classic create order');}
     else {
         $draft=loyf8_ok(loyf8_api('GET','checkout')); $order_id=$draft['order_id']; loyf_assert(!YOWCL_Order_Redemption::record($id),'GET draft not frozen'); loyf_balance($user,100,100,'Draft no debit');
@@ -42,7 +45,7 @@ foreach(array('classic','store') as $adapter) {
         loyf8_ok(loyf8_api('POST','cart/update-item',array('key'=>$key,'quantity'=>1))); $retry=loyf8_ok(loyf8_api('POST','checkout',$body)); loyf_equal($order_id,$retry['order_id'],'Same Store order recovery');
     }
     loyf_balance($user,80,100,'Funded adapter debit once'); YOWCL_Order_Redemption::commit(wc_get_order($order_id)); loyf_balance($user,80,100,'Cross-adapter primitive replay');
-    $order=wc_get_order($order_id); loyf_equal($id,$order->get_meta(YOWCL_Order_Redemption::META),'Shared attempt identity');
+    $order=wc_get_order($order_id); loyf_assert(strpos($order->get_edit_order_url(),$hpos?'wc-orders':'post.php')!==false,'Storage-native admin order URL'); loyf_equal($id,$order->get_meta(YOWCL_Order_Redemption::META),'Shared attempt identity');
     if($hpos){loyf_equal('',$wpdb->get_var($wpdb->prepare("SELECT meta_value FROM {$wpdb->postmeta} WHERE post_id=%d AND meta_key=%s",$order_id,YOWCL_Order_Redemption::META))??'','No CPT mirror authority');}
     $order->update_status('processing'); $order->update_status('completed'); loyf_balance($user,180,200,'Purchase once both stores/adapters'); $order->update_status('cancelled'); $order->update_status('refunded'); loyf_balance($user,100,100,'Return and reversal once');
     YOWCL_Points_Transaction::apply($user,5,5,'modern:later:'.$user); YOWCL_Order_Redemption::return_points($order_id); loyf_balance($user,105,105,'Return preserves later credit');
