@@ -38,10 +38,9 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
             await surface.getByRole('button', { name:'Apply points', exact:true }).click();
             if (target === fixture.cart) {
                 await surface.getByRole('button', { name:'Retry points update', exact:true }).click();
-                assert(updates.length >= 2, 'Native extension batch observed');
-                assert.deepEqual(updates[0], updates[1], 'Lost response retries original immutable UUID and terms');
             }
             await page.waitForFunction(() => [...document.querySelectorAll('.loyf-blocks-redemption')].some(node => /20 points applied/.test(node.textContent)));
+            if (target === fixture.cart) { assert(updates.length >= 2, 'Native extension batch observed'); assert.deepEqual(updates[0], updates[1], 'Lost response retries original immutable UUID and terms'); }
             await surface.getByRole('button', { name:'Remove points', exact:true }).click();
             await page.waitForFunction(() => [...document.querySelectorAll('.loyf-blocks-redemption')].every(node => !/20 points applied/.test(node.textContent)));
         }
