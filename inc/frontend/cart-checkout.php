@@ -284,84 +284,10 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 	        return (int) $earned_points;
 	    }
 
-	    private function get_using_rules() {
-	        $rules = maybe_unserialize(get_option('loyalty_points_using_rules'));
-	        if (!YOWCL_Free_Migrations::ready( 'redemption' ) || !is_array($rules) || empty($rules['points']) || empty($rules['amount'])) {
-	            return array();
-	        }
-
-	        $points = (float) $rules['points'];
-	        $amount = (float) $rules['amount'];
-	        if ($points <= 0 || $amount <= 0) {
-	            return array();
-	        }
-
-	        return array(
-	            'points' => $points,
-	            'amount' => $amount,
-	        );
-	    }
-
-	    private function calculate_redemption_for_cart($points, $rules) {
-	        $discount = ($points / $rules['points']) * $rules['amount'];
-	        $limit = $this->get_cart_discount_limit(WC()->cart);
-
-	        if ($limit <= 0) {
-	            return array();
-	        }
-
-	        if ($discount > $limit) {
-	            $points = floor(($limit / $rules['amount']) * $rules['points']);
-	            $discount = ($points / $rules['points']) * $rules['amount'];
-	        }
-
-	        if ($points < $rules['points'] || $discount <= 0) {
-	            return array();
-	        }
-
-	        return array(
-	            'points' => $points,
-	            'discount' => wc_format_decimal($discount),
-	        );
-	    }
-
-	    private function get_cart_discount_limit($cart) {
-	        if (!$cart) {
-	            return 0.0;
-	        }
-
-	        $subtotal = (float) $cart->get_subtotal();
-	        $discounts = (float) $cart->get_discount_total();
-
-	        return max(0.0, $subtotal - $discounts);
-	    }
-
 	    private function get_applied_points() {
             $selection = YOWCL_Free_Cart::selection();
             return $selection ? $selection['points'] : 0;
         }
-
-	    private function get_applied_discount() {
-	        if (!WC()->session) {
-	            return 0.0;
-	        }
-
-	        return (float) WC()->session->get(self::SESSION_DISCOUNT, 0);
-	    }
-
-	    private function set_applied_points($points, $discount) {
-            if ( WC()->session ) {
-                $id = wp_generate_uuid4();
-                WC()->session->set( 'yowcl_checkout_id', $id );
-                WC()->session->set( 'loyf_funded_selection', array( 'id' => $id, 'points' => (int) $points, 'discount' => wc_format_decimal( $discount, wc_get_price_decimals() ), 'currency' => get_woocommerce_currency(), 'owner' => YOWCL_Order_Redemption::session_owner() ) );
-            }
-	        if (!WC()->session) {
-	            return;
-	        }
-
-	        WC()->session->set(self::SESSION_POINTS, (float) $points);
-	        WC()->session->set(self::SESSION_DISCOUNT, (float) $discount);
-	    }
 
 	    private function clear_applied_points() {
             YOWCL_Free_Cart::clear();

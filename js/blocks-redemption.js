@@ -29,7 +29,7 @@
             setBusy(true); setError('');
             extensionCartUpdate({ namespace: 'loyf-redemption', data: request })
                 .then(() => { pending.current = null; })
-                .catch(() => { setError(__('Points could not be updated. Retry the same request or refresh your cart.', 'loyalty-for-woocommerce')); })
+                .catch(failure => { if (failure && failure.code === 'loyf_redemption_rejected' && failure.data && failure.data.status === 409) pending.current = null; setError(__('Points could not be updated. Retry the same request or refresh your cart.', 'loyalty-for-woocommerce')); })
                 .finally(() => setBusy(false));
         }
         return h('div', { className: 'loyf-blocks-redemption' },

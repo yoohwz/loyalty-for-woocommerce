@@ -424,7 +424,7 @@
     {
       "target": "inc/cores/helper/free-core.php",
       "mode": "100644",
-      "sha256": "c3cf0fbfa0757bb4e78c423c7856310819bb4097627b0c12aff06c5977e497f5"
+      "sha256": "b2336339d93396b857fb6a7ebcce8155af5fdbce16972f4178eaccdfac87026d"
     },
     {
       "target": "inc/cores/helper/free-order-actions.php",
@@ -439,7 +439,7 @@
     {
       "target": "inc/frontend/cart-checkout.php",
       "mode": "100644",
-      "sha256": "6326c0029a990147d56702a433baf93a83e475f6ed3c62cffade522f33f50b19"
+      "sha256": "64f0631c98903bb8cd35dd22523beea63deb77f5b249ad00d20e5ce4d101c131"
     },
     {
       "target": "inc/frontend/loyalty-info-bubble.php",
@@ -524,7 +524,7 @@
     {
       "target": "js/blocks-redemption.js",
       "mode": "100644",
-      "sha256": "a4534585458e656af14a151f929620417ea90ba429bc3f957f02f761e8029ba5"
+      "sha256": "e60259efa99c97208e9022d3a81c4c9f2e406df7dd567f474b66a07e6ac6f2cf"
     }
   ],
   "blocked_mixed_modules": [

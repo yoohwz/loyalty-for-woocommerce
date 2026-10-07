@@ -8,9 +8,14 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     const page = await browser.newPage();
     page.setDefaultTimeout(30000);
     const calls = [], errors = [], updates = [];
-    page.on('request', request => { if (request.method()==='POST' && /cart(?:%2F|\/)extensions/.test(request.url())) updates.push(JSON.parse(request.postData()).data); });
+    function extensionRequests(request) {
+        if (request.method() !== 'POST') return [];
+        let payload; try { payload = JSON.parse(request.postData()); } catch (_) { return []; }
+        const entries = payload.requests || [{ path:decodeURIComponent(request.url()), body:payload }];
+        return entries.filter(entry => entry.path.includes('cart/extensions')).map(entry => entry.body.data);
+    }
     page.on('pageerror', error => errors.push(error.message));
-    page.on('request', request => { if (request.method()==='POST') calls.push(request.url()); });
+    page.on('request', request => { if (request.method()==='POST') calls.push(request.url()); updates.push(...extensionRequests(request)); });
     try {
         await page.goto(base + '/wp-login.php');
         await page.locator('#user_login').fill('blocks_browser');
@@ -24,18 +29,23 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
             assert.match(await surface.innerText(), /Available points: 50/);
             await surface.getByLabel('Points to apply').fill('20');
             if (target === fixture.cart) {
-                await page.route(/cart(?:%2F|\/)extensions/, async route => { await route.fetch(); await route.abort('failed'); }, { times:1 });
+                let lost = false;
+                await page.route('**/*', async route => {
+                    if (!lost && extensionRequests(route.request()).length) { lost = true; await route.fetch(); await route.abort('failed'); }
+                    else await route.continue();
+                });
             }
             await surface.getByRole('button', { name:'Apply points', exact:true }).click();
             if (target === fixture.cart) {
                 await surface.getByRole('button', { name:'Retry points update', exact:true }).click();
+                assert(updates.length >= 2, 'Native extension batch observed');
                 assert.deepEqual(updates[0], updates[1], 'Lost response retries original immutable UUID and terms');
             }
             await page.waitForFunction(() => [...document.querySelectorAll('.loyf-blocks-redemption')].some(node => /20 points applied/.test(node.textContent)));
             await surface.getByRole('button', { name:'Remove points', exact:true }).click();
             await page.waitForFunction(() => [...document.querySelectorAll('.loyf-blocks-redemption')].every(node => !/20 points applied/.test(node.textContent)));
         }
-        assert(calls.some(url => url.includes('cart%2Fextensions') || url.includes('cart/extensions')), 'Shipped client must use native Store API extension updates');
+        assert(updates.length >= 5, 'Shipped client must use native Store API extension updates, including native batching');
         assert(!calls.some(url => url.includes('admin-ajax.php')), 'Blocks must not send Classic AJAX');
         assert.equal(errors.length, 0, 'Native browser exceptions: ' + errors.join('; '));
         console.log(`Shipped Blocks Cart/Checkout browser PASS Woo${fixture.version} ${fixture.storage}`);
