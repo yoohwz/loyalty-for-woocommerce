@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-08T12:15:53+00:00\n"
+"POT-Creation-Date: 2026-10-08T12:48:19+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
@@ -49,10 +49,10 @@ msgstr ""
 
 #: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php:325
 #: inc/backend/settings.php:285
-#: inc/backend/settings/extra-points.php:57
-#: inc/backend/settings/extra-points.php:66
-#: inc/backend/settings/extra-points.php:75
-#: inc/backend/settings/extra-points.php:102
+#: inc/backend/settings/extra-points.php:60
+#: inc/backend/settings/extra-points.php:69
+#: inc/backend/settings/extra-points.php:78
+#: inc/backend/settings/extra-points.php:105
 #: inc/backend/users/users-points.php:20
 #: inc/cores/helper/free-customer-components.php:55
 #: inc/frontend/loyalty-info-bubble.php:472
@@ -158,12 +158,12 @@ msgid "Point expiration and advanced redemption rules"
 msgstr ""
 
 #: inc/backend/settings.php:120
-#: inc/backend/settings/extra-points.php:152
+#: inc/backend/settings/extra-points.php:155
 msgid "Birthday, account anniversary, and profile completion rewards"
 msgstr ""
 
 #: inc/backend/settings.php:121
-#: inc/backend/settings/extra-points.php:153
+#: inc/backend/settings/extra-points.php:156
 msgid "Purchase milestone and lifetime spend rewards"
 msgstr ""
 
@@ -189,7 +189,7 @@ msgstr ""
 
 #: inc/backend/settings.php:143
 #: inc/backend/settings.php:219
-#: inc/backend/settings/extra-points.php:158
+#: inc/backend/settings/extra-points.php:161
 #: inc/backend/users/user-profile-points.php:153
 #: inc/backend/users/users-points.php:136
 msgid "View Premium features"
@@ -404,12 +404,12 @@ msgid "Customization Settings"
 msgstr ""
 
 #: inc/backend/settings/customization.php:98
-#: inc/backend/settings/extra-points.php:27
+#: inc/backend/settings/extra-points.php:29
 msgid "Before start"
 msgstr ""
 
 #: inc/backend/settings/customization.php:101
-#: inc/backend/settings/extra-points.php:30
+#: inc/backend/settings/extra-points.php:32
 msgid "You have to set at least one role for the loyalty level to set this options."
 msgstr ""
 
@@ -697,7 +697,7 @@ msgid "Enable to display message in Checkout page."
 msgstr ""
 
 #: inc/backend/settings/customization.php:626
-#: inc/backend/settings/extra-points.php:171
+#: inc/backend/settings/extra-points.php:174
 #: inc/backend/settings/general-add-remove-user-role.php:19
 #: inc/backend/settings/general-add-remove-user-role.php:26
 #: inc/backend/settings/tools.php:131
@@ -705,78 +705,93 @@ msgstr ""
 msgid "Nonce verification failed. Please try again."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:23
-#: inc/backend/settings/extra-points.php:39
+#: inc/backend/settings/extra-points.php:25
+#: inc/backend/settings/extra-points.php:41
 msgid "Extra points settings"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:45
-msgid "First purchase"
-msgstr ""
-
-#: inc/backend/settings/extra-points.php:47
-msgid "Enable First Purchase bonus"
+#: inc/backend/settings/extra-points.php:42
+msgid "Rewards on hold are read-only. Review the compatibility notice for each affected reward. You can save the other rewards."
 msgstr ""
 
 #: inc/backend/settings/extra-points.php:48
+#: inc/backend/settings/extra-points.php:214
+msgid "First purchase"
+msgstr ""
+
+#: inc/backend/settings/extra-points.php:50
+msgid "Enable First Purchase bonus"
+msgstr ""
+
+#: inc/backend/settings/extra-points.php:51
 #: inc/cores/helper/free-onboarding.php:330
 msgid "First Purchase points"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:49
+#: inc/backend/settings/extra-points.php:52
 msgid "A fixed bonus for the first qualifying purchase. Only orders created after activation qualify; existing pending orders are excluded."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:54
+#: inc/backend/settings/extra-points.php:57
+#: inc/backend/settings/extra-points.php:203
 msgid "Sign-up"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:58
+#: inc/backend/settings/extra-points.php:61
 msgid "Points awarded to customers when they sign up."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:63
+#: inc/backend/settings/extra-points.php:66
+#: inc/backend/settings/extra-points.php:203
 msgid "Log-in"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:67
+#: inc/backend/settings/extra-points.php:70
 msgid "Points awarded to customers when they log-in daily."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:72
+#: inc/backend/settings/extra-points.php:75
+#: inc/backend/settings/extra-points.php:203
 #: inc/cores/helper/free-customer-components.php:93
 #: inc/frontend/loyalty-info-bubble.php:274
 msgid "Product review"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:76
+#: inc/backend/settings/extra-points.php:79
 msgid "Points awarded to customers for leaving a product review."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:81
+#: inc/backend/settings/extra-points.php:84
+#: inc/backend/settings/extra-points.php:212
 msgid "Level up"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:108
+#: inc/backend/settings/extra-points.php:111
 msgid "Points awarded to customers for reaching a level role."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:149
+#: inc/backend/settings/extra-points.php:152
 msgid "Automate more customer reward actions in Premium"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:150
+#: inc/backend/settings/extra-points.php:153
 msgid "These core rules cover sign-up, daily login, product review, level-up, and First Purchase rewards. Premium adds lifecycle and purchase-based automations for deeper retention workflows."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:154
+#: inc/backend/settings/extra-points.php:157
 msgid "Inactivity win-back campaigns and achievement points"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:180
 #: inc/backend/settings/extra-points.php:187
+#: inc/backend/settings/extra-points.php:198
 #: inc/cores/helper/free-cart.php:37
 msgid "A valid whole points amount is required."
+msgstr ""
+
+#. translators: Comma-separated names of settings whose saves completed.
+#: inc/backend/settings/extra-points.php:220
+#, php-format
+msgid "Settings saved before this error: %s. Reload this page to review them."
 msgstr ""
 
 #: inc/backend/settings/general-add-remove-user-role.php:72
