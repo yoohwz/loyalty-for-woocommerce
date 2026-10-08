@@ -490,7 +490,7 @@
     {
       "target": "inc/cores/helper/free-customer-components.php",
       "mode": "100644",
-      "sha256": "4db762dadac432693ff1172749d166b2f2e9dd63ba48cda51512d04be634e63d"
+      "sha256": "7b71c8bc89c36d8bb9e747dca3a8747eb619e6fc43171d11b02d0e481b976d5c"
     },
     {
       "target": "inc/cores/helper/free-first-purchase.php",
@@ -500,12 +500,12 @@
     {
       "target": "inc/cores/helper/free-migrations.php",
       "mode": "100644",
-      "sha256": "12cb0fbbcfcdaad92c7e769aeea378200103107dfb10ee3b5ec3f2a89b79cd6b"
+      "sha256": "ae9aab76420b265c0415047c44eb1902ba15835efec6ca9437bb5936f4885cad"
     },
     {
       "target": "inc/cores/helper/free-onboarding.php",
       "mode": "100644",
-      "sha256": "d4183d7462aaa658eb98b8da577b5d402d82490245994b8f20b616361ae9720a"
+      "sha256": "b6a7d5b4b229d7a753d8daaa7ac2d52134861c496652ec296dd82b61bfe1ae13"
     },
     {
       "target": "inc/cores/helper/free-order-actions.php",
@@ -515,7 +515,7 @@
     {
       "target": "inc/cores/helper/free-reader-admin.php",
       "mode": "100644",
-      "sha256": "417168340be6de506ba0fad555546082f9fd801423c260b7a227e2730e2f2a8b"
+      "sha256": "98e373b3c6648fc8abf022d8f2ff66631225171fa0f9bf518f0745c100cba57f"
     },
     {
       "target": "inc/cores/helper/free-readers.php",
@@ -525,7 +525,7 @@
     {
       "target": "inc/cores/helper/free-referral.php",
       "mode": "100644",
-      "sha256": "e466defea12c716ee2f86d4f3c3b41f3c6a5d7446b2d0e037a85d21aa218286a"
+      "sha256": "af6dda2a3e898d8ea28b7fd5cdf3eae408708357c1ed3d3189adb6bfe1396345"
     },
     {
       "target": "inc/cores/notices.php",
@@ -620,7 +620,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "fd8f5f8b00ab5011d9d5752cc3f069556502749aad216dd3131990cb1d639c42"
+      "sha256": "a4f6997feab284fcbc82b470716a41bad7067bc781e680135271597b041082c9"
     },
     {
       "target": "license.txt",
@@ -635,7 +635,7 @@
     {
       "target": "readme.txt",
       "mode": "100644",
-      "sha256": "b2ccf6fed88819b9fd83a5e5e241321217e747384184ab7fc93311892194a395"
+      "sha256": "95892c1186a9f24cf394aded4193b0a0caee3b1659a546100acde9279328d09f"
     }
   ],
   "blocked_mixed_modules": [

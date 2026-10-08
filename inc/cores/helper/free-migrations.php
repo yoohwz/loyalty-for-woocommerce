@@ -254,11 +254,39 @@ class YOWCL_Free_Migrations {
         });
     }
     public static function handle_resolution() {
-        $feature=is_string($_POST['feature']??null)?wp_unslash($_POST['feature']):'';
-        if ('POST'!==($_SERVER['REQUEST_METHOD']??'') || !current_user_can('manage_options') || !YOWCL_Free_Core::owns() || !is_string($_POST['_wpnonce']??null) || !wp_verify_nonce(wp_unslash($_POST['_wpnonce']),'loyf_resolve_'.$feature)) { wp_die('migration_resolution_denied'); }
-        try { self::resolve($feature,is_string($_POST['mode']??null)?wp_unslash($_POST['mode']):'',is_string($_POST['fingerprint']??null)?wp_unslash($_POST['fingerprint']):'',wp_unslash($_POST['_wpnonce'])); }
+        $feature=is_string($_POST['feature']??null)?sanitize_key(wp_unslash($_POST['feature'])):'';
+        $mode=is_string($_POST['mode']??null)?sanitize_key(wp_unslash($_POST['mode'])):'';
+        $fingerprint=is_string($_POST['fingerprint']??null)?sanitize_text_field(wp_unslash($_POST['fingerprint'])):'';
+        $nonce=is_string($_POST['_wpnonce']??null)?sanitize_text_field(wp_unslash($_POST['_wpnonce'])):'';
+        $method=is_string($_SERVER['REQUEST_METHOD']??null)?sanitize_key(wp_unslash($_SERVER['REQUEST_METHOD'])):'';
+        if ('post'!==$method || !current_user_can('manage_options') || !YOWCL_Free_Core::owns() || !in_array($feature,self::features(),true) || !in_array($mode,array('canonical','legacy','disable'),true) || !preg_match('/^[a-f0-9]{64}$/D',$fingerprint) || !wp_verify_nonce($nonce,'loyf_resolve_'.$feature)) { wp_die('migration_resolution_denied'); }
+        try { self::resolve($feature,$mode,$fingerprint,$nonce); }
         catch(Throwable $e) { wp_die(esc_html($e->getMessage())); }
         wp_safe_redirect(admin_url('admin.php?page=wc-settings&tab=loyalty')); exit;
+    }
+    /** Completed historical evidence is for manual assessment, never rollback authority. */
+    public static function historical_evidence( $feature ) {
+        if (!current_user_can('manage_options') || !self::ready($feature)) { return null; }
+        $raw=self::read(self::witness($feature).'_before');
+        if (null===$raw) { return null; }
+        $spec=self::decode($raw);
+        if (isset($spec['origin'])) { return null; }
+        $keys=self::validate_spec($feature,$spec);
+        $select=static function($raw)use($keys) {
+            $value=self::decode($raw); $terms=array();
+            foreach($keys as $key) {
+                if (!array_key_exists($key,$value)) { continue; }
+                if ('levelup_points'===$key && is_array($value[$key])) {
+                    $terms[$key]=array();
+                    foreach($value[$key] as $role=>$rule) {
+                        if (is_string($role) && sanitize_key($role)===$role && is_array($rule) && is_scalar($rule['awarded']??null)) { $terms[$key][$role]=array('awarded'=>$rule['awarded']); }
+                    }
+                } elseif(is_scalar($value[$key])) { $terms[$key]=$value[$key]; }
+            }
+            return $terms;
+        };
+        try { $current=$select(self::read(self::target($feature))); } catch(Throwable $e) { $current=__('Unavailable','loyalty-for-woocommerce'); }
+        return array('before'=>$select($spec['before']),'migration'=>$select(serialize($spec['patch'])),'current'=>$current);
     }
     public static function run() {
         if ( ! YOWCL_Free_Core::owns() ) { return; }
@@ -270,6 +298,7 @@ class YOWCL_Free_Migrations {
     public static function notices() {
         if ( ! current_user_can( 'manage_options' ) ) { return; }
         foreach ( self::$errors as $feature => $code ) {
+            /* translators: 1: feature name, 2: migration diagnostic code. */
             echo '<div class="notice notice-error"><p>' . esc_html( sprintf( __( 'Loyalty compatibility migration needs attention (%1$s: %2$s). This feature is held until storage/settings are repaired and migration succeeds.', 'loyalty-for-woocommerce' ), $feature, $code ) ) . '</p>';
             foreach(array('canonical'=>__('Keep current canonical','loyalty-for-woocommerce'),'legacy'=>__('Adopt legacy Free semantics','loyalty-for-woocommerce'),'disable'=>__('Disable using Free settings','loyalty-for-woocommerce')) as $mode=>$label) {
                 try {
@@ -282,6 +311,11 @@ class YOWCL_Free_Migrations {
                 } catch(Throwable $e) { /* Unavailable choices grant no authority. */ }
             }
             echo '</div>';
+        }
+        foreach(self::features() as $feature) {
+            try { $evidence=self::historical_evidence($feature); } catch(Throwable $e) { continue; }
+            if (null===$evidence) { continue; }
+            echo '<div class="notice notice-info"><details><summary>'.esc_html__('Historical Loyalty migration evidence','loyalty-for-woocommerce').' — '.esc_html($feature).'</summary><p>'.esc_html__('These stored terms do not prove which edition last wrote them. Review the before, migration and current terms manually. No automatic restore is performed.','loyalty-for-woocommerce').'</p><pre>'.esc_html(wp_json_encode($evidence)).'</pre></details></div>';
         }
     }
     /** Canonical merchant saves cannot race or precede unfinished initial migration. */

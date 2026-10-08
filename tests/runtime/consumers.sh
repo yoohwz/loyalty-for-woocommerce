@@ -36,9 +36,11 @@ if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
   fi
   if [[ -z "${LOYF_BROWSER_EXECUTABLE:-}" ]]; then node "$(dirname "$LOYF_PLAYWRIGHT_PATH")/playwright/cli.js" install --with-deps chromium; fi
 fi
-for versions in '6.8.3:9.9.5' '7.0:11.1.2'; do
+versions_list=('6.8.3:9.9.5' '7.0:11.1.2'); storages=(cpt hpos)
+if [[ "${LOYF13_COMPAT_SUPPLEMENT:-}" == 1 ]]; then versions_list=('6.3:8.2.2' '7.1.3:11.1.2'); storages=(cpt); fi
+for versions in "${versions_list[@]}"; do
   wordpress=${versions%:*}; woocommerce=${versions#*:}
-  for storage in cpt hpos; do
+  for storage in "${storages[@]}"; do
     database="loyf_rt_$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')"; databases+=( "$database" )
     mysql --host="$LOY_DB_HOST" --port="${LOY_DB_PORT:-3306}" --user="$LOY_DB_USER" -e "CREATE DATABASE \`$database\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
     site="$task_tmp/$woocommerce-$storage"; mkdir -p "$site"

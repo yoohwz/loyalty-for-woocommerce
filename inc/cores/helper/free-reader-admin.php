@@ -22,9 +22,12 @@ class YOWCL_Free_Reader_Admin {
         echo '<table class="widefat striped"><tbody>';
         foreach ( $metrics as $label => $value ) { echo '<tr><th scope="row">' . esc_html( $label ) . '</th><td>' . esc_html( (string) $value ) . '</td></tr>'; }
         echo '</tbody></table><p>' . esc_html__( 'Members and stock cover current users admitted by saved Loyalty roles. Stock is stored balance as of now, including held balances; it is not historical spendable value.', 'loyalty-for-woocommerce' ) . '</p><p>' . esc_html__( 'Flows cover proven canonical events across users. Awards exclude imports, returns and reversals. Redeemed is gross funded checkout debit; returns do not reduce it. No redemption share is shown because a matching qualifying order denominator is not established.', 'loyalty-for-woocommerce' ) . '</p>';
+        /* translators: Number of accounts with held balances. */
         if ( $stock ) { echo '<p>' . esc_html( sprintf( __( 'Accounts with held balances: %d.', 'loyalty-for-woocommerce' ), $stock['held'] ) ) . '</p>'; }
         if ( $flows ) {
+            /* translators: Number of unproven historical rows. */
             echo '<p>' . esc_html( sprintf( __( 'Excluded unproven legacy rows: %d.', 'loyalty-for-woocommerce' ), $flows['legacy'] ) ) . '</p>';
+            /* translators: Number of debits without checkout funding proof. */
             echo '<p>' . esc_html( sprintf( __( 'Excluded debits without native checkout funding proof: %d.', 'loyalty-for-woocommerce' ), $flows['unproven_debits'] ) ) . '</p>';
             if ( $recent ) { echo '<p>' . esc_html( wp_date( 'Y-m-d H:i:s', intdiv( $flows['start'], 1000000 ), new DateTimeZone( $flows['timezone'] ) ) . ' – ' . wp_date( 'Y-m-d H:i:s', intdiv( $flows['end'], 1000000 ), new DateTimeZone( $flows['timezone'] ) ) . ' (' . $flows['timezone'] . ')' ) . '</p>'; }
         }

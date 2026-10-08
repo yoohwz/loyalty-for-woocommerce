@@ -299,8 +299,10 @@ class YOWCL_Free_Onboarding {
                 $t = $s['terms'];
                 if ( is_numeric( $t['amount'] ?? null ) && (float) $t['amount'] > 0 && is_numeric( $t['points'] ?? null ) ) {
                     $raw = 100 / (float) $t['amount'] * (float) $t['points']; $earned = 'round_up' === ( $t['rounding'] ?? '' ) ? ceil( $raw ) : floor( $raw );
+                    /* translators: 1: store currency, 2: illustrative earned points. */
                     if ( is_finite( $earned ) && $earned > 0 && $earned <= 99999999 ) { echo '<p>' . esc_html( sprintf( __( 'Illustrative Launch example, subtotal 100 %1$s without taxes or coupons: %2$s points. This is a saved-choice example, not a reward promise.','loyalty-for-woocommerce' ),$t['currency'],(string) $earned ) ) . '</p>'; }
                 }
+                /* translators: 1: exchanged points, 2: discount amount, 3: store currency. */
                 if ( ! empty( $t['redeem'] ) && is_scalar( $t['redeem_points'] ?? null ) && is_scalar( $t['redeem_amount'] ?? null ) ) { echo '<p>' . esc_html( sprintf( __( 'Illustrative Launch redemption: %1$s points for %2$s %3$s, subject to the cart subtotal.','loyalty-for-woocommerce' ),$t['redeem_points'],$t['redeem_amount'],$t['currency'] ) ) . '</p>'; }
             }
             echo '<table class="widefat"><thead><tr><th>' . esc_html__( 'Setting','loyalty-for-woocommerce' ) . '</th><th>' . esc_html__( 'Current saved value','loyalty-for-woocommerce' ) . '</th></tr></thead><tbody>';
@@ -315,6 +317,7 @@ class YOWCL_Free_Onboarding {
             echo '<section data-loyf-step="' . esc_attr( $i ) . '"><h2 tabindex="-1">' . esc_html( ( $i + 1 ) . '. ' . $heading ) . '</h2>';
             if ( 0 === $i ) { echo '<p>' . esc_html__( 'Start with the existing Customer level at zero points. Only customers qualify; no customer roles are reassigned. Additional levels remain available in Loyalty settings.','loyalty-for-woocommerce' ) . '</p><input type="hidden" name="role" value="customer">'; }
             if ( 1 === $i ) {
+                /* translators: Store currency. */
                 self::number( 'earn_points',__( 'Points earned','loyalty-for-woocommerce' ),'1' ); self::number( 'earn_amount',sprintf( __( 'Per subtotal amount (%s)','loyalty-for-woocommerce' ),get_woocommerce_currency() ),'1',true );
                 echo '<p><label for="loyf-rounding">' . esc_html__( 'Rounding','loyalty-for-woocommerce' ) . '</label> <select name="rounding" id="loyf-rounding"><option value="round_down">' . esc_html__( 'Round down','loyalty-for-woocommerce' ) . '</option><option value="round_up">' . esc_html__( 'Round up','loyalty-for-woocommerce' ) . '</option></select></p>';
                 foreach ( array( 'wc-processing','wc-completed' ) as $status ) { self::check( 'earn_status[]',$status, wc_get_order_status_name( $status ),true ); }
@@ -322,6 +325,7 @@ class YOWCL_Free_Onboarding {
                 echo '<p>' . esc_html__( 'Reverse purchase points on the selected terminal statuses:','loyalty-for-woocommerce' ) . '</p>';
                 foreach ( array( 'wc-failed','wc-cancelled','wc-refunded' ) as $status ) { self::check( 'deduct_status[]',$status,wc_get_order_status_name( $status ),true ); }
             }
+            /* translators: Store currency. */
             if ( 2 === $i ) { self::check( 'redeem','yes',__( 'Enable points redemption','loyalty-for-woocommerce' ) ); self::number( 'redeem_points',__( 'Points exchanged','loyalty-for-woocommerce' ),'100' ); self::number( 'redeem_amount',sprintf( __( 'Discount amount (%s)','loyalty-for-woocommerce' ),get_woocommerce_currency() ),'1',true ); }
             if ( 3 === $i ) { self::check( 'first','yes',__( 'Enable First Purchase bonus (orders created after Launch only)','loyalty-for-woocommerce' ) ); self::number( 'first_points',__( 'First Purchase points','loyalty-for-woocommerce' ),'0' ); self::check( 'referral','yes',__( 'Enable Referral Lite (registered customer, first order, link referrer only)','loyalty-for-woocommerce' ) ); self::number( 'referral_points',__( 'Referrer points','loyalty-for-woocommerce' ),'0' ); }
             if ( 4 === $i ) { self::check( 'bubble','yes',__( 'Show Loyalty bubble','loyalty-for-woocommerce' ),true ); self::check( 'account','yes',__( 'Show My Points in My Account','loyalty-for-woocommerce' ),true ); }
@@ -330,6 +334,7 @@ class YOWCL_Free_Onboarding {
         }
         echo '<p><button type="button" class="button" data-loyf-back hidden>' . esc_html__( 'Back','loyalty-for-woocommerce' ) . '</button> <button type="button" class="button button-primary" data-loyf-next hidden>' . esc_html__( 'Next','loyalty-for-woocommerce' ) . '</button> <button type="button" class="button" data-loyf-skip hidden>' . esc_html__( 'Skip optional growth','loyalty-for-woocommerce' ) . '</button> <button type="submit" name="intent" value="launch" class="button button-primary" data-loyf-launch>' . esc_html__( 'Launch / Save','loyalty-for-woocommerce' ) . '</button> <button type="submit" name="intent" value="dismiss" class="button" formnovalidate>' . esc_html__( 'Exit Quick Start','loyalty-for-woocommerce' ) . '</button></p></form></div>';
         wp_enqueue_script( 'loyf-onboarding',plugins_url( '../../../js/onboarding.js',__FILE__ ),array(),hash_file( 'sha256',dirname( __DIR__,3 ) . '/js/onboarding.js' ),true );
+        /* translators: 1: order subtotal or exchanged points, 2: illustrative points or discount amount. */
         wp_localize_script( 'loyf-onboarding','loyfOnboarding',array( 'example'=>__( 'Illustrative order subtotal of %1$s: %2$s points.','loyalty-for-woocommerce' ),'redeem'=>__( 'Illustrative redemption of %1$s points: %2$s discount, subject to the cart subtotal.','loyalty-for-woocommerce' ),'off'=>__( 'Optional rewards and redemption remain off unless selected.','loyalty-for-woocommerce' ),'invalid'=>__( 'Review the conversion amounts before Launch.','loyalty-for-woocommerce' ) ) );
     }
     private static function check( $name,$value,$label,$checked=false ) { echo '<p><label><input type="checkbox" name="' . esc_attr( $name ) . '" value="' . esc_attr( $value ) . '"' . ( $checked ? ' checked' : '' ) . '> ' . esc_html( $label ) . '</label></p>'; }

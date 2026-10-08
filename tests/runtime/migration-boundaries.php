@@ -2,6 +2,7 @@
 require_once __DIR__.'/assertions.php';
 global $wpdb;
 wp_set_current_user(1);
+$die=static function(){return static function($message){throw new RuntimeException(is_wp_error($message)?$message->get_error_message():(string)$message);};};add_filter('wp_die_handler',$die);add_filter('wp_die_ajax_handler',$die);
 $account='loyalty_extra_points_rules'; $merged='loyalty_extra_reviews_gamification_rules';
 $names=array($account,$merged,'loyalty_points_using_rules','loyalty_notification_email','loyalty_extra_levelup_points_rules');
 foreach(YOWCL_Free_Migrations::features() as $f){$names[]=YOWCL_Free_Migrations::witness($f);$names[]=YOWCL_Free_Migrations::witness($f).'_before';$names[]=YOWCL_Free_Migrations::witness($f).'_resolution';}
@@ -25,9 +26,26 @@ try {
  loyf_equal(array(),YOWCL_Free_Core::level_rules(),'Held level terms');
  loyf_equal(array(),YOWCL_Free_Cart::rules(),'Held new redemption');
  foreach(array('Points_Reward','Points_Deduct','Level_Update') as $id){$class='YOWCL_WC_Email_Loyalty_'.$id;$mail=new $class();loyf_assert(!$mail->is_enabled(),'Held native mail '.$id);}
+ // Existing origin-less partial evidence cannot authorize a Premium target write.
+ $partial=YOWCL_Free_Migrations::preview('signup','legacy');update_option(YOWCL_Free_Migrations::witness('signup').'_before',$partial);YOWCL_Free_Migrations::run();
+ loyf_equal($before[$account],YOWCL_Free_Migrations::read($account),'Origin-less frozen evidence holds unchanged');loyf_assert(!YOWCL_Free_Migrations::ready('signup'),'Origin-less partial never completes');
+ delete_option(YOWCL_Free_Migrations::witness('signup').'_before');
+ // Malformed native POSTs cannot change reviewed terms or create a resolution.
+ $valid=YOWCL_Free_Migrations::preview('signup','canonical');$post=array('feature'=>'signup','mode'=>'canonical','fingerprint'=>hash('sha256',serialize($valid)),'_wpnonce'=>wp_create_nonce('loyf_resolve_signup'));
+ $method=$_SERVER['REQUEST_METHOD']??null;
+ foreach(array(array($post,'GET'),array(array_replace($post,array('_wpnonce'=>'invalid')),'POST'),array(array_replace($post,array('feature'=>array('signup'))),'POST'),array(array_replace($post,array('fingerprint'=>array('invalid'))),'POST')) as $denied){
+  $_POST=$denied[0];$_SERVER['REQUEST_METHOD']=$denied[1];try{do_action('admin_post_loyf_resolve_migration');throw new RuntimeException('Denied native POST accepted');}catch(RuntimeException $e){loyf_equal('migration_resolution_denied',$e->getMessage(),'Native POST denial');}
+ }
+ $_POST=array();if(null===$method){unset($_SERVER['REQUEST_METHOD']);}else{$_SERVER['REQUEST_METHOD']=$method;}
+ loyf_equal($before[$account],YOWCL_Free_Migrations::read($account),'Denied native POST leaves raw target intact');loyf_equal(null,YOWCL_Free_Migrations::read(YOWCL_Free_Migrations::witness('signup').'_resolution'),'Denied native POST leaves no intent');
  $choose('signup','canonical');
  loyf_equal($before[$account],YOWCL_Free_Migrations::read($account),'Keep canonical exact wrapper bytes');
  loyf_assert(YOWCL_Free_Migrations::ready('signup')&&!YOWCL_Free_Migrations::ready('login'),'Per-feature resolution isolation');
+ // Previously completed origin-less evidence is visible without rollback or unknown fields.
+ $historical=YOWCL_Free_Migrations::preview('signup','canonical');update_option(YOWCL_Free_Migrations::witness('signup').'_before',$historical);
+ $evidence=YOWCL_Free_Migrations::historical_evidence('signup');loyf_assert(is_array($evidence)&&isset($evidence['before'],$evidence['migration'],$evidence['current']),'Completed historical evidence visible');
+ loyf_assert(false===strpos(wp_json_encode($evidence),'unknown'),'Historical diagnostic excludes dormant unknown fields');ob_start();YOWCL_Free_Migrations::notices();$notice=ob_get_clean();loyf_assert(false!==strpos($notice,'Historical Loyalty migration evidence'),'Historical evidence native administrator notice');
+ loyf_equal($before[$account],YOWCL_Free_Migrations::read($account),'Historical diagnostic performs no rollback');wp_set_current_user(0);loyf_equal(null,YOWCL_Free_Migrations::historical_evidence('signup'),'No unauthenticated historical assessment');wp_set_current_user(1);
  // A stale reviewed source/target cannot be adopted.
  $stale=YOWCL_Free_Migrations::preview('login','legacy');$terms=maybe_unserialize(get_option($account));$terms['login_points']=31;update_option($account,serialize($terms));
  try{YOWCL_Free_Migrations::resolve('login','legacy',hash('sha256',serialize($stale)),wp_create_nonce('loyf_resolve_login'));throw new RuntimeException('Stale choice accepted');}catch(RuntimeException $e){loyf_equal('migration_resolution_stale',$e->getMessage(),'Stale choice denial');}
@@ -56,5 +74,5 @@ try {
  echo "Migration boundaries: PASS (Premium hold, wrapped bytes, per-feature choices, stale/denied POST terms, target/witness retry and intervening owned edits).\n";
 }finally{
  foreach($saved as $n=>$row){$wpdb->delete($wpdb->options,array('option_name'=>$n));if(null!==$row){$wpdb->insert($wpdb->options,array('option_name'=>$n,'option_value'=>$row['option_value'],'autoload'=>$row['autoload']));}}
- wp_cache_flush();wp_set_current_user(1);
+ remove_filter('wp_die_handler',$die);remove_filter('wp_die_ajax_handler',$die);wp_cache_flush();wp_set_current_user(1);
 }
