@@ -13,6 +13,8 @@ Authority: Issue #10 and its fixed start handoff. Free-owned scalar settings nev
 
 Native-owned history enters election validation even when its stored identity differs. An orphan, duplicate or malformed identity cannot erase that history; only a coherent validated frozen receipt may retain another customer ownership after a live owner edit.
 
+All receipt consumers use the same authoritative persisted-row reader: absence means zero rows; empty, duplicate or unsupported rows are held unchanged before mutation. Single-value Woo metadata reads cannot authorize attachment or replace a frozen receipt.
+
 Invariants: one registered customer winner, one event per order/component, no historical positive backfill, no marker-as-value authority. Empty final receipt prevents later mutable state from changing attribution. Existing Premium receipts outside the link/referrer/no-expiration/registered/first-order shape are held rather than interpreted as Free policy. Committed component marker proof/recovery stays independent of settings/cookies; legacy awarded markers suppress fabricated value. No raw user-ID cookie selects a referrer.
 
 Referrer and referee are separate recipients: LOYF-9 may independently award the referred customer on the same order, and its no-clawback policy stays intact when Referral Lite reverses. Producers share the established order mutex and canonical recipient locks; contention retains only application retries, never replays Woo hooks. Post-commit notifications remain observations with the existing delivery crash window, not an outbox.

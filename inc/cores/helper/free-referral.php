@@ -37,10 +37,18 @@ class YOWCL_Free_Referral {
         }
         return $terms;
     }
-    public static function terms( $order ) {
-        $rows = array_values( $order->get_meta( YOWCL_Referral_Rewards::TERMS, false, 'edit' ) );
-        if ( 1 !== count( $rows ) ) { throw new DomainException( 'referral_terms_ambiguous' ); }
-        $t = $rows[0]->value;
+    /** Null means no persisted row; empty, duplicate and unsupported rows are held unchanged. */
+    public static function receipt( $order ) {
+        global $wpdb;
+        $hpos = \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled();
+        $table = $hpos ? $wpdb->prefix . 'wc_orders_meta' : $wpdb->postmeta;
+        $column = $hpos ? 'order_id' : 'post_id';
+        $rows = YOWCL_Points_Lock::query( $wpdb->dbh, $wpdb->prepare( "SELECT meta_value FROM {$table} WHERE {$column}=%d AND meta_key=%s", $order->get_id(), YOWCL_Referral_Rewards::TERMS ) );
+        try {
+            if ( 0 === $rows->num_rows ) { return null; }
+            if ( 1 !== $rows->num_rows ) { throw new DomainException( 'referral_terms_ambiguous' ); }
+            $t = maybe_unserialize( $rows->fetch_assoc()['meta_value'] );
+        } finally { $rows->free(); }
         if ( ! is_array( $t ) || 1 !== ( $t['version'] ?? null ) || ! in_array( $t['channel'] ?? null, array( 'none','link' ), true ) ||
             ! is_int( $t['referee'] ?? null ) || $t['referee'] < 0 || ! is_int( $t['referrer'] ?? null ) || $t['referrer'] < 0 ||
             ( $t['identity'] ?? null ) !== ( $t['referee'] > 0 ? 'user:' . $t['referee'] : '' ) || 'first_order' !== ( $t['frequency'] ?? null ) ||
@@ -54,11 +62,16 @@ class YOWCL_Free_Referral {
         }
         return $t;
     }
+    public static function terms( $order ) {
+        $terms = self::receipt( $order );
+        if ( null === $terms ) { throw new DomainException( 'referral_terms_ambiguous' ); }
+        return $terms;
+    }
     public static function qualification( $order ) {
         $rows = array_values( $order->get_meta( YOWCL_Referral_Rewards::QUALIFIED, false, 'edit' ) );
         $q = 1 === count( $rows ) ? $rows[0]->value : null;
-        $raw = $order->get_meta( YOWCL_Referral_Rewards::TERMS, true );
-        $referee = '' === $raw ? (int) $order->get_user_id() : self::terms( $order )['referee'];
+        $receipt = self::receipt( $order );
+        $referee = null === $receipt ? (int) $order->get_user_id() : $receipt['referee'];
         $identities = array_values( $order->get_meta( YOWCL_Referral_Rewards::IDENTITY, false, 'edit' ) );
         // Native customer history must be validated before an identity can exclude an order.
         $identity = $referee > 0 ? 'user:' . $referee : '';

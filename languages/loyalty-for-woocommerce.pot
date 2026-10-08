@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-08T00:49:19+00:00\n"
+"POT-Creation-Date: 2026-10-08T01:02:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
@@ -1265,19 +1265,19 @@ msgstr ""
 msgid "Referral %1$s reward (%2$s) for order %3$s"
 msgstr ""
 
-#: inc/cores/helper/free-referral.php:92
+#: inc/cores/helper/free-referral.php:105
 msgid "Your referral link"
 msgstr ""
 
-#: inc/cores/helper/free-referral.php:92
+#: inc/cores/helper/free-referral.php:105
 msgid "Link copied"
 msgstr ""
 
-#: inc/cores/helper/free-referral.php:92
+#: inc/cores/helper/free-referral.php:105
 msgid "Select and copy the link"
 msgstr ""
 
-#: inc/cores/helper/free-referral.php:92
+#: inc/cores/helper/free-referral.php:105
 msgid "Copy link"
 msgstr ""
 
@@ -1351,7 +1351,7 @@ msgstr ""
 msgid "Late payment after Loyalty redemption return or incomplete recovery; manual review required. Merchant must resolve the payment. Reference: %s"
 msgstr ""
 
-#: inc/cores/helper/referral-rewards.php:275
+#: inc/cores/helper/referral-rewards.php:273
 #, php-format
 msgid "Referral reward reversed for order %s"
 msgstr ""
