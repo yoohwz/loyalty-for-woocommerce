@@ -211,7 +211,8 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 	        }
 	    
             try { YOWCL_Free_Cart::apply( $_POST['loyalty_points_input'] ?? null ); WC()->cart->calculate_totals(); }
-            catch ( Throwable $e ) { wp_send_json_error( array( 'message' => $e->getMessage() ) ); return; }
+            // The Classic client renders this message inside HTML; exceptions may contain private or third-party details.
+            catch ( Throwable $e ) { wp_send_json_error( array( 'message' => esc_html__( 'Points could not be applied. Check your balance and reapply points.', 'loyalty-for-woocommerce' ) ) ); return; }
             wp_send_json_success( array( 'message' => __( 'Points applied successfully.', 'loyalty-for-woocommerce' ) ) );
 	    
 	        wp_die();

@@ -4,7 +4,14 @@ require_once __DIR__.'/assertions.php';
 global $wpdb;
 if (!defined('DOING_AJAX')) { define('DOING_AJAX', true); }
 add_filter('wp_die_handler', static function(){ return static function($message){ throw new RuntimeException(is_wp_error($message)?$message->get_error_message():(string)$message); }; });
-function edition_snapshot(){global $wpdb;return array('rows'=>$wpdb->get_results("SELECT * FROM {$wpdb->prefix}yo_loyalty_points_log ORDER BY id",ARRAY_A),'meta'=>$wpdb->get_results("SELECT * FROM {$wpdb->usermeta} WHERE meta_key <> 'dismissed_wp_pointers' ORDER BY umeta_id",ARRAY_A),'roles'=>get_option($wpdb->prefix.'user_roles'));}
+function edition_snapshot(){
+ global $wpdb;
+ // Native wp_login/user_register and Woo's qualifying-order read refresh these
+ // presentation/activity caches. All Loyalty, role and other raw meta stays exact.
+ $excluded=array('dismissed_wp_pointers','wc_last_active','wc_order_count_'.rtrim($wpdb->get_blog_prefix(),'_'));
+ $where=implode(',',array_map(static function($key)use($wpdb){return $wpdb->prepare('%s',$key);},$excluded));
+ return array('rows'=>$wpdb->get_results("SELECT * FROM {$wpdb->prefix}yo_loyalty_points_log ORDER BY id",ARRAY_A),'meta'=>$wpdb->get_results("SELECT * FROM {$wpdb->usermeta} WHERE meta_key NOT IN ($where) ORDER BY umeta_id",ARRAY_A),'roles'=>get_option($wpdb->prefix.'user_roles'));
+}
 loyf_assert('no'===get_option('woocommerce_custom_orders_table_data_sync_enabled'),'Edition synchronization disabled');
 $expected='hpos'===getenv('LOYF_STORAGE');loyf_equal($expected,Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled(),'Native edition storage owner');
 $phase=getenv('LOYF13_EDITION_PHASE');$file=getenv('LOYF13_EDITION_FIXTURE');
