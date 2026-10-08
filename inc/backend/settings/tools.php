@@ -9,6 +9,7 @@ class YOSWC_Loyalty_Settings_Tools {
 	}
 
 	public function display_tools_settings() {
+        YOWCL_Free_Reader_Admin::form();
 		if ( null !== filter_input( INPUT_POST, 'import_csv', FILTER_UNSAFE_RAW ) ) {
 			$this->import_csv();
 		}

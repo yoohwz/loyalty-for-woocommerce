@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-08T04:21:21+00:00\n"
+"POT-Creation-Date: 2026-10-08T06:52:15+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
@@ -54,6 +54,7 @@ msgstr ""
 #: inc/backend/settings/extra-points.php:75
 #: inc/backend/settings/extra-points.php:102
 #: inc/backend/users/users-points.php:20
+#: inc/cores/helper/free-customer-components.php:55
 #: inc/frontend/loyalty-info-bubble.php:472
 msgid "Points"
 msgstr ""
@@ -414,6 +415,7 @@ msgstr ""
 #: inc/backend/settings/customization.php:129
 #: inc/backend/settings/customization.php:538
 #: inc/backend/settings/customization.php:687
+#: inc/cores/helper/free-customer-components.php:66
 #: inc/frontend/my-account.php:65
 msgid "My Points"
 msgstr ""
@@ -697,8 +699,8 @@ msgstr ""
 #: inc/backend/settings/extra-points.php:171
 #: inc/backend/settings/general-add-remove-user-role.php:19
 #: inc/backend/settings/general-add-remove-user-role.php:26
-#: inc/backend/settings/tools.php:130
-#: inc/backend/settings/tools.php:146
+#: inc/backend/settings/tools.php:131
+#: inc/backend/settings/tools.php:147
 msgid "Nonce verification failed. Please try again."
 msgstr ""
 
@@ -741,6 +743,7 @@ msgid "Points awarded to customers when they log-in daily."
 msgstr ""
 
 #: inc/backend/settings/extra-points.php:72
+#: inc/cores/helper/free-customer-components.php:83
 #: inc/frontend/loyalty-info-bubble.php:274
 msgid "Product review"
 msgstr ""
@@ -881,129 +884,130 @@ msgstr ""
 msgid "Referrer points"
 msgstr ""
 
-#: inc/backend/settings/tools.php:26
-#: inc/backend/settings/tools.php:37
+#: inc/backend/settings/tools.php:27
+#: inc/backend/settings/tools.php:38
 msgid "Import"
 msgstr ""
 
-#: inc/backend/settings/tools.php:30
+#: inc/backend/settings/tools.php:31
 msgid "Import CSV"
 msgstr ""
 
-#: inc/backend/settings/tools.php:43
+#: inc/backend/settings/tools.php:44
 msgid "Start another import"
 msgstr ""
 
-#: inc/backend/settings/tools.php:45
+#: inc/backend/settings/tools.php:46
 msgid "Retry the original file to continue the current import. Start another import only after reviewing the previous results."
 msgstr ""
 
 #. translators: %1$s: URL to download the CSV sample file.
-#: inc/backend/settings/tools.php:51
+#: inc/backend/settings/tools.php:52
 #, php-format
 msgid "Download the <a href=\"%1$s\" target=\"_blank\" rel=\"noopener\">CSV sample file</a> and add the entries to the correct column."
 msgstr ""
 
-#: inc/backend/settings/tools.php:68
+#: inc/backend/settings/tools.php:69
 #: inc/frontend/loyalty-info-bubble.php:266
 msgid "Calculation"
 msgstr ""
 
-#: inc/backend/settings/tools.php:72
+#: inc/backend/settings/tools.php:73
+#: inc/cores/helper/free-customer-components.php:11
 msgid "Loyalty level"
 msgstr ""
 
-#: inc/backend/settings/tools.php:75
+#: inc/backend/settings/tools.php:76
 msgid "Redefine"
 msgstr ""
 
-#: inc/backend/settings/tools.php:78
+#: inc/backend/settings/tools.php:79
 #: inc/frontend/my-account.php:208
 msgid "Loading..."
 msgstr ""
 
-#: inc/backend/settings/tools.php:79
+#: inc/backend/settings/tools.php:80
 msgid "Redefining... Please wait, DO NOT leave the page until finished."
 msgstr ""
 
-#: inc/backend/settings/tools.php:81
+#: inc/backend/settings/tools.php:82
 msgid "Redefine the loyalty levels based on the total earned points."
 msgstr ""
 
-#: inc/backend/settings/tools.php:111
+#: inc/backend/settings/tools.php:112
 msgid "Import recovery identity needs review."
 msgstr ""
 
-#: inc/backend/settings/tools.php:119
-#: inc/backend/settings/tools.php:150
+#: inc/backend/settings/tools.php:120
+#: inc/backend/settings/tools.php:151
 msgid "You do not have permission to import points."
 msgstr ""
 
-#: inc/backend/settings/tools.php:120
+#: inc/backend/settings/tools.php:121
 msgid "An import is running. Retry the current file later."
 msgstr ""
 
-#: inc/backend/settings/tools.php:134
+#: inc/backend/settings/tools.php:135
 msgid "The current import changed. Reload and review its results."
 msgstr ""
 
-#: inc/backend/settings/tools.php:157
+#: inc/backend/settings/tools.php:158
 msgid "No file was uploaded."
 msgstr ""
 
-#: inc/backend/settings/tools.php:163
+#: inc/backend/settings/tools.php:164
 msgid "Invalid file type. Please upload a CSV file."
 msgstr ""
 
-#: inc/backend/settings/tools.php:171
+#: inc/backend/settings/tools.php:172
 msgid "Could not initialize the WordPress filesystem."
 msgstr ""
 
-#: inc/backend/settings/tools.php:177
+#: inc/backend/settings/tools.php:178
 msgid "Could not open CSV file."
 msgstr ""
 
-#: inc/backend/settings/tools.php:182
+#: inc/backend/settings/tools.php:183
 msgid "Invalid import identity or file size."
 msgstr ""
 
-#: inc/backend/settings/tools.php:186
+#: inc/backend/settings/tools.php:187
 msgid "Import at most 500 rows per operation."
 msgstr ""
 
-#: inc/backend/settings/tools.php:191
+#: inc/backend/settings/tools.php:192
 msgid "Invalid or duplicate CSV target. Whole non-negative balances are required."
 msgstr ""
 
-#: inc/backend/settings/tools.php:197
+#: inc/backend/settings/tools.php:198
 msgid "This import identity belongs to different terms. Retry the original file."
 msgstr ""
 
-#: inc/backend/settings/tools.php:211
+#: inc/backend/settings/tools.php:212
 msgid "Points imported from CSV."
 msgstr ""
 
 #. translators: %d: number of rows imported.
-#: inc/backend/settings/tools.php:224
+#: inc/backend/settings/tools.php:225
 #, php-format
 msgid "Successfully imported %d row(s)."
 msgstr ""
 
 #. translators: %d: number of rows that failed to import.
-#: inc/backend/settings/tools.php:234
+#: inc/backend/settings/tools.php:235
 #, php-format
 msgid "%d row(s) failed to import."
 msgstr ""
 
-#: inc/backend/settings/tools.php:245
+#: inc/backend/settings/tools.php:246
 msgid "You do not have permission to perform this action."
 msgstr ""
 
-#: inc/backend/settings/tools.php:306
+#: inc/backend/settings/tools.php:307
 msgid "Loyalty levels have been successfully redefined."
 msgstr ""
 
-#: inc/backend/settings/tools.php:314
+#: inc/backend/settings/tools.php:315
 msgid "An error occurred redefining loyalty levels."
 msgstr ""
 
@@ -1245,7 +1249,97 @@ msgid "Level up bonus for role:"
 msgstr ""
 
 #: inc/cores/helper/free-core.php:89
+#: inc/cores/helper/free-reader-admin.php:13
 msgid "Unavailable"
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:11
+msgid "Points balance"
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:11
+msgid "Points history"
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:11
+msgid "Ways to earn"
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:11
+msgid "Referral link"
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:19
+msgid "Sign in to view your loyalty information. If already signed in, reload to try again."
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:30
+msgid "Your loyalty information appears here after signing in."
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:34
+msgid "Loyalty information is unavailable."
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:44
+#: inc/cores/helper/free-customer-components.php:52
+msgid "Unavailable — contact the store for review."
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:46
+msgid "Loyalty information needs review or this account is not enrolled."
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:57
+msgid "Stored balance; spending is held for review."
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:62
+msgid "The store has not enabled the points history page."
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:74
+#, php-format
+msgid "Earned points: %s"
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:77
+#, php-format
+msgid "Next level: %1$s at %2$s earned points."
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:82
+msgid "Eligible purchases"
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:83
+#: inc/frontend/loyalty-info-bubble.php:272
+msgid "Create an account"
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:83
+#: inc/frontend/loyalty-info-bubble.php:273
+msgid "Daily login"
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:84
+msgid "Reach a new loyalty level"
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:86
+msgid "First eligible purchase"
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:87
+msgid "Refer a registered customer"
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:88
+msgid "No Free earning offers are currently enabled."
+msgstr ""
+
+#: inc/cores/helper/free-customer-components.php:92
+msgid "Referrals are currently disabled."
 msgstr ""
 
 #: inc/cores/helper/free-first-purchase.php:111
@@ -1444,6 +1538,98 @@ msgstr ""
 
 #: inc/cores/helper/free-order-actions.php:36
 msgid "Purchase an order"
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:6
+#: inc/cores/helper/free-reader-admin.php:20
+msgid "Loyalty overview"
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:11
+msgid "Loyalty overview is unavailable."
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:20
+msgid "Flow period"
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:20
+msgid "Lifetime"
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:20
+msgid "Recent 30 days"
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:20
+msgid "View"
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:21
+msgid "Current eligible loyalty members"
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:21
+msgid "Known gross points issued"
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:21
+msgid "Known gross points redeemed"
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:21
+msgid "Current available points outstanding"
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:21
+msgid "Distinct proven funded orders"
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:24
+msgid "Members and stock cover current users admitted by saved Loyalty roles. Stock is stored balance as of now, including held balances; it is not historical spendable value."
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:24
+msgid "Flows cover proven canonical events across users. Awards exclude imports, returns and reversals. Redeemed is gross funded checkout debit; returns do not reduce it. No redemption share is shown because a matching qualifying order denominator is not established."
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:25
+#, php-format
+msgid "Accounts with held balances: %d."
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:27
+#, php-format
+msgid "Excluded unproven legacy rows: %d."
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:28
+#, php-format
+msgid "Excluded debits without native checkout funding proof: %d."
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:31
+msgid "Unavailable means failed or incomplete evidence, ambiguous metadata, unsupported precision, missing time proof, or the safe read limit. No value is repaired on this page."
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:35
+msgid "Export customer loyalty state"
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:35
+msgid "Current eligible customers only; user ID, email, exact stored balances and Loyalty level. Maximum 10,000 customers. This CSV is not an import template. A final complete record is required; an error record or missing footer means incomplete. Exact numbers and unsafe spreadsheet text are exported as tab-prefixed text."
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:38
+msgid "Download customer CSV"
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:83
+msgid "Export access denied."
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:90
+msgid "Export unavailable. No complete customer export was produced."
 msgstr ""
 
 #: inc/cores/helper/free-referral.php:36
@@ -1728,14 +1914,6 @@ msgstr ""
 
 #: inc/frontend/loyalty-info-bubble.php:264
 msgid "Point totals are rounded down."
-msgstr ""
-
-#: inc/frontend/loyalty-info-bubble.php:272
-msgid "Create an account"
-msgstr ""
-
-#: inc/frontend/loyalty-info-bubble.php:273
-msgid "Daily login"
 msgstr ""
 
 #. translators: 1: Loyalty level, 2: Points amount.
@@ -2051,4 +2229,38 @@ msgstr ""
 
 #: js/blocks-redemption.js:50
 msgid "Retry points update"
+msgstr ""
+
+#: inc/blocks/level-progress/block.json
+msgctxt "block title"
+msgid "Loyalty level"
+msgstr ""
+
+#: inc/blocks/level-progress/block.json
+#: inc/blocks/points-balance/block.json
+#: inc/blocks/points-history/block.json
+#: inc/blocks/referral-link/block.json
+#: inc/blocks/ways-to-earn/block.json
+msgctxt "block description"
+msgid "Private current-customer loyalty information."
+msgstr ""
+
+#: inc/blocks/points-balance/block.json
+msgctxt "block title"
+msgid "Points balance"
+msgstr ""
+
+#: inc/blocks/points-history/block.json
+msgctxt "block title"
+msgid "Points history"
+msgstr ""
+
+#: inc/blocks/referral-link/block.json
+msgctxt "block title"
+msgid "Referral link"
+msgstr ""
+
+#: inc/blocks/ways-to-earn/block.json
+msgctxt "block title"
+msgid "Ways to earn"
 msgstr ""

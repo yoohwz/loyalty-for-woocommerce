@@ -181,6 +181,7 @@ jobs:
           bash tests/runtime/run.sh
           bash tests/runtime/modern.sh
           bash tests/runtime/onboarding.sh
+          bash tests/runtime/consumers.sh
 
   required:
     name: LOYF Required CI
