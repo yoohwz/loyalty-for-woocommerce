@@ -45,7 +45,7 @@ if('free-seed'===$phase){
  file_put_contents($file,wp_json_encode(array('buyer_login'=>get_userdata($buyer)->user_login,'buyer'=>$buyer,'referrer'=>$ref,'review'=>$review,'order'=>$order_id,'snapshot'=>edition_snapshot()),JSON_PRETTY_PRINT));echo "Native Free positive edition fixture PASS (registered rewards, Classic funded checkout, privileged manual AJAX, native guarded CSV ingestion).\n";return;
 }
 $data=json_decode(file_get_contents($file),true);$before=edition_snapshot();
-if('premium-replay'===$phase){loyf_assert(class_exists('YOWCL_Loyalty',false)&&!class_exists('YOSWC_Loyalty',false),'Separate Premium owner');loyf_assert(YOWCL_Premium_Gate::is_active(),'Native Premium gate enabled by explicit simulated validator');}
+if(in_array($phase,array('premium-replay','premium-return-replay'),true)){loyf_assert(class_exists('YOWCL_Loyalty',false)&&!class_exists('YOSWC_Loyalty',false),'Separate Premium owner');loyf_assert(YOWCL_Premium_Gate::is_active(),'Native Premium gate enabled by explicit simulated validator');}
 else{loyf_assert(class_exists('YOSWC_Loyalty',false)&&!class_exists('YOWCL_Loyalty',false),'Separate Free owner');}
 $u=$data['buyer'];$o=wc_get_order($data['order']);do_action('user_register',$u);do_action('wp_login',$data['buyer_login'],get_userdata($u));do_action('comment_post',$data['review'],1,get_comment($data['review'],ARRAY_A));do_action('woocommerce_order_status_completed',$o->get_id(),$o);do_action('woocommerce_payment_complete',$o->get_id());
 loyf_equal($data['snapshot']['rows'],edition_snapshot()['rows'],'Cross-edition replay exact log rows/IDs/NULLs');
