@@ -3,7 +3,7 @@
 if (!defined('LOYF_RUNTIME_DISPOSABLE')) { throw new RuntimeException('Disposable required'); }
 $feature=$args[0]??'';
 remove_filter('wp_redirect','WP_CLI\\Utils\\wp_redirect_handler');
-$unexpected_die=function(){return function($message){throw new RuntimeException((string)$message);};};
+$unexpected_die=function(){return function($message){throw new RuntimeException(is_wp_error($message)?$message->get_error_message():(string)$message);};};
 add_filter('wp_die_handler',$unexpected_die);add_filter('wp_die_ajax_handler',$unexpected_die);
 register_shutdown_function(function()use($feature){if(!YOWCL_Free_Migrations::ready($feature)){throw new RuntimeException('Native feature resolution failed '.$feature);}});
 wp_set_current_user(1);

@@ -2,10 +2,11 @@
 require __DIR__ . '/assertions.php';
 global $wpdb;
 wp_set_current_user(1);
-$unexpected_die=function(){return function($message){throw new RuntimeException((string)$message);};};
+$unexpected_die=function(){return function($message){throw new RuntimeException(is_wp_error($message)?$message->get_error_message():(string)$message);};};
 add_filter('wp_die_handler',$unexpected_die);add_filter('wp_die_ajax_handler',$unexpected_die);
 // Later synthetic resets model explicit merchant choices, not a new origin assertion.
 function loyf_upgrade_migrate() {
+    $actor=get_current_user_id(); wp_set_current_user(1);
     YOWCL_Free_Migrations::run();
     foreach(YOWCL_Free_Migrations::features() as $feature) {
         if(YOWCL_Free_Migrations::ready($feature)) { continue; }
@@ -14,6 +15,7 @@ function loyf_upgrade_migrate() {
             YOWCL_Free_Migrations::resolve($feature,'legacy',hash('sha256',serialize($spec)),wp_create_nonce('loyf_resolve_'.$feature));
         } catch(Throwable $e) { /* Fault fixtures retain the native hold. */ }
     }
+    wp_set_current_user($actor);
 }
 $before = get_option('loyf_upgrade_before');
 loyf_assert(is_array($before), 'Actual old-Free fixture');
