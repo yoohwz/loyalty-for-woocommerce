@@ -55,7 +55,7 @@ if ( 'bootstrap-merchant' === $phase ) {
     (new YOSWC_Loyalty_Settings())->save_earning_point_rules();
     loyf_equal('7',get_option('loyalty_points_earning_rules')['customer']['points'],'Native merchant save during bootstrap'); return;
 }
-if ( in_array($case,array('bootstrap-race','seal-race'),true) ) {
+if ( in_array($case,array('bootstrap-race','seal-race','assessment-race'),true) ) {
     loyf_equal('review',YOWCL_Free_Onboarding::state()['status'],'Competing bootstrap retires unsealed proof');
     loyf_assert(!YOWCL_Free_Onboarding::writable(),'Interleaved bootstrap is review-only');
     $before=loyf11_snapshot(); $input=loyf11_input();
