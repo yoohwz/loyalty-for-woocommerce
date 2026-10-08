@@ -58,7 +58,7 @@ class YOWCL_Free_Customer_Components {
             return $markup;
         }
         if ( 'points-history' === $kind ) {
-            $settings = get_option( 'loyalty_customization_my_account', array() );
+            $settings = maybe_unserialize( get_option( 'loyalty_customization_my_account', array() ) );
             if ( ! is_array( $settings ) || empty( $settings['my_account'] ) || wc_get_page_id( 'myaccount' ) <= 0 ) { return self::text( __( 'The store has not enabled the points history page.', 'loyalty-for-woocommerce' ) ); }
             $slug = $settings['my_account_slug'] ?? 'my-points';
             if ( ! is_string( $slug ) || '' === $slug || sanitize_title( $slug ) !== $slug ) { return self::text( $unavailable ); }
@@ -80,7 +80,10 @@ class YOWCL_Free_Customer_Components {
         if ( 'ways-to-earn' === $kind ) {
             $items = array(); $rules = maybe_unserialize( get_option( 'loyalty_points_earning_rules', array() ) ); $role = $customer['level'];
             if ( ! is_array( $rules ) ) { return self::text( $unavailable ); }
-            if ( $role && isset( $rules[$role] ) ) {
+            $statuses = maybe_unserialize( get_option( 'loyalty_points_earning_status', array() ) );
+            $purchase_enabled = false; $registered_statuses = wc_get_order_statuses();
+            if ( is_array( $statuses ) ) { foreach ( $statuses as $status ) { if ( is_string( $status ) && isset( $registered_statuses[$status] ) ) { $purchase_enabled = true; break; } } }
+            if ( $purchase_enabled && $role && isset( $rules[$role] ) ) {
                 $rule = $rules[$role];
                 if ( ! is_array( $rule ) || ! is_scalar( $rule['points'] ?? null ) || ! is_scalar( $rule['amount'] ?? null ) || ! is_numeric( $rule['points'] ) || ! is_numeric( $rule['amount'] ) || ! is_finite( (float) $rule['points'] ) || ! is_finite( (float) $rule['amount'] ) ) { return self::text( $unavailable ); }
                 if ( (int) $rule['points'] > 0 && (float) $rule['amount'] > 0 ) { $items[] = __( 'Eligible purchases', 'loyalty-for-woocommerce' ); }

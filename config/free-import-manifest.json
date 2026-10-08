@@ -495,7 +495,7 @@
     {
       "target": "inc/cores/helper/free-customer-components.php",
       "mode": "100644",
-      "sha256": "8ad5c3825fe16c4eb6e8a5d64f5dabeb933c973a3673250c4d92345847c923d2"
+      "sha256": "4db762dadac432693ff1172749d166b2f2e9dd63ba48cda51512d04be634e63d"
     },
     {
       "target": "inc/cores/helper/free-first-purchase.php",
