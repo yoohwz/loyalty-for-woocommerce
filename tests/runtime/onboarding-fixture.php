@@ -23,7 +23,7 @@ if ( 'seed' === $phase ) {
     if ( 'premium' === $case ) { add_option( 'loyalty_referral_coupon',serialize( array( 'enabled'=>'yes','opaque'=>array( 'preserve'=>'exact' ) ) ) ); }
     if ( 'user-marker' === $case ) { add_user_meta( $user,'_yowcl_loyalty_level','gold' ); }
     if ( 'order-marker' === $case ) { $o->update_meta_data( '_points_awarded',31 ); $o->save_meta_data(); }
-    if ( 'hpos-marker' === $case ) { update_option( 'woocommerce_custom_orders_table_data_sync_enabled','no' ); update_option( 'woocommerce_custom_orders_table_enabled','yes' ); $o=wc_get_order( $o->get_id() ); $o->update_meta_data( '_yowcl_referral_terms',array( 'legacy'=>'preserve' ) ); $o->save_meta_data(); }
+    if ( 'hpos-marker' === $case ) { $o=wc_get_order( $o->get_id() ); $o->update_meta_data( '_yowcl_referral_terms',array( 'legacy'=>'preserve' ) ); $o->save_meta_data(); }
     if ( 'version' === $case ) { add_option( 'yoswc_loyalty_version','1.2.2' ); }
     if ( 'bad-cutover' === $case ) { add_option( 'loyf_core_cutover_v1',array( 'malformed'=>true ) ); }
     if ( 'migration' === $case ) { add_option( 'loyf_migration_signup_v1','broken' ); }

@@ -54,6 +54,7 @@ for case in $cases; do
   wp core install --url=http://loyf-onboarding.invalid --title=Onboarding --admin_user=loyf_admin --admin_password=disposable-only --admin_email=admin@example.invalid --skip-email --quiet
   wp config set DISABLE_WP_CRON true --raw --quiet
   wp plugin activate woocommerce --quiet
+  if [[ "$case" == hpos-marker ]]; then wp option update woocommerce_custom_orders_table_data_sync_enabled no --quiet; wp option update woocommerce_custom_orders_table_enabled yes --quiet; fi
   LOYF11_PHASE=seed wp eval-file "$repo/tests/runtime/onboarding-fixture.php" --quiet
   wp plugin activate loyalty-for-woocommerce --quiet
   LOYF11_PHASE=verify wp eval-file "$repo/tests/runtime/onboarding-fixture.php" --quiet
