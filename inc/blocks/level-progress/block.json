@@ -1,0 +1,16 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "loyf/level-progress",
+  "title": "Loyalty level",
+  "category": "widgets",
+  "icon": "awards",
+  "description": "Private current-customer loyalty information.",
+  "textdomain": "loyalty-for-woocommerce",
+  "supports": {
+    "html": false,
+    "customClassName": false
+  },
+  "editorScript": "loyf-customer-editor",
+  "style": "loyf-customer-components"
+}

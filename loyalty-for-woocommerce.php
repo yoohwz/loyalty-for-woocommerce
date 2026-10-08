@@ -62,6 +62,9 @@ class YOSWC_Loyalty {
 		add_action( 'woocommerce_init', array( 'YOWCL_Free_Migrations', 'session' ), 20 );
 		YOWCL_Order_Redemption::register();
         YOWCL_Free_Blocks::boot();
+        foreach ( array( 'free-readers', 'free-customer-components', 'free-reader-admin' ) as $reader ) { require_once plugin_dir_path(__FILE__) . 'inc/cores/helper/' . $reader . '.php'; }
+        YOWCL_Free_Customer_Components::boot();
+        YOWCL_Free_Reader_Admin::boot();
 		include_once plugin_dir_path(__FILE__) . 'inc/cores/backend.php';
 		include_once plugin_dir_path(__FILE__) . 'inc/cores/frontend.php';
 		YOWCL_Free_Onboarding::baseline();

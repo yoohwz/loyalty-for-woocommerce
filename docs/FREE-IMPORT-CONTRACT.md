@@ -8,7 +8,7 @@ The executable `config/free-import-manifest.json` inventories every upstream Git
 
 ## Core runtime and extraction
 
-The phase is `core-runtime`: 29 explicit imports plus 63 Free product overlays form the complete 92-file distribution. Source, stage, ZIP and extracted-tree checks require this same boundary. The historical CLI mode name `legacy` automatically includes imports in this phase; it cannot waive core-runtime verification.
+The phase is `core-runtime`: 29 explicit imports plus 74 Free product overlays form the complete 103-file distribution. Source, stage, ZIP and extracted-tree checks require this same boundary. The historical CLI mode name `legacy` automatically includes imports in this phase; it cannot waive core-runtime verification.
 
 Five imports retain whole canonical source bytes: `points-lock.php`, `points-log-cache.php`, `points-log.php`, `role-claims.php` and `inc/backend/actions/helper/roles.php`. The core mixed modules use reviewed exact-byte extraction recipes:
 
