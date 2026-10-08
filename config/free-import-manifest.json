@@ -500,7 +500,7 @@
     {
       "target": "inc/cores/helper/free-migrations.php",
       "mode": "100644",
-      "sha256": "ae9aab76420b265c0415047c44eb1902ba15835efec6ca9437bb5936f4885cad"
+      "sha256": "c92874baa970adad4bbfc6fb3903f5007cccd5d372e1adb5ee3661f2dc1a0bdc"
     },
     {
       "target": "inc/cores/helper/free-onboarding.php",
@@ -620,7 +620,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "a4f6997feab284fcbc82b470716a41bad7067bc781e680135271597b041082c9"
+      "sha256": "4de5ca9eafade1f72e700f82c9b8d08e78996c3dab132e380893657bd155ca54"
     },
     {
       "target": "license.txt",
@@ -635,7 +635,7 @@
     {
       "target": "readme.txt",
       "mode": "100644",
-      "sha256": "95892c1186a9f24cf394aded4193b0a0caee3b1659a546100acde9279328d09f"
+      "sha256": "0d542da4a2980b7745cf1d2a7e24677b80fed5d5772ad87bb478292733f8f883"
     }
   ],
   "blocked_mixed_modules": [

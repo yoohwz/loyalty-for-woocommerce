@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-08T11:01:59+00:00\n"
+"POT-Creation-Date: 2026-10-08T11:56:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
@@ -1217,6 +1217,7 @@ msgid "Please sign in to use points."
 msgstr ""
 
 #: inc/cores/helper/free-blocks.php:47
+#: inc/frontend/cart-checkout.php:215
 msgid "Points could not be applied. Check your balance and reapply points."
 msgstr ""
 
@@ -1250,7 +1251,7 @@ msgid "Level up bonus for role:"
 msgstr ""
 
 #: inc/cores/helper/free-core.php:89
-#: inc/cores/helper/free-migrations.php:288
+#: inc/cores/helper/free-migrations.php:328
 #: inc/cores/helper/free-reader-admin.php:13
 msgid "Unavailable"
 msgstr ""
@@ -1351,32 +1352,32 @@ msgid "First Purchase rewards are held. Explicitly save an enabled First Purchas
 msgstr ""
 
 #. translators: 1: feature name, 2: migration diagnostic code.
-#: inc/cores/helper/free-migrations.php:302
+#: inc/cores/helper/free-migrations.php:342
 #, php-format
 msgid "Loyalty compatibility migration needs attention (%1$s: %2$s). This feature is held until storage/settings are repaired and migration succeeds."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:303
+#: inc/cores/helper/free-migrations.php:343
 msgid "Keep current canonical"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:303
+#: inc/cores/helper/free-migrations.php:343
 msgid "Adopt legacy Free semantics"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:303
+#: inc/cores/helper/free-migrations.php:343
 msgid "Disable using Free settings"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:318
+#: inc/cores/helper/free-migrations.php:358
 msgid "Historical Loyalty migration evidence"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:318
+#: inc/cores/helper/free-migrations.php:358
 msgid "These stored terms do not prove which edition last wrote them. Review the before, migration and current terms manually. No automatic restore is performed."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:335
+#: inc/cores/helper/free-migrations.php:375
 msgid "Please reapply loyalty points after the upgrade. Your points balance has not changed."
 msgstr ""
 
@@ -1835,24 +1836,24 @@ msgid "Apply points"
 msgstr ""
 
 #: inc/frontend/cart-checkout.php:204
-#: inc/frontend/cart-checkout.php:304
+#: inc/frontend/cart-checkout.php:305
 msgid "Nonce verification failed."
 msgstr ""
 
 #: inc/frontend/cart-checkout.php:209
-#: inc/frontend/cart-checkout.php:299
+#: inc/frontend/cart-checkout.php:300
 msgid "User not logged in."
 msgstr ""
 
-#: inc/frontend/cart-checkout.php:215
+#: inc/frontend/cart-checkout.php:216
 msgid "Points applied successfully."
 msgstr ""
 
-#: inc/frontend/cart-checkout.php:226
+#: inc/frontend/cart-checkout.php:227
 msgid "User not logged in"
 msgstr ""
 
-#: inc/frontend/cart-checkout.php:313
+#: inc/frontend/cart-checkout.php:314
 msgid "Points removed successfully."
 msgstr ""
 

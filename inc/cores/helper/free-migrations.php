@@ -3,10 +3,13 @@
 defined( 'ABSPATH' ) || exit;
 class YOWCL_Free_Migrations {
     private static $errors = array();
+    private static $owner = null;
     public static function witness( $feature ) { return 'loyf_migration_' . $feature . '_v1'; }
     public static function read( $name ) {
         global $wpdb;
+        self::assert_owner();
         $rows = $wpdb->get_col( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $name ) );
+        self::assert_owner();
         if ( $wpdb->last_error || ! is_array( $rows ) || count( $rows ) > 1 ) { throw new RuntimeException( 'migration_storage_unavailable' ); }
         return $rows ? $rows[0] : null;
     }
@@ -24,26 +27,58 @@ class YOWCL_Free_Migrations {
         $old = null === $raw ? null : maybe_unserialize( $raw );
         return maybe_serialize( is_string( $old ) && is_serialized( $old ) ? serialize( $value ) : $value );
     }
+    /** Bind mutation/transaction SQL to the original named-lock connection.
+     * wpdb may reconnect and replay a query; a new connection cannot inherit this owner.
+     */
+    private static function assert_owner() {
+        global $wpdb;
+        if (null===self::$owner) { return; }
+        $owner=self::$owner;
+        try {
+            if ($wpdb->options!==$owner['table'] || $wpdb->dbh!==$owner['db'] || (string)mysqli_thread_id($owner['db'])!==$owner['id']) { throw new RuntimeException(); }
+            $result=mysqli_query($owner['db'],$wpdb->prepare('SELECT IS_USED_LOCK(%s)',$owner['name']));
+            if (!($result instanceof mysqli_result)) { throw new RuntimeException(); }
+            try { $row=mysqli_fetch_row($result); } finally { mysqli_free_result($result); }
+            if (!$row || (string)$row[0]!==$owner['id']) { throw new RuntimeException(); }
+        } catch(Throwable $e) { throw new RuntimeException('migration_ownership_lost'); }
+    }
+    private static function query( $sql ) {
+        if (null===self::$owner) { throw new RuntimeException('migration_ownership_lost'); }
+        self::assert_owner();
+        $sql=apply_filters('query',$sql); // Retain WordPress query observers/fault fixtures.
+        self::assert_owner();
+        try { $result=mysqli_query(self::$owner['db'],$sql); }
+        catch(Throwable $e) { throw new RuntimeException('migration_write_failed'); }
+        if (false===$result) { throw new RuntimeException('migration_write_failed'); }
+        self::assert_owner(); return $result;
+    }
     private static function put( $name, $raw, $before ) {
         global $wpdb;
-        if ( $raw !== $before ) {
-            if ( null === $before ) {
-                $result = $wpdb->query( $wpdb->prepare( "INSERT INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, 'no')", $name, $raw ) );
-            } else {
-                $result = $wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s AND BINARY option_value = BINARY %s", $raw, $name, $before ) );
-            }
-            if ( 1 !== $result ) { throw new RuntimeException( 'migration_write_failed' ); }
-            wp_cache_delete( $name, 'options' );
-            wp_cache_delete( 'alloptions', 'options' );
-            wp_cache_delete( 'notoptions', 'options' );
+        if ($raw!==$before) {
+            $sql=null===$before
+                ? $wpdb->prepare("INSERT INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, 'no')",$name,$raw)
+                : $wpdb->prepare("UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s AND BINARY option_value = BINARY %s",$raw,$name,$before);
+            self::query($sql);
+            if (1!==mysqli_affected_rows(self::$owner['db'])) { throw new RuntimeException('migration_write_failed'); }
+            wp_cache_delete($name,'options'); wp_cache_delete('alloptions','options'); wp_cache_delete('notoptions','options');
         }
-        if ( self::read( $name ) !== $raw ) { throw new RuntimeException( 'migration_readback_failed' ); }
+        if (self::read($name)!==$raw) { throw new RuntimeException('migration_readback_failed'); }
     }
     public static function locked( $callback ) {
         global $wpdb;
-        $lock = 'loyf-options:' . md5( $wpdb->options );
-        if ( '1' !== (string) $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, 5)', $lock ) ) ) { throw new RuntimeException( 'migration_lock_unavailable' ); }
-        try { return $callback(); } finally { $wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock ) ); }
+        if (null!==self::$owner) { throw new RuntimeException('migration_nested_operation'); }
+        $lock='loyf-options:'.md5($wpdb->options);
+        if ('1'!==(string)$wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s, 5)',$lock))) { throw new RuntimeException('migration_lock_unavailable'); }
+        $db=$wpdb->dbh;
+        try {
+            if (!($db instanceof mysqli)) { throw new RuntimeException('migration_ownership_lost'); }
+            self::$owner=array('db'=>$db,'id'=>(string)mysqli_thread_id($db),'name'=>$lock,'table'=>$wpdb->options);
+            self::assert_owner(); return $callback();
+        } finally {
+            self::$owner=null;
+            // Release only the original connection's lock, including after wpdb reconnects.
+            try { $result=mysqli_query($db,$wpdb->prepare('SELECT RELEASE_LOCK(%s)',$lock)); if($result instanceof mysqli_result){mysqli_free_result($result);} } catch(Throwable $e) {}
+        }
     }
     private static function points( $value ) {
         if ( '' === $value ) { return $value; }
@@ -164,18 +199,23 @@ class YOWCL_Free_Migrations {
     }
     private static function finish( $feature, $spec, $resolution=false ) {
         global $wpdb;
+        self::assert_owner(); $db=self::$owner['db'];
         $engine=$wpdb->get_var($wpdb->prepare('SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s',$wpdb->options));
-        if ($wpdb->last_error || 'InnoDB'!==$engine || false===$wpdb->query('START TRANSACTION')) { throw new RuntimeException('migration_transaction_unavailable'); }
+        self::assert_owner();
+        if ($wpdb->last_error || 'InnoDB'!==$engine || YOWCL_Points_Lock::has_transaction($db)) { throw new RuntimeException('migration_transaction_unavailable'); }
+        self::query('START TRANSACTION');
         try {
             foreach(array(self::target($feature),self::witness($feature)) as $name) {
-                $wpdb->get_col($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name=%s FOR UPDATE",$name));
-                if($wpdb->last_error) { throw new RuntimeException('migration_storage_unavailable'); }
+                $result=self::query($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name=%s FOR UPDATE",$name));
+                if (!($result instanceof mysqli_result)) { throw new RuntimeException('migration_storage_unavailable'); }
+                mysqli_free_result($result);
             }
             if (null!==self::read(self::witness($feature))) { throw new RuntimeException('migration_witness_changed'); }
             self::finish_locked($feature,$spec,$resolution);
-            if(false===$wpdb->query('COMMIT')) { throw new RuntimeException('migration_commit_unknown'); }
+            self::query('COMMIT');
         } catch(Throwable $e) {
-            $wpdb->query('ROLLBACK'); wp_cache_flush(); throw $e;
+            try { mysqli_query($db,'ROLLBACK'); } catch(Throwable $ignored) {}
+            wp_cache_flush(); throw $e;
         }
     }
     private static function finish_locked( $feature, $spec, $resolution=false ) {

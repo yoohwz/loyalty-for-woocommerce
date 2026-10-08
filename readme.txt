@@ -3,7 +3,7 @@ Contributors: yoohw, baonguyen0310
 Tags: woocommerce, loyalty program, reward points, points rewards, customer rewards
 Requires at least: 6.3
 Tested up to: 7.1.3
-WC tested up to: 11.1.2
+WC tested up to: 11.2.0
 Requires PHP: 7.4
 Stable tag: 1.2.2
 License: GPLv2 or later

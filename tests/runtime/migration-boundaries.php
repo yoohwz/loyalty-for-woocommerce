@@ -61,6 +61,20 @@ try {
  try{$choose('review','canonical');throw new RuntimeException('Malformed witness resolved');}catch(RuntimeException $e){loyf_equal('migration_malformed_witness',$e->getMessage(),'Malformed witness denial');}
  delete_option(YOWCL_Free_Migrations::witness('review'));
  $choose('review','disable');loyf_equal('no',get_option($merged)['review_enabled'],'Explicit disable');
+ // Actual loss of the original connection after target UPDATE must not replay
+ // a standalone success witness on wpdb's replacement/autocommit connection.
+ $clear('levelup');$atomic=YOWCL_Free_Migrations::preview('levelup','disable');$killed=false;
+ $disconnect=static function($sql)use($wpdb,&$killed){
+  if(!$killed&&strpos($sql,"INSERT INTO {$wpdb->options}")!==false&&strpos($sql,"'loyf_migration_levelup_v1',")!==false){
+   $killer=new mysqli(getenv('LOY_DB_HOST'),DB_USER,DB_PASSWORD,DB_NAME,(int)(getenv('LOY_DB_PORT')?:3306));$killer->query('KILL '.(int)mysqli_thread_id($wpdb->dbh));$killer->close();$killed=true;
+  }return $sql;
+ };
+ add_filter('query',$disconnect,PHP_INT_MAX);try{$choose('levelup','disable');throw new RuntimeException('Disconnected migration reported success');}catch(RuntimeException $e){loyf_assert(in_array($e->getMessage(),array('migration_ownership_lost','migration_write_failed'),true),'Original connection loss classified');}finally{remove_filter('query',$disconnect,PHP_INT_MAX);}
+ loyf_assert($killed,'Native witness boundary disconnected actual MySQL connection');$wpdb->check_connection(false);wp_cache_flush();loyf_equal($atomic['before'],YOWCL_Free_Migrations::read($merged),'Disconnected target transaction rolls back');loyf_assert(!YOWCL_Free_Migrations::ready('levelup'),'Replacement connection cannot fabricate witness');$choose('levelup','disable');loyf_assert(YOWCL_Free_Migrations::ready('levelup'),'Explicit reviewed intent recovers on new owner');$clear('levelup');
+ // A merchant callback's outer transaction must never be implicitly committed.
+ $outer=$wpdb->dbh;mysqli_query($outer,'START TRANSACTION');$wpdb->query($wpdb->prepare("INSERT INTO {$wpdb->options} (option_name,option_value,autoload) VALUES (%s,%s,'no')",'loyf13_outer_transaction_probe','uncommitted'));
+ try{$choose('email_reward','canonical');throw new RuntimeException('Outer transaction committed by migration');}catch(RuntimeException $e){loyf_equal('migration_transaction_unavailable',$e->getMessage(),'Outer transaction denied');}finally{mysqli_query($outer,'ROLLBACK');wp_cache_flush();}
+ loyf_equal(null,YOWCL_Free_Migrations::read('loyf13_outer_transaction_probe'),'Outer caller rollback remains authoritative');loyf_assert(!YOWCL_Free_Migrations::ready('email_reward'),'No outer-transaction feature success');
  // Unknown response after target write: same reviewed intent may complete only
  // its exact post-image, preserving another pair and unknown container fields.
  $spec=YOWCL_Free_Migrations::preview('levelup','disable');
@@ -77,7 +91,7 @@ try {
  try{$choose('levelup','disable');throw new RuntimeException('Later merchant edit overwritten');}catch(RuntimeException $e){loyf_equal('migration_target_changed',$e->getMessage(),'Changed owned pair holds');}
  loyf_equal(51,get_option($merged)['levelup_points']['subscriber']['awarded'],'Later owned edit retained');
  wp_set_current_user(0);try{$choose('email_reward','canonical');throw new RuntimeException('Unauthorized resolution');}catch(RuntimeException $e){loyf_equal('migration_resolution_denied',$e->getMessage(),'Capability denial');}
- echo "Migration boundaries: PASS (Premium hold, wrapped bytes, per-feature choices, stale/denied POST terms, target/witness retry and intervening owned edits).\n";
+ echo "Migration boundaries: PASS (Premium hold, wrapped bytes, per-feature choices, stale/denied POST terms, original-connection loss/outer transaction, committed level recovery, target/witness retry and intervening owned edits).\n";
 }finally{
  if(is_int($recovery_user)&&$recovery_user>0){$wpdb->delete(YOWCL_Points_Log::table_name(),array('user_id'=>$recovery_user));require_once ABSPATH.'wp-admin/includes/user.php';wp_delete_user($recovery_user);}
  foreach($saved as $n=>$row){$wpdb->delete($wpdb->options,array('option_name'=>$n));if(null!==$row){$wpdb->insert($wpdb->options,array('option_name'=>$n,'option_value'=>$row['option_value'],'autoload'=>$row['autoload']));}}
