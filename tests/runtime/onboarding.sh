@@ -8,6 +8,9 @@ task_tmp=$(mktemp -d "${TMPDIR:-/tmp}/loyf-onboarding.XXXXXXXX")
 databases=(); server_pid=; activation_pid=; contender_pid=
 cleanup() {
   result=$?
+  if [[ "$result" != 0 ]]; then
+    for log in "$task_tmp"/*-activation.log "$task_tmp"/*-contender.log; do [[ ! -f "$log" ]] || tail -n 60 "$log" >&2; done
+  fi
   if [[ -n "$activation_pid" ]]; then kill "$activation_pid" 2>/dev/null || true; wait "$activation_pid" 2>/dev/null || true; fi
   if [[ -n "$contender_pid" ]]; then kill "$contender_pid" 2>/dev/null || true; wait "$contender_pid" 2>/dev/null || true; fi
   if [[ -n "$server_pid" ]]; then kill "$server_pid" 2>/dev/null || true; wait "$server_pid" 2>/dev/null || true; fi
