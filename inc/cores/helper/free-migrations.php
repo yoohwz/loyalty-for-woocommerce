@@ -66,7 +66,12 @@ class YOWCL_Free_Migrations {
     }
     public static function locked( $callback ) {
         global $wpdb;
-        if (null!==self::$owner) { throw new RuntimeException('migration_nested_operation'); }
+        // Native onboarding/First Purchase services share the already held options owner.
+        // A nested call must neither reacquire nor release that owner's named lock.
+        if (null!==self::$owner) {
+            self::assert_owner();
+            try { return $callback(); } finally { self::assert_owner(); }
+        }
         $lock='loyf-options:'.md5($wpdb->options);
         if ('1'!==(string)$wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s, 5)',$lock))) { throw new RuntimeException('migration_lock_unavailable'); }
         $db=$wpdb->dbh;
