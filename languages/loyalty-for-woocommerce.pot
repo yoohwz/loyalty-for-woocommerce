@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-07T06:08:36+00:00\n"
+"POT-Creation-Date: 2026-10-08T01:02:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
@@ -49,12 +49,12 @@ msgstr ""
 
 #: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php:325
 #: inc/backend/settings.php:285
-#: inc/backend/settings/extra-points.php:47
-#: inc/backend/settings/extra-points.php:56
-#: inc/backend/settings/extra-points.php:65
-#: inc/backend/settings/extra-points.php:92
+#: inc/backend/settings/extra-points.php:57
+#: inc/backend/settings/extra-points.php:66
+#: inc/backend/settings/extra-points.php:75
+#: inc/backend/settings/extra-points.php:102
 #: inc/backend/users/users-points.php:20
-#: inc/frontend/loyalty-info-bubble.php:471
+#: inc/frontend/loyalty-info-bubble.php:472
 msgid "Points"
 msgstr ""
 
@@ -97,6 +97,20 @@ msgstr ""
 msgid "You earned {earned_points} points"
 msgstr ""
 
+#. translators: %s: order number
+#: inc/backend/actions/extra/first-purchase.php:111
+#, php-format
+msgid "First purchase bonus (Order #%s)"
+msgstr ""
+
+#: inc/backend/actions/extra/first-purchase.php:113
+msgid "First purchase reward"
+msgstr ""
+
+#: inc/backend/actions/extra/first-purchase.php:114
+msgid "Thanks for your first purchase. Your loyalty reward has been added."
+msgstr ""
+
 #: inc/backend/settings.php:26
 #: inc/frontend/loyalty-info-bubble.php:59
 msgid "Loyalty"
@@ -129,12 +143,11 @@ msgstr ""
 #: inc/backend/settings.php:65
 #: inc/backend/settings.php:126
 #: inc/backend/settings.php:202
-#: inc/backend/settings/referrals.php:263
 msgid "Premium"
 msgstr ""
 
 #: inc/backend/settings.php:118
-msgid "Referral links and referral coupons"
+msgid "Referral coupons and referee rewards"
 msgstr ""
 
 #: inc/backend/settings.php:119
@@ -142,11 +155,12 @@ msgid "Point expiration and advanced redemption rules"
 msgstr ""
 
 #: inc/backend/settings.php:120
-#: inc/backend/settings/extra-points.php:142
+#: inc/backend/settings/extra-points.php:152
 msgid "Birthday, account anniversary, and profile completion rewards"
 msgstr ""
 
 #: inc/backend/settings.php:121
+#: inc/backend/settings/extra-points.php:153
 msgid "Purchase milestone and lifetime spend rewards"
 msgstr ""
 
@@ -172,8 +186,7 @@ msgstr ""
 
 #: inc/backend/settings.php:143
 #: inc/backend/settings.php:219
-#: inc/backend/settings/extra-points.php:148
-#: inc/backend/settings/referrals.php:271
+#: inc/backend/settings/extra-points.php:158
 #: inc/backend/users/user-profile-points.php:153
 #: inc/backend/users/users-points.php:136
 msgid "View Premium features"
@@ -386,14 +399,12 @@ msgid "Customization Settings"
 msgstr ""
 
 #: inc/backend/settings/customization.php:114
-#: inc/backend/settings/extra-points.php:25
-#: inc/backend/settings/referrals.php:15
+#: inc/backend/settings/extra-points.php:27
 msgid "Before start"
 msgstr ""
 
 #: inc/backend/settings/customization.php:117
-#: inc/backend/settings/extra-points.php:28
-#: inc/backend/settings/referrals.php:18
+#: inc/backend/settings/extra-points.php:30
 msgid "You have to set at least one role for the loyalty level to set this options."
 msgstr ""
 
@@ -477,7 +488,7 @@ msgid "Bottom left"
 msgstr ""
 
 #: inc/backend/settings/customization.php:292
-#: inc/frontend/loyalty-info-bubble.php:152
+#: inc/frontend/loyalty-info-bubble.php:153
 msgid "Powered by"
 msgstr ""
 
@@ -662,7 +673,7 @@ msgid "Cart & Checkout messages"
 msgstr ""
 
 #: inc/backend/settings/customization.php:607
-#: inc/frontend/loyalty-info-bubble.php:326
+#: inc/frontend/loyalty-info-bubble.php:327
 msgid "Cart"
 msgstr ""
 
@@ -671,7 +682,7 @@ msgid "Enable to display message in Cart page."
 msgstr ""
 
 #: inc/backend/settings/customization.php:619
-#: inc/frontend/loyalty-info-bubble.php:329
+#: inc/frontend/loyalty-info-bubble.php:330
 msgid "Checkout"
 msgstr ""
 
@@ -680,7 +691,7 @@ msgid "Enable to display message in Checkout page."
 msgstr ""
 
 #: inc/backend/settings/customization.php:642
-#: inc/backend/settings/extra-points.php:161
+#: inc/backend/settings/extra-points.php:171
 #: inc/backend/settings/general-add-remove-user-role.php:19
 #: inc/backend/settings/general-add-remove-user-role.php:26
 #: inc/backend/settings/tools.php:130
@@ -688,63 +699,75 @@ msgstr ""
 msgid "Nonce verification failed. Please try again."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:21
-#: inc/backend/settings/extra-points.php:37
+#: inc/backend/settings/extra-points.php:23
+#: inc/backend/settings/extra-points.php:39
 msgid "Extra points settings"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:44
-msgid "Sign-up"
+#: inc/backend/settings/extra-points.php:45
+msgid "First purchase"
+msgstr ""
+
+#: inc/backend/settings/extra-points.php:47
+msgid "Enable First Purchase bonus"
 msgstr ""
 
 #: inc/backend/settings/extra-points.php:48
+msgid "First Purchase points"
+msgstr ""
+
+#: inc/backend/settings/extra-points.php:49
+msgid "A fixed bonus for the first qualifying purchase. Only orders created after activation qualify; existing pending orders are excluded."
+msgstr ""
+
+#: inc/backend/settings/extra-points.php:54
+msgid "Sign-up"
+msgstr ""
+
+#: inc/backend/settings/extra-points.php:58
 msgid "Points awarded to customers when they sign up."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:53
+#: inc/backend/settings/extra-points.php:63
 msgid "Log-in"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:57
+#: inc/backend/settings/extra-points.php:67
 msgid "Points awarded to customers when they log-in daily."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:62
-#: inc/frontend/loyalty-info-bubble.php:273
+#: inc/backend/settings/extra-points.php:72
+#: inc/frontend/loyalty-info-bubble.php:274
 msgid "Product review"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:66
+#: inc/backend/settings/extra-points.php:76
 msgid "Points awarded to customers for leaving a product review."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:71
+#: inc/backend/settings/extra-points.php:81
 msgid "Level up"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:98
+#: inc/backend/settings/extra-points.php:108
 msgid "Points awarded to customers for reaching a level role."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:139
+#: inc/backend/settings/extra-points.php:149
 msgid "Automate more customer reward actions in Premium"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:140
-msgid "These core rules cover sign-up, daily login, product review, and level-up rewards. Premium adds lifecycle and purchase-based automations for deeper retention workflows."
+#: inc/backend/settings/extra-points.php:150
+msgid "These core rules cover sign-up, daily login, product review, level-up, and First Purchase rewards. Premium adds lifecycle and purchase-based automations for deeper retention workflows."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:143
-msgid "First order, purchase milestone, and lifetime spend rewards"
-msgstr ""
-
-#: inc/backend/settings/extra-points.php:144
+#: inc/backend/settings/extra-points.php:154
 msgid "Inactivity win-back campaigns and achievement points"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:166
-#: inc/backend/settings/extra-points.php:173
-#: inc/frontend/cart-checkout.php:211
+#: inc/backend/settings/extra-points.php:180
+#: inc/backend/settings/extra-points.php:187
+#: inc/cores/helper/free-cart.php:37
 msgid "A valid whole points amount is required."
 msgstr ""
 
@@ -791,10 +814,7 @@ msgstr ""
 
 #: inc/backend/settings/general-earning-point-rules.php:90
 #: inc/backend/settings/general-using-point-rules.php:55
-#: inc/backend/settings/referrals.php:87
-#: inc/backend/settings/referrals.php:119
-#: inc/backend/settings/referrals.php:204
-#: inc/frontend/my-account.php:293
+#: inc/frontend/my-account.php:294
 msgid "points"
 msgstr ""
 
@@ -840,107 +860,20 @@ msgstr ""
 msgid "Manage loyalty email enablement and customization in WooCommerce email settings."
 msgstr ""
 
+#: inc/backend/settings/referrals.php:7
+msgid "Referral Lite"
+msgstr ""
+
+#: inc/backend/settings/referrals.php:8
+msgid "Earn fixed points when a registered customer follows your link and completes their first qualifying order. Cancelled, failed or refunded orders reverse the referral reward."
+msgstr ""
+
 #: inc/backend/settings/referrals.php:11
-msgid "Referrals settings"
+msgid "Enable Referral Lite"
 msgstr ""
 
-#: inc/backend/settings/referrals.php:45
-msgid "Referral via link"
-msgstr ""
-
-#: inc/backend/settings/referrals.php:46
-msgid "Activates link-based referrals. Rewards are given to the referrer and/or referee upon purchase via the referral link."
-msgstr ""
-
-#: inc/backend/settings/referrals.php:52
-#: inc/backend/settings/referrals.php:139
-msgid "Enable/Disable"
-msgstr ""
-
-#: inc/backend/settings/referrals.php:60
-msgid "Enable referral via link"
-msgstr ""
-
-#: inc/backend/settings/referrals.php:67
-#: inc/backend/settings/referrals.php:184
-msgid "Referrer earnings"
-msgstr ""
-
-#: inc/backend/settings/referrals.php:93
-#: inc/backend/settings/referrals.php:210
-msgid "Set the number of points the referrer will receive based on their loyalty level."
-msgstr ""
-
-#: inc/backend/settings/referrals.php:99
-msgid "Referee earnings"
-msgstr ""
-
-#: inc/backend/settings/referrals.php:125
-msgid "Set the number of points the referee will receive based on the referrer loyalty level."
-msgstr ""
-
-#: inc/backend/settings/referrals.php:132
-msgid "Referral via coupon"
-msgstr ""
-
-#: inc/backend/settings/referrals.php:133
-msgid "Activates coupon-based referrals. Rewards the referrer and applies a discount to the referee at checkout."
-msgstr ""
-
-#: inc/backend/settings/referrals.php:147
-msgid "Enable referral via coupon"
-msgstr ""
-
-#: inc/backend/settings/referrals.php:155
-msgid "Coupon format"
-msgstr ""
-
-#: inc/backend/settings/referrals.php:160
-msgid "Random"
-msgstr ""
-
-#: inc/backend/settings/referrals.php:161
-msgid "User ID"
-msgstr ""
-
-#: inc/backend/settings/referrals.php:162
-msgid "Username"
-msgstr ""
-
-#: inc/backend/settings/referrals.php:170
-msgid "Discount type"
-msgstr ""
-
-#: inc/backend/settings/referrals.php:175
-msgid "Percentage discount"
-msgstr ""
-
-#: inc/backend/settings/referrals.php:176
-msgid "Fixed cart discount"
-msgstr ""
-
-#: inc/backend/settings/referrals.php:177
-msgid "Fixed product discount"
-msgstr ""
-
-#: inc/backend/settings/referrals.php:216
-msgid "Referee discounts"
-msgstr ""
-
-#: inc/backend/settings/referrals.php:236
-msgid "discount"
-msgstr ""
-
-#: inc/backend/settings/referrals.php:244
-msgid "If type is Percentage, use 0–100. If Fixed, enter the currency amount. The discount based on the referrer loyalty level."
-msgstr ""
-
-#: inc/backend/settings/referrals.php:265
-msgid "Referral features are available in Premium"
-msgstr ""
-
-#: inc/backend/settings/referrals.php:267
-msgid "Premium adds referral links and referral coupons for referrer and referee rewards."
+#: inc/backend/settings/referrals.php:12
+msgid "Referrer points"
 msgstr ""
 
 #: inc/backend/settings/tools.php:26
@@ -967,7 +900,7 @@ msgid "Download the <a href=\"%1$s\" target=\"_blank\" rel=\"noopener\">CSV samp
 msgstr ""
 
 #: inc/backend/settings/tools.php:68
-#: inc/frontend/loyalty-info-bubble.php:265
+#: inc/frontend/loyalty-info-bubble.php:266
 msgid "Calculation"
 msgstr ""
 
@@ -980,7 +913,7 @@ msgid "Redefine"
 msgstr ""
 
 #: inc/backend/settings/tools.php:78
-#: inc/frontend/my-account.php:207
+#: inc/frontend/my-account.php:208
 msgid "Loading..."
 msgstr ""
 
@@ -1107,7 +1040,7 @@ msgid "User Points"
 msgstr ""
 
 #: inc/backend/users/user-profile-points.php:63
-#: inc/frontend/my-account.php:279
+#: inc/frontend/my-account.php:280
 msgid "Current points"
 msgstr ""
 
@@ -1127,12 +1060,12 @@ msgid "Points Log"
 msgstr ""
 
 #: inc/backend/users/user-profile-points.php:94
-#: inc/frontend/my-account.php:324
+#: inc/frontend/my-account.php:325
 msgid "Date"
 msgstr ""
 
 #: inc/backend/users/user-profile-points.php:95
-#: inc/frontend/my-account.php:327
+#: inc/frontend/my-account.php:328
 msgid "Amount"
 msgstr ""
 
@@ -1141,7 +1074,7 @@ msgid "Order ID"
 msgstr ""
 
 #: inc/backend/users/user-profile-points.php:97
-#: inc/frontend/my-account.php:326
+#: inc/frontend/my-account.php:327
 msgid "Description"
 msgstr ""
 
@@ -1216,7 +1149,7 @@ msgid "Level updated: %s"
 msgstr ""
 
 #: inc/backend/users/user-profile-points.php:244
-#: inc/frontend/my-account.php:368
+#: inc/frontend/my-account.php:369
 msgid "No points log found."
 msgstr ""
 
@@ -1260,6 +1193,32 @@ msgstr ""
 msgid "Points rewarded successfully!"
 msgstr ""
 
+#: inc/cores/helper/free-blocks.php:33
+msgid "Your cart or redemption rules changed. Please reapply points."
+msgstr ""
+
+#: inc/cores/helper/free-blocks.php:34
+msgid "Points are unavailable. Please retry or reapply points."
+msgstr ""
+
+#: inc/cores/helper/free-blocks.php:38
+#: inc/cores/helper/free-cart.php:36
+msgid "Please sign in to use points."
+msgstr ""
+
+#: inc/cores/helper/free-blocks.php:47
+msgid "Points could not be applied. Check your balance and reapply points."
+msgstr ""
+
+#: inc/cores/helper/free-cart.php:47
+#: inc/cores/helper/free-cart.php:51
+msgid "Invalid points amount."
+msgstr ""
+
+#: inc/cores/helper/free-cart.php:74
+msgid "Points used"
+msgstr ""
+
 #: inc/cores/helper/free-core.php:67
 msgid "Sign-up bonus"
 msgstr ""
@@ -1280,13 +1239,12 @@ msgstr ""
 msgid "Level up bonus for role:"
 msgstr ""
 
-#: inc/cores/helper/free-core.php:86
-#: inc/frontend/cart-checkout.php:275
-msgid "Points used"
+#: inc/cores/helper/free-core.php:89
+msgid "Unavailable"
 msgstr ""
 
-#: inc/cores/helper/free-core.php:88
-msgid "Please remove point redemption or use Classic checkout to place this order."
+#: inc/cores/helper/free-first-purchase.php:111
+msgid "First Purchase rewards are held. Explicitly save an enabled First Purchase configuration in Loyalty Extra points settings to establish its activation cutoff."
 msgstr ""
 
 #: inc/cores/helper/free-migrations.php:125
@@ -1300,6 +1258,27 @@ msgstr ""
 
 #: inc/cores/helper/free-order-actions.php:36
 msgid "Purchase an order"
+msgstr ""
+
+#: inc/cores/helper/free-referral.php:36
+#, php-format
+msgid "Referral %1$s reward (%2$s) for order %3$s"
+msgstr ""
+
+#: inc/cores/helper/free-referral.php:105
+msgid "Your referral link"
+msgstr ""
+
+#: inc/cores/helper/free-referral.php:105
+msgid "Link copied"
+msgstr ""
+
+#: inc/cores/helper/free-referral.php:105
+msgid "Select and copy the link"
+msgstr ""
+
+#: inc/cores/helper/free-referral.php:105
+msgid "Copy link"
 msgstr ""
 
 #: inc/cores/helper/order-deduction.php:39
@@ -1318,58 +1297,63 @@ msgstr ""
 msgid "Order status change"
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:212
+#: inc/cores/helper/order-redemption.php:218
 msgid "Please sign in and reapply your Loyalty redemption."
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:217
+#: inc/cores/helper/order-redemption.php:223
 msgid "This Loyalty redemption cannot be reused. Please start a new checkout."
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:245
+#: inc/cores/helper/order-redemption.php:251
 msgid "The points for this order were returned. Please create a new order."
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:266
+#: inc/cores/helper/order-redemption.php:272
 msgid "Get a discount by using points"
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:272
+#: inc/cores/helper/order-redemption.php:278
 msgid "Could not commit Loyalty points. Please retry this checkout."
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:352
+#: inc/cores/helper/order-redemption.php:500
 msgid "Order is incomplete; redeemed points returned"
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:383
+#: inc/cores/helper/order-redemption.php:531
 msgid "Historical Loyalty redemption has no atomic debit proof. Manual points-return review required."
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:409
+#: inc/cores/helper/order-redemption.php:557
 msgid "Loyalty payment outcome is uncertain. Points remain charged; merchant must reconcile the payment and order before returning points."
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:413
+#: inc/cores/helper/order-redemption.php:561
 msgid "Loyalty points return requires recovery. Retry the order status action after restoring storage."
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:445
+#: inc/cores/helper/order-redemption.php:593
 msgid "Your points were returned. Reapply redemption and start a new checkout."
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:467
+#: inc/cores/helper/order-redemption.php:615
 msgid "The points for this order were returned. Please start a new checkout."
 msgstr ""
 
-#: inc/cores/helper/order-redemption.php:481
+#: inc/cores/helper/order-redemption.php:629
 msgid "This Loyalty order cannot be paid. Please start a new checkout."
 msgstr ""
 
 #. translators: %s: Gateway transaction reference, when supplied.
-#: inc/cores/helper/order-redemption.php:516
+#: inc/cores/helper/order-redemption.php:664
 #, php-format
 msgid "Late payment after Loyalty redemption return or incomplete recovery; manual review required. Merchant must resolve the payment. Reference: %s"
+msgstr ""
+
+#: inc/cores/helper/referral-rewards.php:273
+#, php-format
+msgid "Referral reward reversed for order %s"
 msgstr ""
 
 #: inc/cores/notices.php:46
@@ -1377,93 +1361,87 @@ msgid "Loyalty for WooCommerce requires WooCommerce to be installed and active."
 msgstr ""
 
 #. translators: %d: Minimum points.
-#: inc/frontend/cart-checkout.php:42
-#: inc/frontend/cart-checkout.php:65
+#: inc/frontend/cart-checkout.php:44
+#: inc/frontend/cart-checkout.php:67
 #, php-format
 msgid "You must apply at least %d points."
 msgstr ""
 
 #. translators: %d: Maximum points.
-#: inc/frontend/cart-checkout.php:44
-#: inc/frontend/cart-checkout.php:67
+#: inc/frontend/cart-checkout.php:46
+#: inc/frontend/cart-checkout.php:69
 #, php-format
 msgid "You cannot apply more than %d points."
 msgstr ""
 
 #. translators: %d: Earning points.
-#: inc/frontend/cart-checkout.php:49
-#: inc/frontend/cart-checkout.php:73
-#: inc/frontend/cart-checkout.php:165
-#: inc/frontend/cart-checkout.php:190
-#, php-format
+#: inc/frontend/cart-checkout.php:51
+#: inc/frontend/cart-checkout.php:75
+#: inc/frontend/cart-checkout.php:167
+#: inc/frontend/cart-checkout.php:192
+#: js/blocks-redemption.js:46
+#, php-format,js-format
 msgid "You will earn %d points with this purchase."
 msgstr ""
 
-#: inc/frontend/cart-checkout.php:51
-#: inc/frontend/cart-checkout.php:75
-#: inc/frontend/cart-checkout.php:161
-#: inc/frontend/cart-checkout.php:186
+#: inc/frontend/cart-checkout.php:53
+#: inc/frontend/cart-checkout.php:77
+#: inc/frontend/cart-checkout.php:163
+#: inc/frontend/cart-checkout.php:188
 #: inc/frontend/product-message.php:79
 #: inc/frontend/shop-message.php:46
 msgid "Reward Icon"
 msgstr ""
 
-#: inc/frontend/cart-checkout.php:76
+#: inc/frontend/cart-checkout.php:78
 msgid "An error occurred. Please try again."
 msgstr ""
 
 #. translators: %d: Available points.
-#: inc/frontend/cart-checkout.php:130
+#: inc/frontend/cart-checkout.php:132
 #, php-format
 msgid "You have %d points available."
 msgstr ""
 
-#: inc/frontend/cart-checkout.php:134
+#: inc/frontend/cart-checkout.php:136
 msgid "Click here to use your points"
 msgstr ""
 
 #. translators: %d: Applied points.
-#: inc/frontend/cart-checkout.php:142
+#: inc/frontend/cart-checkout.php:144
 #, php-format
 msgid "%d points are applied to this cart."
 msgstr ""
 
-#: inc/frontend/cart-checkout.php:146
+#: inc/frontend/cart-checkout.php:148
+#: js/blocks-redemption.js:51
 msgid "Remove points"
 msgstr ""
 
-#: inc/frontend/cart-checkout.php:151
+#: inc/frontend/cart-checkout.php:153
+#: js/blocks-redemption.js:50
 msgid "Apply points"
 msgstr ""
 
-#: inc/frontend/cart-checkout.php:202
-#: inc/frontend/cart-checkout.php:442
+#: inc/frontend/cart-checkout.php:204
+#: inc/frontend/cart-checkout.php:304
 msgid "Nonce verification failed."
 msgstr ""
 
-#: inc/frontend/cart-checkout.php:207
-#: inc/frontend/cart-checkout.php:437
+#: inc/frontend/cart-checkout.php:209
+#: inc/frontend/cart-checkout.php:299
 msgid "User not logged in."
 msgstr ""
 
-#: inc/frontend/cart-checkout.php:220
-msgid "Point redemption is not configured."
-msgstr ""
-
-#: inc/frontend/cart-checkout.php:225
-#: inc/frontend/cart-checkout.php:231
-msgid "Invalid points amount."
-msgstr ""
-
-#: inc/frontend/cart-checkout.php:238
+#: inc/frontend/cart-checkout.php:215
 msgid "Points applied successfully."
 msgstr ""
 
-#: inc/frontend/cart-checkout.php:280
+#: inc/frontend/cart-checkout.php:226
 msgid "User not logged in"
 msgstr ""
 
-#: inc/frontend/cart-checkout.php:451
+#: inc/frontend/cart-checkout.php:313
 msgid "Points removed successfully."
 msgstr ""
 
@@ -1471,243 +1449,243 @@ msgstr ""
 msgid "Open loyalty program information"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:72
+#: inc/frontend/loyalty-info-bubble.php:73
 msgid "Rewards program"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:73
+#: inc/frontend/loyalty-info-bubble.php:74
 msgid "Loyalty information"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:74
+#: inc/frontend/loyalty-info-bubble.php:75
 msgid "Earn points, move up levels, and use rewards as you shop."
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:76
+#: inc/frontend/loyalty-info-bubble.php:77
 msgid "Close loyalty information"
 msgstr ""
 
 #. translators: %d: Number of visible reward details.
-#: inc/frontend/loyalty-info-bubble.php:109
+#: inc/frontend/loyalty-info-bubble.php:110
 #, php-format
 msgid "%d details"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:184
-#: inc/frontend/loyalty-info-bubble.php:205
+#: inc/frontend/loyalty-info-bubble.php:185
+#: inc/frontend/loyalty-info-bubble.php:206
 msgid "Your rewards"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:187
+#: inc/frontend/loyalty-info-bubble.php:188
 msgid "Not a member yet?"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:190
-#: inc/frontend/loyalty-info-bubble.php:643
+#: inc/frontend/loyalty-info-bubble.php:191
+#: inc/frontend/loyalty-info-bubble.php:644
 msgid "Join now"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:192
+#: inc/frontend/loyalty-info-bubble.php:193
 msgid "Create an account to start earning points and tracking your reward level."
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:207
+#: inc/frontend/loyalty-info-bubble.php:208
 msgid "Your level"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:208
+#: inc/frontend/loyalty-info-bubble.php:209
 msgid "Ready to use"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:209
+#: inc/frontend/loyalty-info-bubble.php:210
 msgid "Level progress"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:210
+#: inc/frontend/loyalty-info-bubble.php:211
 msgid "Next reward level"
 msgstr ""
 
 #. translators: %s: Points amount.
-#: inc/frontend/loyalty-info-bubble.php:226
+#: inc/frontend/loyalty-info-bubble.php:227
 #, php-format
 msgid "Unlock at %s earned."
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:229
-#: inc/frontend/loyalty-info-bubble.php:234
+#: inc/frontend/loyalty-info-bubble.php:230
+#: inc/frontend/loyalty-info-bubble.php:235
 msgid "Starting reward level."
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:234
+#: inc/frontend/loyalty-info-bubble.php:235
 msgid "Customer"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:238
+#: inc/frontend/loyalty-info-bubble.php:239
 msgid "Reward levels"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:249
+#: inc/frontend/loyalty-info-bubble.php:250
 msgid "Purchases"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:255
+#: inc/frontend/loyalty-info-bubble.php:256
 msgid "Points are calculated after coupons."
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:258
+#: inc/frontend/loyalty-info-bubble.php:259
 msgid "Taxes are excluded from point calculations."
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:262
+#: inc/frontend/loyalty-info-bubble.php:263
 msgid "Point totals are rounded up."
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:263
+#: inc/frontend/loyalty-info-bubble.php:264
 msgid "Point totals are rounded down."
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:271
+#: inc/frontend/loyalty-info-bubble.php:272
 msgid "Create an account"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:272
+#: inc/frontend/loyalty-info-bubble.php:273
 msgid "Daily login"
 msgstr ""
 
 #. translators: 1: Loyalty level, 2: Points amount.
-#: inc/frontend/loyalty-info-bubble.php:284
+#: inc/frontend/loyalty-info-bubble.php:285
 #, php-format
 msgid "Reach %1$s: %2$s"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:292
+#: inc/frontend/loyalty-info-bubble.php:293
 msgid "Bonus rewards"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:296
+#: inc/frontend/loyalty-info-bubble.php:297
 msgid "Earn points"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:313
+#: inc/frontend/loyalty-info-bubble.php:314
 msgid "Point value"
 msgstr ""
 
 #. translators: 1: Points amount, 2: Money amount.
-#: inc/frontend/loyalty-info-bubble.php:316
+#: inc/frontend/loyalty-info-bubble.php:317
 #, php-format
 msgid "%1$s can be used for %2$s off."
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:334
+#: inc/frontend/loyalty-info-bubble.php:335
 msgid "Where to use"
 msgstr ""
 
 #. translators: %s: Place list.
-#: inc/frontend/loyalty-info-bubble.php:337
+#: inc/frontend/loyalty-info-bubble.php:338
 #, php-format
 msgid "Customers can use points on: %s."
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:344
-#: inc/frontend/loyalty-info-bubble.php:348
+#: inc/frontend/loyalty-info-bubble.php:345
+#: inc/frontend/loyalty-info-bubble.php:349
 msgid "Use points"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:344
+#: inc/frontend/loyalty-info-bubble.php:345
 msgid "Use available points for cart discounts when configured."
 msgstr ""
 
 #. translators: 1: Bonus label, 2: Points amount.
-#: inc/frontend/loyalty-info-bubble.php:361
+#: inc/frontend/loyalty-info-bubble.php:362
 #, php-format
 msgid "%1$s: %2$s"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:369
-#: inc/frontend/loyalty-info-bubble.php:390
+#: inc/frontend/loyalty-info-bubble.php:370
+#: inc/frontend/loyalty-info-bubble.php:391
 msgid "Earn points on eligible purchases."
 msgstr ""
 
 #. translators: 1: Loyalty level, 2: Points amount, 3: Money amount.
-#: inc/frontend/loyalty-info-bubble.php:383
+#: inc/frontend/loyalty-info-bubble.php:384
 #, php-format
 msgid "%1$s members earn %2$s for every %3$s spent."
 msgstr ""
 
 #. translators: 1: Points amount, 2: Loyalty level.
-#: inc/frontend/loyalty-info-bubble.php:403
+#: inc/frontend/loyalty-info-bubble.php:404
 #, php-format
 msgid "%1$s to reach %2$s."
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:414
+#: inc/frontend/loyalty-info-bubble.php:415
 msgid "Highest level reached."
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:659
+#: inc/frontend/loyalty-info-bubble.php:660
 msgid "Not configured"
 msgstr ""
 
 #. translators: 1: Points number, 2: Point label.
-#: inc/frontend/loyalty-info-bubble.php:689
+#: inc/frontend/loyalty-info-bubble.php:690
 #, php-format
 msgid "%1$s %2$s"
 msgstr ""
 
 #. translators: %s: Customer first name.
-#: inc/frontend/my-account.php:169
+#: inc/frontend/my-account.php:170
 #, php-format
 msgid "%s's Reward Summary"
 msgstr ""
 
-#: inc/frontend/my-account.php:172
+#: inc/frontend/my-account.php:173
 msgid "My Reward Summary"
 msgstr ""
 
-#: inc/frontend/my-account.php:208
-#: inc/frontend/my-account.php:378
+#: inc/frontend/my-account.php:209
+#: inc/frontend/my-account.php:379
 msgid "Load more"
 msgstr ""
 
-#: inc/frontend/my-account.php:209
+#: inc/frontend/my-account.php:210
 msgid "No more points"
 msgstr ""
 
-#: inc/frontend/my-account.php:210
+#: inc/frontend/my-account.php:211
 msgid "Error"
 msgstr ""
 
-#: inc/frontend/my-account.php:226
+#: inc/frontend/my-account.php:227
 msgid "Your points balance needs review. Please contact the store before using points."
 msgstr ""
 
-#: inc/frontend/my-account.php:285
+#: inc/frontend/my-account.php:286
 msgid "Earned points"
 msgstr ""
 
-#: inc/frontend/my-account.php:293
+#: inc/frontend/my-account.php:294
 msgid "To next level"
 msgstr ""
 
-#: inc/frontend/my-account.php:295
+#: inc/frontend/my-account.php:296
 msgid "Congratulations! You reached the highest level."
 msgstr ""
 
 #. translators: 1: Points left to reach next level, 2: Next level.
-#: inc/frontend/my-account.php:305
+#: inc/frontend/my-account.php:306
 #, php-format
 msgid "Earn %1$s points more to reach %2$s level."
 msgstr ""
 
-#: inc/frontend/my-account.php:313
+#: inc/frontend/my-account.php:314
 msgid "Thank you for your loyalty. Hope you enjoy the benefits!"
 msgstr ""
 
-#: inc/frontend/my-account.php:325
+#: inc/frontend/my-account.php:326
 msgid "Order"
 msgstr ""
 
-#: inc/frontend/my-account.php:405
+#: inc/frontend/my-account.php:406
 msgid "No more points log found."
 msgstr ""
 
@@ -1869,4 +1847,30 @@ msgstr ""
 
 #: templates/emails/plain/loyalty-points-reward.php:34
 msgid "Earned:"
+msgstr ""
+
+#: js/blocks-redemption.js:31
+msgid "Enter a whole points amount."
+msgstr ""
+
+#: js/blocks-redemption.js:41
+msgid "Points could not be updated. Retry the same request or refresh your cart."
+msgstr ""
+
+#: js/blocks-redemption.js:45
+#, js-format
+msgid "Available points: %d"
+msgstr ""
+
+#: js/blocks-redemption.js:48
+#, js-format
+msgid "%d points applied: %s"
+msgstr ""
+
+#: js/blocks-redemption.js:49
+msgid "Points to apply"
+msgstr ""
+
+#: js/blocks-redemption.js:50
+msgid "Retry points update"
 msgstr ""

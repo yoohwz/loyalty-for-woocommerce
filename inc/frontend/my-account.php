@@ -159,6 +159,7 @@ class YOSWC_Loyalty_My_Account_My_Points {
 	 * Display the content for "My Points" tab.
 	 */
 	public function my_points_content() {
+        YOWCL_Free_Referral::render_link( 'account' );
 		$user_id = get_current_user_id();
 		$user_role = $this->get_user_role();
 

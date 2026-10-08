@@ -7,7 +7,7 @@ class YOWCL_Ledger_V2 {
 	const CHECKPOINT_META = '_yowcl_ledger_v2_checkpoint';
 
 	public static function actions() {
-		return array_merge( YOWCL_Points_Transaction::REWARD_ACTIONS, array( 'points_transaction', 'points_used', 'points_deducted', 'admin_reward', 'admin_deduct', 'points_import' ) );
+		return array_merge( YOWCL_Points_Transaction::REWARD_ACTIONS, array( 'points_transaction', 'points_used', 'points_deducted', 'admin_reward', 'admin_deduct', 'points_import', 'referral_reward_reversal' ) );
 	}
 
 	public static function key_valid( $key ) {

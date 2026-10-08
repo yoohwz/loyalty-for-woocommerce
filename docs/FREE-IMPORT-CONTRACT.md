@@ -8,17 +8,17 @@ The executable `config/free-import-manifest.json` inventories every upstream Git
 
 ## Core runtime and extraction
 
-The phase is `core-runtime`: 27 explicit imports plus 59 Free product overlays form the complete 86-file distribution. Source, stage, ZIP and extracted-tree checks require this same boundary. The historical CLI mode name `legacy` automatically includes imports in this phase; it cannot waive core-runtime verification.
+The phase is `core-runtime`: 29 explicit imports plus 61 Free product overlays form the complete 90-file distribution. Source, stage, ZIP and extracted-tree checks require this same boundary. The historical CLI mode name `legacy` automatically includes imports in this phase; it cannot waive core-runtime verification.
 
 Five imports retain whole canonical source bytes: `points-lock.php`, `points-log-cache.php`, `points-log.php`, `role-claims.php` and `inc/backend/actions/helper/roles.php`. The core mixed modules use reviewed exact-byte extraction recipes:
 
 | Canonical source | Free purpose / excluded closure |
 | --- | --- |
-| `points-transaction.php` | Atomic integer balance/log writer; no expiration, reset, reconciliation, referral reversal or checkpoint creation |
+| `points-transaction.php` | Atomic integer balance/log writer; bounded link/referrer reversal; no expiration, reset, reconciliation or checkpoint creation |
 | `ledger-v2.php` | Existing row classification, source proof and checkpoint reader; narrowed Free action allowlist |
 | `points-allocation.php` | Compatible receipt decoding/time validation only; no allocation planner, expiry policy or writer |
 | `core-rewards.php` | Exactly-once Free user rewards and retained retries; no licensing, profile or expiration producer |
-| `points-events.php` | Paired reward/deduct/level observations; no advanced/expiration notifications |
+| `points-events.php` | Paired reward/deduct/level and bounded First Purchase context observations; no other advanced or expiration notifications |
 | `order-rewards.php` | Serialized purchase/reversal finalization and role projection; no referral or checkpoint allocation |
 | `inc/cores/database.php` → `inc/cores/helper/database.php` | Exact additive canonical schema v3 prerequisite, Free activation identity |
 | `inc/backend/actions/deduct-points.php` → `inc/cores/helper/order-deduction.php` | Canonical purchase reversal with no Premium entitlement dependency |
@@ -31,7 +31,7 @@ Helper names above resolve under `inc/cores/helper/` unless qualified. Canonical
 
 `wp-text-domain-v1` uses PHP tokenization to change only literal domain arguments of supported global WordPress translation calls. All other bytes remain unchanged. Namespaced sources are refused; dynamic/qualified domains are not guessed. Free runtime strings and the regenerated POT use `loyalty-for-woocommerce`; owner strings and persisted identities are not translation domains.
 
-Premium licensing/updater, campaigns, expiration, advanced rewards/referrals, redeem-products/free-shipping/coupon conversion, advanced earning, level discounts/reset and reconciliation repair remain absent/unreachable. Dormant data is preserved, not deleted or treated as permission to execute excluded behavior.
+Premium licensing/updater, campaigns, expiration, advanced rewards/referrals beyond the bounded First Purchase and Referral Lite exceptions, redeem-products/free-shipping/coupon conversion, advanced earning, level discounts/reset and reconciliation repair remain absent/unreachable. Dormant data is preserved, not deleted or treated as permission to execute excluded behavior.
 
 LOYF-6 additionally admits only the canonical email base, Points Reward, Points Deduct and Level Update classes and their six HTML/plain templates. The base extraction substitutes the Free template root, retains Woo-version palette fallbacks, gates failed migrations and preserves unrelated native settings on authorized Woo saves. The Free registration adapter owns only those three families; retained legacy preferences never register a second sender. Other email families remain excluded.
 
@@ -62,3 +62,7 @@ python3 scripts/free-import.py drift --upstream /absolute/upstream.git --sha <ne
 Staging requires bound origins, an exact clean Free HEAD descended from the admitted baseline, exact overlay bytes and complete upstream proofs. All targets are validated together against duplicate, NFC/case-fold and file/ancestor collisions. Output must be empty, absolute and outside source/upstream/tool checkouts including aliases. Only the external output is written. Partial interrupted output is uncertified until verification passes. ZIP checks reject extra files, symlinks, excluded paths, identity drift and payload changes.
 
 Drift reports all added/removed/modified paths, blobs and modes without writing source. New upstream commits require explicit readmission even with an unchanged tree. There is no wildcard import, automatic apply, task-state registry or approval parser.
+
+LOYF-9 admits only `advanced-rewards.php` bounded First Purchase delivery and `extra/first-purchase.php`, plus their context observations. No other advanced producer or clawback is enabled. See `FIRST-PURCHASE-CONTRACT.md`.
+
+LOYF-10 admits only token/link `helper/referrals.php` and the registered-customer/link-referrer receipt/election/delivery/reversal kernel in `referral-rewards.php`. Free-owned policy uses one option containing only enabled/points scalar terms; Premium referral options remain untouched. The transaction extraction adds only `referral_link_referrer_reward` and exact source-linked `referral_reward_reversal`. Coupon/referee/guest/expiration/configurable policies remain forbidden. See `REFERRAL-LITE-CONTRACT.md`.

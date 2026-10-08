@@ -56,6 +56,8 @@ for versions in '6.8.3:9.9.5' '7.0:11.1.2'; do
     if [[ "$storage" == hpos ]]; then wp option update woocommerce_custom_orders_table_enabled yes --quiet; fi
     wp plugin activate loyalty-for-woocommerce --quiet
     export LOYF_STORAGE="$storage"
+    wp eval-file "$repo/tests/runtime/referral-lite.php" --quiet
+    wp eval-file "$repo/tests/runtime/referral-origins.php" --quiet
     wp eval-file "$repo/tests/runtime/first-purchase.php" --quiet
     wp eval-file "$repo/tests/runtime/modern.php" --quiet
     if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
@@ -71,6 +73,7 @@ for versions in '6.8.3:9.9.5' '7.0:11.1.2'; do
       browser_php=(php -d opcache.enable=0 -d opcache.enable_cli=0 -d opcache.jit=0 -d opcache.jit_buffer_size=0)
       "${browser_php[@]}" -r 'echo "Browser fixture interpreter: ", json_encode(array("php"=>PHP_VERSION,"opcache"=>ini_get("opcache.enable"),"opcache_cli"=>ini_get("opcache.enable_cli"),"jit"=>ini_get("opcache.jit"),"jit_buffer"=>ini_get("opcache.jit_buffer_size"))), PHP_EOL;'
       "${browser_php[@]}" -S "127.0.0.1:${LOYF_BROWSER_PORT:-18088}" -t "$site" "$repo/tests/runtime/browser-router.php" > "$task_tmp/browser-server.log" 2>&1 & server_pid=$!
+      node "$repo/tests/runtime/referral-browser.cjs"
       node "$repo/tests/runtime/blocks-browser.cjs"
       wp option update loyalty_points_using_rules '[]' --format=json --quiet
       for display in '1:0' '0:1' '0:0'; do

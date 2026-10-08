@@ -115,7 +115,7 @@ class YOSWC_Loyalty_Settings {
 		$docs_url = apply_filters( 'yoswc_loyalty_premium_docs_url', 'https://yoohw.com/docs/category/woocommerce-loyalty/' );
 
 		$premium_features = array(
-			__( 'Referral links and referral coupons', 'loyalty-for-woocommerce' ),
+			__( 'Referral coupons and referee rewards', 'loyalty-for-woocommerce' ),
 			__( 'Point expiration and advanced redemption rules', 'loyalty-for-woocommerce' ),
 			__( 'Birthday, account anniversary, and profile completion rewards', 'loyalty-for-woocommerce' ),
 			__( 'Purchase milestone and lifetime spend rewards', 'loyalty-for-woocommerce' ),
