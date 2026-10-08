@@ -11,6 +11,10 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         if (page.url().includes('action=confirm_admin_email')) { await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), page.getByRole('link', { name: 'Remind me later' }).click()]); }
         if (page.url().includes('wp-login')) throw new Error('Native admin login: ' + page.url() + ' ' + (await page.locator('body').innerText()).slice(0,2000));
         await page.goto(base + '/wp-admin/admin.php?page=loyf-setup');
+        if (page.url().includes('setup-wizard')) {
+            await Promise.all([page.waitForURL(u => !(u.searchParams.get('path') || '').startsWith('/setup-wizard'), { waitUntil: 'domcontentloaded' }), page.getByRole('button', { name: 'Skip guided setup', exact: true }).click()]);
+            await page.goto(base + '/wp-admin/admin.php?page=loyf-setup');
+        }
         try { await page.locator('[data-loyf-step="0"]').waitFor({ state: 'visible' }); } catch (e) { console.error('Onboarding browser page:', page.url(), (await page.locator('body').innerText()).slice(0,2400)); throw e; }
         const posts = []; page.on('request', r => { if (r.method() === 'POST') posts.push(r.url()); });
         for (let step = 0; step < 5; step++) {
