@@ -63,7 +63,7 @@ add_action('activated_plugin',static function($plugin){
     wp_set_current_user(get_user_by('login','loyf_admin')->ID);
     $_POST=array('earning_point_rules_nonce'=>wp_create_nonce('save_earning_point_rules'),'loyalty_earning_points'=>array('customer'=>'7'),'loyalty_earning_amount'=>array('customer'=>'5'));
     (new YOSWC_Loyalty_Settings())->save_earning_point_rules();
-    echo 'Native contender merchant setting:',wp_json_encode(get_option('loyalty_points_earning_rules')),PHP_EOL;
+    file_put_contents(getenv('LOYF11_BARRIER').'.merchant',wp_json_encode(get_option('loyalty_points_earning_rules')));
 });
 add_action('yowcl_reward_test_checkpoint',static function($step){
     if('seal-race'===getenv('LOYF11_CASE')&&'onboarding_baseline_snapshot'===$step){loyf11_pause_bootstrap();}
@@ -105,6 +105,7 @@ for case in $cases; do
       touch "$LOYF11_BARRIER.b-go"
       wait "$contender_pid"; contender_pid=
       cat "$task_tmp/$case-contender.log"
+      cat "$LOYF11_BARRIER.merchant"
     else
       wp plugin activate loyalty-for-woocommerce --quiet
       LOYF11_PHASE=bootstrap-merchant wp eval-file "$repo/tests/runtime/onboarding-fixture.php" --quiet
