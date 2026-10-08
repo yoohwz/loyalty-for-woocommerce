@@ -310,7 +310,7 @@
     {
       "target": "inc/backend/actions/emails/notifications-email.php",
       "mode": "100644",
-      "sha256": "8fed425d2a5aca7a1eeb835fbf7723f4d66086e753a8f01e739bc8b171942fdb"
+      "sha256": "263812be059e792bb749e29cbcc385914a8f69ca6c6015f05b39899a49a5c705"
     },
     {
       "target": "inc/backend/actions/extra-points/level-up.php",
@@ -480,12 +480,12 @@
     {
       "target": "inc/cores/helper/free-cart.php",
       "mode": "100644",
-      "sha256": "98bfc52c6417d5dc9950f6883eba23445dcfdcb941104b5173f6c252d94d04f6"
+      "sha256": "be8f42abb450cfadf52b628f6d0ae2a79480c141753447f61a1829e50fe84327"
     },
     {
       "target": "inc/cores/helper/free-core.php",
       "mode": "100644",
-      "sha256": "ed4ca05df0837cf8b133f938bc569492ebfb481413530638b9d9801672c9a621"
+      "sha256": "329b36a5bc161182d4a2d91994d18dde53a232b2d1a09819f9201f8c14bbfef8"
     },
     {
       "target": "inc/cores/helper/free-customer-components.php",
@@ -500,7 +500,7 @@
     {
       "target": "inc/cores/helper/free-migrations.php",
       "mode": "100644",
-      "sha256": "d8f59d427df642a8167669aca52d7d9bb235321fd991cdfe8c88a401b47fe0a3"
+      "sha256": "2be211932d4a8eebc030f778cd655a9e2ed67f10ef6a8f506938b93c5d4ce31b"
     },
     {
       "target": "inc/cores/helper/free-onboarding.php",
@@ -535,12 +535,12 @@
     {
       "target": "inc/frontend/cart-checkout.php",
       "mode": "100644",
-      "sha256": "511508a5fc74195d2b738b451102543abb7caa61e27a1e13bdfdf642a3fa3f86"
+      "sha256": "9c983cbed8c770aad23570d036de15182836ef9957acace1a54e84b57dc59dec"
     },
     {
       "target": "inc/frontend/loyalty-info-bubble.php",
       "mode": "100644",
-      "sha256": "cdb87dd0ef4a5bdb303aa0b3d039cf0085b9cd65521232316c80699ebafb9774"
+      "sha256": "e00f60d679ab82100040937df14102985f153927e774934c30080299eb6b2ed4"
     },
     {
       "target": "inc/frontend/my-account.php",
@@ -620,7 +620,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "22fd291861dd14cefd3e69aa99fd35dde2dfa478c897bec464539e87fe504c8f"
+      "sha256": "773410a53fc0c21c0b8df09a770460241185ad9d489c4f21dd0bab6255f42db6"
     },
     {
       "target": "license.txt",

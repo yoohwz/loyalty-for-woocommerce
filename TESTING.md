@@ -130,6 +130,8 @@ Premium-origin → Free → Premium seeds valid positive shared terms, all nativ
 
 This certifies committed Free First Purchase/referral identities, not every uncommitted policy across editions. Pinned Premium has no equivalent of Free's effective-enable creation cutoff; an uncommitted old order switching to Premium is outside this continuation guarantee. Premium-only coupon/referee/expiration/advanced policies are not admitted as Free new producers. External payment transport, genuine licensing, commercial WCS, multisite and production opcode/JIT behavior remain unavailable; simulated entitlement and loopback browser tests cannot substitute for them. Native connection severance is now executed for the bounded migration/onboarding owner, not every financial/network ACK window.
 
+`migration-cache.php` runs in every consumer leg with independent native WordPress processes/MySQL connections. A reader warms local alloptions and Woo email instances before authenticated per-feature Disable commits; all eight features must use committed disabled policy despite retained pre-images. Actual registered review callbacks refuse fresh value while recovering an existing committed marker without another row; warm reward mail stays silent. A separate request warms alloptions before plugin bootstrap waits on the options lock, then requires the completed-witness boot to refresh it after COMMIT. Native cache API pre-image refill at the transaction observer verifies post-COMMIT invalidation; raw target SELECT failure holds new value. This covers native local cache and cache API coherence, not external Redis/Memcached transport.
+
 ### Minimum and current stable supplements
 
 ```sh

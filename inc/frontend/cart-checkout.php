@@ -93,7 +93,7 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
             $is_checkout_page = is_checkout() && isset($customization_options['checkout']) && $customization_options['checkout'] == 1;
             $display_reward_message = $is_cart_page || $is_checkout_page;
     
-            $loyalty_points_rules = get_option('loyalty_points_using_rules');
+            $loyalty_points_rules = YOWCL_Free_Cart::rules();
             $min_points = 1;
 
             $custom_icon = get_option( 'loyalty_customization_message_icon' );
@@ -104,7 +104,7 @@ class YOSWC_Loyalty_Using_Point_Cart_Checkout {
 			}
     
             if ($loyalty_points_rules) {
-                $rules = maybe_unserialize($loyalty_points_rules);
+                $rules = $loyalty_points_rules;
                 if (isset($rules['points']) && isset($rules['amount'])) {
                     $min_points = (int) $rules['points'];
                 }

@@ -16,6 +16,17 @@ class YOWCL_Free_Migrations {
     public static function ready( $feature ) {
         try { return '1' === self::read( self::witness( $feature ) ); } catch ( Throwable $e ) { return false; }
     }
+    /** Read committed canonical policy independently of local/shared option caches. */
+    public static function canonical( $feature ) {
+        try { return self::ready($feature) ? self::decode(self::read(self::target($feature))) : array(); }
+        catch ( Throwable $e ) { return array(); }
+    }
+    private static function invalidate( $feature ) {
+        wp_cache_delete(self::target($feature),'options');
+        wp_cache_delete(self::witness($feature),'options');
+        wp_cache_delete('alloptions','options');
+        wp_cache_delete('notoptions','options');
+    }
     private static function decode( $raw ) {
         if ( null === $raw ) { return array(); }
         $value = maybe_unserialize( maybe_unserialize( $raw ) );
@@ -220,7 +231,10 @@ class YOWCL_Free_Migrations {
             self::query('COMMIT');
         } catch(Throwable $e) {
             try { mysqli_query($db,'ROLLBACK'); } catch(Throwable $ignored) {}
-            wp_cache_flush(); throw $e;
+            throw $e;
+        } finally {
+            // Another request can refill pre-images during the transaction.
+            self::invalidate($feature);
         }
     }
     private static function finish_locked( $feature, $spec, $resolution=false ) {
@@ -235,7 +249,7 @@ class YOWCL_Free_Migrations {
     }
     private static function migrate( $feature ) {
         $witness=self::read(self::witness($feature));
-        if ('1'===$witness) { return; }
+        if ('1'===$witness) { self::invalidate($feature); return; }
         if (null!==$witness) { throw new RuntimeException('migration_malformed_witness'); }
         if (null!==self::read(self::witness($feature).'_resolution')) { throw new RuntimeException('migration_resolution_pending'); }
         if (self::premium_history()) { throw new RuntimeException('migration_origin_unresolved'); }
