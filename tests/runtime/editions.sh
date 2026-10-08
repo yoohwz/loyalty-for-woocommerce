@@ -47,8 +47,17 @@ for versions in '6.8.3:9.9.5' '7.0:11.1.2'; do
     wp plugin activate loyalty-for-woocommerce --quiet
     LOYF13_EDITION_PHASE=free-seed wp eval-file "$repo/tests/runtime/edition-events.php"
     wp plugin deactivate loyalty-for-woocommerce --quiet; wp plugin activate wc-loyalty --quiet
+    LOYF13_OWNER=wc-loyalty wp eval-file "$repo/tests/runtime/edition-owner.php"
+    wp plugin activate loyalty-for-woocommerce --quiet
+    LOYF13_OWNER=wc-loyalty wp eval-file "$repo/tests/runtime/edition-owner.php"
+    wp plugin deactivate loyalty-for-woocommerce --quiet
     LOYF13_EDITION_PHASE=premium-replay wp eval-file "$repo/tests/runtime/edition-events.php"
     wp plugin deactivate wc-loyalty --quiet; wp plugin activate loyalty-for-woocommerce --quiet
+    LOYF13_OWNER=loyalty-for-woocommerce wp eval-file "$repo/tests/runtime/edition-owner.php"
+    wp plugin activate wc-loyalty --quiet
+    LOYF13_OWNER=wc-loyalty wp eval-file "$repo/tests/runtime/edition-owner.php"
+    wp plugin deactivate wc-loyalty --quiet
+    LOYF13_OWNER=loyalty-for-woocommerce wp eval-file "$repo/tests/runtime/edition-owner.php"
     LOYF13_EDITION_PHASE=free-replay wp eval-file "$repo/tests/runtime/edition-events.php"
    else
     wp plugin activate wc-loyalty --quiet; wp eval-file "$repo/tests/runtime/edition-origin-seed.php"

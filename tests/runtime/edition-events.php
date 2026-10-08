@@ -10,7 +10,12 @@ function edition_snapshot(){
  // presentation/activity caches. All Loyalty, role and other raw meta stays exact.
  $excluded=array('dismissed_wp_pointers','wc_last_active','wc_order_count_'.rtrim($wpdb->get_blog_prefix(),'_'));
  $where=implode(',',array_map(static function($key)use($wpdb){return $wpdb->prepare('%s',$key);},$excluded));
- return array('rows'=>$wpdb->get_results("SELECT * FROM {$wpdb->prefix}yo_loyalty_points_log ORDER BY id",ARRAY_A),'meta'=>$wpdb->get_results("SELECT * FROM {$wpdb->usermeta} WHERE meta_key NOT IN ($where) ORDER BY umeta_id",ARRAY_A),'roles'=>get_option($wpdb->prefix.'user_roles'));
+ $markers=array();foreach(array('_used_points','_yo','_yowcl','_yoswc','_loyf','_loyalty','first_purchase') as $prefix){$markers[]=$wpdb->prepare('meta_key LIKE %s',$wpdb->esc_like($prefix).'%');}$marker_sql=implode(' OR ',$markers);
+ $order_meta=$wpdb->get_results("SELECT * FROM {$wpdb->postmeta} WHERE $marker_sql ORDER BY meta_id",ARRAY_A);
+ $hpos_meta=array();if('hpos'===getenv('LOYF_STORAGE')){$hpos_meta=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}wc_orders_meta WHERE $marker_sql ORDER BY id",ARRAY_A);}
+ $names=array('loyalty_levels_roles','loyalty_levels_rules','loyalty_points_earning_status','loyalty_points_deduction_status','loyalty_points_earning_rules','loyalty_points_using_rules','loyalty_extra_points_rules','loyalty_extra_reviews_gamification_rules','loyalty_customization_my_account','loyalty_customization_membercard','woocommerce_yowcl_loyalty_points_reward_settings','woocommerce_yowcl_loyalty_points_deduct_settings','woocommerce_yowcl_loyalty_level_update_settings');
+ $options=implode(',',array_map(static function($name)use($wpdb){return $wpdb->prepare('%s',$name);},$names));
+ return array('rows'=>$wpdb->get_results("SELECT * FROM {$wpdb->prefix}yo_loyalty_points_log ORDER BY id",ARRAY_A),'meta'=>$wpdb->get_results("SELECT * FROM {$wpdb->usermeta} WHERE meta_key NOT IN ($where) ORDER BY umeta_id",ARRAY_A),'roles'=>get_option($wpdb->prefix.'user_roles'),'order_meta'=>$order_meta,'hpos_meta'=>$hpos_meta,'comment_meta'=>$wpdb->get_results("SELECT * FROM {$wpdb->commentmeta} ORDER BY meta_id",ARRAY_A),'options'=>$wpdb->get_results("SELECT option_name,option_value,autoload FROM {$wpdb->options} WHERE option_name IN ($options) ORDER BY option_name",ARRAY_A));
 }
 loyf_assert('no'===get_option('woocommerce_custom_orders_table_data_sync_enabled'),'Edition synchronization disabled');
 $expected='hpos'===getenv('LOYF_STORAGE');loyf_equal($expected,Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled(),'Native edition storage owner');
@@ -45,6 +50,7 @@ else{loyf_assert(class_exists('YOSWC_Loyalty',false)&&!class_exists('YOWCL_Loyal
 $u=$data['buyer'];$o=wc_get_order($data['order']);do_action('user_register',$u);do_action('wp_login',$data['buyer_login'],get_userdata($u));do_action('comment_post',$data['review'],1,get_comment($data['review'],ARRAY_A));do_action('woocommerce_order_status_completed',$o->get_id(),$o);do_action('woocommerce_payment_complete',$o->get_id());
 loyf_equal($data['snapshot']['rows'],edition_snapshot()['rows'],'Cross-edition replay exact log rows/IDs/NULLs');
 loyf_equal($data['snapshot']['meta'],edition_snapshot()['meta'],'Cross-edition replay exact user meta/roles/markers');loyf_equal($data['snapshot']['roles'],edition_snapshot()['roles'],'Cross-edition physical roles');
+foreach(array('order_meta','hpos_meta','comment_meta','options') as $surface){loyf_equal($data['snapshot'][$surface],edition_snapshot()[$surface],'Cross-edition raw '.$surface);}
 foreach($data['snapshot']['rows'] as $row){$key=$row['event_key'];if(null===$key){continue;}$event=array('action'=>$row['action'],'order_id'=>(int)$row['order_id'],'source_event_key'=>$row['source_event_key']);
  if(in_array($row['action'],YOWCL_Points_Transaction::REWARD_ACTIONS,true)){$result=YOWCL_Points_Transaction::reward((int)$row['user_id'],(int)$row['available_delta'],$key,$event);}
  elseif('points_deducted'===$row['action']){$result=YOWCL_Points_Transaction::reverse_order_reward((int)$row['user_id'],(int)$row['order_id'],'Replay');}
