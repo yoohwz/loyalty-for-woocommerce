@@ -3444,7 +3444,7 @@
   },
   "inc/cores/helper/referral-rewards.php": {
     "input_sha256": "8cf98e7fadebcdeae8c1716e51de1ba584e18b8e622727b3f1b0751161d3ae78",
-    "selected_sha256": "e7451e9c2e354445fa930c822b2715530db289566a8cdc9c765fef15c3662161",
+    "selected_sha256": "c5d83ea59ec85ec10f7cc885dd877b17bdfddd062bf0511bf1ebe573eff7be70",
     "spans": [
       {
         "start": 38,
@@ -3624,7 +3624,7 @@
       {
         "start": 27104,
         "end": 27224,
-        "replacement": "CQkJCg=="
+        "replacement": "Cg=="
       },
       {
         "start": 28058,
@@ -3645,12 +3645,17 @@
   },
   "inc/backend/actions/helper/referrals.php": {
     "input_sha256": "75195bca62eb763b311429dcee042f569cc7320888cbb765801f97ca5fb998e5",
-    "selected_sha256": "1d9e32b6e8be9172a6c040a402d05934d3cf9aaecfd57c8f6cdbdf824661bfdc",
+    "selected_sha256": "9fff503a31d004213a64165e387df8ce52befea449640e7a4fcb5ef2f5bba4e6",
     "spans": [
       {
         "start": 574,
         "end": 660,
         "replacement": "ICAgICAgICBpZiAoICEgWU9XQ0xfRnJlZV9Db3JlOjpvd25zKCkgKSB7Cg=="
+      },
+      {
+        "start": 675,
+        "end": 684,
+        "replacement": "Cg=="
       },
       {
         "start": 756,

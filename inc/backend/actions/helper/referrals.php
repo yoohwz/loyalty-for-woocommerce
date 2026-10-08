@@ -20,7 +20,7 @@ class YOWCL_Helper_Referrals {
         if ( ! YOWCL_Free_Core::owns() ) {
 			return;
 		}
-        
+
         add_action( 'init', [ __CLASS__, 'maybe_capture_referral' ] );
 
 

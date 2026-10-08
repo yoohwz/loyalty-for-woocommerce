@@ -236,7 +236,7 @@ class YOWCL_Referral_Rewards {
 			}
 			if ( ! $complete ) { $done = true; return; }
 			$owner();
-			
+
 			YOWCL_Order_Rewards::meta( $order, '_yo_link_referral_awarded', 'yes' );
 			$done = true;
 		}, array(), $retry );
