@@ -40,6 +40,7 @@ class YOWCL_Helper_Referrals {
 
         $target_url = $target_url ?: home_url( '/' );
         $token      = self::ensure_user_token( $user_id );
+        if ( ! is_string( $token ) || ! preg_match( '/^[a-zA-Z0-9]{12}$/D', $token ) ) { return ''; }
 
         $args = array_merge( $extra_args, [ self::QUERY_VAR => $token ] );
         return add_query_arg( $args, $target_url );
@@ -69,7 +70,10 @@ class YOWCL_Helper_Referrals {
         if ( ! $config['enabled'] || ! get_userdata( (int) $user_id ) ) { return ''; }
         return YOWCL_Free_Migrations::locked( static function () use ( $user_id ) {
             global $wpdb;
-            $tokens = get_user_meta( (int) $user_id, self::USER_META_TOKEN, false );
+            $db = $wpdb->dbh; $name = 'yowclrt_' . hash( 'sha224', DB_NAME . ':' . $wpdb->usermeta );
+            if ( '1' !== (string) YOWCL_Points_Lock::scalar( $db, $wpdb->prepare( 'SELECT GET_LOCK(%s,0)', $name ) ) ) { throw new RuntimeException( 'referral_token_busy' ); }
+            try {
+            $tokens = self::tokens( (int) $user_id );
             if ( $tokens ) {
                 if ( 1 !== count( $tokens ) || ! is_string( $tokens[0] ) || self::resolve_referrer_user_id( $tokens[0] ) !== (int) $user_id ) { throw new DomainException( 'referral_token_ambiguous' ); }
                 return $tokens[0];
@@ -79,10 +83,12 @@ class YOWCL_Helper_Referrals {
                 $found = $wpdb->get_var( $wpdb->prepare( "SELECT umeta_id FROM {$wpdb->usermeta} WHERE meta_key=%s AND meta_value=%s LIMIT 1", self::USER_META_TOKEN, $token ) );
                 if ( $wpdb->last_error ) { throw new RuntimeException( 'referral_token_storage_failed' ); }
                 if ( $found ) { continue; }
+                if ( $wpdb->dbh !== $db || (string) YOWCL_Points_Lock::scalar( $db, 'SELECT CONNECTION_ID()' ) !== (string) YOWCL_Points_Lock::scalar( $db, $wpdb->prepare( 'SELECT IS_USED_LOCK(%s)', $name ) ) ) { throw new RuntimeException( 'referral_token_ownership_lost' ); }
                 if ( ! add_user_meta( (int) $user_id, self::USER_META_TOKEN, $token, true ) || self::resolve_referrer_user_id( $token ) !== (int) $user_id ) { throw new RuntimeException( 'referral_token_not_saved' ); }
                 return $token;
             }
             throw new RuntimeException( 'referral_token_unavailable' );
+            } finally { try { YOWCL_Points_Lock::scalar( $db, $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $name ) ); } catch ( Throwable $ignored ) {} }
         } );
     }
 
@@ -97,13 +103,20 @@ class YOWCL_Helper_Referrals {
         $rows = $wpdb->get_results( $wpdb->prepare( "SELECT m.user_id,m.meta_value FROM {$wpdb->usermeta} m INNER JOIN {$wpdb->users} u ON u.ID=m.user_id WHERE m.meta_key=%s AND m.meta_value=%s LIMIT 2", self::USER_META_TOKEN, $token ), ARRAY_A );
         if ( $wpdb->last_error ) { throw new RuntimeException( 'referral_token_storage_failed' ); }
         if ( 1 !== count( $rows ) || ! hash_equals( (string) $rows[0]['meta_value'], $token ) ) { return 0; }
-        $all = get_user_meta( (int) $rows[0]['user_id'], self::USER_META_TOKEN, false );
+        $all = self::tokens( (int) $rows[0]['user_id'] );
         return 1 === count( $all ) && $all[0] === $token ? (int) $rows[0]['user_id'] : 0;
+    }
+
+    private static function tokens( $user ) {
+        global $wpdb;
+        $tokens = $wpdb->get_col( $wpdb->prepare( "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id=%d AND meta_key=%s", $user, self::USER_META_TOKEN ) );
+        if ( $wpdb->last_error ) { throw new RuntimeException( 'referral_token_storage_failed' ); }
+        return $tokens;
     }
 
     /**
      * If ?ref=TOKEN is present, set a cookie holding the validated token.
-     * Cookie lifetime: 30 days (can tweak here if needed).
+     * Free cookie lifetime is fixed at 30 days.
      */
     public static function maybe_capture_referral() {
         if ( ! YOWCL_Free_Core::owns() ) {

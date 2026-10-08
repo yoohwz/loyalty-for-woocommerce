@@ -266,7 +266,7 @@
       "target": "inc/backend/actions/helper/referrals.php",
       "transform": "wp-text-domain-v1",
       "sha256": "75195bca62eb763b311429dcee042f569cc7320888cbb765801f97ca5fb998e5",
-      "output_sha256": "33bf2227bbb6b91025d1ed4cfcf1fea24199dced7dedb9208909ea0fffdcfd71",
+      "output_sha256": "1d9e32b6e8be9172a6c040a402d05934d3cf9aaecfd57c8f6cdbdf824661bfdc",
       "domain_replacements": 0,
       "extraction": "inc/backend/actions/helper/referrals.php"
     }
@@ -1768,6 +1768,6 @@
   "extractions": {
     "id": "byte-spans-v1",
     "path": "config/free-core-extractions.json",
-    "sha256": "51a38df0b948cf49f9849819b10da155cf34de36d131740da797c2b7760feab7"
+    "sha256": "5b811f22cc1aa34304471b9756070842849a7101c40b04c9ff7c37a02609da94"
   }
 }
