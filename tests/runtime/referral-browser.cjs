@@ -25,6 +25,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     await page.locator('[data-yoswc-loyalty-info] .yoswc-loyalty-info__bubble').click();
     const button=page.locator('[data-loyf-referral-copy="loyf-referral-bubble"]');
     assert.equal(await page.locator('#loyf-referral-bubble').inputValue(),base+'/?ref='+f.token);
+    await page.waitForLoadState('networkidle'); // Finish Woo's initial customer/address hydration before measuring Copy.
     const posts=[];page.on('request',r=>{
       if(r.method()!=='POST')return;
       // Woo11.2 transports a cart GET inside its POST batch middleware.
