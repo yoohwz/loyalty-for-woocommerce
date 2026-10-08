@@ -34,22 +34,31 @@ class YOWCL_Free_Onboarding {
             if ( self::exists( "SELECT 1 FROM {$wpdb->options} WHERE " . implode( ' OR ', $where ) . ' LIMIT 1' ) ) { throw new RuntimeException( 'onboarding_prior_options' ); }
             // Even an empty legacy schema is evidence of an earlier bootstrap.
             if ( self::exists( $wpdb->prepare( 'SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s', $wpdb->prefix . 'yo_loyalty_points_log' ) ) ) { throw new RuntimeException( 'onboarding_prior_schema' ); }
-            $meta = array( 'user_points','user_earning_points','first_purchase_rewarded','_points_awarded','_points_deducted','_yoswc_role_claims' );
+            $meta = array( 'user_points','user_earning_points','first_purchase_rewarded','_points_awarded','_points_deducted','_used_points','_used_points_discount','_yoswc_role_claims' );
             foreach ( array( $wpdb->usermeta, $wpdb->postmeta, $wpdb->commentmeta ) as $table ) {
                 $where = array(); foreach ( $meta as $m ) { $where[] = $wpdb->prepare( 'meta_key=%s', $m ); }
-                foreach ( array( 'loyalty_','_loyalty_','yoswc_loyalty','_yoswc_','yowcl_','yol_','_yol_','_yo_','_yowcl_','_loyf_' ) as $p ) { $where[] = $wpdb->prepare( 'meta_key LIKE %s', $wpdb->esc_like( $p ) . '%' ); }
+                foreach ( array( 'loyalty_','_loyalty_','yoswc_loyalty','_yoswc_','yo_loyalty_','yowcl_','yol_','_yol_','_yo_','_yowcl_','loyf_','_loyf_' ) as $p ) { $where[] = $wpdb->prepare( 'meta_key LIKE %s', $wpdb->esc_like( $p ) . '%' ); }
                 if ( self::exists( "SELECT 1 FROM {$table} WHERE " . implode( ' OR ', $where ) . ' LIMIT 1' ) ) { throw new RuntimeException( 'onboarding_prior_markers' ); }
             }
             foreach ( array( 'wc_orders_meta'=>'meta_key', 'actionscheduler_actions'=>'hook' ) as $suffix=>$column ) {
                 $table = $wpdb->prefix . $suffix;
                 if ( ! self::exists( $wpdb->prepare( 'SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s', $table ) ) ) { continue; }
-                $where = array(); foreach ( array( '_yo_','_yowcl_','_loyf_','yowcl_','yoswc_loyalty','loyf_' ) as $p ) { $where[] = $wpdb->prepare( "$column LIKE %s", $wpdb->esc_like( $p ) . '%' ); }
-                foreach ( array( '_points_awarded','_points_deducted' ) as $m ) { $where[] = $wpdb->prepare( "$column=%s", $m ); }
+                $where = array(); foreach ( array( 'loyalty_','_loyalty_','yoswc_loyalty','_yoswc_','yo_loyalty_','yowcl_','yol_','_yol_','_yo_','_yowcl_','loyf_','_loyf_' ) as $p ) { $where[] = $wpdb->prepare( "$column LIKE %s", $wpdb->esc_like( $p ) . '%' ); }
+                foreach ( array( '_points_awarded','_points_deducted','_used_points','_used_points_discount' ) as $m ) { $where[] = $wpdb->prepare( "$column=%s", $m ); }
                 if ( self::exists( "SELECT 1 FROM {$table} WHERE " . implode( ' OR ', $where ) . ' LIMIT 1' ) ) { throw new RuntimeException( 'onboarding_prior_orders' ); }
             }
             // Unattributed custom roles cannot prove a clean Loyalty history.
             $roles = maybe_unserialize( self::read( $wpdb->prefix . 'user_roles' ) );
             if ( ! is_array( $roles ) || array_diff( array_keys( $roles ), array( 'administrator','editor','author','contributor','subscriber','customer','shop_manager' ) ) ) { throw new RuntimeException( 'onboarding_roles_uncertain' ); }
+            $caps = $wpdb->get_results( $wpdb->prepare( "SELECT user_id,meta_value FROM {$wpdb->usermeta} WHERE meta_key=%s LIMIT 10001",$wpdb->prefix . 'capabilities' ),ARRAY_A );
+            if ( $wpdb->last_error || ! is_array( $caps ) || count( $caps ) > 10000 ) { throw new RuntimeException( 'onboarding_role_coverage_uncertain' ); }
+            $seen = array();
+            foreach ( $caps as $row ) {
+                $value = @unserialize( $row['meta_value'],array( 'allowed_classes'=>false ) );
+                if ( isset( $seen[$row['user_id']] ) || ! is_array( $value ) || array_diff( array_keys( $value ),array_keys( $roles ) ) ) { throw new RuntimeException( 'onboarding_role_assignment_uncertain' ); }
+                foreach ( $value as $enabled ) { if ( ! is_bool( $enabled ) ) { throw new RuntimeException( 'onboarding_role_assignment_uncertain' ); } }
+                $seen[$row['user_id']] = true;
+            }
             $s = array( 'version'=>1, 'status'=>'proven', 'id'=>wp_generate_uuid4() );
             if ( add_option( self::OPTION, $s, '', false ) && self::read( self::OPTION ) === serialize( $s ) ) { self::$initial = true; }
         } catch ( Throwable $e ) {

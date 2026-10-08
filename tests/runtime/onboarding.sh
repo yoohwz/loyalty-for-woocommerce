@@ -38,10 +38,10 @@ add_filter('query',static function($query){
     return $query;
 },PHP_INT_MAX);
 PHP
-cases='fresh skip options premium user-marker order-marker hpos-marker version bad-cutover migration bad-witness role balance log assessment-failure late-setting late-balance failure first-failure referral-failure unknown-referral disconnect parallel merchant-race dismiss'
+cases='fresh skip options premium user-marker order-marker used-marker discount-marker hpos-marker hpos-used-marker version bad-cutover migration bad-witness role orphan-role license balance log assessment-failure late-setting late-balance failure first-failure referral-failure unknown-referral disconnect parallel merchant-race dismiss'
 cases="${LOYF11_CASES:-$cases}"
 for case in $cases; do
-  case "$case" in fresh|skip|options|premium|user-marker|order-marker|hpos-marker|version|bad-cutover|migration|bad-witness|role|balance|log|assessment-failure|late-setting|late-balance|failure|first-failure|referral-failure|unknown-referral|disconnect|parallel|merchant-race|dismiss|browser) ;; *) echo 'Unknown onboarding fixture' >&2; exit 2 ;; esac
+  case "$case" in fresh|skip|options|premium|user-marker|order-marker|used-marker|discount-marker|hpos-marker|hpos-used-marker|version|bad-cutover|migration|bad-witness|role|orphan-role|license|balance|log|assessment-failure|late-setting|late-balance|failure|first-failure|referral-failure|unknown-referral|disconnect|parallel|merchant-race|dismiss|browser) ;; *) echo 'Unknown onboarding fixture' >&2; exit 2 ;; esac
 done
 if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
   if [[ " $cases " != *' browser '* ]]; then cases="$cases browser"; fi
@@ -58,7 +58,7 @@ for case in $cases; do
   wp core install --url=http://loyf-onboarding.invalid --title=Onboarding --admin_user=loyf_admin --admin_password=disposable-only --admin_email=admin@example.invalid --skip-email --quiet
   wp config set DISABLE_WP_CRON true --raw --quiet
   wp plugin activate woocommerce --quiet
-  if [[ "$case" == hpos-marker ]]; then wp option update woocommerce_custom_orders_table_data_sync_enabled no --quiet; wp option update woocommerce_custom_orders_table_enabled yes --quiet; fi
+  if [[ "$case" == hpos-marker || "$case" == hpos-used-marker ]]; then wp option update woocommerce_custom_orders_table_data_sync_enabled no --quiet; wp option update woocommerce_custom_orders_table_enabled yes --quiet; fi
   LOYF11_PHASE=seed wp eval-file "$repo/tests/runtime/onboarding-fixture.php" --quiet
   wp plugin activate loyalty-for-woocommerce --quiet
   LOYF11_PHASE=verify wp eval-file "$repo/tests/runtime/onboarding-fixture.php" --quiet

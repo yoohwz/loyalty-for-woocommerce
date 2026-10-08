@@ -22,12 +22,17 @@ if ( 'seed' === $phase ) {
     if ( 'options' === $case ) { add_option( 'loyalty_points_earning_rules',array( 'customer'=>array( 'points'=>'17','amount'=>'23' ),'unknown'=>array( 'nested'=>true ) ) ); }
     if ( 'premium' === $case ) { add_option( 'loyalty_referral_coupon',serialize( array( 'enabled'=>'yes','opaque'=>array( 'preserve'=>'exact' ) ) ) ); }
     if ( 'user-marker' === $case ) { add_user_meta( $user,'_yowcl_loyalty_level','gold' ); }
+    if ( 'used-marker' === $case ) { $o->update_meta_data('_used_points',31); $o->save_meta_data(); }
+    if ( 'discount-marker' === $case ) { $o->update_meta_data('_used_points_discount','7.25'); $o->save_meta_data(); }
+    if ( 'hpos-used-marker' === $case ) { $o->update_meta_data('_used_points',31); $o->save_meta_data(); }
     if ( 'order-marker' === $case ) { $o->update_meta_data( '_points_awarded',31 ); $o->save_meta_data(); }
     if ( 'hpos-marker' === $case ) { $o=wc_get_order( $o->get_id() ); $o->update_meta_data( '_yowcl_referral_terms',array( 'legacy'=>'preserve' ) ); $o->save_meta_data(); }
     if ( 'version' === $case ) { add_option( 'yoswc_loyalty_version','1.2.2' ); }
     if ( 'bad-cutover' === $case ) { add_option( 'loyf_core_cutover_v1',array( 'malformed'=>true ) ); }
     if ( 'migration' === $case ) { add_option( 'loyf_migration_signup_v1','broken' ); }
     if ( 'bad-witness' === $case ) { add_option( 'loyf_onboarding_v1',array( 'version'=>1,'status'=>'fresh' ) ); }
+    if ( 'orphan-role' === $case ) { update_user_meta($user,$wpdb->prefix.'capabilities',array('deleted_loyalty_gold'=>true)); }
+    if ( 'license' === $case ) { add_option('yowcl_license_key','dormant-premium-fixture'); }
     if ( 'role' === $case ) { add_role( 'old_loyalty','Old Loyalty',array( 'read'=>true ) ); }
     if ( 'balance' === $case ) { add_user_meta( $user,'user_points','9.5' ); add_user_meta( $user,'user_earning_points','17.25' ); }
     if ( 'log' === $case ) {
@@ -35,7 +40,7 @@ if ( 'seed' === $phase ) {
         $wpdb->insert( $wpdb->prefix . 'yo_loyalty_points_log',array( 'id'=>77,'user_id'=>$user,'action'=>'legacy_reward','order_id'=>$o->get_id(),'amount'=>'9.50','description'=>'Untouched legacy','date'=>'2020-01-01 00:00:00' ) );
     }
     if ( 'assessment-failure' === $case ) { file_put_contents( getenv( 'LOYF11_FAIL_FILE' ),'once' ); }
-    $fixture['protected'] = $wpdb->get_results( "SELECT option_name,option_value FROM {$wpdb->options} WHERE option_name IN ('loyalty_points_earning_rules','loyalty_referral_coupon','loyf_core_cutover_v1','loyf_migration_signup_v1','loyf_onboarding_v1') ORDER BY option_name",ARRAY_A );
+    $fixture['protected'] = $wpdb->get_results( "SELECT option_name,option_value FROM {$wpdb->options} WHERE option_name IN ('loyalty_points_earning_rules','loyalty_referral_coupon','yowcl_license_key','loyf_core_cutover_v1','loyf_migration_signup_v1','loyf_onboarding_v1') ORDER BY option_name",ARRAY_A );
     file_put_contents( getenv( 'LOYF11_FIXTURE' ),wp_json_encode( $fixture ) ); return;
 }
 wp_set_current_user( get_user_by( 'login','loyf_admin' )->ID );

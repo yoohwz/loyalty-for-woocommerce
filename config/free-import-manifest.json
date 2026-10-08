@@ -575,12 +575,12 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "cdb6cf4d59dcf8619c1f740612c7c3bb095555ad408bb0b98fe66daa954a4c77"
+      "sha256": "213b3ed08bc58d0372d87a3a911f7db43cb5b836669345037236d2f127dbe063"
     },
     {
       "target": "inc/cores/helper/free-onboarding.php",
       "mode": "100644",
-      "sha256": "60d7db9d11d762adb6ea62fbdb102185c880db6c246911b3e7434f39d06ec1af"
+      "sha256": "68df3eb114cfa30f51f4fdb72e39018376d1c789367e966cf1bb39ec21838066"
     },
     {
       "target": "js/onboarding.js",
