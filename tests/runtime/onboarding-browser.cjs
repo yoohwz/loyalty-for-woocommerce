@@ -9,7 +9,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         await page.locator('#user_login').fill('loyf_admin'); await page.locator('#user_pass').fill('disposable-only');
         await Promise.all([page.waitForURL(u => !u.pathname.includes('wp-login')), page.locator('#wp-submit').click()]);
         await page.goto(base + '/wp-admin/admin.php?page=loyf-setup');
-        await page.locator('[data-loyf-step="0"]').waitFor({ state: 'visible' });
+        try { await page.locator('[data-loyf-step="0"]').waitFor({ state: 'visible' }); } catch (e) { console.error('Onboarding browser page:', page.url(), (await page.locator('body').innerText()).slice(0,2400)); throw e; }
         const posts = []; page.on('request', r => { if (r.method() === 'POST') posts.push(r.url()); });
         for (let step = 0; step < 5; step++) {
             if (step === 1) { await page.locator('[name="earn_points"]').fill('2'); await page.locator('[name="earn_amount"]').fill('5'); }

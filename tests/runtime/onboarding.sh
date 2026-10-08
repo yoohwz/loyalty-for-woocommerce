@@ -39,8 +39,12 @@ add_filter('query',static function($query){
 },PHP_INT_MAX);
 PHP
 cases='fresh skip options premium user-marker order-marker hpos-marker version bad-cutover migration bad-witness role balance log assessment-failure late-setting late-balance failure first-failure referral-failure unknown-referral disconnect parallel merchant-race dismiss'
+cases="${LOYF11_CASES:-$cases}"
+for case in $cases; do
+  case "$case" in fresh|skip|options|premium|user-marker|order-marker|hpos-marker|version|bad-cutover|migration|bad-witness|role|balance|log|assessment-failure|late-setting|late-balance|failure|first-failure|referral-failure|unknown-referral|disconnect|parallel|merchant-race|dismiss|browser) ;; *) echo 'Unknown onboarding fixture' >&2; exit 2 ;; esac
+done
 if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
-  cases="$cases browser"
+  if [[ " $cases " != *' browser '* ]]; then cases="$cases browser"; fi
   if [[ -z "${LOYF_PLAYWRIGHT_PATH:-}" ]]; then npm install --prefix "$task_tmp/browser" playwright@1.56.1 --no-audit --no-fund; export LOYF_PLAYWRIGHT_PATH="$task_tmp/browser/node_modules/playwright"; fi
   if [[ -z "${LOYF_BROWSER_EXECUTABLE:-}" ]]; then node "$LOYF_PLAYWRIGHT_PATH/cli.js" install --with-deps chromium; fi
 fi
