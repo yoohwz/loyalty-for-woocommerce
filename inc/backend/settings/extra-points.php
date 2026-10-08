@@ -189,13 +189,16 @@ class YOSWC_Loyalty_Settings_Extra_Points {
                 }
                 $map = array();
                 if ( YOWCL_Free_Migrations::ready( 'levelup' ) ) {
-                    $merged = maybe_unserialize( get_option( 'loyalty_extra_reviews_gamification_rules', array() ) );
-                    $map = $merged['levelup_points'] ?? array();
                     foreach ( (array) get_option( 'loyalty_levels_roles', array() ) as $role ) {
                         $field = 'loyalty_extra_levelup_' . $role;
                         if ( !array_key_exists( $field, $_POST ) ) { continue; }
                         $value = $_POST[$field];
                         if ( !is_scalar( $value ) || ( '' !== (string) $value && ( !preg_match( '/^[0-9]+$/D', (string) $value ) || strlen( (string) $value ) > 8 ) ) ) { throw new DomainException( __( 'A valid whole points amount is required.', 'loyalty-for-woocommerce' ) ); }
+                        if ( ! $level_changed ) {
+                            // Build an explicitly edited map from live rows after ownership.
+                            $merged = maybe_unserialize( maybe_unserialize( YOWCL_Free_Migrations::read( 'loyalty_extra_reviews_gamification_rules' ) ) );
+                            $map = $merged['levelup_points'] ?? array();
+                        }
                         if ( !is_array( $map ) || ( isset( $map[$role] ) && !is_array( $map[$role] ) ) ) { throw new RuntimeException( 'migration_malformed_option' ); }
                         $map[$role] = array_replace( $map[$role] ?? array(), array( 'awarded'=>(string) $value ) ); $level_changed = true;
                     }

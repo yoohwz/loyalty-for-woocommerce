@@ -355,7 +355,7 @@
     {
       "target": "inc/backend/settings/extra-points.php",
       "mode": "100644",
-      "sha256": "a8b37175cb1b1651b6de98c141f00ffc8dd0d2e96eda78f9e56ed4aedb0b86aa"
+      "sha256": "3e5b7439bb75772eb4cad459b3851d49a16b32d91b039ed8410eb79529b4b57b"
     },
     {
       "target": "inc/backend/settings/files/yol_import_sample.csv",
@@ -620,7 +620,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "586c319ff11842610a5c4570271b19c619b02525231cd67bea2a17b9aaa21cf3"
+      "sha256": "22fd291861dd14cefd3e69aa99fd35dde2dfa478c897bec464539e87fe504c8f"
     },
     {
       "target": "license.txt",

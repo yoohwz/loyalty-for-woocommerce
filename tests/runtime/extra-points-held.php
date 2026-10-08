@@ -39,6 +39,16 @@ try{
   // An omitted ready control must not silently clear its existing terms.
   $after=$snapshot();$_POST=array('extra_points_settings_nonce'=>wp_create_nonce('save_extra_points_settings_action'));$save();loyf_equal($after,$snapshot(),'Absent controls grant no mutation');
  }
+ // A stale pre-lock option cache cannot erase another role or dormant fields.
+ $choose('levelup');$cached=get_option($merged);$live=maybe_unserialize($cached);$live['levelup_points']['customer']['dormant']='fresh';$live['levelup_points']['subscriber']=array('awarded'=>'11','dormant'=>'preserve');
+ $wpdb->query($wpdb->prepare("UPDATE {$wpdb->options} SET option_value=%s WHERE option_name=%s",maybe_serialize(serialize($live)),$merged));
+ loyf_equal($cached,get_option($merged),'Native option cache remains stale before save');
+ $_POST=array('extra_points_settings_nonce'=>wp_create_nonce('save_extra_points_settings_action'),'loyalty_extra_levelup_customer'=>'67');$save();$live['levelup_points']['customer']['awarded']='67';
+ loyf_equal(maybe_serialize(serialize($live)),YOWCL_Free_Migrations::read($merged),'Live owned merge preserves concurrent dormant and other-role fields');
+ // An unsubmitted feature's source failure cannot veto another ready save.
+ $unavailable=static function($sql)use($merged){return strpos($sql,'SELECT option_value')!==false&&strpos($sql,"'{$merged}'")!==false?'SELECT * FROM loyf13_unsubmitted_level_source':$sql;};
+ add_filter('query',$unavailable,PHP_INT_MAX);try{$_POST=array('extra_points_settings_nonce'=>wp_create_nonce('save_extra_points_settings_action'),'loyalty_extra_signup_points'=>'47');$save();}finally{remove_filter('query',$unavailable,PHP_INT_MAX);}
+ loyf_equal(47,YOWCL_Free_Core::extra('signup'),'Unsubmitted level target is not read or saved');
  // Native storage failure after one completed setting reports that partial result.
  YOWCL_Free_First_Purchase::save(false,'0');$first_before=array(YOWCL_Free_Migrations::read(YOWCL_Free_First_Purchase::RULES),YOWCL_Free_Migrations::read(YOWCL_Free_First_Purchase::WITNESS));
  $_POST=array('extra_points_settings_nonce'=>wp_create_nonce('save_extra_points_settings_action'),'loyalty_extra_signup_points'=>'51','loyalty_extra_login_points'=>'53','loyalty_extra_review_points'=>'59','loyalty_extra_first_purchase_enabled'=>'yes','loyalty_extra_first_purchase_points'=>'61');$writes=0;
