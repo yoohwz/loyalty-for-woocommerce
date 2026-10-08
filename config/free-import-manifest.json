@@ -525,7 +525,7 @@
     {
       "target": "inc/cores/helper/free-readers.php",
       "mode": "100644",
-      "sha256": "5159640b7f5b1bacbbdad06b5d4fdd5dc71a0b78e1247d042089fb00b79521c9"
+      "sha256": "31a946c2f090840a678d16a936d915d89fe59d95b442b367e78fa2dc5f484544"
     },
     {
       "target": "inc/cores/helper/free-referral.php",

@@ -52,7 +52,7 @@ class YOWCL_Free_Readers {
     public static function population( $potential = false ) {
         global $wpdb;
         $clauses = array();
-        foreach ( self::roles() as $role ) { $clauses[] = $wpdb->prepare( 'BINARY c.meta_value LIKE %s', '%' . $wpdb->esc_like( '"' . $role . '";' . ( $potential ? '' : 'b:1;' ) ) . '%' ); }
+        foreach ( self::roles() as $role ) { $clauses[] = $wpdb->prepare( 'BINARY c.meta_value LIKE %s', '%' . $wpdb->esc_like( '"' . $role . '";' . ( $potential ? '' : 'b:' ) ) . '%' ); }
         if ( ! $clauses ) { return '0=1'; }
         return $wpdb->prepare( "EXISTS (SELECT 1 FROM {$wpdb->usermeta} c WHERE c.user_id=u.ID AND c.meta_key=%s AND (", $wpdb->get_blog_prefix() . 'capabilities' ) . implode( ' OR ', $clauses ) . '))';
     }
@@ -110,7 +110,7 @@ class YOWCL_Free_Readers {
         if ( 1 !== count( $values ) ) { return false; }
         $caps = maybe_unserialize( $values[0] );
         if ( ! is_array( $caps ) ) { return false; }
-        foreach ( self::roles() as $role ) { if ( true === ( $caps[$role] ?? false ) ) { return true; } }
+        foreach ( self::roles() as $role ) { if ( array_key_exists( $role, $caps ) && is_bool( $caps[$role] ) ) { return true; } }
         return false;
     }
     public static function level( $id, array $meta ) {
@@ -131,7 +131,7 @@ class YOWCL_Free_Readers {
         global $wpdb;
         $caps = maybe_unserialize( $meta[$wpdb->get_blog_prefix() . 'capabilities'][0] ?? '' );
         $expected = $stored ? $stored[0] : ''; $highest = -1;
-        if ( ! $stored && is_array( $caps ) ) { foreach ( $rules as $slug => $rule ) { if ( true === ( $caps[$slug] ?? false ) && (int) $rule['from'] > $highest ) { $highest = (int) $rule['from']; $expected = $slug; } } }
+        if ( ! $stored && is_array( $caps ) ) { foreach ( $rules as $slug => $rule ) { if ( array_key_exists( $slug, $caps ) && is_bool( $caps[$slug] ) && (int) $rule['from'] > $highest ) { $highest = (int) $rule['from']; $expected = $slug; } } }
         return in_array( $expected, self::roles(), true ) && isset( $rules[$expected] ) ? $expected : null;
     }
     public static function economic_hold( array $meta, array $available, array $earned ) {
