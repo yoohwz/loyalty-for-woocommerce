@@ -47,13 +47,13 @@ class YOWCL_Referral_Rewards {
     }
 
     private static function qualification_terms( $order, array $rules ) {
-        $qualified = $order->get_meta( self::QUALIFIED, true );
+        $qualified = YOWCL_Free_Referral::qualification( $order );
         if ( is_array( $qualified ) ) { return $qualified; }
         return array( 'identity'=>self::identity( $order ), 'referee'=>(int) $order->get_user_id(), 'email'=>'', 'frequency'=>'first_order', 'award_statuses'=>array( 'wc-processing','wc-completed' ) );
     }
 
 	private static function qualify( $order, array $terms ) {
-		if ( $order->get_meta( self::QUALIFIED, true ) ) { return; }
+		if ( YOWCL_Free_Referral::qualification( $order ) ) { return; }
 		$qualified = array_intersect_key( $terms, array_flip( array( 'identity', 'referee', 'email', 'frequency', 'award_statuses' ) ) );
 		YOWCL_Order_Rewards::meta( $order, self::IDENTITY, $qualified['identity'] );
 		YOWCL_Order_Rewards::meta( $order, self::QUALIFIED, $qualified );
@@ -66,7 +66,7 @@ class YOWCL_Referral_Rewards {
 	private static function store_terms( $order, array $terms ) {
 		YOWCL_Order_Rewards::meta( $order, self::TERMS, $terms );
 		YOWCL_Order_Rewards::meta( $order, self::IDENTITY, $terms['identity'] );
-		if ( $terms['referrer'] && in_array( $terms['channel'], array( 'link', 'coupon' ), true ) ) {
+		if ( $terms['referrer'] && 'link' === $terms['channel'] ) {
 			YOWCL_Order_Rewards::meta( $order, '_yo_' . $terms['channel'] . '_referrer_user_id', $terms['referrer'] );
 			YOWCL_Order_Rewards::meta( $order, '_yo_referrer_user_id', $terms['referrer'] );
 		}
@@ -114,7 +114,7 @@ class YOWCL_Referral_Rewards {
 			$statuses = array_values( array_unique( array_merge( $terms['award_statuses'], $unreceipted_statuses ) ) );
 			$in = $wpdb->prepare( implode( ',', array_fill( 0, count( $statuses ), '%s' ) ), $statuses );
 			$type = $hpos ? "o.type = 'shop_order'" : "o.post_type = 'shop_order'";
-			$query = YOWCL_Points_Lock::query( $db, "SELECT o.id, o.{$status} AS status FROM {$table} o WHERE {$type} AND {$customer} AND (o.{$status} IN ({$in}) OR EXISTS (SELECT 1 FROM {$meta} q WHERE q.{$id_column} = o.id AND q.meta_key = '_yowcl_referral_qualified') OR EXISTS (SELECT 1 FROM {$meta} r WHERE r.{$id_column} = o.id AND r.meta_key = '_yowcl_referral_terms')) ORDER BY o.{$date} ASC, o.id ASC LIMIT 10001" );
+			$query = YOWCL_Points_Lock::query( $db, "SELECT o.id, o.{$status} AS status, EXISTS(SELECT 1 FROM {$meta} q WHERE q.{$id_column}=o.id AND q.meta_key='_yowcl_referral_qualified') AS has_qualified, EXISTS(SELECT 1 FROM {$meta} r WHERE r.{$id_column}=o.id AND r.meta_key='_yowcl_referral_terms') AS has_terms FROM {$table} o WHERE {$type} AND {$customer} AND (o.{$status} IN ({$in}) OR EXISTS (SELECT 1 FROM {$meta} q WHERE q.{$id_column} = o.id AND q.meta_key = '_yowcl_referral_qualified') OR EXISTS (SELECT 1 FROM {$meta} r WHERE r.{$id_column} = o.id AND r.meta_key = '_yowcl_referral_terms')) ORDER BY o.{$date} ASC, o.id ASC LIMIT 10001" );
 			if ( $query->num_rows > 10000 ) { $query->free(); throw new RuntimeException( 'referral_history_incomplete' ); }
 			$winner = 0;
 			while ( $row = mysqli_fetch_assoc( $query ) ) {
@@ -123,12 +123,14 @@ class YOWCL_Referral_Rewards {
 				$candidate->read_meta_data( true );
 				if ( ! $candidate->get_date_created() || $candidate->get_date_created()->getTimestamp() <= 0 ) { $query->free(); throw new RuntimeException( 'referral_history_date_invalid' ); }
 				$receipt = $candidate->get_meta( self::TERMS, true );
+                $qualification = YOWCL_Free_Referral::qualification( $candidate );
+                if ( ( $row['has_qualified'] && ! $qualification ) || ( $row['has_terms'] && '' === $receipt ) ) { $query->free(); throw new RuntimeException( 'referral_history_metadata_unavailable' ); }
                 if ( '' !== $receipt ) { self::terms( $candidate ); }
-				foreach ( array( $receipt, $candidate->get_meta( self::QUALIFIED, true ) ) as $frozen ) {
+				foreach ( array( $receipt, $qualification ) as $frozen ) {
 					if ( is_array( $frozen ) && ( $frozen['identity'] ?? '' ) !== $terms['identity'] ) { continue 2; }
 				}
 				$award_statuses = is_array( $receipt ) ? ( $receipt['award_statuses'] ?? array() ) : ( '' === $receipt ? $unreceipted_statuses : array() );
-				if ( $candidate->get_meta( self::QUALIFIED, true ) || in_array( $row['status'], $award_statuses, true ) || ( '' === $receipt && in_array( $row['status'], array( 'wc-processing', 'wc-completed' ), true ) ) ) { $winner = (int) $row['id']; break; }
+				if ( $qualification || in_array( $row['status'], $award_statuses, true ) || ( '' === $receipt && in_array( $row['status'], array( 'wc-processing', 'wc-completed' ), true ) ) ) { $winner = (int) $row['id']; break; }
 			}
 			mysqli_free_result( $query );
 			if ( ! $winner ) { return 0; }

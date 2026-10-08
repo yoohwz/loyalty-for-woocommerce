@@ -54,6 +54,18 @@ class YOWCL_Free_Referral {
         }
         return $t;
     }
+    public static function qualification( $order ) {
+        $rows = array_values( $order->get_meta( YOWCL_Referral_Rewards::QUALIFIED, false, 'edit' ) );
+        if ( ! $rows ) { return null; }
+        $q = 1 === count( $rows ) ? $rows[0]->value : null;
+        $raw = $order->get_meta( YOWCL_Referral_Rewards::TERMS, true );
+        $referee = '' === $raw ? (int) $order->get_user_id() : self::terms( $order )['referee'];
+        $identities = array_values( $order->get_meta( YOWCL_Referral_Rewards::IDENTITY, false, 'edit' ) );
+        if ( ! is_array( $q ) || ( $q['referee'] ?? null ) !== $referee || ( $q['identity'] ?? null ) !== ( $referee > 0 ? 'user:' . $referee : '' ) ||
+            1 !== count( $identities ) || $identities[0]->value !== $q['identity'] || 'first_order' !== ( $q['frequency'] ?? null ) ||
+            ( $q['award_statuses'] ?? null ) !== array( 'wc-processing','wc-completed' ) ) { throw new DomainException( 'referral_qualification_invalid' ); }
+        return $q;
+    }
     public static function legacy_attribution( $order ) {
         foreach ( array( '_yo_link_referrer_user_id','_yo_coupon_referrer_user_id','_yo_referrer_user_id','_yo_link_referral_awarded','_yo_coupon_referral_awarded','_yo_link_referrer_awarded','_yo_link_referee_awarded','_yo_coupon_referrer_awarded','_yo_referral_rewards_reversed' ) as $key ) {
             foreach ( $order->get_meta( $key, false, 'edit' ) as $m ) { if ( $m->value ) { return true; } }
