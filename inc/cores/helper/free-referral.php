@@ -56,11 +56,14 @@ class YOWCL_Free_Referral {
     }
     public static function qualification( $order ) {
         $rows = array_values( $order->get_meta( YOWCL_Referral_Rewards::QUALIFIED, false, 'edit' ) );
-        if ( ! $rows ) { return null; }
         $q = 1 === count( $rows ) ? $rows[0]->value : null;
         $raw = $order->get_meta( YOWCL_Referral_Rewards::TERMS, true );
         $referee = '' === $raw ? (int) $order->get_user_id() : self::terms( $order )['referee'];
         $identities = array_values( $order->get_meta( YOWCL_Referral_Rewards::IDENTITY, false, 'edit' ) );
+        // Native customer history must be validated before an identity can exclude an order.
+        $identity = $referee > 0 ? 'user:' . $referee : '';
+        if ( $identities && ( 1 !== count( $identities ) || $identities[0]->value !== $identity ) ) { throw new DomainException( 'referral_identity_invalid' ); }
+        if ( ! $rows ) { return null; }
         if ( ! is_array( $q ) || ( $q['referee'] ?? null ) !== $referee || ( $q['identity'] ?? null ) !== ( $referee > 0 ? 'user:' . $referee : '' ) ||
             1 !== count( $identities ) || $identities[0]->value !== $q['identity'] || 'first_order' !== ( $q['frequency'] ?? null ) ||
             ( $q['award_statuses'] ?? null ) !== array( 'wc-processing','wc-completed' ) ) { throw new DomainException( 'referral_qualification_invalid' ); }

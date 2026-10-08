@@ -108,13 +108,13 @@ class YOWCL_Referral_Rewards {
             }
 			// Query customer orders before referral filtering: a non-referred first order also wins.
 				$customer = $hpos ? $wpdb->prepare( 'o.customer_id = %d', $user ) : $wpdb->prepare( "EXISTS (SELECT 1 FROM {$meta} u WHERE u.{$id_column} = o.id AND u.meta_key = '_customer_user' AND u.meta_value = %s)", (string) $user );
-				$customer = $wpdb->prepare( "(EXISTS (SELECT 1 FROM {$meta} i WHERE i.{$id_column} = o.id AND i.meta_key = %s AND i.meta_value = %s) OR ({$customer} AND NOT EXISTS (SELECT 1 FROM {$meta} i WHERE i.{$id_column} = o.id AND i.meta_key = %s)))", self::IDENTITY, $terms['identity'], self::IDENTITY );
+				$customer = $wpdb->prepare( "(EXISTS (SELECT 1 FROM {$meta} i WHERE i.{$id_column} = o.id AND i.meta_key = %s AND i.meta_value = %s) OR ({$customer}))", self::IDENTITY, $terms['identity'] );
 			$current_rules = array( 'award_statuses'=>array( 'wc-processing','wc-completed' ) );
 			$unreceipted_statuses = array_values( array_unique( array_merge( $current_rules['award_statuses'], array( 'wc-processing', 'wc-completed' ) ) ) );
 			$statuses = array_values( array_unique( array_merge( $terms['award_statuses'], $unreceipted_statuses ) ) );
 			$in = $wpdb->prepare( implode( ',', array_fill( 0, count( $statuses ), '%s' ) ), $statuses );
 			$type = $hpos ? "o.type = 'shop_order'" : "o.post_type = 'shop_order'";
-			$query = YOWCL_Points_Lock::query( $db, "SELECT o.id, o.{$status} AS status, EXISTS(SELECT 1 FROM {$meta} q WHERE q.{$id_column}=o.id AND q.meta_key='_yowcl_referral_qualified') AS has_qualified, EXISTS(SELECT 1 FROM {$meta} r WHERE r.{$id_column}=o.id AND r.meta_key='_yowcl_referral_terms') AS has_terms FROM {$table} o WHERE {$type} AND {$customer} AND (o.{$status} IN ({$in}) OR EXISTS (SELECT 1 FROM {$meta} q WHERE q.{$id_column} = o.id AND q.meta_key = '_yowcl_referral_qualified') OR EXISTS (SELECT 1 FROM {$meta} r WHERE r.{$id_column} = o.id AND r.meta_key = '_yowcl_referral_terms')) ORDER BY o.{$date} ASC, o.id ASC LIMIT 10001" );
+			$query = YOWCL_Points_Lock::query( $db, "SELECT o.id, o.{$status} AS status, EXISTS(SELECT 1 FROM {$meta} q WHERE q.{$id_column}=o.id AND q.meta_key='_yowcl_referral_qualified') AS has_qualified, EXISTS(SELECT 1 FROM {$meta} r WHERE r.{$id_column}=o.id AND r.meta_key='_yowcl_referral_terms') AS has_terms, EXISTS(SELECT 1 FROM {$meta} i WHERE i.{$id_column}=o.id AND i.meta_key='_yowcl_referral_customer_identity') AS has_identity FROM {$table} o WHERE {$type} AND {$customer} AND (o.{$status} IN ({$in}) OR EXISTS (SELECT 1 FROM {$meta} q WHERE q.{$id_column} = o.id AND q.meta_key = '_yowcl_referral_qualified') OR EXISTS (SELECT 1 FROM {$meta} r WHERE r.{$id_column} = o.id AND r.meta_key = '_yowcl_referral_terms')) ORDER BY o.{$date} ASC, o.id ASC LIMIT 10001" );
 			if ( $query->num_rows > 10000 ) { $query->free(); throw new RuntimeException( 'referral_history_incomplete' ); }
 			$winner = 0;
 			while ( $row = mysqli_fetch_assoc( $query ) ) {
@@ -124,7 +124,7 @@ class YOWCL_Referral_Rewards {
 				if ( ! $candidate->get_date_created() || $candidate->get_date_created()->getTimestamp() <= 0 ) { $query->free(); throw new RuntimeException( 'referral_history_date_invalid' ); }
 				$receipt = $candidate->get_meta( self::TERMS, true );
                 $qualification = YOWCL_Free_Referral::qualification( $candidate );
-                if ( ( $row['has_qualified'] && ! $qualification ) || ( $row['has_terms'] && '' === $receipt ) ) { $query->free(); throw new RuntimeException( 'referral_history_metadata_unavailable' ); }
+                if ( ( $row['has_qualified'] && ! $qualification ) || ( $row['has_terms'] && '' === $receipt ) || ( $row['has_identity'] && ! $candidate->get_meta( self::IDENTITY, false, 'edit' ) ) ) { $query->free(); throw new RuntimeException( 'referral_history_metadata_unavailable' ); }
                 if ( '' !== $receipt ) { self::terms( $candidate ); }
 				foreach ( array( $receipt, $qualification ) as $frozen ) {
 					if ( is_array( $frozen ) && ( $frozen['identity'] ?? '' ) !== $terms['identity'] ) { continue 2; }

@@ -257,7 +257,7 @@
       "target": "inc/cores/helper/referral-rewards.php",
       "transform": "wp-text-domain-v1",
       "sha256": "8cf98e7fadebcdeae8c1716e51de1ba584e18b8e622727b3f1b0751161d3ae78",
-      "output_sha256": "d5363038b67c58b289e3ed999b5aeead165acb6234a3b4279b3fb34f5b0fbc56",
+      "output_sha256": "72aeb1a74f076209475b6ba0341e8296a74ab82a3d869c6ab6e99dee660344ad",
       "domain_replacements": 1,
       "extraction": "inc/cores/helper/referral-rewards.php"
     },
@@ -495,7 +495,7 @@
     {
       "target": "inc/cores/helper/free-referral.php",
       "mode": "100644",
-      "sha256": "8d0de3d1feb60a3da556c57cd52510e2bdd34e5d1461daffd6f50acb7a946e0b"
+      "sha256": "4b32a6e06cf4f94c82b7693da343e24b5f1a4b1b8ce7dd6a18aa476f72c142f3"
     },
     {
       "target": "inc/cores/notices.php",
@@ -575,7 +575,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "efdd4def9af77625568343d691e8d356e76099def2dc4e09d532333c19fab640"
+      "sha256": "1fbfb9422e4d5a037545fc3b220beba92384f7f4dfa06aaa1c01df0a3c8bbe01"
     }
   ],
   "blocked_mixed_modules": [
@@ -1768,6 +1768,6 @@
   "extractions": {
     "id": "byte-spans-v1",
     "path": "config/free-core-extractions.json",
-    "sha256": "995860d51d546ca80b9ff699bc81a65f33d56930223848d90bff5a5f00fa8a04"
+    "sha256": "cefc685227548aa17dc5fe4a1011677289058cde587392bd3319b3a0622d2941"
   }
 }

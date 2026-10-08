@@ -26,6 +26,36 @@ try{
  foreach(array('guest','self','disabled','invalid','none')as$case){$owner='guest'===$case?0:('self'===$case?$b:rf_user($case));if('disabled'===$case){YOWCL_Free_Referral::save(false,31);}$x=rf_attach(rf_order($owner),'invalid'===$case?(string)$a:('none'===$case?'':$tb));YOWCL_Free_Referral::save(true,31);$_COOKIE['yowcl_ref']=$ta;$x->update_status('processing');rf_drain($x);loyf_equal(null,rf_row($x),'No retroactive value '.$case);}
  // Non-referred and historical first success consume eligibility, even after later deletion.
  foreach(array('nonreferred','historical')as$case){$u=rf_user($case);$first=rf_order($u,time()-500);if('nonreferred'===$case){$first=rf_attach($first,'');}$hooks=clone $GLOBALS['wp_filter']['woocommerce_order_status_changed'];if('historical'===$case){remove_all_actions('woocommerce_order_status_changed');}try{$first->update_status('processing');}finally{$GLOBALS['wp_filter']['woocommerce_order_status_changed']=$hooks;}$second=rf_attach(rf_order($u,time()-100),$tb);$second->update_status('processing');rf_drain($second);loyf_equal(null,rf_row($second),'Earlier consumes '.$case);loyf_equal($first->get_id(),(int)get_user_meta($u,YOWCL_Referral_Rewards::USER_WINNER,true),'Earlier witness '.$case);$first->delete(true);$third=rf_attach(rf_order($u),$tb);$third->update_status('processing');rf_drain($third);loyf_equal(null,rf_row($third),'Deleted winner not reopened');}
+ // Malformed identity must not hide native-owned historical first successes from election.
+ foreach(array('orphan','qualified','foreign_identity','duplicate_identity')as$case){
+  $u=rf_user('identity_'.$case);$first=rf_order($u,time()-500);
+  $hooks=clone $GLOBALS['wp_filter']['woocommerce_order_status_changed'];remove_all_actions('woocommerce_order_status_changed');
+  try{$first->update_status('processing');}finally{$GLOBALS['wp_filter']['woocommerce_order_status_changed']=$hooks;}
+  $identity='foreign_identity'===$case?'user:'.$b:'broken';
+  $first->add_meta_data(YOWCL_Referral_Rewards::IDENTITY,$identity);
+  if('duplicate_identity'===$case){$first->add_meta_data(YOWCL_Referral_Rewards::IDENTITY,'user:'.$u);}
+  if('qualified'===$case){$first->add_meta_data(YOWCL_Referral_Rewards::QUALIFIED,array('identity'=>'broken','referee'=>$u,'email'=>'','frequency'=>'first_order','award_statuses'=>array('wc-processing','wc-completed')));}
+  $first->save_meta_data();$foreign_claim=get_user_meta($b,YOWCL_Referral_Rewards::USER_WINNER,false);
+  $second=rf_attach(rf_order($u,time()-100),$tb);$second->update_status('processing');
+  loyf_equal(null,rf_row($second),'Hidden malformed history no value '.$case);
+  loyf_equal(array(),get_user_meta($u,YOWCL_Referral_Rewards::USER_WINNER,false),'Ambiguous history no claim '.$case);
+  loyf_equal($foreign_claim,get_user_meta($b,YOWCL_Referral_Rewards::USER_WINNER,false),'Identity cannot transfer claim '.$case);
+  $first->delete_meta_data(YOWCL_Referral_Rewards::IDENTITY);$first->delete_meta_data(YOWCL_Referral_Rewards::QUALIFIED);$first->add_meta_data(YOWCL_Referral_Rewards::IDENTITY,'user:'.$u);$first->save_meta_data();
+  rf_drain($second);YOWCL_Referral_Rewards::process($second->get_id());
+  loyf_equal(null,rf_row($second),'Repaired identity preserves first success '.$case);
+  loyf_equal($first->get_id(),(int)get_user_meta($u,YOWCL_Referral_Rewards::USER_WINNER,true),'Repaired historical winner '.$case);
+ }
+ // Valid final ownership remains frozen when the live order owner is subsequently edited.
+ foreach(array('receipt','qualified_receipt')as$case){
+  $original=rf_user('frozen_original_'.$case);$edited=rf_user('frozen_edited_'.$case);$first=rf_attach(rf_order($original,time()-500),'');
+  $hooks=clone $GLOBALS['wp_filter']['woocommerce_order_status_changed'];remove_all_actions('woocommerce_order_status_changed');
+  try{$first->update_status('processing');}finally{$GLOBALS['wp_filter']['woocommerce_order_status_changed']=$hooks;}
+  if('qualified_receipt'===$case){YOWCL_Referral_Rewards::record_transition($first->get_id(),'processing');}
+  $first=wc_get_order($first->get_id());$first->set_customer_id($edited);$first->save();
+  $later=rf_attach(rf_order($original,time()-100),$tb);$later->update_status('processing');loyf_equal(null,rf_row($later),'Frozen original first consumed '.$case);
+  loyf_equal($first->get_id(),(int)get_user_meta($original,YOWCL_Referral_Rewards::USER_WINNER,true),'Frozen original witness '.$case);
+  $later=rf_attach(rf_order($edited),$tb);$later->update_status('processing');loyf_assert(rf_row($later),'Validated foreign frozen owner excluded '.$case);
+ }
  // Frozen value under native recipient contention, terminal before commit, zero reversal replay.
  foreach(array('retry','terminal','zero')as$case){$r=rf_user('r_'.$case);$t=YOWCL_Helper_Referrals::ensure_user_token($r);$x=rf_attach(rf_order(rf_user('u_'.$case)),$t);$lock=YOWCL_Points_Lock::acquire($r);try{$x->update_status('processing');loyf_equal(null,rf_row($x),'Native lock holds value');YOWCL_Free_Referral::save(false,90);}finally{YOWCL_Points_Lock::release($lock);}if('terminal'===$case){$x->update_status('cancelled');}rf_drain($x);YOWCL_Free_Referral::save(true,31);if('terminal'===$case){loyf_equal(null,rf_row($x),'Terminal before commit denied');continue;}loyf_balance($r,31,31,'Retained frozen retry');if('zero'===$case){YOWCL_Points_Transaction::apply($r,-31,-31,'rf:zero');}$x->update_status('refunded');rf_drain($x);loyf_balance($r,0,0,'Full or zero reversal');$rr=YOWCL_Points_Transaction::find(rf_key($x).':reversal');loyf_assert($rr,'Zero committed terminal');YOWCL_Points_Transaction::apply($r,7,7,'rf:replenish:'.$r);YOWCL_Referral_Rewards::process($x->get_id());loyf_balance($r,7,7,'No later unrelated deduction');}
  // Unknown response after actual COMMIT and exactly-once terminal recovery.
