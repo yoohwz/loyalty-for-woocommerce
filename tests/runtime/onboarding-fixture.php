@@ -38,7 +38,10 @@ if ( 'seed' === $phase ) {
     $fixture['protected'] = $wpdb->get_results( "SELECT option_name,option_value FROM {$wpdb->options} WHERE option_name IN ('loyalty_points_earning_rules','loyalty_referral_coupon','loyf_core_cutover_v1','loyf_migration_signup_v1','loyf_onboarding_v1') ORDER BY option_name",ARRAY_A );
     file_put_contents( getenv( 'LOYF11_FIXTURE' ),wp_json_encode( $fixture ) ); return;
 }
-wp_set_current_user( get_user_by( 'login','loyf_admin' )->ID ); do_action( 'admin_init' );
+wp_set_current_user( get_user_by( 'login','loyf_admin' )->ID );
+// Call the native Loyalty bootstrap owners; Woo admin_init requires a real admin screen.
+if ( class_exists( 'YOSWC_Loyalty_Backend',false ) ) { YOSWC_Loyalty_Backend::check_version(); }
+if ( class_exists( 'YOSWC_Loyalty_Settings_Customization',false ) ) { YOSWC_Loyalty_Settings_Customization::set_default_message_settings(); }
 $fixture = json_decode( file_get_contents( getenv( 'LOYF11_FIXTURE' ) ),true );
 if ( 'browser-check' === $phase ) {
     loyf_equal( 'complete',YOWCL_Free_Onboarding::state()['status'],'Browser Launch completed' );
