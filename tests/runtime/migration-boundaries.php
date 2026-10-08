@@ -8,6 +8,7 @@ $names=array($account,$merged,'loyalty_points_using_rules','loyalty_notification
 foreach(YOWCL_Free_Migrations::features() as $f){$names[]=YOWCL_Free_Migrations::witness($f);$names[]=YOWCL_Free_Migrations::witness($f).'_before';$names[]=YOWCL_Free_Migrations::witness($f).'_resolution';}
 $names=array_merge($names,array('wc_loyalty_version','yowcl_email_legacy_options_migrated','woocommerce_yowcl_loyalty_points_reward_settings','woocommerce_yowcl_loyalty_points_deduct_settings','woocommerce_yowcl_loyalty_level_update_settings'));
 $saved=array();foreach($names as $n){$saved[$n]=$wpdb->get_row($wpdb->prepare("SELECT option_value,autoload FROM {$wpdb->options} WHERE option_name=%s",$n),ARRAY_A);}
+$recovery_user=0;
 $clear=function($f)use($wpdb){foreach(array('','_before','_resolution') as $suffix){delete_option(YOWCL_Free_Migrations::witness($f).$suffix);}};
 $choose=function($f,$mode){$spec=YOWCL_Free_Migrations::preview($f,$mode);YOWCL_Free_Migrations::resolve($f,$mode,hash('sha256',serialize($spec)),wp_create_nonce('loyf_resolve_'.$f));};
 try {
@@ -26,6 +27,11 @@ try {
  loyf_equal(array(),YOWCL_Free_Core::level_rules(),'Held level terms');
  loyf_equal(array(),YOWCL_Free_Cart::rules(),'Held new redemption');
  foreach(array('Points_Reward','Points_Deduct','Level_Update') as $id){$class='YOWCL_WC_Email_Loyalty_'.$id;$mail=new $class();loyf_assert(!$mail->is_enabled(),'Held native mail '.$id);}
+ // Held level terms must still repair an independently proven committed marker.
+ $choose('levelup','canonical');$recovery_user=wp_insert_user(array('user_login'=>'migration_recovery_'.substr(wp_generate_uuid4(),0,8),'user_email'=>'migration-recovery@example.invalid','user_pass'=>'disposable-only','role'=>'subscriber'));loyf_assert(!is_wp_error($recovery_user),'Native recovery customer');
+ YOWCL_Free_Core::level_bonus($recovery_user,'subscriber');$key='reward:level_up:'.$recovery_user.':subscriber';$committed=YOWCL_Points_Transaction::find($key);loyf_assert(is_array($committed),'Committed level event established');$available=get_user_meta($recovery_user,'user_points',true);$earned=get_user_meta($recovery_user,'user_earning_points',true);
+ $clear('levelup');delete_user_meta($recovery_user,'_yo_loyalty_levelup_awarded_roles');YOWCL_Free_Core::level_bonus($recovery_user,'subscriber');
+ loyf_equal($committed,YOWCL_Points_Transaction::find($key),'Held level recovery exact committed row/ID');loyf_equal($available,get_user_meta($recovery_user,'user_points',true),'Held level recovery no new available value');loyf_equal($earned,get_user_meta($recovery_user,'user_earning_points',true),'Held level recovery no new earned value');loyf_assert(in_array('subscriber',(array)get_user_meta($recovery_user,'_yo_loyalty_levelup_awarded_roles',true),true),'Held level recovery restores native compatibility marker');loyf_assert(!YOWCL_Free_Migrations::ready('levelup'),'Recovery does not fabricate feature witness');
  // Existing origin-less partial evidence cannot authorize a Premium target write.
  $partial=YOWCL_Free_Migrations::preview('signup','legacy');update_option(YOWCL_Free_Migrations::witness('signup').'_before',$partial);YOWCL_Free_Migrations::run();
  loyf_equal($before[$account],YOWCL_Free_Migrations::read($account),'Origin-less frozen evidence holds unchanged');loyf_assert(!YOWCL_Free_Migrations::ready('signup'),'Origin-less partial never completes');
@@ -73,6 +79,7 @@ try {
  wp_set_current_user(0);try{$choose('email_reward','canonical');throw new RuntimeException('Unauthorized resolution');}catch(RuntimeException $e){loyf_equal('migration_resolution_denied',$e->getMessage(),'Capability denial');}
  echo "Migration boundaries: PASS (Premium hold, wrapped bytes, per-feature choices, stale/denied POST terms, target/witness retry and intervening owned edits).\n";
 }finally{
+ if(is_int($recovery_user)&&$recovery_user>0){$wpdb->delete(YOWCL_Points_Log::table_name(),array('user_id'=>$recovery_user));require_once ABSPATH.'wp-admin/includes/user.php';wp_delete_user($recovery_user);}
  foreach($saved as $n=>$row){$wpdb->delete($wpdb->options,array('option_name'=>$n));if(null!==$row){$wpdb->insert($wpdb->options,array('option_name'=>$n,'option_value'=>$row['option_value'],'autoload'=>$row['autoload']));}}
  remove_filter('wp_die_handler',$die);remove_filter('wp_die_ajax_handler',$die);wp_cache_flush();wp_set_current_user(1);
 }

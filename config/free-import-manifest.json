@@ -485,7 +485,7 @@
     {
       "target": "inc/cores/helper/free-core.php",
       "mode": "100644",
-      "sha256": "b2336339d93396b857fb6a7ebcce8155af5fdbce16972f4178eaccdfac87026d"
+      "sha256": "ed4ca05df0837cf8b133f938bc569492ebfb481413530638b9d9801672c9a621"
     },
     {
       "target": "inc/cores/helper/free-customer-components.php",

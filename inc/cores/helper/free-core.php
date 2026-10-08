@@ -74,7 +74,7 @@ class YOWCL_Free_Core {
         return is_array( $merged ) && 'yes' === ( $merged['levelup_enabled'] ?? 'no' ) && is_array( $merged['levelup_points'] ?? null ) ? $merged['levelup_points'] : array();
     }
     public static function level_bonus( $user, $role ) {
-        if ( ! YOWCL_Free_Migrations::ready( 'levelup' ) ) { return; }
+        // Held terms yield zero new value; the canonical owner still recovers an already committed event first.
         $rules = self::level_rules();
         $role = sanitize_key( $role );
         if ( '' !== $role ) { self::user_reward( $user, 'reward:level_up:' . (int) $user . ':' . $role, 'level_up_reward', (int) ( $rules[$role]['awarded'] ?? 0 ), __( 'Level up bonus for role:', 'loyalty-for-woocommerce' ) . ' ' . ( wp_roles()->roles[$role]['name'] ?? $role ) ); }
