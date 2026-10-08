@@ -14,7 +14,7 @@ php /absolute/wp.phar --path=/absolute/disposable/site \
 
 The runtime bootstrap must load the activated checker; merely requiring its CLI file without the active plugin is not valid runtime evidence. The official CLI documentation is at https://github.com/WordPress/plugin-check/blob/trunk/docs/CLI.md. Native transport is intercepted in the disposable site; no service-provider subscription/license endpoint is contacted. Only the exact Free plugin is scanned.
 
-The executed scan at `1424aa8433de5004c3c7eecdf14a1fb34b1ccc35`, source/stage/ZIP/extraction102 files and verification ZIP SHA256 `aa6f60e63601b8f9fd40c19e664c957a128f122a26032a739443c8c274077b07`, reports **97 ERROR /230 WARNING (327 findings)**. The row inventory below uses that exact source's lines. The CLI renders temporary symlink paths as `/privateinc/...` or `/privatetemplates/...`; the table normalizes only that leading `/private`, and every resulting source path was inspected. Later candidates must rerun the scan and reconcile any changes before acceptance.
+The executed scan at `a236ac436909dbea8473b12f9425b149e56ed2f1`, source/stage/ZIP/extraction102 files and verification ZIP SHA256 `1091a951b5bdb11599fa3903e736797c0186c5f3010da7dc4ef5ecd53aa0ff67`, reports **97 ERROR /230 WARNING (327 findings)**. The row inventory below uses that exact source's lines. The CLI renders temporary symlink paths as `/privateinc/...` or `/privatetemplates/...`; the table normalizes only that leading `/private`, and every resulting source path was inspected. Later candidates must rerun the scan and reconcile any changes before acceptance.
 
 ## Corrections and dispositions
 
@@ -61,12 +61,12 @@ Repeated findings on the same file/line/code are counted in the last column. Cou
 | `inc/backend/settings/extra-points.php` | 186 | `WordPress.Security.ValidatedSanitizedInput.InputNotSanitized` | V | 1 |
 | `inc/backend/settings/extra-points.php` | 186 | `WordPress.Security.ValidatedSanitizedInput.MissingUnslash` | V | 1 |
 | `inc/backend/settings/extra-points.php` | 187 | `WordPress.Security.EscapeOutput.ExceptionNotEscaped` | E | 1 |
-| `inc/backend/settings/extra-points.php` | 196 | `WordPress.Security.NonceVerification.Missing` | N | 1 |
-| `inc/backend/settings/extra-points.php` | 197 | `WordPress.Security.NonceVerification.Missing` | N | 1 |
-| `inc/backend/settings/extra-points.php` | 197 | `WordPress.Security.ValidatedSanitizedInput.InputNotSanitized` | V | 1 |
-| `inc/backend/settings/extra-points.php` | 197 | `WordPress.Security.ValidatedSanitizedInput.MissingUnslash` | V | 1 |
-| `inc/backend/settings/extra-points.php` | 198 | `WordPress.Security.EscapeOutput.ExceptionNotEscaped` | E | 1 |
-| `inc/backend/settings/extra-points.php` | 214 | `WordPress.Security.NonceVerification.Missing` | N | 1 |
+| `inc/backend/settings/extra-points.php` | 194 | `WordPress.Security.NonceVerification.Missing` | N | 1 |
+| `inc/backend/settings/extra-points.php` | 195 | `WordPress.Security.NonceVerification.Missing` | N | 1 |
+| `inc/backend/settings/extra-points.php` | 195 | `WordPress.Security.ValidatedSanitizedInput.InputNotSanitized` | V | 1 |
+| `inc/backend/settings/extra-points.php` | 195 | `WordPress.Security.ValidatedSanitizedInput.MissingUnslash` | V | 1 |
+| `inc/backend/settings/extra-points.php` | 196 | `WordPress.Security.EscapeOutput.ExceptionNotEscaped` | E | 1 |
+| `inc/backend/settings/extra-points.php` | 217 | `WordPress.Security.NonceVerification.Missing` | N | 1 |
 | `inc/backend/settings/referrals.php` | 20 | `WordPress.Security.ValidatedSanitizedInput.InputNotSanitized` | V | 1 |
 | `inc/backend/settings/referrals.php` | 21 | `WordPress.Security.ValidatedSanitizedInput.InputNotSanitized` | V | 1 |
 | `inc/backend/settings/referrals.php` | 21 | `WordPress.Security.ValidatedSanitizedInput.MissingUnslash` | V | 1 |
