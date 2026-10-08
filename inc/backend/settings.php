@@ -493,6 +493,7 @@ class YOSWC_Loyalty_Settings {
 	}
 	
 	public function save_using_point_rules() {
+        if (!YOWCL_Free_Migrations::readable('redemption')) { return; }
 		if (!isset($_POST['using_point_rules_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['using_point_rules_nonce'])), 'save_using_point_rules')) {
 			return;
 		}

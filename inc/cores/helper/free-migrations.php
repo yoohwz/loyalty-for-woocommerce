@@ -21,6 +21,26 @@ class YOWCL_Free_Migrations {
         try { return self::ready($feature) ? self::decode(self::read(self::target($feature))) : array(); }
         catch ( Throwable $e ) { return array(); }
     }
+    /** Readability never grants witness or repair authority. Missing targets remain supported. */
+    public static function readable( $feature ) {
+        try { self::target_settings($feature); return true; } catch (Throwable $e) { return false; }
+    }
+    private static function target_settings( $feature ) {
+        $raw=self::read(self::target($feature));
+        try { return self::decode($raw); }
+        catch (Throwable $e) { throw new RuntimeException('migration_opaque_target'); }
+    }
+    public static function held_settings_message( $feature = null ) {
+        if (null!==$feature) {
+            try { self::target_settings($feature); }
+            catch (Throwable $e) { if ('migration_opaque_target'===$e->getMessage()) { return self::opaque_message($feature); } }
+        }
+        return __('The saved Loyalty settings cannot be read safely. Their original data was preserved. Review the compatibility notice before changing this feature.', 'loyalty-for-woocommerce');
+    }
+    private static function opaque_message( $feature ) {
+        /* translators: Canonical option container name, never its stored contents. */
+        return sprintf(__('The saved Loyalty settings container (%s) has an unsupported format. Its original data was preserved. Restore or repair the original complete container using verified backups before changing this feature.', 'loyalty-for-woocommerce'),self::target($feature));
+    }
     private static function invalidate( $feature ) {
         wp_cache_delete(self::target($feature),'options');
         wp_cache_delete(self::witness($feature),'options');
@@ -29,7 +49,11 @@ class YOWCL_Free_Migrations {
     }
     private static function decode( $raw ) {
         if ( null === $raw ) { return array(); }
-        $value = maybe_unserialize( maybe_unserialize( $raw ) );
+        $value=$raw;
+        for ($i=0;$i<2;$i++) {
+            if (is_string($value) && preg_match('/^(?:O|C):/', $value)) { throw new RuntimeException('migration_malformed_option'); }
+            $value=maybe_unserialize($value);
+        }
         if ( ! is_array( $value ) ) { throw new RuntimeException( 'migration_malformed_option' ); }
         return $value;
     }
@@ -249,6 +273,7 @@ class YOWCL_Free_Migrations {
     }
     private static function migrate( $feature ) {
         $witness=self::read(self::witness($feature));
+        self::target_settings($feature);
         if ('1'===$witness) { self::invalidate($feature); return; }
         if (null!==$witness) { throw new RuntimeException('migration_malformed_witness'); }
         if (null!==self::read(self::witness($feature).'_resolution')) { throw new RuntimeException('migration_resolution_pending'); }
@@ -272,13 +297,16 @@ class YOWCL_Free_Migrations {
     public static function preview( $feature, $mode ) {
         self::target($feature);
         if (!in_array($mode,array('canonical','legacy','disable'),true)) { throw new RuntimeException('migration_resolution_invalid'); }
+        $current=self::target_settings($feature);
+        $witness=self::read(self::witness($feature));
+        if (null!==$witness && '1'!==$witness) { throw new RuntimeException('migration_malformed_witness'); }
         $pending=self::read(self::witness($feature).'_resolution');
         if (null!==$pending) {
             $spec=self::decode($pending);
             if (($spec['mode']??null)!==$mode) { throw new RuntimeException('migration_resolution_pending'); }
             self::validate_spec($feature,$spec,true); return $spec;
         }
-        $target=self::target($feature); $raw=self::read($target); $current=self::decode($raw);
+        $target=self::target($feature); $raw=self::read($target);
         if ('legacy'===$mode) {
             $spec=self::specification($feature);
             // Absence may never become an authorized legacy OFF choice.
@@ -303,6 +331,7 @@ class YOWCL_Free_Migrations {
     public static function resolve( $feature, $mode, $fingerprint, $nonce ) {
         if (!current_user_can('manage_options') || !YOWCL_Free_Core::owns() || !wp_verify_nonce($nonce,'loyf_resolve_'.$feature)) { throw new RuntimeException('migration_resolution_denied'); }
         self::locked(function() use($feature,$mode,$fingerprint) {
+            self::target_settings($feature);
             if (self::ready($feature)) { return; }
             if (null!==self::read(self::witness($feature))) { throw new RuntimeException('migration_malformed_witness'); }
             $spec=self::preview($feature,$mode);
@@ -359,6 +388,10 @@ class YOWCL_Free_Migrations {
         foreach ( self::$errors as $feature => $code ) {
             /* translators: 1: feature name, 2: migration diagnostic code. */
             echo '<div class="notice notice-error"><p>' . esc_html( sprintf( __( 'Loyalty compatibility migration needs attention (%1$s: %2$s). This feature is held until storage/settings are repaired and migration succeeds.', 'loyalty-for-woocommerce' ), $feature, $code ) ) . '</p>';
+            if ('migration_opaque_target'===$code) {
+                echo '<p>'.esc_html(self::opaque_message($feature)).'</p></div>';
+                continue;
+            }
             foreach(array('canonical'=>__('Keep current canonical','loyalty-for-woocommerce'),'legacy'=>__('Adopt legacy Free semantics','loyalty-for-woocommerce'),'disable'=>__('Disable using Free settings','loyalty-for-woocommerce')) as $mode=>$label) {
                 try {
                     $spec=self::preview($feature,$mode);

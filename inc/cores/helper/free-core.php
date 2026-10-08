@@ -68,9 +68,16 @@ class YOWCL_Free_Core {
             YOWCL_Core_Rewards::award( $user, (int) $points, $key, $action, $description ?? $labels[$action], $project, array( 'YOWCL_Core_Rewards', 'notify_user' ) );
         } catch ( Throwable $e ) { self::hold( $user, $e->getMessage() ); }
     }
+    private static function configured_points( $value ) {
+        if (''===$value) { return 0; }
+        return is_scalar($value) && is_numeric($value) && is_finite((float)$value) && (float)$value>=0 && (float)$value<=2147483647 ? (int)$value : null;
+    }
     public static function level_rules() {
         $merged = YOWCL_Free_Migrations::canonical( 'levelup' );
-        return is_array( $merged ) && 'yes' === ( $merged['levelup_enabled'] ?? 'no' ) && is_array( $merged['levelup_points'] ?? null ) ? $merged['levelup_points'] : array();
+        if ('yes'!==($merged['levelup_enabled']??'no') || !is_array($merged['levelup_points']??null)) { return array(); }
+        $rules=$merged['levelup_points'];
+        foreach($rules as$role=>$rule) { if (!is_array($rule) || null===self::configured_points($rule['awarded']??0)) { unset($rules[$role]); } }
+        return $rules;
     }
     public static function level_bonus( $user, $role ) {
         // Held terms yield zero new value; the canonical owner still recovers an already committed event first.
@@ -92,10 +99,10 @@ class YOWCL_Free_Core {
     public static function extra( $kind ) {
         $rules = YOWCL_Free_Migrations::canonical( $kind );
         if ( 'review' === $kind ) {
-            return 'yes' === ( $rules['review_enabled'] ?? 'no' ) ? (int) ( $rules['review_points'] ?? 0 ) : 0;
+            return 'yes' === ( $rules['review_enabled'] ?? 'no' ) ? ( self::configured_points($rules['review_points']??0) ?? 0 ) : 0;
         }
         $flag = 'signup' === $kind ? 'signup_enabled' : 'login_enabled';
         if ( ! is_array( $rules ) || 'yes' !== ( $rules[$flag] ?? 'no' ) ) { return 0; }
-        return (int) ( $rules[$kind . '_points'] ?? 0 );
+        return self::configured_points($rules[$kind . '_points']??0) ?? 0;
     }
 }

@@ -310,7 +310,7 @@
     {
       "target": "inc/backend/actions/emails/notifications-email.php",
       "mode": "100644",
-      "sha256": "263812be059e792bb749e29cbcc385914a8f69ca6c6015f05b39899a49a5c705"
+      "sha256": "958f3b169057f18c47a7b18580c8b8f9cef0c865d0fe5fd3539396be5c8256f7"
     },
     {
       "target": "inc/backend/actions/extra-points/level-up.php",
@@ -345,7 +345,7 @@
     {
       "target": "inc/backend/settings.php",
       "mode": "100644",
-      "sha256": "5146149faeb19c3f2b37a2dba2cfe1aa0f1c3be8c1af326fd069592099e9592a"
+      "sha256": "8f3983019f6daf93362d31b65a3209944adb19de08212ef157abead9ca4e038e"
     },
     {
       "target": "inc/backend/settings/customization.php",
@@ -355,7 +355,7 @@
     {
       "target": "inc/backend/settings/extra-points.php",
       "mode": "100644",
-      "sha256": "3e5b7439bb75772eb4cad459b3851d49a16b32d91b039ed8410eb79529b4b57b"
+      "sha256": "2fe4bcb744941f5fba606a6871da008d08d9936630753ac6bf63b588b965391c"
     },
     {
       "target": "inc/backend/settings/files/yol_import_sample.csv",
@@ -385,7 +385,7 @@
     {
       "target": "inc/backend/settings/general-using-point-rules.php",
       "mode": "100644",
-      "sha256": "a77e2fa1ec74f550ab63a6c540e0573b7ab3058d2bc4768edad867179050677e"
+      "sha256": "5405bdd78790e183a65da1ee2d7541c4bbe14e3686d5506c27a7b35980fe0afb"
     },
     {
       "target": "inc/backend/settings/notification.php",
@@ -485,7 +485,7 @@
     {
       "target": "inc/cores/helper/free-core.php",
       "mode": "100644",
-      "sha256": "329b36a5bc161182d4a2d91994d18dde53a232b2d1a09819f9201f8c14bbfef8"
+      "sha256": "985a74b8ca56d3f187430efe61b5039dbbac9142f787f23269af5bd263b379f7"
     },
     {
       "target": "inc/cores/helper/free-customer-components.php",
@@ -500,7 +500,7 @@
     {
       "target": "inc/cores/helper/free-migrations.php",
       "mode": "100644",
-      "sha256": "2be211932d4a8eebc030f778cd655a9e2ed67f10ef6a8f506938b93c5d4ce31b"
+      "sha256": "6f92efa1981e1c3089a13735114785d17b3ce43dc3ee32fca542ff1881942284"
     },
     {
       "target": "inc/cores/helper/free-onboarding.php",
@@ -620,7 +620,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "773410a53fc0c21c0b8df09a770460241185ad9d489c4f21dd0bab6255f42db6"
+      "sha256": "eff9fd3270a8eac6587f05b1675dd1088caab4695d705af19493348e9be524ae"
     },
     {
       "target": "license.txt",

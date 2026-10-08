@@ -68,6 +68,15 @@ for versions in '6.8.3:9.9.5' '7.0:11.1.2'; do
     wp plugin deactivate loyalty-for-woocommerce --quiet; wp plugin activate wc-loyalty --quiet
     wp eval-file "$repo/tests/runtime/edition-origin-compare.php"
    fi
+   export LOYF13_OPAQUE_SNAPSHOT="$task_tmp/opaque.bin"
+   wp eval-file "$repo/tests/runtime/opaque-editions.php" seed
+   wp plugin deactivate wc-loyalty --quiet; wp plugin activate loyalty-for-woocommerce --quiet
+   wp eval-file "$repo/tests/runtime/opaque-editions.php" free
+   wp plugin deactivate loyalty-for-woocommerce --quiet; wp plugin activate wc-loyalty --quiet
+   wp plugin deactivate wc-loyalty --quiet; wp plugin activate loyalty-for-woocommerce --quiet
+   wp eval-file "$repo/tests/runtime/opaque-editions.php" free
+   wp plugin deactivate loyalty-for-woocommerce --quiet; wp plugin activate wc-loyalty --quiet
+   wp eval-file "$repo/tests/runtime/opaque-editions.php" restore
    export LOYF13_LIFECYCLE_SNAPSHOT="$task_tmp/lifecycle.bin"
    LOYF13_LIFECYCLE_PHASE=before wp eval-file "$repo/tests/runtime/lifecycle-preservation.php"
    wp plugin uninstall loyalty-for-woocommerce --quiet

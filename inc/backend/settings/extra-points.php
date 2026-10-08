@@ -6,19 +6,23 @@ class YOSWC_Loyalty_Settings_Extra_Points {
 
     public function display_extra_points_settings() {
         $loyalty_roles = get_option('loyalty_levels_roles', array());
-        $extra_points = maybe_unserialize(get_option('loyalty_extra_points_rules', array()));
+        $extra_points = YOWCL_Free_Migrations::readable('signup') ? maybe_unserialize(get_option('loyalty_extra_points_rules', array())) : array();
         $extra_points = is_array($extra_points) ? $extra_points : array();
-        $merged = maybe_unserialize(get_option('loyalty_extra_reviews_gamification_rules', array()));
+        $merged = YOWCL_Free_Migrations::readable('review') ? maybe_unserialize(get_option('loyalty_extra_reviews_gamification_rules', array())) : array();
         $merged = is_array($merged) ? $merged : array();
         $extra_points['review_points'] = 'yes' === ($merged['review_enabled'] ?? 'no') ? ($merged['review_points'] ?? 0) : 0;
         foreach (array('signup', 'login') as $kind) { if ('yes' !== ($extra_points[$kind . '_enabled'] ?? 'no')) { $extra_points[$kind . '_points'] = 0; } }
         $levelup_points = 'yes' === ($merged['levelup_enabled'] ?? 'no') ? ($merged['levelup_points'] ?? array()) : array();
 
+        foreach (array('signup','login','review') as $kind) { if (!is_scalar($extra_points[$kind.'_points']??'')) { $extra_points[$kind.'_points']=''; } }
+        $levelup_points=is_array($levelup_points)?$levelup_points:array();
+        foreach ($levelup_points as $role=>$rule) { if (!is_array($rule)||!is_scalar($rule['awarded']??'')) { $levelup_points[$role]=array('awarded'=>''); } }
+
         $is_premium = (bool) apply_filters( 'yoswc_loyalty_is_premium', false );
         $first_purchase = maybe_unserialize( get_option( YOWCL_Free_First_Purchase::RULES, array() ) );
         $first_purchase = is_array( $first_purchase ) ? $first_purchase : array();
         $ready = array();
-        foreach ( array( 'signup','login','review','levelup' ) as $feature ) { $ready[$feature] = YOWCL_Free_Migrations::ready( $feature ); }
+        foreach ( array( 'signup','login','review','levelup' ) as $feature ) { $ready[$feature] = YOWCL_Free_Migrations::ready( $feature ) && YOWCL_Free_Migrations::readable( $feature ); }
 
         if (empty($loyalty_roles)) {
 			?>
@@ -182,7 +186,7 @@ class YOSWC_Loyalty_Settings_Extra_Points {
                 // Disabled/absent fields grant no mutation or migration authority.
                 foreach ( array( 'signup','login','review' ) as $kind ) {
                     $field = 'loyalty_extra_' . $kind . '_points';
-                    if ( !YOWCL_Free_Migrations::ready( $kind ) || !array_key_exists( $field, $_POST ) ) { continue; }
+                    if ( !YOWCL_Free_Migrations::ready( $kind ) || !array_key_exists( $field, $_POST ) || !YOWCL_Free_Migrations::readable( $kind ) ) { continue; }
                     $value = $_POST[$field];
                     if ( !is_scalar( $value ) || ( '' !== (string) $value && ( !preg_match( '/^[0-9]+$/D', (string) $value ) || strlen( (string) $value ) > 8 ) ) ) { throw new DomainException( __( 'A valid whole points amount is required.', 'loyalty-for-woocommerce' ) ); }
                     $values[$kind] = (string) $value;
@@ -192,6 +196,7 @@ class YOSWC_Loyalty_Settings_Extra_Points {
                     foreach ( (array) get_option( 'loyalty_levels_roles', array() ) as $role ) {
                         $field = 'loyalty_extra_levelup_' . $role;
                         if ( !array_key_exists( $field, $_POST ) ) { continue; }
+                        if ( !YOWCL_Free_Migrations::readable( 'levelup' ) ) { break; }
                         $value = $_POST[$field];
                         if ( !is_scalar( $value ) || ( '' !== (string) $value && ( !preg_match( '/^[0-9]+$/D', (string) $value ) || strlen( (string) $value ) > 8 ) ) ) { throw new DomainException( __( 'A valid whole points amount is required.', 'loyalty-for-woocommerce' ) ); }
                         if ( ! $level_changed ) {
