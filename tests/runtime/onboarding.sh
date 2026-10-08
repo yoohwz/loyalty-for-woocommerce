@@ -38,10 +38,10 @@ add_filter('query',static function($query){
     return $query;
 },PHP_INT_MAX);
 PHP
-cases='fresh skip options premium user-marker order-marker used-marker discount-marker hpos-marker hpos-used-marker version bad-cutover migration bad-witness role orphan-role license balance log assessment-failure late-setting late-balance failure first-failure referral-failure unknown-referral disconnect parallel merchant-race dismiss'
+cases='fresh skip options premium user-marker order-marker used-marker discount-marker hpos-marker hpos-used-marker version bad-cutover migration bad-witness role orphan-role license as-group cron balance log assessment-failure late-setting late-balance failure first-failure referral-failure unknown-referral disconnect parallel merchant-race dismiss'
 cases="${LOYF11_CASES:-$cases}"
 for case in $cases; do
-  case "$case" in fresh|skip|options|premium|user-marker|order-marker|used-marker|discount-marker|hpos-marker|hpos-used-marker|version|bad-cutover|migration|bad-witness|role|orphan-role|license|balance|log|assessment-failure|late-setting|late-balance|failure|first-failure|referral-failure|unknown-referral|disconnect|parallel|merchant-race|dismiss|browser) ;; *) echo 'Unknown onboarding fixture' >&2; exit 2 ;; esac
+  case "$case" in fresh|skip|options|premium|user-marker|order-marker|used-marker|discount-marker|hpos-marker|hpos-used-marker|version|bad-cutover|migration|bad-witness|role|orphan-role|license|as-group|cron|balance|log|assessment-failure|late-setting|late-balance|failure|first-failure|referral-failure|unknown-referral|disconnect|parallel|merchant-race|dismiss|browser) ;; *) echo 'Unknown onboarding fixture' >&2; exit 2 ;; esac
 done
 if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
   if [[ " $cases " != *' browser '* ]]; then cases="$cases browser"; fi

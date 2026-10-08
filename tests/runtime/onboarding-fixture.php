@@ -32,6 +32,8 @@ if ( 'seed' === $phase ) {
     if ( 'migration' === $case ) { add_option( 'loyf_migration_signup_v1','broken' ); }
     if ( 'bad-witness' === $case ) { add_option( 'loyf_onboarding_v1',array( 'version'=>1,'status'=>'fresh' ) ); }
     if ( 'orphan-role' === $case ) { update_user_meta($user,$wpdb->prefix.'capabilities',array('deleted_loyalty_gold'=>true)); }
+    if ( 'as-group' === $case ) { $wpdb->insert($wpdb->prefix.'actionscheduler_groups',array('slug'=>'yowcl-core-rewards')); }
+    if ( 'cron' === $case ) { wp_schedule_single_event(time()+3600,'yowcl_legacy_fixture'); }
     if ( 'license' === $case ) { add_option('yowcl_license_key','dormant-premium-fixture'); }
     if ( 'role' === $case ) { add_role( 'old_loyalty','Old Loyalty',array( 'read'=>true ) ); }
     if ( 'balance' === $case ) { add_user_meta( $user,'user_points','9.5' ); add_user_meta( $user,'user_earning_points','17.25' ); }

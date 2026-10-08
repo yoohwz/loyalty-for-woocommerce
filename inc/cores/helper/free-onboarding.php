@@ -47,6 +47,15 @@ class YOWCL_Free_Onboarding {
                 foreach ( array( '_points_awarded','_points_deducted','_used_points','_used_points_discount' ) as $m ) { $where[] = $wpdb->prepare( "$column=%s", $m ); }
                 if ( self::exists( "SELECT 1 FROM {$table} WHERE " . implode( ' OR ', $where ) . ' LIMIT 1' ) ) { throw new RuntimeException( 'onboarding_prior_orders' ); }
             }
+            $groups = $wpdb->prefix . 'actionscheduler_groups';
+            if ( self::exists( $wpdb->prepare( 'SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s',$groups ) ) && self::exists( $wpdb->prepare( "SELECT 1 FROM {$groups} WHERE slug LIKE %s OR slug LIKE %s LIMIT 1",'yowcl-%','loyf-%' ) ) ) { throw new RuntimeException( 'onboarding_prior_schedules' ); }
+            $cron_raw = self::read( 'cron' ); $cron = null === $cron_raw ? array() : @unserialize( $cron_raw,array( 'allowed_classes'=>false ) );
+            if ( ! is_array( $cron ) || count( $cron ) > 10000 ) { throw new RuntimeException( 'onboarding_schedule_coverage_uncertain' ); }
+            foreach ( $cron as $time=>$hooks ) {
+                if ( 'version' === $time ) { continue; }
+                if ( ! is_array( $hooks ) ) { throw new RuntimeException( 'onboarding_schedule_coverage_uncertain' ); }
+                foreach ( array_keys( $hooks ) as $hook ) { if ( ! is_string( $hook ) || preg_match( '/^(?:yowcl_|yoswc_loyalty|loyf_|yol_|yo_loyalty_|loyalty_)/',$hook ) ) { throw new RuntimeException( 'onboarding_prior_schedules' ); } }
+            }
             // Unattributed custom roles cannot prove a clean Loyalty history.
             $roles = maybe_unserialize( self::read( $wpdb->prefix . 'user_roles' ) );
             if ( ! is_array( $roles ) || array_diff( array_keys( $roles ), array( 'administrator','editor','author','contributor','subscriber','customer','shop_manager' ) ) ) { throw new RuntimeException( 'onboarding_roles_uncertain' ); }
