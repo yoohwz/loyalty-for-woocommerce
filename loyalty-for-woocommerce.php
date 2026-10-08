@@ -43,6 +43,10 @@ class YOSWC_Loyalty {
 
 		require_once plugin_dir_path(__FILE__) . 'inc/cores/helper/free-core.php';
 		if ( ! YOWCL_Free_Core::owns() ) { return; }
+		require_once plugin_dir_path(__FILE__) . 'inc/cores/helper/free-onboarding.php';
+		$onboarding_bootstrap = YOWCL_Free_Onboarding::assess();
+		YOWCL_Free_Onboarding::boot();
+		if ( ! $onboarding_bootstrap ) { return; }
 		try { YOWCL_Free_Core::cutover(); } catch ( Throwable $e ) { return; }
 		foreach ( array( 'points-lock', 'points-log-cache', 'points-log', 'ledger-v2', 'points-allocation', 'points-transaction', 'role-claims', 'role-ownership', 'database', 'points-events', 'core-rewards', 'order-rewards', 'free-order-actions', 'order-deduction', 'order-redemption', 'free-admin', 'free-cart', 'free-blocks', 'free-first-purchase', 'advanced-rewards', 'referral-rewards', 'free-referral' ) as $helper ) { require_once plugin_dir_path(__FILE__) . 'inc/cores/helper/' . $helper . '.php'; }
         require_once plugin_dir_path(__FILE__) . 'inc/backend/actions/helper/referrals.php';
@@ -60,6 +64,7 @@ class YOSWC_Loyalty {
         YOWCL_Free_Blocks::boot();
 		include_once plugin_dir_path(__FILE__) . 'inc/cores/backend.php';
 		include_once plugin_dir_path(__FILE__) . 'inc/cores/frontend.php';
+		YOWCL_Free_Onboarding::baseline();
 	}
 
 	private function is_woocommerce_active() {

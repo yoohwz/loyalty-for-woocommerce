@@ -8,7 +8,7 @@ The executable `config/free-import-manifest.json` inventories every upstream Git
 
 ## Core runtime and extraction
 
-The phase is `core-runtime`: 29 explicit imports plus 61 Free product overlays form the complete 90-file distribution. Source, stage, ZIP and extracted-tree checks require this same boundary. The historical CLI mode name `legacy` automatically includes imports in this phase; it cannot waive core-runtime verification.
+The phase is `core-runtime`: 29 explicit imports plus 63 Free product overlays form the complete 92-file distribution. Source, stage, ZIP and extracted-tree checks require this same boundary. The historical CLI mode name `legacy` automatically includes imports in this phase; it cannot waive core-runtime verification.
 
 Five imports retain whole canonical source bytes: `points-lock.php`, `points-log-cache.php`, `points-log.php`, `role-claims.php` and `inc/backend/actions/helper/roles.php`. The core mixed modules use reviewed exact-byte extraction recipes:
 
@@ -66,3 +66,5 @@ Drift reports all added/removed/modified paths, blobs and modes without writing 
 LOYF-9 admits only `advanced-rewards.php` bounded First Purchase delivery and `extra/first-purchase.php`, plus their context observations. No other advanced producer or clawback is enabled. See `FIRST-PURCHASE-CONTRACT.md`.
 
 LOYF-10 admits only token/link `helper/referrals.php` and the registered-customer/link-referrer receipt/election/delivery/reversal kernel in `referral-rewards.php`. Free-owned policy uses one option containing only enabled/points scalar terms; Premium referral options remain untouched. The transaction extraction adds only `referral_link_referrer_reward` and exact source-linked `referral_reward_reversal`. Coupon/referee/guest/expiration/configurable policies remain forbidden. See `REFERRAL-LITE-CONTRACT.md`.
+
+LOYF-11 adds only the Free onboarding adapter and its navigation script over existing settings owners. No new accounting producer is imported; see `ONBOARDING-CONTRACT.md`.

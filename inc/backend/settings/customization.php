@@ -40,18 +40,14 @@ class YOSWC_Loyalty_Settings_Customization {
 		}
 	}
 
-		public static function set_default_message_settings() {
-			$default_loyalty_bubble = array(
+	public static function default_message_settings() {
+		return array(
+			'loyalty_customization_loyalty_bubble'=>array(
 				'enabled' => true,
 				'position' => 'bottom_right',
 				'powered_by' => false,
-			);
-
-		if (!get_option('loyalty_customization_loyalty_bubble')) {
-			update_option('loyalty_customization_loyalty_bubble', $default_loyalty_bubble);
-		}
-
-		$default_shop_page = array(
+			),
+			'loyalty_customization_shop_page'=>array(
 			'shop_page' => false,
 			'shop_page_guest' => false,
 			'shop_page_border_style' => 'solid',
@@ -60,13 +56,8 @@ class YOSWC_Loyalty_Settings_Customization {
 			'shop_page_text_color' => '#000000',
 			'shop_page_background_color' => '#ffffff',
 			'shop_page_border_color' => '#000000',
-		);
-
-		if (!get_option('loyalty_customization_shop_page')) {
-			update_option('loyalty_customization_shop_page', $default_shop_page);
-		}
-
-		$default_product_page = array(
+		),
+			'loyalty_customization_product_page'=>array(
 			'product_page' => false,
 			'product_page_guest' => false,
 			'product_page_position' => 'before_add_to_cart',
@@ -76,29 +67,22 @@ class YOSWC_Loyalty_Settings_Customization {
 			'product_page_text_color' => '#000000',
 			'product_page_background_color' => '#ffffff',
 			'product_page_border_color' => '#000000',
-		);
-
-		if (!get_option('loyalty_customization_product_page')) {
-			update_option('loyalty_customization_product_page', $default_product_page);
-		}
-
-		$default_my_account = array(
+		),
+			'loyalty_customization_my_account'=>array(
 			'my_account' => false,
 			'my_account_label' => '',
 			'my_account_slug' => 'my-points',
-		);
-
-		if (!get_option('loyalty_customization_my_account')) {
-			update_option('loyalty_customization_my_account', $default_my_account);
-		}
-
-		$default_cart_checkout = array(
+		),
+			'loyalty_customization_cart_checkout'=>array(
 			'cart' => false,
 			'checkout' => false,
+		),
 		);
+	}
 
-		if (!get_option('loyalty_customization_cart_checkout')) {
-			update_option('loyalty_customization_cart_checkout', $default_cart_checkout);
+	public static function set_default_message_settings() {
+		foreach ( self::default_message_settings() as $name=>$value ) {
+			if ( ! get_option( $name ) ) { update_option( $name,$value ); }
 		}
 	}
 
