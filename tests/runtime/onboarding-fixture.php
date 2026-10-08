@@ -43,6 +43,10 @@ wp_set_current_user( get_user_by( 'login','loyf_admin' )->ID );
 if ( class_exists( 'YOSWC_Loyalty_Backend',false ) ) { YOSWC_Loyalty_Backend::check_version(); }
 if ( class_exists( 'YOSWC_Loyalty_Settings_Customization',false ) ) { YOSWC_Loyalty_Settings_Customization::set_default_message_settings(); }
 $fixture = json_decode( file_get_contents( getenv( 'LOYF11_FIXTURE' ) ),true );
+if ( 'browser-debug' === $phase ) {
+    $s=YOWCL_Free_Onboarding::state(); $m=new ReflectionMethod('YOWCL_Free_Onboarding','program_snapshot'); $m->setAccessible(true); $actual=$m->invoke(null);
+    echo wp_json_encode(array('status'=>$s['status'],'writable'=>YOWCL_Free_Onboarding::writable(),'added'=>array_diff_key($actual,$s['program']??array()),'changed'=>array_diff_assoc($actual,$s['program']??array()))),PHP_EOL;return;
+}
 if ( 'browser-check' === $phase ) {
     loyf_equal( 'complete',YOWCL_Free_Onboarding::state()['status'],'Browser Launch completed' );
     loyf_equal( '7',get_option( 'loyalty_points_earning_rules' )['customer']['points'],'Stale tab preserves later native Woo save' );

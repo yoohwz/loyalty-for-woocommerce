@@ -7,7 +7,9 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         const context = await browser.newContext(); const page = await context.newPage();
         await page.goto(base + '/wp-login.php');
         await page.locator('#user_login').fill('loyf_admin'); await page.locator('#user_pass').fill('disposable-only');
-        await Promise.all([page.waitForURL(u => !u.pathname.includes('wp-login')), page.locator('#wp-submit').click()]);
+        await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), page.locator('#wp-submit').click()]);
+        if (page.url().includes('action=confirm_admin_email')) { await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), page.getByRole('link', { name: 'Remind me later' }).click()]); }
+        if (page.url().includes('wp-login')) throw new Error('Native admin login: ' + page.url() + ' ' + (await page.locator('body').innerText()).slice(0,2000));
         await page.goto(base + '/wp-admin/admin.php?page=loyf-setup');
         try { await page.locator('[data-loyf-step="0"]').waitFor({ state: 'visible' }); } catch (e) { console.error('Onboarding browser page:', page.url(), (await page.locator('body').innerText()).slice(0,2400)); throw e; }
         const posts = []; page.on('request', r => { if (r.method() === 'POST') posts.push(r.url()); });

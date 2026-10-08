@@ -71,7 +71,7 @@ for case in $cases; do
     export LOYF_BROWSER_URL="http://127.0.0.1:${LOYF11_BROWSER_PORT:-18089}"
     wp option update home "$LOYF_BROWSER_URL" --quiet; wp option update siteurl "$LOYF_BROWSER_URL" --quiet
     php -d opcache.enable_cli=0 -d opcache.enable=0 -d opcache.jit=0 -S "127.0.0.1:${LOYF11_BROWSER_PORT:-18089}" -t "$site" "$repo/tests/runtime/browser-router.php" > "$task_tmp/browser.log" 2>&1 & server_pid=$!
-    node "$repo/tests/runtime/onboarding-browser.cjs"
+    if ! node "$repo/tests/runtime/onboarding-browser.cjs"; then LOYF11_PHASE=browser-debug wp eval-file "$repo/tests/runtime/onboarding-fixture.php" --quiet; exit 1; fi
     LOYF11_PHASE=browser-check wp eval-file "$repo/tests/runtime/onboarding-fixture.php" --quiet
     kill "$server_pid"; wait "$server_pid" 2>/dev/null || true; server_pid=
   fi
