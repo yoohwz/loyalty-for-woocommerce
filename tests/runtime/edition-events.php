@@ -45,12 +45,23 @@ if('free-seed'===$phase){
  file_put_contents($file,wp_json_encode(array('buyer_login'=>get_userdata($buyer)->user_login,'buyer'=>$buyer,'referrer'=>$ref,'review'=>$review,'order'=>$order_id,'snapshot'=>edition_snapshot()),JSON_PRETTY_PRINT));echo "Native Free positive edition fixture PASS (registered rewards, Classic funded checkout, privileged manual AJAX, native guarded CSV ingestion).\n";return;
 }
 $data=json_decode(file_get_contents($file),true);$before=edition_snapshot();
-if('premium-replay'===$phase){loyf_assert(class_exists('YOWCL_Loyalty',false)&&!class_exists('YOSWC_Loyalty',false),'Separate Premium owner');}
+if('premium-replay'===$phase){loyf_assert(class_exists('YOWCL_Loyalty',false)&&!class_exists('YOSWC_Loyalty',false),'Separate Premium owner');loyf_assert(YOWCL_Premium_Gate::is_active(),'Native Premium gate enabled by explicit simulated validator');}
 else{loyf_assert(class_exists('YOSWC_Loyalty',false)&&!class_exists('YOWCL_Loyalty',false),'Separate Free owner');}
 $u=$data['buyer'];$o=wc_get_order($data['order']);do_action('user_register',$u);do_action('wp_login',$data['buyer_login'],get_userdata($u));do_action('comment_post',$data['review'],1,get_comment($data['review'],ARRAY_A));do_action('woocommerce_order_status_completed',$o->get_id(),$o);do_action('woocommerce_payment_complete',$o->get_id());
 loyf_equal($data['snapshot']['rows'],edition_snapshot()['rows'],'Cross-edition replay exact log rows/IDs/NULLs');
 loyf_equal($data['snapshot']['meta'],edition_snapshot()['meta'],'Cross-edition replay exact user meta/roles/markers');loyf_equal($data['snapshot']['roles'],edition_snapshot()['roles'],'Cross-edition physical roles');
-foreach(array('order_meta','hpos_meta','comment_meta','options') as $surface){loyf_equal($data['snapshot'][$surface],edition_snapshot()[$surface],'Cross-edition raw '.$surface);}
+foreach(array('order_meta','hpos_meta') as $surface){
+ $actual=edition_snapshot()[$surface];$expected=$data['snapshot'][$surface];
+ if('premium-replay'===$phase){
+  // Actual pinned Premium records these disabled/no-op advanced assessments.
+  // Existing raw rows/IDs/terms must remain exact; no other addition is admitted.
+  $key='hpos_meta'===$surface?'id':'meta_id';$ids=array_column($expected,$key);$existing=array();$added=array();
+  $terminal=array('_yowcl_milestone_checked'=>'yes','_yowcl_spending_milestones_checked'=>'yes','_yowcl_high_cart_value_awarded'=>'disabled','_yowcl_payment_method_bonus_awarded'=>'disabled','_yowcl_inactivity_return_awarded'=>'disabled');
+  foreach($actual as $row){if(in_array($row[$key],$ids,true)){$existing[]=$row;continue;}$order_key='hpos_meta'===$surface?'order_id':'post_id';loyf_equal($data['order'],(int)$row[$order_key],'Premium no-op assessment belongs to current order');loyf_assert(isset($terminal[$row['meta_key']])&&!isset($added[$row['meta_key']])&&$terminal[$row['meta_key']]===$row['meta_value'],'Only pinned disabled Premium assessments may be appended');$added[$row['meta_key']]=$row['meta_value'];}
+  loyf_equal($expected,$existing,'Existing cross-edition raw markers/IDs '.$surface);
+ }else{loyf_equal($expected,$actual,'Cross-edition raw '.$surface);}
+}
+foreach(array('comment_meta','options') as $surface){loyf_equal($data['snapshot'][$surface],edition_snapshot()[$surface],'Cross-edition raw '.$surface);}
 foreach($data['snapshot']['rows'] as $row){$key=$row['event_key'];if(null===$key){continue;}$event=array('action'=>$row['action'],'order_id'=>(int)$row['order_id'],'source_event_key'=>$row['source_event_key']);
  if(in_array($row['action'],YOWCL_Points_Transaction::REWARD_ACTIONS,true)){$result=YOWCL_Points_Transaction::reward((int)$row['user_id'],(int)$row['available_delta'],$key,$event);}
  elseif('points_deducted'===$row['action']){$result=YOWCL_Points_Transaction::reverse_order_reward((int)$row['user_id'],(int)$row['order_id'],'Replay');}
