@@ -42,7 +42,10 @@ try {
  $spec=YOWCL_Free_Migrations::preview('levelup','disable');
  $fail=function($sql)use($wpdb){return strpos($sql,"INSERT INTO {$wpdb->options}")!==false && strpos($sql,"'loyf_migration_levelup_v1',")!==false?'SELECT * FROM loyf_missing_witness':$sql;};
  $wpdb->suppress_errors(true);add_filter('query',$fail);try{$choose('levelup','disable');}catch(Throwable $e){}remove_filter('query',$fail);$wpdb->suppress_errors(false);
- loyf_assert(!YOWCL_Free_Migrations::ready('levelup'),'Target committed without witness holds');
+ loyf_assert(!YOWCL_Free_Migrations::ready('levelup'),'Failed witness holds');
+ loyf_equal($spec['before'],YOWCL_Free_Migrations::read($merged),'Witness failure rolls target back');
+ // Model a retained pre-atomic target commit without its witness.
+ $terms=get_option($merged);$terms=array_replace($terms,$spec['patch']);update_option($merged,$terms);
  $terms=get_option($merged);$terms['review_points']=41;$terms['unknown']='keep';update_option($merged,$terms);
  $choose('levelup','disable');loyf_assert(YOWCL_Free_Migrations::ready('levelup'),'Exact intended post-image retry');loyf_equal(41,get_option($merged)['review_points'],'Other feature survives retry');loyf_equal('keep',get_option($merged)['unknown'],'Unknown survives retry');
  $clear('levelup');$spec=YOWCL_Free_Migrations::preview('levelup','disable');update_option(YOWCL_Free_Migrations::witness('levelup').'_resolution',$spec);

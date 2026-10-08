@@ -2,6 +2,8 @@
 require __DIR__ . '/assertions.php';
 global $wpdb;
 wp_set_current_user(1);
+$unexpected_die=function(){return function($message){throw new RuntimeException((string)$message);};};
+add_filter('wp_die_handler',$unexpected_die);add_filter('wp_die_ajax_handler',$unexpected_die);
 // Later synthetic resets model explicit merchant choices, not a new origin assertion.
 function loyf_upgrade_migrate() {
     YOWCL_Free_Migrations::run();
@@ -79,6 +81,7 @@ loyf_upgrade_migrate(); loyf_equal('no',get_option('loyalty_extra_reviews_gamifi
 loyf_equal('007',get_option('loyalty_extra_reviews_gamification_rules')['levelup_points']['loyf_gold']['unknown'],'Exact nested role terms');
 // Real settings entry point writes canonical terms, preserves evidence and dormant keys.
 wp_set_current_user(1); $_POST=array('extra_points_settings_nonce'=>wp_create_nonce('save_extra_points_settings_action'),'loyalty_extra_signup_points'=>'9','loyalty_extra_login_points'=>'4','loyalty_extra_review_points'=>'12','loyalty_extra_levelup_loyf_gold'=>'6');
+foreach(YOWCL_Free_Migrations::features() as $feature){loyf_assert(YOWCL_Free_Migrations::ready($feature),'Pre-save feature held '.$feature);}
 $legacy_map=get_option('loyalty_extra_levelup_points_rules'); (new YOSWC_Loyalty_Settings_Extra_Points())->save_extra_points_settings(); $_POST=array();
 loyf_upgrade_migrate(); loyf_equal(9,YOWCL_Free_Core::extra('signup'),'Authorized canonical signup save'); loyf_equal(12,YOWCL_Free_Core::extra('review'),'Review UI/runtime aligned');
 loyf_equal($legacy_map,get_option('loyalty_extra_levelup_points_rules'),'Legacy role evidence read-only'); loyf_equal('29',get_option('loyalty_extra_points_rules')['birthday_points'],'Save preserves dormant account'); loyf_equal(array('keep'=>'001'),get_option('loyalty_extra_reviews_gamification_rules')['context_rules'],'Save preserves dormant merged');

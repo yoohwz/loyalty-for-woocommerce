@@ -73,7 +73,9 @@ for phase in baseline candidate; do
         for feature in signup login review levelup redemption email_reward email_deduct email_level; do wp eval-file "$repo/tests/runtime/capture-legacy.php" "$feature" --quiet; done
         rm "$plugin/inc/cores/api/push-subscription.php"
         git -C "$repo" archive "$head" -- loyalty-for-woocommerce.php readme.txt changelog.txt license.txt css img inc js languages templates | tar -x -C "$plugin"
-        wp eval-file "$repo/tests/runtime/upgrade.php" --quiet
+        upgrade_result=$(wp eval-file "$repo/tests/runtime/upgrade.php" --quiet)
+        printf '%s\n' "$upgrade_result"
+        [[ "$upgrade_result" == *'Actual old-Free → refreshed-Free upgrade PASS'* ]]
     fi
 done
 cmp "$repo/tests/fixtures/free-1.2.2-expected.json" "$tmp/baseline.json"

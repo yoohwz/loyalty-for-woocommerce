@@ -163,6 +163,22 @@ class YOWCL_Free_Migrations {
         return $keys;
     }
     private static function finish( $feature, $spec, $resolution=false ) {
+        global $wpdb;
+        $engine=$wpdb->get_var($wpdb->prepare('SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s',$wpdb->options));
+        if ($wpdb->last_error || 'InnoDB'!==$engine || false===$wpdb->query('START TRANSACTION')) { throw new RuntimeException('migration_transaction_unavailable'); }
+        try {
+            foreach(array(self::target($feature),self::witness($feature)) as $name) {
+                $wpdb->get_col($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name=%s FOR UPDATE",$name));
+                if($wpdb->last_error) { throw new RuntimeException('migration_storage_unavailable'); }
+            }
+            if (null!==self::read(self::witness($feature))) { throw new RuntimeException('migration_witness_changed'); }
+            self::finish_locked($feature,$spec,$resolution);
+            if(false===$wpdb->query('COMMIT')) { throw new RuntimeException('migration_commit_unknown'); }
+        } catch(Throwable $e) {
+            $wpdb->query('ROLLBACK'); wp_cache_flush(); throw $e;
+        }
+    }
+    private static function finish_locked( $feature, $spec, $resolution=false ) {
         $keys=self::validate_spec($feature,$spec,$resolution);
         $raw=self::read($spec['target']); $current=self::decode($raw);
         $post=self::encode(array_replace(self::decode($spec['before']),$spec['patch']),$spec['before']);
