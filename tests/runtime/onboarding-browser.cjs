@@ -24,16 +24,28 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         }
         const posts = []; page.on('request', r => { if (r.method() === 'POST') posts.push(r.url()); });
         for (let step = 0; step < 5; step++) {
-            if (step === 1) { await page.locator('[name="earn_points"]').fill('2'); await page.locator('[name="earn_amount"]').fill('5'); }
+            if (step === 1) {
+                await page.locator('[name="earn_points"]').fill('1.5'); await page.locator('[data-loyf-next]').click();
+                assert.equal(await page.locator('[data-loyf-step="1"]').isVisible(),true);
+                assert.equal(await page.evaluate(()=>document.activeElement.name),'earn_points'); assert.deepEqual(posts,[]);
+                await page.locator('[name="earn_points"]').fill('2'); await page.locator('[name="earn_amount"]').fill('5');
+            }
             if (step === 2) { await page.locator('[name="redeem"]').check(); }
-            if (step === 3) { await page.locator('[name="first"]').check(); await page.locator('[name="referral"]').check(); await page.locator('[data-loyf-skip]').click(); }
+            if (step === 3) { await page.locator('[name="first"]').check(); await page.locator('[name="first_points"]').fill('1.5'); await page.locator('[name="referral"]').check(); await page.locator('[data-loyf-skip]').click(); }
             else await page.locator('[data-loyf-next]').click();
             await page.locator(`[data-loyf-step="${step + 1}"]`).waitFor({ state: 'visible' });
             assert.equal(await page.evaluate(() => document.activeElement.tagName), 'H2');
         }
         assert.deepEqual(posts, []); assert.match(await page.locator('[data-loyf-summary]').innerText(), /40 points/);
         assert.equal(await page.locator('[name="first"]').isChecked(), false); assert.equal(await page.locator('[name="referral"]').isChecked(), false);
+        assert.equal(await page.locator('[name="first_points"]').isDisabled(),true); assert.equal(await page.locator('[name="referral_points"]').isDisabled(),true);
         await page.locator('[data-loyf-back]').click(); await page.locator('[data-loyf-next]').click(); assert.deepEqual(posts, []);
+        await page.evaluate(()=>document.querySelector('[name="earn_points"]').value='1.5');
+        await page.locator('[data-loyf-launch]').click();
+        assert.equal(await page.locator('[data-loyf-step="1"]').isVisible(),true);
+        assert.equal(await page.evaluate(()=>document.activeElement.name),'earn_points'); assert.deepEqual(posts,[]);
+        await page.locator('[name="earn_points"]').fill('2');
+        for(let i=1;i<5;i++)await page.locator('[data-loyf-next]').click();
         const stale = await context.newPage(); await stale.goto(base + '/wp-admin/admin.php?page=loyf-setup');
         const deniedGet = await context.request.get(base + '/wp-admin/admin-post.php?action=loyf_onboarding&intent=launch'); assert.equal(deniedGet.status(), 403);
         const deniedNonce = await context.request.post(base + '/wp-admin/admin-post.php', { form: { action: 'loyf_onboarding', intent: 'launch', _wpnonce: 'invalid' } }); assert.equal(deniedNonce.status(), 403);

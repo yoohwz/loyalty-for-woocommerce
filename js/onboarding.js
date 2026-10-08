@@ -10,6 +10,31 @@
     const summary = form.querySelector('[data-loyf-summary]');
     let step = 0;
     function field(name) { return form.elements.namedItem(name); }
+    // Native automatic validation cannot focus a control in a hidden step.
+    form.noValidate = true;
+    function syncOptional() {
+        ['first', 'referral', 'redeem'].forEach(function (name) {
+            const enabled = field(name).checked;
+            field(name + '_points').disabled = !enabled;
+            if (name === 'redeem') field('redeem_amount').disabled = !enabled;
+        });
+    }
+    form.querySelectorAll('input[type="number"]').forEach(function (input) {
+        input.required = true;
+        input.min = input.step;
+    });
+    ['first', 'referral', 'redeem'].forEach(function (name) { field(name).addEventListener('change', syncOptional); });
+    function validate(sections) {
+        syncOptional();
+        for (const section of sections) {
+            for (const input of section.querySelectorAll('input,select')) {
+                if (!input.disabled && !input.checkValidity()) {
+                    step = steps.indexOf(section); show(true); input.reportValidity(); input.focus(); return false;
+                }
+            }
+        }
+        return true;
+    }
     function sample() {
         summary.replaceChildren();
         const currency = field('currency').value;
@@ -52,11 +77,13 @@
         if (focus) steps[step].querySelector('h2').focus();
     }
     back.addEventListener('click', function () { step = Math.max(0, step - 1); show(true); });
-    next.addEventListener('click', function () { step = Math.min(steps.length - 1, step + 1); show(true); });
-    skip.addEventListener('click', function () { field('first').checked = false; field('referral').checked = false; step = 4; show(true); });
+    next.addEventListener('click', function () { if (validate([steps[step]])) { step = Math.min(steps.length - 1, step + 1); show(true); } });
+    skip.addEventListener('click', function () { field('first').checked = false; field('referral').checked = false; syncOptional(); step = 4; show(true); });
     form.addEventListener('submit', function (event) {
         if (event.submitter && event.submitter.value === 'dismiss') return;
+        if (!validate(steps)) { event.preventDefault(); return; }
         if (step !== steps.length - 1) { event.preventDefault(); step = steps.length - 1; show(true); }
     });
+    syncOptional();
     show(false);
 }());

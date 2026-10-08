@@ -4,6 +4,7 @@ defined( 'ABSPATH' ) || exit;
 class YOWCL_Free_Onboarding {
     const OPTION = 'loyf_onboarding_v1';
     private static $initial = false;
+    private static $blocked = false;
     private static function read( $name ) {
         global $wpdb;
         $rows = $wpdb->get_col( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name=%s", $name ) );
@@ -21,11 +22,21 @@ class YOWCL_Free_Onboarding {
         if ( $wpdb->last_error ) { throw new RuntimeException( 'onboarding_assessment_failed' ); }
         return null !== $value;
     }
+    /** A second bootstrap cannot attribute an unfinished first request's writes. */
+    private static function retire_proof( $raw ) {
+        global $wpdb;
+        $s = maybe_unserialize( $raw );
+        if ( ! is_array( $s ) || 'proven' !== ( $s['status'] ?? '' ) ) { return; }
+        $review = serialize( array( 'version'=>1,'status'=>'review' ) );
+        if ( false === $wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->options} SET option_value=%s WHERE option_name=%s AND BINARY option_value=BINARY %s",$review,self::OPTION,$raw ) ) ) { self::$blocked = true; }
+        self::invalidate();
+    }
     /** Called before cutover, schema, migrations, version and customization defaults. */
     public static function assess() {
         global $wpdb;
         try {
-            if ( null !== self::read( self::OPTION ) ) { return; }
+            $existing = self::read( self::OPTION );
+            if ( null !== $existing ) { self::retire_proof( $existing ); return ! self::$blocked; }
             // A running installation with erased/incomplete witnesses is not a first activation.
             $active = maybe_unserialize( self::read( 'active_plugins' ) );
             if ( ! is_array( $active ) || is_multisite() || in_array( YOSWC_LOYALTY_PLUGIN_BASENAME, $active, true ) ) { throw new RuntimeException( 'onboarding_prior_installation' ); }
@@ -69,10 +80,14 @@ class YOWCL_Free_Onboarding {
                 $seen[$row['user_id']] = true;
             }
             $s = array( 'version'=>1, 'status'=>'proven', 'id'=>wp_generate_uuid4() );
-            if ( add_option( self::OPTION, $s, '', false ) && self::read( self::OPTION ) === serialize( $s ) ) { self::$initial = true; }
+            $raw = serialize( $s );
+            if ( add_option( self::OPTION, $s, '', false ) && self::read( self::OPTION ) === $raw ) { self::$initial = $raw; }
+            else { self::retire_proof( self::read( self::OPTION ) ); }
         } catch ( Throwable $e ) {
+            if ( in_array( $e->getMessage(),array( 'onboarding_read_failed','onboarding_assessment_failed' ),true ) ) { self::$blocked = true; }
             add_option( self::OPTION, array( 'version'=>1,'status'=>'review' ), '', false );
         }
+        return ! self::$blocked;
     }
     public static function names() {
         return array( 'loyalty_levels_roles','loyalty_levels_rules','loyalty_points_earning_rules','loyalty_points_earning_option','loyalty_points_rounding','loyalty_points_earning_status','loyalty_points_deduction_status','loyalty_points_using_point','loyalty_points_using_rules','loyalty_customization_loyalty_bubble','loyalty_customization_my_account','loyalty_extra_purchase_points_rules','loyf_first_purchase_epoch_v1','loyf_referral_lite_v1' );
@@ -101,14 +116,20 @@ class YOWCL_Free_Onboarding {
     public static function baseline() {
         if ( ! self::$initial ) { return; }
         try {
-            $s = self::state(); if ( 'proven' !== $s['status'] ) { return; }
+            global $wpdb;
+            if ( self::read( self::OPTION ) !== self::$initial ) { return; }
+            $s = maybe_unserialize( self::$initial );
             foreach ( array( 'signup','login','review','levelup','redemption','email_reward','email_deduct','email_level' ) as $feature ) { if ( ! YOWCL_Free_Migrations::ready( $feature ) ) { return; } }
             $s['before'] = self::snapshot();
             $s['cutover'] = self::read( YOWCL_Free_Core::CUTOVER );
             $s['program'] = self::program_snapshot();
             // Existing admin_init seeding may occur after an activation sandbox or WP-CLI boot.
             $s['seed'] = array_map( 'serialize',YOSWC_Loyalty_Settings_Customization::default_message_settings() );
-            $s['status'] = 'fresh'; update_option( self::OPTION, $s, false );
+            $s['status'] = 'fresh';
+            YOWCL_Core_Rewards::checkpoint( 'onboarding_baseline_snapshot',$s['id'] );
+            // A competing bootstrap may retire the proof while the snapshot is read.
+            $wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->options} SET option_value=%s WHERE option_name=%s AND BINARY option_value=BINARY %s",serialize( $s ),self::OPTION,self::$initial ) );
+            self::invalidate();
         } catch ( Throwable $e ) { /* A missing baseline always renders review-only. */ }
     }
     public static function writable( $s = null ) {

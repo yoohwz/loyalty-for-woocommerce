@@ -50,6 +50,20 @@ wp_set_current_user( get_user_by( 'login','loyf_admin' )->ID );
 if ( class_exists( 'YOSWC_Loyalty_Backend',false ) ) { YOSWC_Loyalty_Backend::check_version(); }
 if ( class_exists( 'YOSWC_Loyalty_Settings_Customization',false ) ) { YOSWC_Loyalty_Settings_Customization::set_default_message_settings(); }
 $fixture = json_decode( file_get_contents( getenv( 'LOYF11_FIXTURE' ) ),true );
+if ( 'bootstrap-merchant' === $phase ) {
+    $_POST=array('earning_point_rules_nonce'=>wp_create_nonce('save_earning_point_rules'),'loyalty_earning_points'=>array('customer'=>'7'),'loyalty_earning_amount'=>array('customer'=>'5'));
+    (new YOSWC_Loyalty_Settings())->save_earning_point_rules();
+    loyf_equal('7',get_option('loyalty_points_earning_rules')['customer']['points'],'Native merchant save during bootstrap'); return;
+}
+if ( in_array($case,array('bootstrap-race','seal-race'),true) ) {
+    loyf_equal('review',YOWCL_Free_Onboarding::state()['status'],'Competing bootstrap retires unsealed proof');
+    loyf_assert(!YOWCL_Free_Onboarding::writable(),'Interleaved bootstrap is review-only');
+    $before=loyf11_snapshot(); $input=loyf11_input();
+    loyf11_denied(static function()use($input){YOWCL_Free_Onboarding::launch($input);},'Bootstrap cannot absorb merchant save');
+    loyf_equal($before,loyf11_snapshot(),'Denied bootstrap Launch has no business writes');
+    loyf_equal('7',get_option('loyalty_points_earning_rules')['customer']['points'],'Bootstrap retains native merchant7/5');
+    echo 'Native onboarding bootstrap concurrency PASS '.$case."\n";return;
+}
 if ( 'browser-debug' === $phase ) {
     $s=YOWCL_Free_Onboarding::state(); $m=new ReflectionMethod('YOWCL_Free_Onboarding','program_snapshot'); $m->setAccessible(true); $actual=$m->invoke(null);
     echo wp_json_encode(array('status'=>$s['status'],'writable'=>YOWCL_Free_Onboarding::writable(),'added'=>array_diff_key($actual,$s['program']??array()),'changed'=>array_diff_assoc($actual,$s['program']??array()))),PHP_EOL;return;

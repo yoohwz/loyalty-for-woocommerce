@@ -5,9 +5,10 @@ repo=$(git rev-parse --show-toplevel)
 [[ "$repo" != *'/Local Sites/'* && -z $(git status --porcelain --untracked-files=all) ]] || { echo 'Clean external exact candidate required' >&2; exit 2; }
 candidate=$(git rev-parse HEAD)
 task_tmp=$(mktemp -d "${TMPDIR:-/tmp}/loyf-onboarding.XXXXXXXX")
-databases=(); server_pid=
+databases=(); server_pid=; activation_pid=
 cleanup() {
   result=$?
+  if [[ -n "$activation_pid" ]]; then kill "$activation_pid" 2>/dev/null || true; wait "$activation_pid" 2>/dev/null || true; fi
   if [[ -n "$server_pid" ]]; then kill "$server_pid" 2>/dev/null || true; wait "$server_pid" 2>/dev/null || true; fi
   for database in "${databases[@]}"; do MYSQL_PWD="$LOY_DB_PASSWORD" mysql --host="$LOY_DB_HOST" --port="${LOY_DB_PORT:-3306}" --user="$LOY_DB_USER" -e "DROP DATABASE IF EXISTS \`$database\`" >/dev/null 2>&1 || result=1; done
   if [[ "$result" != 0 && -f "$task_tmp/browser.log" ]]; then tail -n 60 "$task_tmp/browser.log" >&2; fi
@@ -37,11 +38,23 @@ add_filter('query',static function($query){
     }
     return $query;
 },PHP_INT_MAX);
+function loyf11_pause_bootstrap() {
+    if ('1'!==getenv('LOYF11_ACTOR_A')) { return; }
+    $barrier=getenv('LOYF11_BARRIER'); file_put_contents($barrier.'.ready','ready');
+    $until=microtime(true)+30; while(!file_exists($barrier.'.go')&&microtime(true)<$until){usleep(20000);}
+    if(!file_exists($barrier.'.go')){throw new RuntimeException('Bootstrap barrier timed out');}
+}
+add_action('added_option',static function($name,$value){
+    if('bootstrap-race'===getenv('LOYF11_CASE')&&'loyf_onboarding_v1'===$name&&is_array($value)&&'proven'===($value['status']??'')){loyf11_pause_bootstrap();}
+},10,2);
+add_action('yowcl_reward_test_checkpoint',static function($step){
+    if('seal-race'===getenv('LOYF11_CASE')&&'onboarding_baseline_snapshot'===$step){loyf11_pause_bootstrap();}
+});
 PHP
-cases='fresh skip options premium user-marker order-marker used-marker discount-marker hpos-marker hpos-used-marker version bad-cutover migration bad-witness role orphan-role license as-group cron balance log assessment-failure late-setting late-balance failure first-failure referral-failure unknown-referral disconnect parallel merchant-race dismiss'
+cases='fresh skip options premium user-marker order-marker used-marker discount-marker hpos-marker hpos-used-marker version bad-cutover migration bad-witness role orphan-role license as-group cron balance log assessment-failure late-setting late-balance failure first-failure referral-failure unknown-referral disconnect parallel merchant-race bootstrap-race seal-race dismiss'
 cases="${LOYF11_CASES:-$cases}"
 for case in $cases; do
-  case "$case" in fresh|skip|options|premium|user-marker|order-marker|used-marker|discount-marker|hpos-marker|hpos-used-marker|version|bad-cutover|migration|bad-witness|role|orphan-role|license|as-group|cron|balance|log|assessment-failure|late-setting|late-balance|failure|first-failure|referral-failure|unknown-referral|disconnect|parallel|merchant-race|dismiss|browser|browser-exit) ;; *) echo 'Unknown onboarding fixture' >&2; exit 2 ;; esac
+  case "$case" in fresh|skip|options|premium|user-marker|order-marker|used-marker|discount-marker|hpos-marker|hpos-used-marker|version|bad-cutover|migration|bad-witness|role|orphan-role|license|as-group|cron|balance|log|assessment-failure|late-setting|late-balance|failure|first-failure|referral-failure|unknown-referral|disconnect|parallel|merchant-race|bootstrap-race|seal-race|dismiss|browser|browser-exit) ;; *) echo 'Unknown onboarding fixture' >&2; exit 2 ;; esac
 done
 if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
   if [[ " $cases " != *' browser '* ]]; then cases="$cases browser browser-exit"; fi
@@ -60,7 +73,18 @@ for case in $cases; do
   wp plugin activate woocommerce --quiet
   if [[ "$case" == hpos-marker || "$case" == hpos-used-marker ]]; then wp option update woocommerce_custom_orders_table_data_sync_enabled no --quiet; wp option update woocommerce_custom_orders_table_enabled yes --quiet; fi
   LOYF11_PHASE=seed wp eval-file "$repo/tests/runtime/onboarding-fixture.php" --quiet
-  wp plugin activate loyalty-for-woocommerce --quiet
+  if [[ "$case" == bootstrap-race || "$case" == seal-race ]]; then
+    export LOYF11_BARRIER="$task_tmp/$case-barrier"
+    LOYF11_ACTOR_A=1 wp plugin activate loyalty-for-woocommerce --quiet > "$task_tmp/$case-activation.log" 2>&1 & activation_pid=$!
+    for attempt in {1..1000}; do [[ ! -f "$LOYF11_BARRIER.ready" ]] || break; sleep 0.02; done
+    [[ -f "$LOYF11_BARRIER.ready" ]] || { cat "$task_tmp/$case-activation.log" >&2; echo 'Native first activation did not reach barrier' >&2; exit 1; }
+    wp plugin activate loyalty-for-woocommerce --quiet
+    LOYF11_PHASE=bootstrap-merchant wp eval-file "$repo/tests/runtime/onboarding-fixture.php" --quiet
+    touch "$LOYF11_BARRIER.go"
+    wait "$activation_pid"; activation_pid=
+  else
+    wp plugin activate loyalty-for-woocommerce --quiet
+  fi
   LOYF11_PHASE=verify wp eval-file "$repo/tests/runtime/onboarding-fixture.php" --quiet
   # Reactivation never turns an existing or completed installation into a writable wizard.
   if [[ "$case" == fresh || "$case" == bad-witness || "$case" == dismiss ]]; then
