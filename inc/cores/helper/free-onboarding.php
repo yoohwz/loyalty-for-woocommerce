@@ -253,7 +253,7 @@ class YOWCL_Free_Onboarding {
         try {
             $input = wp_unslash( $_POST );
             if ( 'dismiss' === ( $input['intent'] ?? '' ) ) {
-                YOWCL_Free_Migrations::locked( static function () { $s = self::state(); if ( self::writable( $s ) ) { $s['status'] = 'dismissed'; update_option( self::OPTION,$s,false ); } } );
+                YOWCL_Free_Migrations::locked( static function () { $s = self::state(); if ( self::writable( $s ) ) { $s['status'] = 'dismissed'; update_option( self::OPTION,$s,false ); if ( self::read( self::OPTION ) !== serialize( $s ) ) { throw new RuntimeException( 'onboarding_exit_unconfirmed' ); } } } );
             } elseif ( 'launch' === ( $input['intent'] ?? '' ) ) { self::launch( $input ); }
             else { throw new DomainException( 'onboarding_invalid_action' ); }
             wp_safe_redirect( admin_url( 'admin.php?page=loyf-setup' ) ); exit;

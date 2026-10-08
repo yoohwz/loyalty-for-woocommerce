@@ -41,10 +41,10 @@ PHP
 cases='fresh skip options premium user-marker order-marker used-marker discount-marker hpos-marker hpos-used-marker version bad-cutover migration bad-witness role orphan-role license as-group cron balance log assessment-failure late-setting late-balance failure first-failure referral-failure unknown-referral disconnect parallel merchant-race dismiss'
 cases="${LOYF11_CASES:-$cases}"
 for case in $cases; do
-  case "$case" in fresh|skip|options|premium|user-marker|order-marker|used-marker|discount-marker|hpos-marker|hpos-used-marker|version|bad-cutover|migration|bad-witness|role|orphan-role|license|as-group|cron|balance|log|assessment-failure|late-setting|late-balance|failure|first-failure|referral-failure|unknown-referral|disconnect|parallel|merchant-race|dismiss|browser) ;; *) echo 'Unknown onboarding fixture' >&2; exit 2 ;; esac
+  case "$case" in fresh|skip|options|premium|user-marker|order-marker|used-marker|discount-marker|hpos-marker|hpos-used-marker|version|bad-cutover|migration|bad-witness|role|orphan-role|license|as-group|cron|balance|log|assessment-failure|late-setting|late-balance|failure|first-failure|referral-failure|unknown-referral|disconnect|parallel|merchant-race|dismiss|browser|browser-exit) ;; *) echo 'Unknown onboarding fixture' >&2; exit 2 ;; esac
 done
 if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
-  if [[ " $cases " != *' browser '* ]]; then cases="$cases browser"; fi
+  if [[ " $cases " != *' browser '* ]]; then cases="$cases browser browser-exit"; fi
   if [[ -z "${LOYF_PLAYWRIGHT_PATH:-}" ]]; then npm install --prefix "$task_tmp/browser" playwright@1.56.1 --no-audit --no-fund; export LOYF_PLAYWRIGHT_PATH="$task_tmp/browser/node_modules/playwright"; fi
   if [[ -z "${LOYF_BROWSER_EXECUTABLE:-}" ]]; then node "$LOYF_PLAYWRIGHT_PATH/cli.js" install --with-deps chromium; fi
 fi
@@ -67,7 +67,7 @@ for case in $cases; do
     wp plugin deactivate loyalty-for-woocommerce --quiet; wp plugin activate loyalty-for-woocommerce --quiet
     wp eval 'if(YOWCL_Free_Onboarding::writable()){throw new RuntimeException("Reactivation restarted wizard");}' --quiet
   fi
-  if [[ "$case" == browser ]]; then
+  if [[ "$case" == browser || "$case" == browser-exit ]]; then
     wp option update woocommerce_onboarding_profile '{"skipped":true}' --format=json --quiet
     wp transient delete _wc_activation_redirect --quiet
     export LOYF_BROWSER_URL="http://127.0.0.1:${LOYF11_BROWSER_PORT:-18089}"
