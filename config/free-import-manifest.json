@@ -635,7 +635,7 @@
     {
       "target": "readme.txt",
       "mode": "100644",
-      "sha256": "0d542da4a2980b7745cf1d2a7e24677b80fed5d5772ad87bb478292733f8f883"
+      "sha256": "f6ce434d5303c99254fa40a970dd3c39e1e4fcc6900f5af8a8e302c90ff6545d"
     }
   ],
   "blocked_mixed_modules": [

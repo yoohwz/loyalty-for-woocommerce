@@ -33,9 +33,9 @@ The free version focuses on the core loyalty workflow: earning points, redeeming
 * Import point balances from CSV
 * Offer optional First Purchase rewards and Referral Lite for registered customers
 * Set up a new program with the optional Quick Start wizard
-* Review available/earned points and recent reward activity in a basic Dashboard
+* Review current available point stock and reward activity in a basic Dashboard
 * Add points, level, progress, referral and history blocks or shortcodes
-* Export members or history as snapshot CSV with coverage and completion indicators
+* Export current customer loyalty state as snapshot CSV with completion indicators
 * Redefine customer loyalty levels from existing earned points
 * Prevent discount abuse by keeping point discounts and coupons separate
 * Send optional email notifications for point and level updates
@@ -87,11 +87,11 @@ You can also show reward messages on shop pages, product pages, cart, checkout, 
 
 == Dashboard, Blocks and CSV Export ==
 
-The basic Dashboard distinguishes current available/earned point stock from recent reward activity. Missing, historical or held data carries a coverage or Unavailable indication; it is not converted into a misleading exact total.
+The basic Dashboard distinguishes current available point stock from reward activity. Missing, historical or held data carries a coverage or Unavailable indication; it is not converted into a misleading exact total.
 
 Customer points, level, progress, referral and history components are available as Gutenberg blocks and shortcodes. Logged-in customers see their own information; guest views do not expose another customer's balance or referral link.
 
-Tools can export members or history as snapshot CSV. Check the final completion record before treating an export as complete. Numeric values are exported as text, and text that could be interpreted as a spreadsheet formula is escaped. An exported report is not a CSV import template.
+Tools can export current eligible customers' loyalty state as snapshot CSV, including stored available/earned balances, loyalty level and balance-state indicators. Check the final completion record before treating an export as complete. Numeric values are exported as text, and text that could be interpreted as a spreadsheet formula is escaped. An exported report is not a CSV import template.
 
 == Premium Features ==
 
