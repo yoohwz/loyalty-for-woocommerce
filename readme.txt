@@ -31,6 +31,11 @@ The free version focuses on the core loyalty workflow: earning points, redeeming
 * Display customer points and points history in My Account
 * Manually reward or deduct points from user profiles and the Users screen
 * Import point balances from CSV
+* Offer optional First Purchase rewards and Referral Lite for registered customers
+* Set up a new program with the optional Quick Start wizard
+* Review available/earned points and recent reward activity in a basic Dashboard
+* Add points, level, progress, referral and history blocks or shortcodes
+* Export members or history as snapshot CSV with coverage and completion indicators
 * Redefine customer loyalty levels from existing earned points
 * Prevent discount abuse by keeping point discounts and coupons separate
 * Send optional email notifications for point and level updates
@@ -44,6 +49,12 @@ The free version focuses on the core loyalty workflow: earning points, redeeming
 4. Enable customer-facing displays such as the Loyalty bubble, cart message, checkout message, or My Account points tab.
 5. Customers earn points from eligible actions and redeem available points during checkout.
 
+== Quick Start and Existing Stores ==
+
+A genuinely new Free installation can use Quick Start to choose earning, redemption, levels and optional rewards. Previewing or leaving the wizard does not launch a program. Existing or previously used stores receive a review path rather than an automatic reset.
+
+When the source of a migrated feature's settings cannot be established, that feature stays on hold. An administrator can review and keep complete current terms, explicitly adopt valid legacy Free terms, or disable the feature using Free settings. This does not change balances or history, restore old snapshots automatically, or reset Premium configuration.
+
 == Loyalty Points and Rewards ==
 
 The plugin stores each customer's current points and total earned points. Store managers can review point activity, add or remove points manually, and see the reason for each point change.
@@ -55,6 +66,8 @@ Supported free point actions include:
 * Product review bonus
 * Daily login bonus
 * Level-up bonus
+* Optional First Purchase bonus
+* Optional Referral Lite reward to a registered referrer after a qualifying first purchase
 * Manual admin reward
 * Manual admin deduction
 * Points used for a discount
@@ -72,9 +85,17 @@ The frontend Loyalty bubble helps customers understand your rewards program with
 
 You can also show reward messages on shop pages, product pages, cart, checkout, and the customer My Account area.
 
+== Dashboard, Blocks and CSV Export ==
+
+The basic Dashboard distinguishes current available/earned point stock from recent reward activity. Missing, historical or held data carries a coverage or Unavailable indication; it is not converted into a misleading exact total.
+
+Customer points, level, progress, referral and history components are available as Gutenberg blocks and shortcodes. Logged-in customers see their own information; guest views do not expose another customer's balance or referral link.
+
+Tools can export members or history as snapshot CSV. Check the final completion record before treating an export as complete. Numeric values are exported as text, and text that could be interpreted as a spreadsheet formula is escaped. An exported report is not a CSV import template.
+
 == Premium Features ==
 
-An optional premium version is available for stores that need advanced loyalty workflows such as product and category earning rules, referral rewards, point expiration, redeemable products, automated rules, and expanded redemption controls.
+An optional premium version is available for stores that need advanced loyalty workflows such as product and category earning rules, advanced referral rules and coupons, point expiration, redeemable products, automated rules, and expanded redemption controls.
 
 Learn more: [https://yoohw.com/product/woocommerce-loyalty-points-and-rewards/](https://yoohw.com/product/woocommerce-loyalty-points-and-rewards/)
 
@@ -122,7 +143,7 @@ Yes. Go to **WooCommerce > Settings > Loyalty > Tools** to import user points an
 
 = Does it work with WooCommerce checkout? =
 
-Yes. The plugin is designed for the standard WooCommerce cart and checkout flow.
+Yes. Both Classic cart/checkout and WooCommerce Cart/Checkout Blocks use the same funded redemption flow. HPOS is supported; turning off cart redemption does not turn off purchase earning messages.
 
 = Does it support point expiration? =
 
@@ -135,13 +156,13 @@ Yes. The plugin includes localized strings and a `.pot` file in the `/languages/
 == Compatibility ==
 
 * Requires WooCommerce.
-* Designed for standard WooCommerce cart and checkout.
+* Supports Classic and Cart/Checkout Blocks, and CPT or HPOS order storage.
 * Works with standard WooCommerce product types.
 * Uses WordPress user meta and a custom points log table for loyalty accounting.
 
 == Developer Notes ==
 
-The plugin includes hooks for earning, redemption, logging, and email flows. Hook names use the `yoswc_loyalty_` prefix.
+The plugin includes hooks for earning, redemption, logging, and email flows. Legacy `yoswc_loyalty_` observations remain available alongside canonical reward events. Historical observations do not create a second accounting writer.
 
 == Changelog ==
 

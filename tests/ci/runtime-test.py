@@ -45,6 +45,7 @@ if [[ "$*" == *DROP* && "$FAKE_FAIL" == cleanup ]]; then exit 1; fi
                 'php': '''#!/bin/bash
 echo "$*" >> "$CALLS"
 if [[ "$*" == *seed.php* && "$FAKE_FAIL" == seed ]]; then exit 1; fi
+if [[ "$*" == *upgrade.php* && "$FAKE_FAIL" != incomplete_upgrade ]]; then echo 'Actual old-Free → refreshed-Free upgrade PASS'; fi
 if [[ "$*" == *characterization.php* || "$*" == *hardened.php* ]]; then
  [[ "$FAKE_FAIL" != scenario ]] || exit 1
  echo '{"snapshot":"same"}' > "$LOYF_SNAPSHOT"
@@ -77,7 +78,7 @@ fi
         self.assertIn('historical baseline and hardened candidate PASS', result.stdout.decode())
 
     def test_failure_cleanup_and_mismatch(self):
-        for failure in ['create', 'seed', 'scenario', 'mismatch', 'cleanup']:
+        for failure in ['create', 'seed', 'scenario', 'mismatch', 'cleanup', 'incomplete_upgrade']:
             with self.subTest(failure=failure):
                 result, calls = self.run_case(failure)
                 self.assertNotEqual(0, result.returncode)
