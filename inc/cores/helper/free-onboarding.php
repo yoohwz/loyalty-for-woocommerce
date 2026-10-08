@@ -100,7 +100,7 @@ class YOWCL_Free_Onboarding {
         global $wpdb;
         $where = array();
         foreach ( array( 'loyalty_','loyf_','yoswc_loyalty','yowcl_','yol_','wc_loyalty','woocommerce_yowcl_loyalty_','yoswc_role_owner_' ) as $prefix ) { $where[] = $wpdb->prepare( 'option_name LIKE %s',$wpdb->esc_like( $prefix ) . '%' ); }
-        $rows = $wpdb->get_results( "SELECT option_name,option_value FROM {$wpdb->options} WHERE (" . implode( ' OR ',$where ) . ') ORDER BY option_name' . ( $lock ? ' FOR UPDATE' : '' ),ARRAY_A );
+        $rows = $wpdb->get_results( "SELECT option_name,option_value FROM {$wpdb->options} WHERE option_name <> 'yoswc_loyalty_subscription_pushed' AND (" . implode( ' OR ',$where ) . ') ORDER BY option_name' . ( $lock ? ' FOR UPDATE' : '' ),ARRAY_A );
         if ( $wpdb->last_error || ! is_array( $rows ) ) { throw new RuntimeException( 'onboarding_program_unavailable' ); }
         $values = array();
         foreach ( $rows as $row ) { if ( in_array( $row['option_name'],array( self::OPTION,'yoswc_loyalty_subscription_pushed' ),true ) ) { continue; } if ( isset( $values[$row['option_name']] ) ) { throw new RuntimeException( 'onboarding_program_ambiguous' ); } $values[$row['option_name']] = $row['option_value']; }

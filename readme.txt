@@ -78,15 +78,13 @@ An optional premium version is available for stores that need advanced loyalty w
 
 Learn more: [https://yoohw.com/product/woocommerce-loyalty-points-and-rewards/](https://yoohw.com/product/woocommerce-loyalty-points-and-rewards/)
 
-== Third-party Services ==
+== Privacy and External Connections ==
 
-This plugin connects to a YoOhw.com service once when the plugin is first installed and activated. The request is sent to `https://yoohw.com/wp-json/yoohw/v1/plugin-subscription` and includes the plugin slug, plugin version, site URL, site domain, and site admin email. This is used by YoOhw.com for plugin installation records, compatibility tracking, and support.
+Free does not send installation or subscription reports to YoOhw, collect the store administrator's email for a mailing list, or require a reporting opt-in. Historical installation-report options are left dormant; removing this plugin feature does not delete records previously held by a service provider.
 
-The request is not repeated on later plugin updates after the first successful connection.
+Optional points-earned, points-deducted and level-update notifications use the store's native WooCommerce/WordPress mail configuration. Store administrators control those transactional notifications. They are separate from installation reporting or marketing subscriptions.
 
-Service provider: YoOhw.com
-Privacy Policy: https://yoohw.com/privacy-policy/
-License/Service Terms: https://yoohw.com/license-policy/
+Assets bundled with the plugin are served locally. A store administrator can choose an external image URL for a display or email icon; that browser/email-client request is made to the configured image host. Documentation, support and Premium links open only when followed. WordPress/WooCommerce and the store's other services retain their own update, mail and privacy behavior.
 
 == Installation ==
 

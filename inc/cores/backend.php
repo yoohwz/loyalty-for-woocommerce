@@ -26,14 +26,9 @@ class YOSWC_Loyalty_Backend {
 
 	public static function check_version() : void {
 		$installed_version = get_option( 'yoswc_loyalty_version', '' );
-		$is_first_install = '' === $installed_version;
 
 		if ( $installed_version !== self::$version ) {
 			update_option( 'yoswc_loyalty_version', self::$version );
-
-			if ( $is_first_install && class_exists( 'YOSWC_Loyalty_Push_Subscription' ) ) {
-				YOSWC_Loyalty_Push_Subscription::maybe_push();
-			}
 		}
 	}
 
@@ -42,7 +37,6 @@ class YOSWC_Loyalty_Backend {
 		include_once plugin_dir_path(__FILE__) . '../backend/users.php';
 		include_once plugin_dir_path(__FILE__) . '../backend/yoohw-woo-settings-tabs-reorder.php';
 		include_once plugin_dir_path(__FILE__) . '../backend/actions/emails/notifications-email.php';
-		include_once plugin_dir_path(__FILE__) . 'api/push-subscription.php';
 	}
 }
 

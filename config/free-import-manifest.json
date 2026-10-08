@@ -448,14 +448,9 @@
       "sha256": "649c5a1e80ecd5a8ce5f68a0cf9cca3af367ce4f73f6a2353b273b293c194a5e"
     },
     {
-      "target": "inc/cores/api/push-subscription.php",
-      "mode": "100644",
-      "sha256": "4ebb89d9f1b8b3102ae892650889407f90e7bc7e4c510737e9ff23f62157bf38"
-    },
-    {
       "target": "inc/cores/backend.php",
       "mode": "100644",
-      "sha256": "9ea2fe0777f37eb3e042356570958b2dcd5436a1319c630a02cb375bf775d223"
+      "sha256": "ef1a203b1bf9165d8e211f7bdf7ea075f61a2e76278a689cd8f0ceb5d9d6115f"
     },
     {
       "target": "inc/cores/database.php",
@@ -510,7 +505,7 @@
     {
       "target": "inc/cores/helper/free-onboarding.php",
       "mode": "100644",
-      "sha256": "497bc9d633324d2c5c3ad2169636404d345d9ddb1ee47ea59ff2bde8a3574173"
+      "sha256": "0c99c1a388e1d5d6f017596c8a56dc76ee51ba6077402c9676e2c9fddb0c4bf9"
     },
     {
       "target": "inc/cores/helper/free-order-actions.php",
@@ -640,7 +635,7 @@
     {
       "target": "readme.txt",
       "mode": "100644",
-      "sha256": "2b4b45748b562a5d10be9e8cdc13c552b09c8c5e6462edd45b3b4454e9a6a68e"
+      "sha256": "8b6903ffd38d8c1a1abb723d9121297a953023ee8d689cff2bf9f8909efa599b"
     }
   ],
   "blocked_mixed_modules": [
