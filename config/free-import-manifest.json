@@ -500,12 +500,12 @@
     {
       "target": "inc/cores/helper/free-migrations.php",
       "mode": "100644",
-      "sha256": "64067daeedbc4b506400fbc0a9608858e04787f95e169078c6dcbad51496633c"
+      "sha256": "001b79df5c469d0093a14594f9605821b19e35155145df7f75475ca96587610f"
     },
     {
       "target": "inc/cores/helper/free-onboarding.php",
       "mode": "100644",
-      "sha256": "0c99c1a388e1d5d6f017596c8a56dc76ee51ba6077402c9676e2c9fddb0c4bf9"
+      "sha256": "d4183d7462aaa658eb98b8da577b5d402d82490245994b8f20b616361ae9720a"
     },
     {
       "target": "inc/cores/helper/free-order-actions.php",
@@ -630,7 +630,7 @@
     {
       "target": "loyalty-for-woocommerce.php",
       "mode": "100644",
-      "sha256": "210a1e9242f52d154d99d9accbda43abfbe2a8850ef71b65b7d22c4faa97dbaa"
+      "sha256": "b713adf53654560cb18c64322f6e6e5f7ba53e2c59e363d2ef9ee909f5b66f66"
     },
     {
       "target": "readme.txt",

@@ -56,6 +56,9 @@ for phase in baseline candidate; do
     wp eval-file "$repo/tests/runtime/seed.php" --quiet
     if [[ "$phase" == candidate ]]; then wp eval-file "$repo/tests/runtime/pre-cutover.php" --quiet; fi
     wp plugin activate loyalty-for-woocommerce --quiet
+    if [[ "$phase" == candidate ]]; then
+      for feature in signup login review levelup redemption email_reward email_deduct email_level; do wp eval-file "$repo/tests/runtime/resolve-fixture.php" "$feature" --quiet; done
+    fi
     export LOYF_SNAPSHOT="$tmp/$phase.json" LOYF_RAW_SNAPSHOT="$tmp/$phase-raw.json"
     echo "phase=$phase candidate=$sha wp=6.8.3 woo=9.9.5 php=$(php -r 'echo PHP_VERSION;')"
     scenario=characterization.php
@@ -66,6 +69,9 @@ for phase in baseline candidate; do
     if [[ "$phase" == baseline ]]; then
         # Upgrade the actual executed 1.2.2 database/tree; do not manufacture canonical history.
         wp eval-file "$repo/tests/runtime/upgrade-seed.php" --quiet
+        export LOYF_MIGRATION_CAPTURE_SOURCE="$repo/inc/cores/helper/free-migrations.php"
+        for feature in signup login review levelup redemption email_reward email_deduct email_level; do wp eval-file "$repo/tests/runtime/capture-legacy.php" "$feature" --quiet; done
+        rm "$plugin/inc/cores/api/push-subscription.php"
         git -C "$repo" archive "$head" -- loyalty-for-woocommerce.php readme.txt changelog.txt license.txt css img inc js languages templates | tar -x -C "$plugin"
         wp eval-file "$repo/tests/runtime/upgrade.php" --quiet
     fi

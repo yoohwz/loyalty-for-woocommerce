@@ -55,6 +55,7 @@ for versions in '6.8.3:9.9.5' '7.0:11.1.2'; do
     wp option update woocommerce_custom_orders_table_data_sync_enabled no --quiet
     if [[ "$storage" == hpos ]]; then wp option update woocommerce_custom_orders_table_enabled yes --quiet; fi
     wp plugin activate loyalty-for-woocommerce --quiet
+    for feature in signup login review levelup redemption email_reward email_deduct email_level; do wp eval-file "$repo/tests/runtime/resolve-fixture.php" "$feature" --quiet; done
     export LOYF_STORAGE="$storage"
     wp eval-file "$repo/tests/runtime/referral-lite.php" --quiet
     wp eval-file "$repo/tests/runtime/referral-origins.php" --quiet

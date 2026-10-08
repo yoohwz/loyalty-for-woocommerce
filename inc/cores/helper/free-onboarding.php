@@ -5,6 +5,9 @@ class YOWCL_Free_Onboarding {
     const OPTION = 'loyf_onboarding_v1';
     private static $initial = false;
     private static $blocked = false;
+    public static function initial_proof() {
+        return self::$initial && self::read( self::OPTION ) === self::$initial ? self::$initial : false;
+    }
     private static function read( $name ) {
         global $wpdb;
         $rows = $wpdb->get_col( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name=%s", $name ) );
