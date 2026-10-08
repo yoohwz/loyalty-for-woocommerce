@@ -68,6 +68,10 @@ for versions in '6.8.3:9.9.5' '7.0:11.1.2'; do
     wp plugin deactivate loyalty-for-woocommerce --quiet; wp plugin activate wc-loyalty --quiet
     wp eval-file "$repo/tests/runtime/edition-origin-compare.php"
    fi
+   export LOYF13_LIFECYCLE_SNAPSHOT="$task_tmp/lifecycle.bin"
+   LOYF13_LIFECYCLE_PHASE=before wp eval-file "$repo/tests/runtime/lifecycle-preservation.php"
+   wp plugin uninstall loyalty-for-woocommerce --quiet
+   LOYF13_LIFECYCLE_PHASE=after wp eval-file "$repo/tests/runtime/lifecycle-preservation.php"
    echo "Installed edition transition PASS candidate=$candidate WP=$wordpress Woo=$woocommerce storage=$storage origin=$origin Premium=$upstream entitlement=SIMULATED"
    mysql --host="$LOY_DB_HOST" --port="${LOY_DB_PORT:-3306}" --user="$LOY_DB_USER" -e "DROP DATABASE \`$database\`"
    python3 - "$site" <<'PY'

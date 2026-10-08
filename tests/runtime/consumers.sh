@@ -37,7 +37,7 @@ if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
   if [[ -z "${LOYF_BROWSER_EXECUTABLE:-}" ]]; then node "$(dirname "$LOYF_PLAYWRIGHT_PATH")/playwright/cli.js" install --with-deps chromium; fi
 fi
 versions_list=('6.8.3:9.9.5' '7.0:11.1.2'); storages=(cpt hpos)
-if [[ "${LOYF13_COMPAT_SUPPLEMENT:-}" == 1 ]]; then versions_list=('6.3:8.2.2' '7.1.3:11.1.2'); storages=(cpt); fi
+if [[ "${LOYF13_COMPAT_SUPPLEMENT:-}" == 1 ]]; then versions_list=('6.3:8.2.2' '7.1.3:11.2.0'); storages=(cpt); fi
 for versions in "${versions_list[@]}"; do
   wordpress=${versions%:*}; woocommerce=${versions#*:}
   for storage in "${storages[@]}"; do
