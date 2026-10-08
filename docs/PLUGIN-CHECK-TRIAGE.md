@@ -14,7 +14,7 @@ php /absolute/wp.phar --path=/absolute/disposable/site \
 
 The runtime bootstrap must load the activated checker; merely requiring its CLI file without the active plugin is not valid runtime evidence. The official CLI documentation is at https://github.com/WordPress/plugin-check/blob/trunk/docs/CLI.md. Native transport is intercepted in the disposable site; no service-provider subscription/license endpoint is contacted. Only the exact Free plugin is scanned.
 
-The executed scan at `a236ac436909dbea8473b12f9425b149e56ed2f1`, source/stage/ZIP/extraction102 files and verification ZIP SHA256 `1091a951b5bdb11599fa3903e736797c0186c5f3010da7dc4ef5ecd53aa0ff67`, reports **97 ERROR /230 WARNING (327 findings)**. The row inventory below uses that exact source's lines. The CLI renders temporary symlink paths as `/privateinc/...` or `/privatetemplates/...`; the table normalizes only that leading `/private`, and every resulting source path was inspected. Later candidates must rerun the scan and reconcile any changes before acceptance.
+The executed scan at `66ed6c8b94cf63417e7cf6ed08685ceff1bd75d2`, source/stage/ZIP/extraction102 files and verification ZIP SHA256 `50b34854138462b9bcdf5d38099a5c9e6f117588710625282bf34976f209e425`, reports **97 ERROR /230 WARNING (327 findings)**. The row inventory below uses that exact source's lines. The CLI renders temporary symlink paths as `/privateinc/...` or `/privatetemplates/...`; the table normalizes only that leading `/private`, and every resulting source path was inspected. Later candidates must rerun the scan and reconcile any changes before acceptance.
 
 ## Corrections and dispositions
 
@@ -142,24 +142,24 @@ Repeated findings on the same file/line/code are counted in the last column. Cou
 | `inc/cores/helper/free-first-purchase.php` | 91 | `WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude` | B | 1 |
 | `inc/cores/helper/free-migrations.php` | 11 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` | D | 1 |
 | `inc/cores/helper/free-migrations.php` | 11 | `WordPress.DB.DirectDatabaseQuery.NoCaching` | D | 1 |
-| `inc/cores/helper/free-migrations.php` | 38 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_thread_id` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 39 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_query` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 41 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_fetch_row` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 41 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_free_result` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 48 | `WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound` | P | 1 |
+| `inc/cores/helper/free-migrations.php` | 49 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_thread_id` | M | 1 |
 | `inc/cores/helper/free-migrations.php` | 50 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_query` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 62 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_affected_rows` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 76 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` | D | 1 |
-| `inc/cores/helper/free-migrations.php` | 76 | `WordPress.DB.DirectDatabaseQuery.NoCaching` | D | 1 |
-| `inc/cores/helper/free-migrations.php` | 80 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_thread_id` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 85 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_free_result` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 85 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_query` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 143 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` | D | 1 |
-| `inc/cores/helper/free-migrations.php` | 143 | `WordPress.DB.DirectDatabaseQuery.NoCaching` | D | 1 |
-| `inc/cores/helper/free-migrations.php` | 208 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` | D | 1 |
-| `inc/cores/helper/free-migrations.php` | 208 | `WordPress.DB.DirectDatabaseQuery.NoCaching` | D | 1 |
-| `inc/cores/helper/free-migrations.php` | 216 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_free_result` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 222 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_query` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 52 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_fetch_row` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 52 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_free_result` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 59 | `WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound` | P | 1 |
+| `inc/cores/helper/free-migrations.php` | 61 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_query` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 73 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_affected_rows` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 87 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` | D | 1 |
+| `inc/cores/helper/free-migrations.php` | 87 | `WordPress.DB.DirectDatabaseQuery.NoCaching` | D | 1 |
+| `inc/cores/helper/free-migrations.php` | 91 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_thread_id` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 96 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_free_result` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 96 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_query` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 154 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` | D | 1 |
+| `inc/cores/helper/free-migrations.php` | 154 | `WordPress.DB.DirectDatabaseQuery.NoCaching` | D | 1 |
+| `inc/cores/helper/free-migrations.php` | 219 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` | D | 1 |
+| `inc/cores/helper/free-migrations.php` | 219 | `WordPress.DB.DirectDatabaseQuery.NoCaching` | D | 1 |
+| `inc/cores/helper/free-migrations.php` | 227 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_free_result` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 233 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_query` | M | 1 |
 | `inc/cores/helper/free-onboarding.php` | 13 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` | D | 1 |
 | `inc/cores/helper/free-onboarding.php` | 13 | `WordPress.DB.DirectDatabaseQuery.NoCaching` | D | 1 |
 | `inc/cores/helper/free-onboarding.php` | 24 | `PluginCheck.Security.DirectDB.UnescapedDBParameter` | Q | 1 |
