@@ -275,7 +275,7 @@
     {
       "target": "loyalty-for-woocommerce.php",
       "mode": "100644",
-      "sha256": "e1ce5289ea191feeec96cffa66af4fad270346d9cce0c1e8c2470267b322b4a7"
+      "sha256": "d72aa8c7deb51bcff75ed3bcda2bbabad9df670a3014121f0f9b87984e6b1a9f"
     },
     {
       "target": "readme.txt",
@@ -355,7 +355,7 @@
     {
       "target": "inc/backend/settings/customization.php",
       "mode": "100644",
-      "sha256": "d3fde7b5eefae46ec0563cce1c0f2215e3d8004b3567e4c84badd4db5f8274f8"
+      "sha256": "ec33971d20e4e86536cd335cdb2367e4a4fd6e49ac97b318605e02bcfc9edc51"
     },
     {
       "target": "inc/backend/settings/extra-points.php",
@@ -575,7 +575,17 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "8b5db801500d31ccdc98c0e1db81d4dcbfb3e9dbc19f0781e16e118672ad42d6"
+      "sha256": "cdb6cf4d59dcf8619c1f740612c7c3bb095555ad408bb0b98fe66daa954a4c77"
+    },
+    {
+      "target": "inc/cores/helper/free-onboarding.php",
+      "mode": "100644",
+      "sha256": "60d7db9d11d762adb6ea62fbdb102185c880db6c246911b3e7434f39d06ec1af"
+    },
+    {
+      "target": "js/onboarding.js",
+      "mode": "100644",
+      "sha256": "415dff8ffa0fdb47c42bec0f2df2f7f8ec3c7a799969414a7eeaaa50a883df20"
     }
   ],
   "blocked_mixed_modules": [

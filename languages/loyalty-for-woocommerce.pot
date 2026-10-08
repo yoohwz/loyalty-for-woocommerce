@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-08T01:02:00+00:00\n"
+"POT-Creation-Date: 2026-10-08T02:02:16+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
@@ -86,6 +86,7 @@ msgstr ""
 
 #: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-reward.php:9
 #: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-reward.php:30
+#: inc/cores/helper/free-onboarding.php:264
 msgid "Points earned"
 msgstr ""
 
@@ -303,10 +304,12 @@ msgid "Point rounding"
 msgstr ""
 
 #: inc/backend/settings.php:333
+#: inc/cores/helper/free-onboarding.php:265
 msgid "Round up"
 msgstr ""
 
 #: inc/backend/settings.php:334
+#: inc/cores/helper/free-onboarding.php:265
 msgid "Round down"
 msgstr ""
 
@@ -394,303 +397,303 @@ msgstr ""
 msgid "The WordPress media library is not available."
 msgstr ""
 
-#: inc/backend/settings/customization.php:110
+#: inc/backend/settings/customization.php:94
 msgid "Customization Settings"
 msgstr ""
 
-#: inc/backend/settings/customization.php:114
+#: inc/backend/settings/customization.php:98
 #: inc/backend/settings/extra-points.php:27
 msgid "Before start"
 msgstr ""
 
-#: inc/backend/settings/customization.php:117
+#: inc/backend/settings/customization.php:101
 #: inc/backend/settings/extra-points.php:30
 msgid "You have to set at least one role for the loyalty level to set this options."
 msgstr ""
 
-#: inc/backend/settings/customization.php:145
-#: inc/backend/settings/customization.php:554
-#: inc/backend/settings/customization.php:703
+#: inc/backend/settings/customization.php:129
+#: inc/backend/settings/customization.php:538
+#: inc/backend/settings/customization.php:687
 #: inc/frontend/my-account.php:65
 msgid "My Points"
 msgstr ""
 
-#: inc/backend/settings/customization.php:162
+#: inc/backend/settings/customization.php:146
 msgid "Levels & Membercard"
 msgstr ""
 
-#: inc/backend/settings/customization.php:170
+#: inc/backend/settings/customization.php:154
 msgid "Level icons"
 msgstr ""
 
-#: inc/backend/settings/customization.php:188
-#: inc/backend/settings/customization.php:508
+#: inc/backend/settings/customization.php:172
+#: inc/backend/settings/customization.php:492
 msgid "Image URL"
 msgstr ""
 
-#: inc/backend/settings/customization.php:192
-#: inc/backend/settings/customization.php:513
+#: inc/backend/settings/customization.php:176
+#: inc/backend/settings/customization.php:497
 msgid "Upload Image"
 msgstr ""
 
-#: inc/backend/settings/customization.php:199
+#: inc/backend/settings/customization.php:183
 msgid "Add an icon badge for each level. If this is not set, then the level name will display instead."
 msgstr ""
 
-#: inc/backend/settings/customization.php:204
+#: inc/backend/settings/customization.php:188
 msgid "Text colors"
 msgstr ""
 
-#: inc/backend/settings/customization.php:232
+#: inc/backend/settings/customization.php:216
 msgid "Set colors for level name, process bar, and circle level progress."
 msgstr ""
 
-#: inc/backend/settings/customization.php:238
+#: inc/backend/settings/customization.php:222
 msgid "Membercard"
+msgstr ""
+
+#: inc/backend/settings/customization.php:226
+#: inc/backend/settings/customization.php:345
+#: inc/backend/settings/customization.php:442
+msgid "Text:"
+msgstr ""
+
+#: inc/backend/settings/customization.php:234
+#: inc/backend/settings/customization.php:353
+#: inc/backend/settings/customization.php:450
+msgid "Background:"
 msgstr ""
 
 #: inc/backend/settings/customization.php:242
 #: inc/backend/settings/customization.php:361
 #: inc/backend/settings/customization.php:458
-msgid "Text:"
-msgstr ""
-
-#: inc/backend/settings/customization.php:250
-#: inc/backend/settings/customization.php:369
-#: inc/backend/settings/customization.php:466
-msgid "Background:"
-msgstr ""
-
-#: inc/backend/settings/customization.php:258
-#: inc/backend/settings/customization.php:377
-#: inc/backend/settings/customization.php:474
 msgid "Border:"
 msgstr ""
 
-#: inc/backend/settings/customization.php:268
+#: inc/backend/settings/customization.php:252
 msgid "Loyalty bubble"
 msgstr ""
 
-#: inc/backend/settings/customization.php:273
+#: inc/backend/settings/customization.php:257
 msgid "Enable the floating Loyalty bubble on the frontend."
 msgstr ""
 
-#: inc/backend/settings/customization.php:279
+#: inc/backend/settings/customization.php:263
 msgid "Bubble position"
 msgstr ""
 
-#: inc/backend/settings/customization.php:284
+#: inc/backend/settings/customization.php:268
 msgid "Bottom right"
 msgstr ""
 
-#: inc/backend/settings/customization.php:285
+#: inc/backend/settings/customization.php:269
 msgid "Bottom left"
 msgstr ""
 
-#: inc/backend/settings/customization.php:292
+#: inc/backend/settings/customization.php:276
 #: inc/frontend/loyalty-info-bubble.php:153
 msgid "Powered by"
 msgstr ""
 
-#: inc/backend/settings/customization.php:298
+#: inc/backend/settings/customization.php:282
 msgid "Show a small YoOhw credit below the Loyalty panel."
 msgstr ""
 
-#: inc/backend/settings/customization.php:304
+#: inc/backend/settings/customization.php:288
 msgid "Messages & Display"
 msgstr ""
 
-#: inc/backend/settings/customization.php:311
+#: inc/backend/settings/customization.php:295
 msgid "Shop & Product messages"
 msgstr ""
 
-#: inc/backend/settings/customization.php:319
+#: inc/backend/settings/customization.php:303
 msgid "Shop page"
 msgstr ""
 
-#: inc/backend/settings/customization.php:325
+#: inc/backend/settings/customization.php:309
 msgid "Enable to display message in the shop (products list) page."
+msgstr ""
+
+#: inc/backend/settings/customization.php:315
+#: inc/backend/settings/customization.php:412
+msgid "Border"
+msgstr ""
+
+#: inc/backend/settings/customization.php:319
+#: inc/backend/settings/customization.php:416
+msgid "Style:"
+msgstr ""
+
+#: inc/backend/settings/customization.php:321
+#: inc/backend/settings/customization.php:418
+msgid "None"
+msgstr ""
+
+#: inc/backend/settings/customization.php:322
+#: inc/backend/settings/customization.php:419
+msgid "Solid"
+msgstr ""
+
+#: inc/backend/settings/customization.php:323
+#: inc/backend/settings/customization.php:420
+msgid "Dashed"
+msgstr ""
+
+#: inc/backend/settings/customization.php:324
+#: inc/backend/settings/customization.php:421
+msgid "Dotted"
+msgstr ""
+
+#: inc/backend/settings/customization.php:325
+#: inc/backend/settings/customization.php:422
+msgid "Double"
+msgstr ""
+
+#: inc/backend/settings/customization.php:326
+#: inc/backend/settings/customization.php:423
+msgid "Groove"
+msgstr ""
+
+#: inc/backend/settings/customization.php:327
+#: inc/backend/settings/customization.php:424
+msgid "Ridge"
+msgstr ""
+
+#: inc/backend/settings/customization.php:328
+#: inc/backend/settings/customization.php:425
+msgid "Inset"
+msgstr ""
+
+#: inc/backend/settings/customization.php:329
+#: inc/backend/settings/customization.php:426
+msgid "Outset"
 msgstr ""
 
 #: inc/backend/settings/customization.php:331
 #: inc/backend/settings/customization.php:428
-msgid "Border"
+msgid "Width:"
 msgstr ""
 
-#: inc/backend/settings/customization.php:335
-#: inc/backend/settings/customization.php:432
-msgid "Style:"
-msgstr ""
-
-#: inc/backend/settings/customization.php:337
-#: inc/backend/settings/customization.php:434
-msgid "None"
-msgstr ""
-
-#: inc/backend/settings/customization.php:338
-#: inc/backend/settings/customization.php:435
-msgid "Solid"
-msgstr ""
-
-#: inc/backend/settings/customization.php:339
-#: inc/backend/settings/customization.php:436
-msgid "Dashed"
+#: inc/backend/settings/customization.php:333
+#: inc/backend/settings/customization.php:430
+msgid "Radius:"
 msgstr ""
 
 #: inc/backend/settings/customization.php:340
 #: inc/backend/settings/customization.php:437
-msgid "Dotted"
-msgstr ""
-
-#: inc/backend/settings/customization.php:341
-#: inc/backend/settings/customization.php:438
-msgid "Double"
-msgstr ""
-
-#: inc/backend/settings/customization.php:342
-#: inc/backend/settings/customization.php:439
-msgid "Groove"
-msgstr ""
-
-#: inc/backend/settings/customization.php:343
-#: inc/backend/settings/customization.php:440
-msgid "Ridge"
-msgstr ""
-
-#: inc/backend/settings/customization.php:344
-#: inc/backend/settings/customization.php:441
-msgid "Inset"
-msgstr ""
-
-#: inc/backend/settings/customization.php:345
-#: inc/backend/settings/customization.php:442
-msgid "Outset"
-msgstr ""
-
-#: inc/backend/settings/customization.php:347
-#: inc/backend/settings/customization.php:444
-msgid "Width:"
-msgstr ""
-
-#: inc/backend/settings/customization.php:349
-#: inc/backend/settings/customization.php:446
-msgid "Radius:"
-msgstr ""
-
-#: inc/backend/settings/customization.php:356
-#: inc/backend/settings/customization.php:453
 msgid "Colors"
 msgstr ""
 
-#: inc/backend/settings/customization.php:388
-#: inc/backend/settings/customization.php:485
+#: inc/backend/settings/customization.php:372
+#: inc/backend/settings/customization.php:469
 msgid "Guest"
 msgstr ""
 
-#: inc/backend/settings/customization.php:394
-#: inc/backend/settings/customization.php:491
+#: inc/backend/settings/customization.php:378
+#: inc/backend/settings/customization.php:475
 msgid "Enable to display message for guest visitors."
 msgstr ""
 
-#: inc/backend/settings/customization.php:400
+#: inc/backend/settings/customization.php:384
 msgid "Product page"
 msgstr ""
 
-#: inc/backend/settings/customization.php:406
+#: inc/backend/settings/customization.php:390
 msgid "Enable to display message in the single product page."
 msgstr ""
 
-#: inc/backend/settings/customization.php:412
+#: inc/backend/settings/customization.php:396
 msgid "Position"
 msgstr ""
 
-#: inc/backend/settings/customization.php:417
+#: inc/backend/settings/customization.php:401
 msgid "Before Add to Cart button"
 msgstr ""
 
-#: inc/backend/settings/customization.php:418
+#: inc/backend/settings/customization.php:402
 msgid "After Add to Cart button"
 msgstr ""
 
-#: inc/backend/settings/customization.php:419
+#: inc/backend/settings/customization.php:403
 msgid "Before short description"
 msgstr ""
 
-#: inc/backend/settings/customization.php:420
+#: inc/backend/settings/customization.php:404
 msgid "After short description"
 msgstr ""
 
-#: inc/backend/settings/customization.php:421
+#: inc/backend/settings/customization.php:405
 msgid "After product meta"
 msgstr ""
 
-#: inc/backend/settings/customization.php:497
+#: inc/backend/settings/customization.php:481
 msgid "Message icon"
 msgstr ""
 
-#: inc/backend/settings/customization.php:529
+#: inc/backend/settings/customization.php:513
 msgid "My Account display"
 msgstr ""
 
-#: inc/backend/settings/customization.php:538
+#: inc/backend/settings/customization.php:522
 msgid "Points display"
 msgstr ""
 
-#: inc/backend/settings/customization.php:544
+#: inc/backend/settings/customization.php:528
 msgid "Enable to display points in My Account page."
 msgstr ""
 
-#: inc/backend/settings/customization.php:550
+#: inc/backend/settings/customization.php:534
 msgid "Points label"
 msgstr ""
 
-#: inc/backend/settings/customization.php:560
+#: inc/backend/settings/customization.php:544
 msgid "Points slug"
 msgstr ""
 
 #. translators: %s: Link to Permalink Settings page
-#: inc/backend/settings/customization.php:572
+#: inc/backend/settings/customization.php:556
 #, php-format
 msgid "You may have to save changes at %s to make it work probably."
 msgstr ""
 
-#: inc/backend/settings/customization.php:573
+#: inc/backend/settings/customization.php:557
 msgid "Permalink Settings"
 msgstr ""
 
 #. translators: %s: Link to Permalink Settings page
-#: inc/backend/settings/customization.php:584
+#: inc/backend/settings/customization.php:568
 #, php-format
 msgid "You can setup %s."
 msgstr ""
 
-#: inc/backend/settings/customization.php:585
+#: inc/backend/settings/customization.php:569
 msgid "the endpoint here"
 msgstr ""
 
-#: inc/backend/settings/customization.php:599
+#: inc/backend/settings/customization.php:583
 msgid "Cart & Checkout messages"
 msgstr ""
 
-#: inc/backend/settings/customization.php:607
+#: inc/backend/settings/customization.php:591
 #: inc/frontend/loyalty-info-bubble.php:327
 msgid "Cart"
 msgstr ""
 
-#: inc/backend/settings/customization.php:613
+#: inc/backend/settings/customization.php:597
 msgid "Enable to display message in Cart page."
 msgstr ""
 
-#: inc/backend/settings/customization.php:619
+#: inc/backend/settings/customization.php:603
 #: inc/frontend/loyalty-info-bubble.php:330
 msgid "Checkout"
 msgstr ""
 
-#: inc/backend/settings/customization.php:625
+#: inc/backend/settings/customization.php:609
 msgid "Enable to display message in Checkout page."
 msgstr ""
 
-#: inc/backend/settings/customization.php:642
+#: inc/backend/settings/customization.php:626
 #: inc/backend/settings/extra-points.php:171
 #: inc/backend/settings/general-add-remove-user-role.php:19
 #: inc/backend/settings/general-add-remove-user-role.php:26
@@ -713,6 +716,7 @@ msgid "Enable First Purchase bonus"
 msgstr ""
 
 #: inc/backend/settings/extra-points.php:48
+#: inc/cores/helper/free-onboarding.php:272
 msgid "First Purchase points"
 msgstr ""
 
@@ -873,6 +877,7 @@ msgid "Enable Referral Lite"
 msgstr ""
 
 #: inc/backend/settings/referrals.php:12
+#: inc/cores/helper/free-onboarding.php:272
 msgid "Referrer points"
 msgstr ""
 
@@ -1256,6 +1261,187 @@ msgstr ""
 msgid "Please reapply loyalty points after the upgrade. Your points balance has not changed."
 msgstr ""
 
+#: inc/cores/helper/free-onboarding.php:219
+#: inc/cores/helper/free-onboarding.php:239
+msgid "Review your loyalty setup"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:219
+msgid "Loyalty setup"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:222
+msgid "Set up your loyalty program when you are ready. Your choices are saved only when you select Launch."
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:222
+msgid "Quick Start"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:240
+msgid "Loyalty settings"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:242
+msgid "Quick Start completed. Current settings below may include later edits."
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:242
+msgid "Review only. Use the existing Loyalty settings screens to change your program. An interrupted Launch may have saved some of your selected settings; it will not run again."
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:248
+#, php-format
+msgid "Illustrative Launch example, subtotal 100 %1$s without taxes or coupons: %2$s points. This is a saved-choice example, not a reward promise."
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:250
+#, php-format
+msgid "Illustrative Launch redemption: %1$s points for %2$s %3$s, subject to the cart subtotal."
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:252
+msgid "Setting"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:252
+msgid "Current saved value"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:253
+#: inc/frontend/loyalty-info-bubble.php:660
+msgid "Not configured"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:253
+msgid "Unavailable. Review storage before saving."
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:256
+msgid "Preview only until Launch. Suggestions are illustrative; no points or orders are created."
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:259
+msgid "Program"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:259
+#: inc/frontend/loyalty-info-bubble.php:297
+msgid "Earn points"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:259
+msgid "Redeem points"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:259
+msgid "Optional growth"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:259
+msgid "Customer display"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:259
+msgid "Launch summary"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:262
+msgid "Start with the existing Customer level at zero points. Only customers qualify; no customer roles are reassigned. Additional levels remain available in Loyalty settings."
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:264
+#, php-format
+msgid "Per subtotal amount (%s)"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:265
+msgid "Rounding"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:267
+msgid "Use price after coupons"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:267
+msgid "Subtract order taxes (existing Free calculation)"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:268
+msgid "Reverse purchase points on the selected terminal statuses:"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:271
+msgid "Enable points redemption"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:271
+msgid "Points exchanged"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:271
+#, php-format
+msgid "Discount amount (%s)"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:272
+msgid "Enable First Purchase bonus (orders created after Launch only)"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:272
+msgid "Enable Referral Lite (registered customer, first order, link referrer only)"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:273
+msgid "Show Loyalty bubble"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:273
+msgid "Show My Points in My Account"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:274
+msgid "Launch saves only your selected Free settings. If saving is interrupted, review the current settings before using the existing settings screens; Quick Start will not overwrite them on retry."
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:277
+msgid "Back"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:277
+msgid "Next"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:277
+msgid "Skip optional growth"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:277
+msgid "Launch / Save"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:277
+msgid "Exit Quick Start"
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:279
+#, php-format
+msgid "Illustrative order subtotal of %1$s: %2$s points."
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:279
+#, php-format
+msgid "Illustrative redemption of %1$s points: %2$s discount, subject to the cart subtotal."
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:279
+msgid "Optional rewards and redemption remain off unless selected."
+msgstr ""
+
+#: inc/cores/helper/free-onboarding.php:279
+msgid "Review the conversion amounts before Launch."
+msgstr ""
+
 #: inc/cores/helper/free-order-actions.php:36
 msgid "Purchase an order"
 msgstr ""
@@ -1562,10 +1748,6 @@ msgstr ""
 msgid "Bonus rewards"
 msgstr ""
 
-#: inc/frontend/loyalty-info-bubble.php:297
-msgid "Earn points"
-msgstr ""
-
 #: inc/frontend/loyalty-info-bubble.php:314
 msgid "Point value"
 msgstr ""
@@ -1620,10 +1802,6 @@ msgstr ""
 
 #: inc/frontend/loyalty-info-bubble.php:415
 msgid "Highest level reached."
-msgstr ""
-
-#: inc/frontend/loyalty-info-bubble.php:660
-msgid "Not configured"
 msgstr ""
 
 #. translators: 1: Points number, 2: Point label.

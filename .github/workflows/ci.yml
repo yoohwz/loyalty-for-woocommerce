@@ -180,6 +180,7 @@ jobs:
         run: |
           bash tests/runtime/run.sh
           bash tests/runtime/modern.sh
+          bash tests/runtime/onboarding.sh
 
   required:
     name: LOYF Required CI

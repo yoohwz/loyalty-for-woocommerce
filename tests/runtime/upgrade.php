@@ -135,3 +135,5 @@ $points=get_user_meta($user,'user_points',true); WC()->session->set('yoswc_loyal
 YOWCL_Free_Migrations::session(); loyf_equal(null,WC()->session->get('yoswc_loyalty_applied_points'),'Legacy selection cleared'); loyf_equal($points,get_user_meta($user,'user_points',true),'Clear changes no value'); loyf_assert(wc_notice_count('notice')>0,'Explicit reapply feedback');
 WC()->session->set('loyf_funded_selection',array('id'=>'fixture')); WC()->session->set('yoswc_loyalty_applied_points',20); YOWCL_Free_Migrations::session(); loyf_equal(20,WC()->session->get('yoswc_loyalty_applied_points'),'Canonical attempt retained');
 echo "Actual old-Free → refreshed-Free upgrade PASS\n";
+
+loyf_assert( ! YOWCL_Free_Onboarding::writable(), "Actual old-Free upgrade is review-only" );
