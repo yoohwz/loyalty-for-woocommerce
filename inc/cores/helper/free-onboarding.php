@@ -86,6 +86,10 @@ class YOWCL_Free_Onboarding {
         } catch ( Throwable $e ) {
             if ( in_array( $e->getMessage(),array( 'onboarding_read_failed','onboarding_assessment_failed' ),true ) ) { self::$blocked = true; }
             add_option( self::OPTION, array( 'version'=>1,'status'=>'review' ), '', false );
+            // A concurrent proof can appear after our initial absence read, including
+            // when its new footprint caused this assessment to fail before add_option.
+            try { self::retire_proof( self::read( self::OPTION ) ); }
+            catch ( Throwable $unavailable ) { self::$blocked = true; }
         }
         return ! self::$blocked;
     }

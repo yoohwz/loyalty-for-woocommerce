@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-08T03:50:09+00:00\n"
+"POT-Creation-Date: 2026-10-08T04:21:21+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
@@ -86,7 +86,7 @@ msgstr ""
 
 #: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-reward.php:9
 #: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-reward.php:30
-#: inc/cores/helper/free-onboarding.php:311
+#: inc/cores/helper/free-onboarding.php:315
 msgid "Points earned"
 msgstr ""
 
@@ -304,12 +304,12 @@ msgid "Point rounding"
 msgstr ""
 
 #: inc/backend/settings.php:333
-#: inc/cores/helper/free-onboarding.php:312
+#: inc/cores/helper/free-onboarding.php:316
 msgid "Round up"
 msgstr ""
 
 #: inc/backend/settings.php:334
-#: inc/cores/helper/free-onboarding.php:312
+#: inc/cores/helper/free-onboarding.php:316
 msgid "Round down"
 msgstr ""
 
@@ -716,7 +716,7 @@ msgid "Enable First Purchase bonus"
 msgstr ""
 
 #: inc/backend/settings/extra-points.php:48
-#: inc/cores/helper/free-onboarding.php:319
+#: inc/cores/helper/free-onboarding.php:323
 msgid "First Purchase points"
 msgstr ""
 
@@ -877,7 +877,7 @@ msgid "Enable Referral Lite"
 msgstr ""
 
 #: inc/backend/settings/referrals.php:12
-#: inc/cores/helper/free-onboarding.php:319
+#: inc/cores/helper/free-onboarding.php:323
 msgid "Referrer points"
 msgstr ""
 
@@ -1261,184 +1261,184 @@ msgstr ""
 msgid "Please reapply loyalty points after the upgrade. Your points balance has not changed."
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:266
-#: inc/cores/helper/free-onboarding.php:286
+#: inc/cores/helper/free-onboarding.php:270
+#: inc/cores/helper/free-onboarding.php:290
 msgid "Review your loyalty setup"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:266
+#: inc/cores/helper/free-onboarding.php:270
 msgid "Loyalty setup"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:269
+#: inc/cores/helper/free-onboarding.php:273
 msgid "Set up your loyalty program when you are ready. Your choices are saved only when you select Launch."
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:269
+#: inc/cores/helper/free-onboarding.php:273
 msgid "Quick Start"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:287
+#: inc/cores/helper/free-onboarding.php:291
 msgid "Loyalty settings"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:289
+#: inc/cores/helper/free-onboarding.php:293
 msgid "Quick Start completed. Current settings below may include later edits."
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:289
+#: inc/cores/helper/free-onboarding.php:293
 msgid "Review only. Use the existing Loyalty settings screens to change your program. An interrupted Launch may have saved some of your selected settings; it will not run again."
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:295
+#: inc/cores/helper/free-onboarding.php:299
 #, php-format
 msgid "Illustrative Launch example, subtotal 100 %1$s without taxes or coupons: %2$s points. This is a saved-choice example, not a reward promise."
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:297
+#: inc/cores/helper/free-onboarding.php:301
 #, php-format
 msgid "Illustrative Launch redemption: %1$s points for %2$s %3$s, subject to the cart subtotal."
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:299
+#: inc/cores/helper/free-onboarding.php:303
 msgid "Setting"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:299
+#: inc/cores/helper/free-onboarding.php:303
 msgid "Current saved value"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:300
+#: inc/cores/helper/free-onboarding.php:304
 #: inc/frontend/loyalty-info-bubble.php:660
 msgid "Not configured"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:300
+#: inc/cores/helper/free-onboarding.php:304
 msgid "Unavailable. Review storage before saving."
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:303
+#: inc/cores/helper/free-onboarding.php:307
 msgid "Preview only until Launch. Suggestions are illustrative; no points or orders are created."
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:306
+#: inc/cores/helper/free-onboarding.php:310
 msgid "Program"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:306
+#: inc/cores/helper/free-onboarding.php:310
 #: inc/frontend/loyalty-info-bubble.php:297
 msgid "Earn points"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:306
+#: inc/cores/helper/free-onboarding.php:310
 msgid "Redeem points"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:306
+#: inc/cores/helper/free-onboarding.php:310
 msgid "Optional growth"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:306
+#: inc/cores/helper/free-onboarding.php:310
 msgid "Customer display"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:306
+#: inc/cores/helper/free-onboarding.php:310
 msgid "Launch summary"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:309
+#: inc/cores/helper/free-onboarding.php:313
 msgid "Start with the existing Customer level at zero points. Only customers qualify; no customer roles are reassigned. Additional levels remain available in Loyalty settings."
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:311
+#: inc/cores/helper/free-onboarding.php:315
 #, php-format
 msgid "Per subtotal amount (%s)"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:312
+#: inc/cores/helper/free-onboarding.php:316
 msgid "Rounding"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:314
+#: inc/cores/helper/free-onboarding.php:318
 msgid "Use price after coupons"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:314
+#: inc/cores/helper/free-onboarding.php:318
 msgid "Subtract order taxes (existing Free calculation)"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:315
+#: inc/cores/helper/free-onboarding.php:319
 msgid "Reverse purchase points on the selected terminal statuses:"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:318
+#: inc/cores/helper/free-onboarding.php:322
 msgid "Enable points redemption"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:318
+#: inc/cores/helper/free-onboarding.php:322
 msgid "Points exchanged"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:318
+#: inc/cores/helper/free-onboarding.php:322
 #, php-format
 msgid "Discount amount (%s)"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:319
+#: inc/cores/helper/free-onboarding.php:323
 msgid "Enable First Purchase bonus (orders created after Launch only)"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:319
+#: inc/cores/helper/free-onboarding.php:323
 msgid "Enable Referral Lite (registered customer, first order, link referrer only)"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:320
+#: inc/cores/helper/free-onboarding.php:324
 msgid "Show Loyalty bubble"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:320
+#: inc/cores/helper/free-onboarding.php:324
 msgid "Show My Points in My Account"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:321
+#: inc/cores/helper/free-onboarding.php:325
 msgid "Launch saves only your selected Free settings. If saving is interrupted, review the current settings before using the existing settings screens; Quick Start will not overwrite them on retry."
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:324
+#: inc/cores/helper/free-onboarding.php:328
 msgid "Back"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:324
+#: inc/cores/helper/free-onboarding.php:328
 msgid "Next"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:324
+#: inc/cores/helper/free-onboarding.php:328
 msgid "Skip optional growth"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:324
+#: inc/cores/helper/free-onboarding.php:328
 msgid "Launch / Save"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:324
+#: inc/cores/helper/free-onboarding.php:328
 msgid "Exit Quick Start"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:326
+#: inc/cores/helper/free-onboarding.php:330
 #, php-format
 msgid "Illustrative order subtotal of %1$s: %2$s points."
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:326
+#: inc/cores/helper/free-onboarding.php:330
 #, php-format
 msgid "Illustrative redemption of %1$s points: %2$s discount, subject to the cart subtotal."
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:326
+#: inc/cores/helper/free-onboarding.php:330
 msgid "Optional rewards and redemption remain off unless selected."
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:326
+#: inc/cores/helper/free-onboarding.php:330
 msgid "Review the conversion amounts before Launch."
 msgstr ""
 
