@@ -68,6 +68,8 @@ for case in $cases; do
     wp eval 'if(YOWCL_Free_Onboarding::writable()){throw new RuntimeException("Reactivation restarted wizard");}' --quiet
   fi
   if [[ "$case" == browser ]]; then
+    wp option update woocommerce_onboarding_profile '{"skipped":true}' --format=json --quiet
+    wp transient delete _wc_activation_redirect --quiet
     export LOYF_BROWSER_URL="http://127.0.0.1:${LOYF11_BROWSER_PORT:-18089}"
     wp option update home "$LOYF_BROWSER_URL" --quiet; wp option update siteurl "$LOYF_BROWSER_URL" --quiet
     php -d opcache.enable_cli=0 -d opcache.enable=0 -d opcache.jit=0 -S "127.0.0.1:${LOYF11_BROWSER_PORT:-18089}" -t "$site" "$repo/tests/runtime/browser-router.php" > "$task_tmp/browser.log" 2>&1 & server_pid=$!
