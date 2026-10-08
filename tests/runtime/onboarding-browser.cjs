@@ -6,8 +6,11 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     try {
         const context = await browser.newContext(); const page = await context.newPage();
         await page.goto(base + '/wp-login.php');
-        await page.locator('#user_login').fill('loyf_admin'); await page.locator('#user_pass').fill('disposable-only');
-        await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), page.locator('#wp-submit').click()]);
+        await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), page.evaluate(() => {
+            document.querySelector('#user_login').value = 'loyf_admin';
+            document.querySelector('#user_pass').value = 'disposable-only';
+            document.querySelector('#loginform').requestSubmit(document.querySelector('#wp-submit'));
+        })]);
         if (page.url().includes('action=confirm_admin_email')) { await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), page.getByRole('link', { name: 'Remind me later' }).click()]); }
         if (page.url().includes('wp-login')) throw new Error('Native admin login: ' + page.url() + ' ' + (await page.locator('body').innerText()).slice(0,2000));
         await page.goto(base + '/wp-admin/admin.php?page=loyf-setup');
