@@ -1,6 +1,8 @@
 <?php
 if(!defined('LOYF_RUNTIME_DISPOSABLE')){throw new RuntimeException('Disposable required');}
 wp_set_current_user(1);update_option('woocommerce_coming_soon','no');
+// This reader/editor fixture represents an already configured Woo store.
+update_option('woocommerce_onboarding_profile',array('completed'=>true));delete_transient('_wc_activation_redirect');
 update_option('loyalty_customization_loyalty_bubble',array('enabled'=>false));
 update_option('loyalty_customization_my_account',array('my_account'=>true,'my_account_slug'=>'my-points','my_account_label'=>'My Points'));
 WC_Install::create_pages();YOWCL_Free_Referral::save(true,31);
