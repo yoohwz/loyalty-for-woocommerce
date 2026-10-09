@@ -500,7 +500,7 @@
     {
       "target": "inc/cores/helper/free-migrations.php",
       "mode": "100644",
-      "sha256": "3886aa94ae6e592f7d2a3980d295a850f838af745db71d42b1ce2535df564687"
+      "sha256": "f1361127b6e32c996874bd262f90f31dc07389f4d7cc9570f59c4f888fd700c1"
     },
     {
       "target": "inc/cores/helper/free-onboarding.php",
@@ -620,7 +620,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "8ea535e51b01850be485161e2e41a36c460e07639eac29d5d2e96de94be9e4a0"
+      "sha256": "1968d46daeaaa941ef46e1888c825fb78ef8732afebff9f40e8cd786cdb910af"
     },
     {
       "target": "license.txt",

@@ -294,6 +294,7 @@ class YOWCL_Free_Migrations {
         self::query('START TRANSACTION');self::$transaction=true;$commit_attempted=false;
         try {
             $names=array('active_plugins',self::target($feature),self::witness($feature));
+            if ($resolution && 'redemption' === $feature) { $names[]='woocommerce_currency'; $names[]='loyalty_points_using_point'; }
             if(!$completion){$names[]=$evidence_name;$names[]=self::witness($feature).'_resolution';}
             if(isset($spec['consent'])) {
                 $names[]=self::witness($feature).'_resolution';
@@ -311,7 +312,10 @@ class YOWCL_Free_Migrations {
             if (null!==self::read(self::witness($feature))) { throw new RuntimeException('migration_witness_changed'); }
             if(!$completion && ($locked_evidence!==$evidence_raw || (!$resolution && null!==self::read(self::witness($feature).'_resolution')))){throw new RuntimeException('migration_malformed_evidence');}
             if (!YOWCL_Free_Core::owns()) { throw new RuntimeException('migration_owner_changed'); }
-            if ($resolution && !isset($spec['consent'])) { self::interactive_actor(); }
+            if ($resolution && !isset($spec['consent'])) {
+                self::interactive_actor();
+                if ('redemption' === $feature) { self::assert_direct_redemption_context($spec); }
+            }
             if (isset($spec['consent'])) {
                 self::consent($feature,$spec,$interactive);
             }
@@ -373,7 +377,11 @@ class YOWCL_Free_Migrations {
         if (null!==$pending) {
             $spec=self::decode($pending);
             if (($spec['mode']??null)!==$mode) { throw new RuntimeException('migration_resolution_pending'); }
-            self::validate_spec($feature,$spec,true); return $spec;
+            self::validate_spec($feature,$spec,true);
+            if ('redemption' === $feature && !isset($spec['consent'])) {
+                self::assert_direct_redemption_context($spec);
+            }
+            return $spec;
         }
         return self::live_preview($feature,$mode);
     }
@@ -411,9 +419,27 @@ class YOWCL_Free_Migrations {
         }
         self::validate_spec($feature,$spec,true); return $spec;
     }
+    /** Bind a direct redemption confirmation to the exact currency and enablement shown. */
+    private static function assert_direct_redemption_context($spec) {
+        if (!is_array($spec['context'] ?? null) || array_keys($spec['context']) !== array('currency','currency_option','enabled')) {
+            throw new RuntimeException('migration_resolution_stale');
+        }
+        $current=array(
+            'currency'=>get_woocommerce_currency(),
+            'currency_option'=>self::read('woocommerce_currency'),
+            'enabled'=>self::read('loyalty_points_using_point')
+        );
+        if ($spec['context'] !== $current) { throw new RuntimeException('migration_resolution_stale'); }
+        return $current;
+    }
     /** A fresh direct review binds immutable evidence and currently displayed storage. */
     public static function resolution_fingerprint($feature,$spec) {
-        if (!isset($spec['consent'])) { return hash('sha256',serialize($spec)); }
+        if (!isset($spec['consent'])) {
+            if ('redemption' === $feature) {
+                return hash('sha256',serialize(array('spec'=>$spec,'context'=>self::assert_direct_redemption_context($spec))));
+            }
+            return hash('sha256',serialize($spec));
+        }
         $live=array('intent'=>$spec,'target'=>self::read(self::target($feature)));
         if ('legacy'===($spec['mode']??null)) { $live['source']=self::specification($feature)['source']; }
         if ('redemption'===$feature) { $live['context']=array(get_woocommerce_currency(),self::read('woocommerce_currency'),self::read('loyalty_points_using_point')); }

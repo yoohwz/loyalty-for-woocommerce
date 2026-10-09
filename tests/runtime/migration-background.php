@@ -115,6 +115,76 @@ try {
     loyf_equal($original,YOWCL_Free_Migrations::read('loyf_migration_signup_v1_resolution'),'Failed direct confirmation retains exact expired intent');YOWCL_Free_Migrations::schedule();loyf_assert(!YOWCL_Free_Migrations::ready('signup'),'Failed direct request never renews worker authority');
     $direct('signup','canonical');loyf_equal($original,YOWCL_Free_Migrations::read('loyf_migration_signup_v1_resolution'),'Direct recovery preserves original evidence and expiry');loyf_equal('fresh sibling',maybe_unserialize(maybe_unserialize(YOWCL_Free_Migrations::read('loyalty_extra_points_rules')))['unknown'],'Fresh direct recovery preserves shared sibling');
 
+    // Direct redemption without aggregate consent must preserve the exact reviewed currency/enablement.
+    $redemption_post=static function($fingerprint,$expected){
+        $_SERVER['REQUEST_METHOD']='POST';
+        $_POST=array('feature'=>'redemption','mode'=>'canonical','fingerprint'=>$fingerprint,'_wpnonce'=>wp_create_nonce('loyf_resolve_redemption'));
+        $redirect=static function($url){throw new RuntimeException('redirect:'.$url);};
+        add_filter('wp_redirect',$redirect,0);
+        try{do_action('admin_post_loyf_resolve_migration');throw new LogicException('Missing redemption POST');}
+        catch(RuntimeException $e){loyf_assert(strpos($e->getMessage(),'result='.$expected)!==false,'Direct redemption result '.$expected);}
+        finally{remove_filter('wp_redirect',$redirect,0);$_POST=array();}
+    };
+    // A failed first direct attempt leaves immutable pending evidence; later context drift is never consent.
+    foreach(array('currency','enabled') as $change){
+        $reset();$store('woocommerce_currency','USD');$store('loyalty_points_using_point','no');
+        $spec=YOWCL_Free_Migrations::preview('redemption','canonical');
+        $fingerprint=YOWCL_Free_Migrations::resolution_fingerprint('redemption',$spec);
+        $target=YOWCL_Free_Migrations::read('loyalty_points_using_rules');
+        $fault=static function($sql)use($wpdb){return 0===strpos($sql,'INSERT INTO '.$wpdb->options)&&strpos($sql,"'loyf_migration_redemption_v1',")!==false?'SELECT * FROM loyf27_direct_redemption_write_failure':$sql;};
+        add_filter('query',$fault,PHP_INT_MAX);
+        try{$redemption_post($fingerprint,'unconfirmed');}finally{remove_filter('query',$fault,PHP_INT_MAX);}
+        $pending=YOWCL_Free_Migrations::read('loyf_migration_redemption_v1_resolution');
+        loyf_assert(null!==$pending,'Failed direct attempt retained reviewed context');
+        $store('currency'===$change?'woocommerce_currency':'loyalty_points_using_point','currency'===$change?'EUR':'yes');
+        $redemption_post($fingerprint,'migration_resolution_stale');
+        $deny(static function(){YOWCL_Free_Migrations::preview('redemption','canonical');},'migration_resolution_stale');
+        loyf_equal($pending,YOWCL_Free_Migrations::read('loyf_migration_redemption_v1_resolution'),'Context drift keeps pending bytes');
+        loyf_equal($target,YOWCL_Free_Migrations::read('loyalty_points_using_rules'),'Context drift leaves raw redemption unchanged');
+        loyf_assert(!YOWCL_Free_Migrations::ready('redemption'),'Context drift cannot create witness');
+    }
+    // A second DB connection changing context precisely at START TRANSACTION must also be refused.
+    foreach(array('currency','enabled') as $change){
+        $reset();$store('woocommerce_currency','USD');$store('loyalty_points_using_point','no');
+        $spec=YOWCL_Free_Migrations::preview('redemption','canonical');
+        $fingerprint=YOWCL_Free_Migrations::resolution_fingerprint('redemption',$spec);
+        $target=YOWCL_Free_Migrations::read('loyalty_points_using_rules');$changed=false;
+        $fault=static function($sql)use($wpdb,$change,&$changed){
+            if('START TRANSACTION'===$sql&&!$changed){
+                $changed=true;$name='currency'===$change?'woocommerce_currency':'loyalty_points_using_point';$value='currency'===$change?'JPY':'yes';
+                $other=new mysqli(getenv('LOY_DB_HOST'),DB_USER,DB_PASSWORD,DB_NAME,(int)(getenv('LOY_DB_PORT')?:3306));
+                $stmt=$other->prepare("INSERT INTO {$wpdb->options}(option_name,option_value,autoload) VALUES(?,?,'no') ON DUPLICATE KEY UPDATE option_value=VALUES(option_value)");
+                $stmt->bind_param('ss',$name,$value);
+                loyf_assert($stmt->execute(),'Independent redemption context mutation before locks');
+                $stmt->close();$other->close();
+            }
+            return $sql;
+        };
+        add_filter('query',$fault,PHP_INT_MAX);
+        try{$redemption_post($fingerprint,'migration_resolution_stale');}
+        finally{remove_filter('query',$fault,PHP_INT_MAX);}
+        loyf_assert($changed,'Actual direct redemption transaction race was exercised');
+        loyf_equal($target,YOWCL_Free_Migrations::read('loyalty_points_using_rules'),'Race preserves target raw option');
+        loyf_assert(null!==YOWCL_Free_Migrations::read('loyf_migration_redemption_v1_resolution'),'Race keeps reviewed intent');
+        loyf_assert(!YOWCL_Free_Migrations::ready('redemption'),'Race cannot authorize new redemption');
+    }
+    // Historical pending intents without a reviewed context cannot be retroactively authorized.
+    $reset();$store('woocommerce_currency','USD');$store('loyalty_points_using_point','no');
+    $old=YOWCL_Free_Migrations::preview('redemption','canonical');unset($old['context']);
+    $store('loyf_migration_redemption_v1_resolution',serialize($old));
+    $deny(static function(){YOWCL_Free_Migrations::preview('redemption','canonical');},'migration_resolution_stale');
+    loyf_assert(!YOWCL_Free_Migrations::ready('redemption'),'Missing historical context stays on hold');
+    // Valid unchanged direct choice is still possible, with byte-exact fractional representation.
+    $reset();$store('woocommerce_currency','USD');$store('loyalty_points_using_point','no');
+    $edit('loyalty_points_using_rules',array('amount'=>'0.0010'));
+    $original_redemption=YOWCL_Free_Migrations::read('loyalty_points_using_rules');
+    $spec=YOWCL_Free_Migrations::preview('redemption','canonical');
+    $redemption_post(YOWCL_Free_Migrations::resolution_fingerprint('redemption',$spec),'confirmed');
+    loyf_assert(YOWCL_Free_Migrations::ready('redemption'),'Unchanged reviewed direct redemption completes');
+    loyf_equal($original_redemption,YOWCL_Free_Migrations::read('loyalty_points_using_rules'),'Direct keeps raw 0.0010 amount and serialized wrapper');
+    loyf_equal('no',YOWCL_Free_Migrations::read('loyalty_points_using_point'),'Direct does not enable redemption');
+    loyf_equal($before,$business(),'Direct context checks create no points/history/role changes');
+
     // A worker keeps bounded retry authority after uncertain COMMIT and never replays a committed witness.
     foreach(array(false,true) as $durable) {
         $reset();$admit(array('signup'=>'disable'));$attempted=false;$fault=static function($sql)use($wpdb,$durable,&$attempted){if('COMMIT'===$sql&&!$attempted){$attempted=true;if($durable){mysqli_query($wpdb->dbh,'COMMIT');}return 'SELECT * FROM loyf27_worker_commit_response';}return $sql;};
