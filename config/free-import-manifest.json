@@ -500,7 +500,7 @@
     {
       "target": "inc/cores/helper/free-migrations.php",
       "mode": "100644",
-      "sha256": "7afbfc8643d4a2a51a50cff2af603ec6988d34e9ea8a76802049a0c156484766"
+      "sha256": "6d455ab7e2325b41b9d2e3fe6b0e3fcd5b7e2e0885b646df5b74face4e7682f8"
     },
     {
       "target": "inc/cores/helper/free-onboarding.php",

@@ -401,7 +401,8 @@ class YOWCL_Free_Migrations {
         if (YOWCL_Free_Onboarding::initial_proof()) { self::run(); }
         else {
             // Keep completed-policy cache handover without any synchronous conversion.
-            foreach(self::features() as $feature) { if (self::ready($feature)) { self::invalidate($feature); } }
+            try { self::locked(function(){foreach(self::features() as $feature){if(self::ready($feature)){self::invalidate($feature);}}}); }
+            catch(Throwable $e) { foreach(self::features() as $feature){self::invalidate($feature);} }
         }
         add_action(self::HOOK,array(__CLASS__,'worker'),10,2);
         add_action('action_scheduler_init',array(__CLASS__,'schedule'));
@@ -746,7 +747,7 @@ class YOWCL_Free_Migrations {
         $active=in_array($status['state'],array('queued','running'),true);
         $message=$active ? __('Loyalty is updating your settings in the background. Existing points and history are unchanged.','loyalty-for-woocommerce') : __('Loyalty settings need attention. Some new rewards, redemption or emails are paused. Existing points and history are unchanged.','loyalty-for-woocommerce');
         if ('failed'===$status['state']) { $message=__('Loyalty could not finish updating its settings. Review the migration status before retrying. Existing points and history are unchanged.','loyalty-for-woocommerce'); }
-        echo '<div id="loyf-migration-notice" class="notice notice-'.($active?'info':'warning').'" data-token="'.esc_attr(self::notice_token($status)).'"><p>'.esc_html($message).' <a href="'.esc_url(self::review_url()).'">'.esc_html__('Migration status','loyalty-for-woocommerce').'</a></p><button type="button" class="notice-dismiss" aria-label="'.esc_attr__('Dismiss this notice','loyalty-for-woocommerce').'"><span class="screen-reader-text">'.esc_html__('Dismiss this notice','loyalty-for-woocommerce').'</span></button></div>';
+        echo '<div id="loyf-migration-notice" class="notice notice-'.($active?'info':'warning').'" style="position:relative;padding-right:38px" data-token="'.esc_attr(self::notice_token($status)).'"><p>'.esc_html($message).' <a href="'.esc_url(self::review_url()).'">'.esc_html__('Migration status','loyalty-for-woocommerce').'</a></p><button type="button" class="notice-dismiss" aria-label="'.esc_attr__('Dismiss this notice','loyalty-for-woocommerce').'"><span class="screen-reader-text">'.esc_html__('Dismiss this notice','loyalty-for-woocommerce').'</span></button></div>';
         $url=wp_json_encode(admin_url('admin-ajax.php'));$nonce=wp_json_encode(wp_create_nonce('loyf_dismiss_migration'));
         echo '<script>(function(){var n=document.getElementById("loyf-migration-notice");if(!n)return;n.querySelector("button").addEventListener("click",function(){var b=this;b.disabled=true;fetch('.$url.',{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({action:"loyf_dismiss_migration",_wpnonce:'.$nonce.',token:n.dataset.token})}).then(function(r){return r.json();}).then(function(r){if(!r.success)throw new Error();n.remove();}).catch(function(){b.disabled=false;});});})();</script>';
     }
