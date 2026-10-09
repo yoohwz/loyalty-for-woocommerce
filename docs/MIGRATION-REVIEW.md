@@ -46,3 +46,16 @@ An enabled positive amount below currency precision (for example raw `0.0010` di
 The keep-current helper deliberately selects only complete valid current proposals and focuses the separate confirmation button; one final POST authorizes the displayed set. Other feature-specific legacy/disable choices share that POST. The page names included/excluded counts, shows only owned terms and preserves individual resolution as a fallback. Unreadable whole containers remain outside every aggregate choice. Existing General/Extra/email guards, First Purchase hold, Tools form ownership and fractional raw representations remain unchanged.
 
 Redemption proposals bind both the displayed currency (and original currency option) and standalone enablement into the reviewed fingerprint. Admission locks those rows and rejects GET-to-POST drift. An attempted COMMIT with an unverified result is reported as unknown, since the whole vector may already be durable; the persisted batch/set/actor identity makes an exact duplicate safe. A pre-COMMIT refusal still records no executable vector.
+
+## LOYF-27 one-time interactive replacement
+
+[Round2 Plan6074828679](https://github.com/yoohwz/loyalty-for-woocommerce/issues/27#issuecomment-6074828679) permits only a new27 pending choice with actual owned-term/source/redemption-context drift to be replaced once through a fresh individual POST. The original intent and pre-image remain immutable.
+
+| Entry / crossing | Authority and invariant | Failure / lifetime |
+| --- | --- | --- |
+| Replacement GET | Structurally valid new27 pending, no witness/audit/frozen pre-image, readable live target and attributable owned drift | No mutation; sibling-only edits, historical/malformed evidence and unchanged expired intent remain outside replacement |
+| Fresh replacement POST | Current administrator/Free owner, dedicated nonce, original raw intent identity plus exact live proposal/context fingerprint | Recheck under deterministic row locks on the original named-lock connection; concurrent edits and a prior worker success win |
+| Completion | Existing per-feature target/witness writer plus one immutable non-autoloaded audit in one InnoDB transaction | No durable successor authorization, no expiry renewal; precommit failure rolls back all new writes, uncertain COMMIT reports unknown |
+| Old/new worker or second POST | Original intent remains retained; existing witness is terminal and serialized options ownership governs races | Old worker cannot execute a new choice; repeated success is no-op and no chained replacements are admitted |
+
+Audit stores only old identity/digest, scoped new decision/actor and verified completion digests, never whole shared containers or opaque/Premium data. It supplies no mutation/rollback/readiness authority. Committed-value recovery and independent siblings retain their existing owners.

@@ -76,7 +76,7 @@ const fixture = mode => execFileSync(process.env.LOYF25_PHP || 'php', [process.e
   const identity=await page.locator('[name=operation_id]').inputValue();await page.locator('[name=start_new_import]').click();assert.notEqual(await page.locator('[name=operation_id]').inputValue(),identity,'Explicit new import changes only the existing recovery pointer');assert(!(await page.locator('body').innerText()).includes('Your settings have been saved.'));fixture('verify-value');
   await page.setViewportSize({width:390,height:844});await page.goto(review+'#loyf-review-redemption');
   assert(await page.locator('#loyf-review-redemption').isVisible());assert.equal(await page.evaluate(()=>document.activeElement.id),'loyf-review-redemption');
-  await page.keyboard.press('Tab');assert.equal(await page.evaluate(()=>document.activeElement.tagName),'A');
+  await page.keyboard.press('Tab');assert(await page.locator('#loyf-review-redemption').evaluate(s=>document.activeElement===Array.from(s.querySelectorAll('a,summary,button,input,select')).find(e=>e.getClientRects().length>0&&!e.disabled)),'Tab reaches the first visible scoped control');
   if(process.env.LOYF25_SCREENSHOT){await page.screenshot({path:process.env.LOYF25_SCREENSHOT,fullPage:true});}
   fixture('background-seed');await page.goto(review);
   assert.equal(await page.locator('#loyf-status select').count(),8,'One reviewed vector');
@@ -93,6 +93,13 @@ const fixture = mode => execFileSync(process.env.LOYF25_PHP || 'php', [process.e
   await page.getByRole('link',{name:'Migration status',exact:true}).click();assert((await page.locator('#loyf-status').innerText()).includes('Queued or running: 8'));
   fixture('drain-background');fixture('verify-background');await page.reload();assert((await page.locator('#loyf-status').innerText()).includes('Verified: 8'));
   await page.goto(settings('general'));assert.equal(await page.locator('#loyf-migration-notice').count(),0,'Completed notice disappears');
+  fixture('replacement-seed');await page.goto(review+'#loyf-review-signup');
+  const replacement=page.locator('#loyf-review-signup .loyf-replacement');await replacement.getByText('Review changed settings',{exact:true}).click();
+  const disable=replacement.locator('details').filter({has:page.locator('summary').getByText('Disable',{exact:true})});await disable.locator('summary').click();
+  assert((await disable.innerText()).includes('Disabled'));const replacementForm=await disable.locator('form').evaluate(f=>Object.fromEntries(new FormData(f)));
+  await Promise.all([page.waitForURL(u=>u.searchParams.get('result')==='confirmed'),disable.getByRole('button',{name:'Confirm replacement: Disable',exact:true}).click()]);fixture('verify-replacement');
+  assert.equal(await page.evaluate(()=>document.activeElement.id),'loyf-review-signup');assert.equal(await page.locator('#loyf-review-signup .loyf-replacement').count(),0,'Completed replacement has no next generation');
+  const replay=await context.request.post(base+'/wp-admin/admin-post.php',{form:replacementForm});assert(replay.url().includes('result=already_confirmed'));fixture('verify-replacement');fixture('drain-background');fixture('verify-replacement');
   console.log('Native migration review browser PASS: held/forged General and email save, independent First Purchase and ready email save, eight scoped links/email holds, role/decimal/privacy comparison, stale and individual keep/legacy/disable PRG/focus, fractional native save, Tools form ownership, responsive keyboard; no value/log events.');
  } finally {await browser.close();}
 })().catch(error=>{console.error(error);process.exit(1);});
