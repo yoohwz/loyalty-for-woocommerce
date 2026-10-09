@@ -541,7 +541,7 @@ class YOWCL_Free_Migrations {
         $ordered=array();foreach(self::features() as $feature){if(isset($choices[$feature])){$ordered[$feature]=$choices[$feature];}}
         $set=hash('sha256',serialize($ordered));$actor=get_current_user_id();
         self::locked(function()use($ordered,$batch,$set,$actor,$wpdb){
-            $specs=array();$duplicates=0;
+            $specs=array();$duplicates=0;$issued=time();
             foreach($ordered as $feature=>$choice) {
                 if (!is_array($choice) || array_keys($choice)!==array('mode','fingerprint') || !is_string($choice['mode']) || !in_array($choice['mode'],array('canonical','legacy','disable'),true) || !is_string($choice['fingerprint']) || !preg_match('/^[a-f0-9]{64}$/D',$choice['fingerprint'])) { throw new RuntimeException('migration_resolution_invalid'); }
                 $pending=self::read(self::witness($feature).'_resolution');
@@ -552,7 +552,7 @@ class YOWCL_Free_Migrations {
                 }
                 $spec=self::batch_preview($feature,$choice['mode']);
                 if (!hash_equals(hash('sha256',serialize($spec)),$choice['fingerprint'])) { throw new RuntimeException('migration_resolution_stale'); }
-                $spec['consent']=array('version'=>27,'feature'=>$feature,'site'=>$wpdb->options,'actor'=>$actor,'issued'=>time(),'expires'=>time()+86400,'batch'=>$batch,'set'=>$set,'fingerprint'=>$choice['fingerprint']);
+                $spec['consent']=array('version'=>27,'feature'=>$feature,'site'=>$wpdb->options,'actor'=>$actor,'issued'=>$issued,'expires'=>$issued+86400,'batch'=>$batch,'set'=>$set,'fingerprint'=>$choice['fingerprint']);
                 if ('redemption'===$feature) { $spec['consent']['currency']=get_woocommerce_currency();$spec['consent']['enabled']=self::read('loyalty_points_using_point'); }
                 $specs[$feature]=$spec;
             }

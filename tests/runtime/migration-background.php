@@ -38,7 +38,7 @@ try {
     $_SERVER['REQUEST_METHOD']='POST';$_POST=array('choices'=>$vector,'batch'=>$batch,'_wpnonce'=>wp_create_nonce('loyf_confirm_migrations'));
     $redirect=static function($url){throw new RuntimeException('redirect:'.$url);};add_filter('wp_redirect',$redirect,0);
     try{do_action('admin_post_loyf_confirm_migrations');throw new LogicException('No native POST handler');}catch(RuntimeException $e){loyf_assert(strpos($e->getMessage(),'batch_result=admitted')!==false,'Native one POST vector admitted');}finally{remove_filter('wp_redirect',$redirect,0);$_POST=array();}
-    foreach(YOWCL_Free_Migrations::features() as $f){loyf_assert(!YOWCL_Free_Migrations::ready($f),'Admission is not completion');loyf_assert(get_option(YOWCL_Free_Migrations::witness($f).'_resolution')!==false,'Entire vector recorded');}
+    foreach(YOWCL_Free_Migrations::features() as $f){loyf_assert(!YOWCL_Free_Migrations::ready($f),'Admission is not completion');loyf_assert(get_option(YOWCL_Free_Migrations::witness($f).'_resolution')!==false,'Entire vector recorded');$c=get_option(YOWCL_Free_Migrations::witness($f).'_resolution')['consent'];loyf_equal(86400,$c['expires']-$c['issued'],'Consent bounded to24h');}
     $raw=YOWCL_Free_Migrations::read('loyalty_points_using_rules');YOWCL_Free_Migrations::admit($vector,$batch,wp_create_nonce('loyf_confirm_migrations'));
     loyf_equal(8,count(as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'status'=>'pending','per_page'=>20),'ids')),'Duplicate submit deduplicates');
     $drain();loyf_equal('completed',YOWCL_Free_Migrations::status()['state'],'Eight independently verified witnesses');
