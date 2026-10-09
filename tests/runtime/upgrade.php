@@ -22,6 +22,18 @@ foreach(YOWCL_Free_Migrations::features() as $feature) { loyf_assert(!YOWCL_Free
 YOWCL_Free_Migrations::schedule();
 $actions=as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'group'=>YOWCL_Free_Migrations::GROUP,'status'=>'pending','per_page'=>20),'ids');
 loyf_equal(8,count($actions),'Eight bounded captured actions');
+// Actual captured provenance must still be the same stored evidence after row locks.
+$signup_args=null;foreach($actions as $action){$args=ActionScheduler::store()->fetch_action($action)->get_args();if('signup'===($args[0]??null)){$signup_args=$args;break;}}loyf_assert(null!==$signup_args,'Actual captured signup action');
+$signup_target=YOWCL_Free_Migrations::read('loyalty_extra_points_rules');$signup_before=$wpdb->get_row($wpdb->prepare("SELECT option_value,autoload FROM {$wpdb->options} WHERE option_name=%s",'loyf_migration_signup_v1_before'),ARRAY_A);$signup_work=YOWCL_Free_Migrations::read('loyf_migration_signup_v1_background');
+foreach(array('_before','_resolution') as $suffix){
+    $changed=false;$name='loyf_migration_signup_v1'.$suffix;$fault=static function($sql)use($wpdb,$name,&$changed){if(!$changed&&strpos($sql,"option_name='active_plugins' FOR UPDATE")!==false){$changed=true;$wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='active_plugins'");$other=new mysqli(getenv('LOY_DB_HOST'),DB_USER,DB_PASSWORD,DB_NAME,(int)(getenv('LOY_DB_PORT')?:3306));$raw='corrupt captured authority';$stmt=$other->prepare("INSERT INTO {$wpdb->options}(option_name,option_value,autoload) VALUES(?,?,'no') ON DUPLICATE KEY UPDATE option_value=VALUES(option_value)");$stmt->bind_param('ss',$name,$raw);loyf_assert($stmt->execute(),'Independent captured evidence change after snapshot');$stmt->close();$other->close();}return $sql;};add_filter('query',$fault,PHP_INT_MAX);
+    $probe=as_schedule_single_action(time(),YOWCL_Free_Migrations::HOOK,$signup_args,YOWCL_Free_Migrations::GROUP,false);loyf_assert((bool)$probe,'Actual AS captured probe');
+    try{ActionScheduler_QueueRunner::instance()->process_action($probe,'LOYF-27 captured current evidence');}finally{remove_filter('query',$fault,PHP_INT_MAX);}
+    loyf_assert($changed&&!YOWCL_Free_Migrations::ready('signup'),'Changed capture/pending authority refuses completion');loyf_equal($signup_target,YOWCL_Free_Migrations::read('loyalty_extra_points_rules'),'Captured refusal retains exact target');loyf_equal('corrupt captured authority',YOWCL_Free_Migrations::read($name),'Captured refusal never repairs authority');loyf_assert(!YOWCL_Free_Migrations::transaction_active(),'Captured transaction scope ends on refusal');
+    // Restore only this disposable case's original fixture; no product retry policy is changed.
+    $wpdb->update($wpdb->options,$signup_before,array('option_name'=>'loyf_migration_signup_v1_before'));$wpdb->delete($wpdb->options,array('option_name'=>'loyf_migration_signup_v1_resolution'));$wpdb->update($wpdb->options,array('option_value'=>$signup_work),array('option_name'=>'loyf_migration_signup_v1_background'));wp_cache_flush();
+}
+echo "Captured current evidence snapshot refusal PASS\n";
 // Genuine captured AS proof survives an ownership race without authorizing a Premium-owned write.
 $review_action=null;foreach($actions as $action){$args=ActionScheduler::store()->fetch_action($action)->get_args();if('review'===($args[0]??null)){$review_action=$action;break;}}loyf_assert(null!==$review_action,'Actual captured review action');
 $plugins=$wpdb->get_row($wpdb->prepare("SELECT option_value,autoload FROM {$wpdb->options} WHERE option_name=%s",'active_plugins'),ARRAY_A);$active=maybe_unserialize($plugins['option_value']);$active[]='wc-loyalty/wc-loyalty.php';$premium=serialize($active);

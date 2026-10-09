@@ -8,13 +8,15 @@ class YOWCL_Free_Core {
         if ( is_admin() && in_array( $_REQUEST['action'] ?? '', array( 'activate', 'activate-selected' ), true ) && ( ( $_REQUEST['plugin'] ?? '' ) === 'wc-loyalty/wc-loyalty.php' || in_array( 'wc-loyalty/wc-loyalty.php', (array) ( $_REQUEST['checked'] ?? array() ), true ) ) ) { return false; }
         if ( defined( 'WP_CLI' ) && WP_CLI && in_array( 'activate', (array) ( $_SERVER['argv'] ?? array() ), true ) && in_array( 'wc-loyalty', (array) ( $_SERVER['argv'] ?? array() ), true ) ) { return false; }
         global $wpdb;
-        $raw = $wpdb->get_var( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'active_plugins' ) );
+        $current = class_exists('YOWCL_Free_Migrations',false) && YOWCL_Free_Migrations::transaction_active();
+        $locking = $current ? ' FOR UPDATE' : '';
+        $raw = $wpdb->get_var( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s" . $locking, 'active_plugins' ) );
         if ( $wpdb->last_error ) { return false; }
         $active = null === $raw ? array() : maybe_unserialize( $raw );
         if ( ! is_array( $active ) ) { return false; }
         $network = array();
         if ( is_multisite() ) {
-            $raw = $wpdb->get_var( $wpdb->prepare( "SELECT meta_value FROM {$wpdb->sitemeta} WHERE site_id = %d AND meta_key = %s", get_current_network_id(), 'active_sitewide_plugins' ) );
+            $raw = $wpdb->get_var( $wpdb->prepare( "SELECT meta_value FROM {$wpdb->sitemeta} WHERE site_id = %d AND meta_key = %s" . $locking, get_current_network_id(), 'active_sitewide_plugins' ) );
             if ( $wpdb->last_error ) { return false; }
             $network = null === $raw ? array() : maybe_unserialize( $raw );
             if ( ! is_array( $network ) ) { return false; }

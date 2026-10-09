@@ -142,6 +142,30 @@ try {
     try{$direct('signup','disable','unknown');}finally{remove_filter('query',$fault,PHP_INT_MAX);$GLOBALS['wp_object_cache']=$cache;wp_cache_flush();}
     loyf_assert(YOWCL_Free_Migrations::ready('signup'),'Post-COMMIT cache failure retains verified witness');loyf_equal($original,YOWCL_Free_Migrations::read('loyf_migration_signup_v1_resolution'),'Post-COMMIT cache failure preserves original intent');loyf_equal(0,YOWCL_Free_Core::extra('signup'),'Post-COMMIT cache failure cannot report rollback');
 
+    // Current-state guards must ignore a pre-lock InnoDB read-view on every entry point.
+    foreach(array('worker','admit','direct','replace') as $operation){foreach(array('owner','target','witness','source','currency','enabled') as $change){
+        $reset();$store('woocommerce_currency','USD');$feature='source'===$change?'review':(in_array($change,array('currency','enabled'),true)?'redemption':'signup');$mode='source'===$change?'legacy':'canonical';$target_name=$targets[$feature];
+        if('admit'!==$operation){$admit(array($feature=>$mode));}
+        if('replace'===$operation){$edit($target_name,array('redemption'===$feature?'points':$feature.'_points'=>'99'));}
+        $target=YOWCL_Free_Migrations::read($target_name);$pending=YOWCL_Free_Migrations::read(YOWCL_Free_Migrations::witness($feature).'_resolution');$active=$wpdb->get_row($wpdb->prepare("SELECT option_value,autoload FROM {$wpdb->options} WHERE option_name=%s",'active_plugins'),ARRAY_A);$changed=false;$expected_target=$target;
+        $fault=static function($sql)use($wpdb,$feature,$change,$target_name,$target,$active,&$changed,&$expected_target){if(!$changed&&strpos($sql,"option_name='active_plugins' FOR UPDATE")!==false){$changed=true;$wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='active_plugins'");
+            $name=$target_name;$raw=$target;
+            if('owner'===$change){$name='active_plugins';$v=unserialize($active['option_value']);$v[]='wc-loyalty/wc-loyalty.php';$raw=serialize($v);}
+            elseif('witness'===$change){$name=YOWCL_Free_Migrations::witness($feature);$raw='corrupt';}
+            elseif('currency'===$change){$name='woocommerce_currency';$raw='JPY';}
+            elseif('enabled'===$change){$name='loyalty_points_using_point';$raw='no';}
+            else{$name='source'===$change?'loyalty_extra_points_rules':$target_name;$old=$wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name=%s",$name));$v=maybe_unserialize(maybe_unserialize($old));$v[$feature.'_points']='999';$v[$feature.'_enabled']='yes';$raw=is_string(maybe_unserialize($old))?serialize(serialize($v)):serialize($v);if('target'===$change){$expected_target=$raw;}}
+            $other=new mysqli(getenv('LOY_DB_HOST'),DB_USER,DB_PASSWORD,DB_NAME,(int)(getenv('LOY_DB_PORT')?:3306));$stmt=$other->prepare("INSERT INTO {$wpdb->options}(option_name,option_value,autoload) VALUES(?,?,'no') ON DUPLICATE KEY UPDATE option_value=VALUES(option_value)");$stmt->bind_param('ss',$name,$raw);loyf_assert($stmt->execute(),'Independent current-state edit after snapshot');$stmt->close();$other->close();
+        }return $sql;};add_filter('query',$fault,PHP_INT_MAX);
+        try{
+            if('worker'===$operation){$drain();}
+            elseif('admit'===$operation){$code='owner'===$change?'migration_resolution_denied':('witness'===$change?'migration_resolution_pending':'migration_resolution_stale');$deny(static function()use($admit,$feature,$mode){$admit(array($feature=>$mode));},$code);}
+            elseif('direct'===$operation){$direct($feature,$mode,in_array($change,array('target','currency','enabled'),true)?'migration_target_changed':'unconfirmed');}
+            else{$replacement($feature,$mode,'unconfirmed');}
+        }finally{remove_filter('query',$fault,PHP_INT_MAX);$store('active_plugins',$active['option_value'],$active['autoload']);}
+        loyf_assert($changed&&!YOWCL_Free_Migrations::ready($feature),'Stale read-view cannot publish a witness');loyf_equal($expected_target,YOWCL_Free_Migrations::read($target_name),'Current merchant target wins');loyf_equal($pending,YOWCL_Free_Migrations::read(YOWCL_Free_Migrations::witness($feature).'_resolution'),'Snapshot creates no changed authorization');loyf_equal(null,YOWCL_Free_Migrations::read(YOWCL_Free_Migrations::witness($feature).'_supersession'),'Snapshot creates no audit');loyf_assert(!YOWCL_Free_Migrations::transaction_active(),'Transaction read scope always ends');
+    }}
+
     // A valid pre-transaction snapshot cannot authorize a different stored intent.
     foreach(array('worker','direct') as $operation){foreach(array('corrupt','delete','replace') as $change){foreach(array('before','snapshot') as $timing){
         $reset();$admit(array('signup'=>'disable'));$target=YOWCL_Free_Migrations::read('loyalty_extra_points_rules');$original=YOWCL_Free_Migrations::read('loyf_migration_signup_v1_resolution');$changed=false;$expected=null;

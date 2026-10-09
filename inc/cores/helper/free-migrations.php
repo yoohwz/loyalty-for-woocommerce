@@ -4,13 +4,14 @@ defined( 'ABSPATH' ) || exit;
 class YOWCL_Free_Migrations {
     private static $errors = array();
     private static $owner = null;
+    private static $transaction = false;
     const HOOK = 'loyf_migrate_feature';
     const GROUP = 'loyf-migrations';
     public static function witness( $feature ) { return 'loyf_migration_' . $feature . '_v1'; }
     public static function read( $name ) {
         global $wpdb;
         self::assert_owner();
-        $rows = $wpdb->get_col( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $name ) );
+        $rows = $wpdb->get_col( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s" . (self::transaction_active() ? ' FOR UPDATE' : ''), $name ) );
         self::assert_owner();
         if ( $wpdb->last_error || ! is_array( $rows ) || count( $rows ) > 1 ) { throw new RuntimeException( 'migration_storage_unavailable' ); }
         return $rows ? $rows[0] : null;
@@ -125,10 +126,16 @@ class YOWCL_Free_Migrations {
             self::$owner=array('db'=>$db,'id'=>(string)mysqli_thread_id($db),'name'=>$lock,'table'=>$wpdb->options);
             self::assert_owner(); return $callback();
         } finally {
+            self::$transaction=false;
             self::$owner=null;
             // Release only the original connection's lock, including after wpdb reconnects.
             try { $result=mysqli_query($db,$wpdb->prepare('SELECT RELEASE_LOCK(%s)',$lock)); if($result instanceof mysqli_result){mysqli_free_result($result);} } catch(Throwable $e) {}
         }
+    }
+    /** Only the original migration transaction requires current locking reads. */
+    public static function transaction_active() {
+        if(self::$transaction){self::assert_owner();}
+        return self::$transaction;
     }
     /** Rebuild the interactive actor after serialization; the request's WP_User may be stale. */
     private static function interactive_actor($actor=null) {
@@ -276,18 +283,18 @@ class YOWCL_Free_Migrations {
     private static function finish( $feature, $spec, $resolution=false, $interactive=false, $completion=null ) {
         global $wpdb;
         self::assert_owner(); $db=self::$owner['db'];
-        $evidence_name=self::witness($feature).'_resolution';$evidence_raw=null;
-        if($resolution && !$completion){
+        $evidence_name=self::witness($feature).($resolution?'_resolution':'_before');$evidence_raw=null;
+        if(!$completion){
             $evidence_raw=self::read($evidence_name);
             if(null===$evidence_raw || serialize(self::decode($evidence_raw))!==serialize($spec)){throw new RuntimeException('migration_malformed_evidence');}
         }
         $engine=$wpdb->get_var($wpdb->prepare('SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s',$wpdb->options));
         self::assert_owner();
         if ($wpdb->last_error || 'InnoDB'!==$engine || YOWCL_Points_Lock::has_transaction($db)) { throw new RuntimeException('migration_transaction_unavailable'); }
-        self::query('START TRANSACTION');$commit_attempted=false;
+        self::query('START TRANSACTION');self::$transaction=true;$commit_attempted=false;
         try {
             $names=array('active_plugins',self::target($feature),self::witness($feature));
-            if($resolution && !$completion){$names[]=$evidence_name;}
+            if(!$completion){$names[]=$evidence_name;$names[]=self::witness($feature).'_resolution';}
             if(isset($spec['consent'])) {
                 $names[]=self::witness($feature).'_resolution';
                 if('legacy'===$spec['mode']){$names[]='levelup'===$feature?'loyalty_extra_levelup_points_rules':(0===strpos($feature,'email_')?'loyalty_notification_email':('redemption'===$feature?'loyalty_points_using_rules':'loyalty_extra_points_rules'));}
@@ -302,7 +309,7 @@ class YOWCL_Free_Migrations {
                 mysqli_free_result($result);
             }
             if (null!==self::read(self::witness($feature))) { throw new RuntimeException('migration_witness_changed'); }
-            if($resolution && !$completion && $locked_evidence!==$evidence_raw){throw new RuntimeException('migration_malformed_evidence');}
+            if(!$completion && ($locked_evidence!==$evidence_raw || (!$resolution && null!==self::read(self::witness($feature).'_resolution')))){throw new RuntimeException('migration_malformed_evidence');}
             if (!YOWCL_Free_Core::owns()) { throw new RuntimeException('migration_owner_changed'); }
             if ($resolution && !isset($spec['consent'])) { self::interactive_actor(); }
             if (isset($spec['consent'])) {
@@ -317,6 +324,7 @@ class YOWCL_Free_Migrations {
             if ($commit_attempted) { throw new RuntimeException('migration_completion_unknown'); }
             throw $e;
         } finally {
+            self::$transaction=false;
             // Another request can refill pre-images during the transaction.
             try { self::invalidate($feature); }
             catch(Throwable $e) { if($commit_attempted){throw new RuntimeException('migration_completion_unknown');}throw $e; }
@@ -734,7 +742,7 @@ class YOWCL_Free_Migrations {
             if ($duplicates) { if ($duplicates===count($ordered)) { return; } throw new RuntimeException('migration_resolution_pending'); }
             $engine=$wpdb->get_var($wpdb->prepare('SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s',$wpdb->options));self::assert_owner();$db=self::$owner['db'];
             if ($wpdb->last_error || 'InnoDB'!==$engine || YOWCL_Points_Lock::has_transaction($db)) { throw new RuntimeException('migration_transaction_unavailable'); }
-            self::query('START TRANSACTION');
+            self::query('START TRANSACTION');self::$transaction=true;
             try {
                 $names=array('active_plugins');
                 foreach($specs as $feature=>$spec) {
@@ -756,7 +764,7 @@ class YOWCL_Free_Migrations {
                 }
                 $commit_attempted=true;self::query('COMMIT');
             } catch(Throwable $e) { try{mysqli_query($db,'ROLLBACK');}catch(Throwable $ignored){} throw $e; }
-            finally { foreach($specs as $feature=>$spec){self::invalidate($feature);wp_cache_delete(self::witness($feature).'_resolution','options');} }
+            finally { self::$transaction=false;foreach($specs as $feature=>$spec){self::invalidate($feature);wp_cache_delete(self::witness($feature).'_resolution','options');} }
         });
         self::schedule();
         } catch(Throwable $e) { if($commit_attempted){throw new RuntimeException('migration_admission_unknown');}throw $e; }
