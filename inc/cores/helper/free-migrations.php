@@ -279,11 +279,12 @@ class YOWCL_Free_Migrations {
             $commit_attempted=true;self::query('COMMIT');
         } catch(Throwable $e) {
             try { mysqli_query($db,'ROLLBACK'); } catch(Throwable $ignored) {}
-            if ($completion && $commit_attempted) { throw new RuntimeException('migration_replacement_unknown'); }
+            if ($commit_attempted) { throw new RuntimeException('migration_completion_unknown'); }
             throw $e;
         } finally {
             // Another request can refill pre-images during the transaction.
-            self::invalidate($feature);
+            try { self::invalidate($feature); }
+            catch(Throwable $e) { if($commit_attempted){throw new RuntimeException('migration_completion_unknown');}throw $e; }
         }
     }
     private static function finish_locked( $feature, $spec, $resolution=false ) {
@@ -438,14 +439,14 @@ class YOWCL_Free_Migrations {
             });
             self::finish($feature,$spec,true,false,$completion);$committed=true;
             return 'confirmed';
-        }); } catch(Throwable $e) { if($committed){throw new RuntimeException('migration_replacement_unknown');}throw $e; }
+        }); } catch(Throwable $e) { if($committed){throw new RuntimeException('migration_completion_unknown');}throw $e; }
     }
     public static function handle_replacement() {
         if ('POST'!==($_SERVER['REQUEST_METHOD']??'')) { wp_die('migration_resolution_denied'); }
         foreach(array('feature','mode','fingerprint','_wpnonce') as $key) { if(!is_string($_POST[$key]??null)){wp_die('migration_resolution_denied');} }
         $feature=wp_unslash($_POST['feature']);$mode=wp_unslash($_POST['mode']);
         try { $result=self::replace_pending($feature,$mode,wp_unslash($_POST['fingerprint']),wp_unslash($_POST['_wpnonce'])); }
-        catch(Throwable $e) { $result='migration_replacement_unknown'===$e->getMessage()?'unknown':'unconfirmed'; }
+        catch(Throwable $e) { $result='migration_completion_unknown'===$e->getMessage()?'unknown':'unconfirmed'; }
         wp_safe_redirect(add_query_arg(array('feature'=>$feature,'result'=>$result,'choice'=>$mode),self::review_url()).'#loyf-review-'.$feature);exit;
     }
     private static function render_replacement($feature) {
@@ -463,7 +464,8 @@ class YOWCL_Free_Migrations {
     }
     public static function resolve( $feature, $mode, $fingerprint, $nonce ) {
         if (!current_user_can('manage_options') || !YOWCL_Free_Core::owns() || !wp_verify_nonce($nonce,'loyf_resolve_'.$feature)) { throw new RuntimeException('migration_resolution_denied'); }
-        return self::locked(function() use($feature,$mode,$fingerprint) {
+        $committed=false;
+        try { return self::locked(function() use($feature,$mode,$fingerprint,&$committed) {
             self::target_settings($feature);
             if (self::ready($feature)) { return 'already_confirmed'; }
             if (null!==self::read(self::witness($feature))) { throw new RuntimeException('migration_malformed_witness'); }
@@ -472,9 +474,9 @@ class YOWCL_Free_Migrations {
             $name=self::witness($feature).'_resolution';
             self::put($name,serialize($spec),self::read($name));
             // This POST grants only same-request authority; the original pending row stays unchanged.
-            self::finish($feature,$spec,true,isset($spec['consent']));
+            self::finish($feature,$spec,true,isset($spec['consent']));$committed=true;
             return 'confirmed';
-        });
+        }); } catch(Throwable $e) { if($committed){throw new RuntimeException('migration_completion_unknown');}throw $e; }
     }
     public static function handle_resolution() {
         $feature=is_string($_POST['feature']??null)?sanitize_key(wp_unslash($_POST['feature'])):'';
@@ -485,10 +487,10 @@ class YOWCL_Free_Migrations {
         if ('post'!==$method || !current_user_can('manage_options') || !YOWCL_Free_Core::owns() || !in_array($feature,self::features(),true) || !in_array($mode,array('canonical','legacy','disable'),true) || !preg_match('/^[a-f0-9]{64}$/D',$fingerprint) || !wp_verify_nonce($nonce,'loyf_resolve_'.$feature)) { wp_die('migration_resolution_denied'); }
         try { $decision=self::resolve($feature,$mode,$fingerprint,$nonce); }
         catch(Throwable $e) {
-            $code=in_array($e->getMessage(),array('migration_resolution_stale','migration_target_changed'),true)?$e->getMessage():'unconfirmed';
+            $code='migration_completion_unknown'===$e->getMessage()?'unknown':(in_array($e->getMessage(),array('migration_resolution_stale','migration_target_changed'),true)?$e->getMessage():'unconfirmed');
             wp_safe_redirect(add_query_arg(array('feature'=>$feature,'result'=>$code,'choice'=>$mode),admin_url('admin.php?page=loyf-migration-review')).'#loyf-review-'.$feature); exit;
         }
-        $result='confirmed'===self::review_state($feature)?$decision:'unconfirmed';
+        $state=self::review_state($feature);$result='confirmed'===$state?$decision:('unavailable'===$state?'unknown':'unconfirmed');
         wp_safe_redirect(add_query_arg(array('feature'=>$feature,'result'=>$result),admin_url('admin.php?page=loyf-migration-review')).'#loyf-review-'.$feature); exit;
     }
     /** Completed historical evidence is for manual assessment, never rollback authority. */
@@ -619,7 +621,7 @@ class YOWCL_Free_Migrations {
         if (!as_schedule_single_action(time()+$delay,self::HOOK,$args,self::GROUP,true)) { throw new RuntimeException('migration_schedule_failed'); }
     }
     private static function transient($code) {
-        return in_array($code,array('migration_lock_unavailable','migration_ownership_lost','migration_storage_unavailable','migration_write_failed','migration_readback_failed','migration_semantics_readback_failed','migration_transaction_unavailable'),true);
+        return in_array($code,array('migration_lock_unavailable','migration_ownership_lost','migration_storage_unavailable','migration_write_failed','migration_readback_failed','migration_semantics_readback_failed','migration_transaction_unavailable','migration_completion_unknown'),true);
     }
     public static function worker($feature,$run) {
         if (!in_array($feature,self::features(),true) || !is_string($run) || !self::scheduler() || !YOWCL_Free_Core::owns()) { return; }
@@ -922,7 +924,7 @@ class YOWCL_Free_Migrations {
         return $html.'</ul>';
     }
     private static function resolution_message( $code ) {
-        if ('unknown'===$code) { return __('The replacement result could not be verified. It may have committed. Reload this item to inspect current server storage before trying again.','loyalty-for-woocommerce'); }
+        if ('unknown'===$code) { return __('The decision result could not be verified. It may have committed. Reload this item to inspect current server storage before trying again.','loyalty-for-woocommerce'); }
         if ('migration_resolution_stale'===$code || 'migration_target_changed'===$code) { return __('The reviewed settings changed. Nothing was confirmed by this request. Reload and review the current terms before choosing again.','loyalty-for-woocommerce'); }
         return __('The decision could not be confirmed. Saved data and any pending choice are preserved. Reload and review this item; retry only the pending choice when available. For unsupported data, ask a qualified administrator to review verified backups.','loyalty-for-woocommerce');
     }
