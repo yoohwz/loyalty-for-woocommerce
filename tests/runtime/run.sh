@@ -11,8 +11,13 @@ base=$(python3 -c 'import json; print(json.load(open("tests/fixtures/free-1.2.2.
 git cat-file -e "$base^{commit}"
 tmp=$(mktemp -d "${TMPDIR:-/tmp}/loyf-runtime.XXXXXXXX")
 dbs=()
+server_pid=
 cleanup() {
     status=$?
+    if [[ -n "$server_pid" ]]; then
+        if [[ "$status" != 0 ]]; then tail -n 80 "$tmp/browser.log" >&2; fi
+        kill "$server_pid" 2>/dev/null || true; wait "$server_pid" 2>/dev/null || true
+    fi
     for db in "${dbs[@]}"; do
         if ! MYSQL_PWD="$LOY_DB_PASSWORD" mysql --host="$LOY_DB_HOST" --port="${LOY_DB_PORT:-3306}" --user="$LOY_DB_USER" -e "DROP DATABASE IF EXISTS \`$db\`" >/dev/null 2>&1; then
             echo 'Disposable database cleanup failed.' >&2
@@ -29,9 +34,9 @@ export LOYF_WP_CLI_PHAR="$tmp/wp.phar"
 export LOYF_FIXTURE="$repo/tests/fixtures/free-1.2.2.json"
 curl -fsSL --retry 3 https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar -o "$tmp/wp.phar"
 wp() { php "$tmp/wp.phar" --path="$site" "$@"; }
-for phase in baseline candidate; do
+for phase in baseline uncaptured candidate; do
     sha=$head
-    [[ "$phase" != baseline ]] || sha=$base
+    [[ "$phase" == candidate ]] || sha=$base
     db="loyf_rt_$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')"
     site="$tmp/$phase"
     # Track before CREATE: cleanup also covers a client failure after server creation.
@@ -58,6 +63,34 @@ for phase in baseline candidate; do
     wp plugin activate loyalty-for-woocommerce --quiet
     if [[ "$phase" == candidate ]]; then
       for feature in signup login review levelup redemption email_reward email_deduct email_level; do wp eval-file "$repo/tests/runtime/resolve-fixture.php" "$feature" --quiet; done
+    fi
+    if [[ "$phase" == uncaptured ]]; then
+        # A separate actual historical tree/database: never call capture_legacy here.
+        export LOYF_SNAPSHOT="$tmp/uncaptured-legacy.json" LOYF_RAW_SNAPSHOT="$tmp/uncaptured-legacy-raw.json"
+        wp eval-file "$repo/tests/runtime/characterization.php" --quiet
+        cmp "$repo/tests/fixtures/free-1.2.2-expected.json" "$LOYF_SNAPSHOT"
+        export LOYF25_SNAPSHOT="$tmp/uncaptured-before.json"
+        wp eval-file "$repo/tests/runtime/migration-review.php" before --quiet
+        rm -f "$plugin/inc/cores/api/push-subscription.php"
+        git -C "$repo" archive "$head" -- loyalty-for-woocommerce.php readme.txt changelog.txt license.txt css img inc js languages templates | tar -x -C "$plugin"
+        wp eval-file "$repo/tests/runtime/migration-review.php" upgrade --quiet
+        if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
+            if [[ -z "${LOYF_PLAYWRIGHT_PATH:-}" ]]; then
+                npm install --prefix "$tmp/browser" playwright@1.56.1 --no-audit --no-fund
+                export LOYF_PLAYWRIGHT_PATH="$tmp/browser/node_modules/playwright"
+                node "$LOYF_PLAYWRIGHT_PATH/cli.js" install chromium --with-deps
+            fi
+            port="${LOYF25_BROWSER_PORT:-18095}"
+            export LOYF_BROWSER_URL="http://127.0.0.1:$port" LOYF25_SITE="$site" LOYF25_FIXTURE="$repo/tests/runtime/migration-review.php"
+            wp option update home "$LOYF_BROWSER_URL" --quiet
+            wp option update siteurl "$LOYF_BROWSER_URL" --quiet
+            wp config set DOING_AJAX false --raw --quiet
+            wp eval-file "$LOYF25_FIXTURE" browser-seed --quiet
+            php -d opcache.enable=0 -d opcache.enable_cli=0 -d opcache.jit=0 -d opcache.jit_buffer_size=0 -S "127.0.0.1:$port" -t "$site" > "$tmp/browser.log" 2>&1 & server_pid=$!
+            node "$repo/tests/runtime/migration-review-browser.cjs"
+            kill "$server_pid"; wait "$server_pid" 2>/dev/null || true; server_pid=
+        fi
+        continue
     fi
     export LOYF_SNAPSHOT="$tmp/$phase.json" LOYF_RAW_SNAPSHOT="$tmp/$phase-raw.json"
     echo "phase=$phase candidate=$sha wp=6.8.3 woo=9.9.5 php=$(php -r 'echo PHP_VERSION;')"

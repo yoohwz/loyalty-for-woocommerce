@@ -72,6 +72,15 @@ if ( 'browser-check' === $phase && 'browser-exit' === $case ) {
     loyf_equal('dismissed',YOWCL_Free_Onboarding::state()['status'],'Shipped Exit persisted dismissal');
     loyf_equal(json_decode(file_get_contents(getenv('LOYF11_FIXTURE').'.view.json'),true),loyf11_snapshot(),'Shipped Exit has no business writes');echo "Native onboarding browser Exit PASS\n";return;
 }
+if ('browser-check'===$phase && 'browser-blank'===$case) {
+    $before=json_decode(file_get_contents(getenv('LOYF11_FIXTURE').'.view.json'),true);$after=loyf11_snapshot();
+    loyf_equal('dismissed',YOWCL_Free_Onboarding::state()['status'],'Fresh skip remains dismissed after General save');
+    foreach(array('loyalty_points_using_rules','loyalty_points_using_point') as $name){loyf_equal($before[0][$name]??null,$after[0][$name]??null,'Fresh blank redemption preserved '.$name);}
+    foreach(array(1,2,3,4) as $part){loyf_equal($before[$part],$after[$part],'Fresh General save no economic/role/scheduled writes');}
+    loyf_equal('7',get_option('loyalty_points_earning_rules')['customer']['points'],'Fresh blank redemption allows earning save');
+    loyf_equal('round_down',get_option('loyalty_points_rounding'),'Fresh blank redemption allows rounding save');
+    echo "Native fresh activation/Quick Start skip/blank redemption General Save PASS\n";return;
+}
 if ( 'browser-check' === $phase ) {
     loyf_equal( 'complete',YOWCL_Free_Onboarding::state()['status'],'Browser Launch completed' );
     loyf_equal( '7',get_option( 'loyalty_points_earning_rules' )['customer']['points'],'Stale tab preserves later native Woo save' );
@@ -80,7 +89,7 @@ if ( 'browser-check' === $phase ) {
     loyf_equal( array(),loyf_rows( $fixture['user'] ),'Browser previews/Launch never mint value' );
     echo "Native onboarding browser saved choices PASS\n"; return;
 }
-if ( ! in_array( $case,array( 'fresh','skip','late-setting','late-balance','failure','first-failure','referral-failure','unknown-referral','disconnect','parallel','merchant-race','browser','browser-exit','dismiss' ),true ) ) {
+if ( ! in_array( $case,array( 'fresh','skip','late-setting','late-balance','failure','first-failure','referral-failure','unknown-referral','disconnect','parallel','merchant-race','browser','browser-exit','browser-blank','dismiss' ),true ) ) {
     loyf_assert( ! YOWCL_Free_Onboarding::writable(),'Footprint is review-only: ' . $case );
     $html = loyf11_render(); loyf_assert( false === strpos( $html,'id="loyf-quick-start"' ),'No writable review form' );
     global $wpdb;
@@ -96,7 +105,7 @@ foreach ( array( 'earn_points'=>array( '-1','1.5','1e3','999999999',array() ),'e
     foreach ( $values as $value ) { $bad=$input; $bad[$key]=$value; loyf11_denied( static function () use ( $bad ) { YOWCL_Free_Onboarding::launch( $bad ); },'Bad ' . $key ); loyf_equal( $before,loyf11_snapshot(),'Invalid input has no writes' ); }
 }
 wp_set_current_user( $fixture['user'] ); loyf11_denied( static function () use ( $input ) { YOWCL_Free_Onboarding::launch( $input ); },'Customer denied' ); wp_set_current_user( get_user_by( 'login','loyf_admin' )->ID );
-if ( 'browser' === $case || 'browser-exit' === $case ) { file_put_contents(getenv('LOYF11_FIXTURE').'.view.json',wp_json_encode($before)); echo "Browser fixture fresh PASS\n"; return; }
+if ( 'browser' === $case || 'browser-exit' === $case || 'browser-blank' === $case ) { file_put_contents(getenv('LOYF11_FIXTURE').'.view.json',wp_json_encode($before)); echo "Browser fixture fresh PASS\n"; return; }
 if ( 'late-setting' === $case ) { update_option( 'loyalty_extra_points_rules',array( 'signup_enabled'=>'yes','signup_points'=>'13','merchant'=>'preserve' ) ); $before=loyf11_snapshot(); loyf11_denied( static function () use ( $input ) { YOWCL_Free_Onboarding::launch( $input ); },'Prior merchant settings' ); loyf_equal( $before,loyf11_snapshot(),'No stale launch writes' ); return; }
 if ( 'late-balance' === $case ) { update_user_meta( $fixture['user'],'user_points',19 ); $before=loyf11_snapshot(); loyf11_denied( static function () use ( $input ) { YOWCL_Free_Onboarding::launch( $input ); },'Used program' ); loyf_equal( $before,loyf11_snapshot(),'No used-program writes' ); return; }
 if ( 'skip' === $case || 'dismiss' === $case ) { unset( $input['first'],$input['referral'],$input['redeem'] ); }

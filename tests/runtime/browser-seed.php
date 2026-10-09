@@ -3,6 +3,11 @@ if(!defined('LOYF_RUNTIME_DISPOSABLE')){throw new RuntimeException('Disposable r
 update_option('woocommerce_coming_soon','no');
 $rules=get_option('loyalty_extra_points_rules');$rules['signup_enabled']='no';$rules['login_enabled']='no';update_option('loyalty_extra_points_rules',$rules);
 $user=wp_insert_user(array('user_login'=>'blocks_browser','user_email'=>'blocks-browser@example.invalid','user_pass'=>'disposable-only','role'=>'customer'));if(is_wp_error($user)){throw new RuntimeException($user->get_error_message());}
+// Native customer defaults are persisted before measuring a read-only Copy action.
+// Otherwise Blocks may asynchronously save these same defaults during hydration.
+$location=wc_get_base_location();$customer=new WC_Customer($user);
+$customer->set_billing_country($location['country']);$customer->set_billing_state($location['state']);$customer->set_billing_email('blocks-browser@example.invalid');
+$customer->set_shipping_country($location['country']);$customer->set_shipping_state($location['state']);$customer->save();
 YOWCL_Points_Transaction::apply((int)$user,50,50,'browser:seed');
 $product=new WC_Product_Simple();$product->set_name('Blocks browser product');$product->set_regular_price('100');$product->set_virtual(true);$product->set_status('publish');$product->save();
 WC_Install::create_pages();

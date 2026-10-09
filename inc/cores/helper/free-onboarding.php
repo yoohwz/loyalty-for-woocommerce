@@ -293,8 +293,9 @@ class YOWCL_Free_Onboarding {
         echo '<div class="wrap"><h1>' . esc_html__( 'Review your loyalty setup','loyalty-for-woocommerce' ) . '</h1>';
         echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=loyalty' ) ) . '">' . esc_html__( 'Loyalty settings','loyalty-for-woocommerce' ) . '</a></p>';
         if ( ! $fresh ) {
-            $text = 'complete' === $s['status'] ? __( 'Quick Start completed. Current settings below may include later edits.','loyalty-for-woocommerce' ) : __( 'Review only. Use the existing Loyalty settings screens to change your program. An interrupted Launch may have saved some of your selected settings; it will not run again.','loyalty-for-woocommerce' );
+            $text = 'complete' === $s['status'] ? __( 'Quick Start completed. Current settings may include later edits. Review them in Loyalty settings.','loyalty-for-woocommerce' ) : __( 'Review only. Use the existing Loyalty settings screens to change your program. An interrupted Launch may have saved some of your selected settings; it will not run again.','loyalty-for-woocommerce' );
             echo '<p>' . esc_html( $text ) . '</p>';
+            if (current_user_can('manage_options') && class_exists('YOWCL_Free_Migrations',false) && YOWCL_Free_Migrations::has_holds()) { echo '<p><a href="'.esc_url(YOWCL_Free_Migrations::review_url()).'">'.esc_html__('Review held Loyalty settings','loyalty-for-woocommerce').'</a></p>'; }
             if ( 'complete' === $s['status'] && is_array( $s['terms'] ?? null ) ) {
                 $t = $s['terms'];
                 if ( is_numeric( $t['amount'] ?? null ) && (float) $t['amount'] > 0 && is_numeric( $t['points'] ?? null ) ) {
@@ -305,9 +306,7 @@ class YOWCL_Free_Onboarding {
                 /* translators: 1: exchanged points, 2: discount amount, 3: store currency. */
                 if ( ! empty( $t['redeem'] ) && is_scalar( $t['redeem_points'] ?? null ) && is_scalar( $t['redeem_amount'] ?? null ) ) { echo '<p>' . esc_html( sprintf( __( 'Illustrative Launch redemption: %1$s points for %2$s %3$s, subject to the cart subtotal.','loyalty-for-woocommerce' ),$t['redeem_points'],$t['redeem_amount'],$t['currency'] ) ) . '</p>'; }
             }
-            echo '<table class="widefat"><thead><tr><th>' . esc_html__( 'Setting','loyalty-for-woocommerce' ) . '</th><th>' . esc_html__( 'Current saved value','loyalty-for-woocommerce' ) . '</th></tr></thead><tbody>';
-            foreach ( self::names() as $n ) { try { $raw = self::read( $n ); $text = null === $raw ? __( 'Not configured','loyalty-for-woocommerce' ) : wp_json_encode( maybe_unserialize( maybe_unserialize( $raw ) ) ); } catch ( Throwable $e ) { $text = __( 'Unavailable. Review storage before saving.','loyalty-for-woocommerce' ); } echo '<tr><th scope="row">' . esc_html( $n ) . '</th><td>' . esc_html( $text ) . '</td></tr>'; }
-            echo '</tbody></table></div>'; return;
+            echo '</div>'; return;
         }
         echo '<p>' . esc_html__( 'Preview only until Launch. Suggestions are illustrative; no points or orders are created.','loyalty-for-woocommerce' ) . '</p><form id="loyf-quick-start" method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
         wp_nonce_field( 'loyf_onboarding' );

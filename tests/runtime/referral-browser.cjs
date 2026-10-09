@@ -25,6 +25,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     await page.locator('[data-yoswc-loyalty-info] .yoswc-loyalty-info__bubble').click();
     const button=page.locator('[data-loyf-referral-copy="loyf-referral-bubble"]');
     assert.equal(await page.locator('#loyf-referral-bubble').inputValue(),base+'/?ref='+f.token);
+    await page.waitForFunction(()=>{const key=window.wc?.wcBlocksData?.CART_STORE_KEY;if(!key||!window.wp?.data)return false;const store=window.wp.data.select(key);return store.hasFinishedResolution('getCartData')&&!store.isCustomerDataUpdating();});
     await page.waitForLoadState('networkidle'); // Finish Woo's initial customer/address hydration before measuring Copy.
     const posts=[];page.on('request',r=>{
       if(r.method()!=='POST')return;

@@ -25,6 +25,7 @@ class YOSWC_Loyalty_Settings_Extra_Points {
         foreach ( array( 'signup','login','review','levelup' ) as $feature ) { $ready[$feature] = YOWCL_Free_Migrations::ready( $feature ) && YOWCL_Free_Migrations::readable( $feature ); }
 
         if (empty($loyalty_roles)) {
+            foreach ($ready as $feature=>$is_ready) { if (!$is_ready) { echo '<p>'.YOWCL_Free_Migrations::held_link($feature).'</p>'; } }
 			?>
 			<h2><?php esc_html_e('Extra points settings', 'loyalty-for-woocommerce'); ?></h2>
 			<table class="form-table">
@@ -43,7 +44,7 @@ class YOSWC_Loyalty_Settings_Extra_Points {
 
         ?>
         <h2><?php esc_html_e('Extra points settings', 'loyalty-for-woocommerce'); ?></h2>
-        <?php if ( in_array( false, $ready, true ) ) { echo '<p class="description">' . esc_html__( 'Rewards on hold are read-only. Review the compatibility notice for each affected reward. You can save the other rewards.', 'loyalty-for-woocommerce' ) . '</p>'; } ?>
+        <?php if ( in_array( false, $ready, true ) ) { echo '<p class="description">' . esc_html__( 'Rewards on hold are read-only. Review each affected reward in Migration Review. You can save the other rewards.', 'loyalty-for-woocommerce' ) . '</p>'; } ?>
         
         <table class="form-table">
         <?php wp_nonce_field('save_extra_points_settings_action', 'extra_points_settings_nonce'); ?>
@@ -61,7 +62,8 @@ class YOSWC_Loyalty_Settings_Extra_Points {
                         <label for="loyalty_extra_signup_points"><?php esc_html_e('Sign-up', 'loyalty-for-woocommerce'); ?></label>
                     </th>
                     <td>
-                        <input type="number" name="loyalty_extra_signup_points" style="width: 84px;" value="<?php echo esc_attr($extra_points['signup_points'] ?? ''); ?>" placeholder="<?php esc_attr_e('Points', 'loyalty-for-woocommerce'); ?>" min="0" <?php disabled( ! $ready['signup'] ); ?> />
+                        <input type="number" id="loyalty_extra_signup_points" name="loyalty_extra_signup_points" style="width: 84px;" value="<?php echo esc_attr($extra_points['signup_points'] ?? ''); ?>" placeholder="<?php esc_attr_e('Points', 'loyalty-for-woocommerce'); ?>" min="0" <?php disabled( ! $ready['signup'] ); ?> />
+                        <?php if (!$ready['signup']) { echo '<p>'.YOWCL_Free_Migrations::held_link('signup').'</p>'; } ?>
                         <p class="description"><?php esc_html_e('Points awarded to customers when they sign up.', 'loyalty-for-woocommerce'); ?></p>
                     </td>
                 </tr>
@@ -70,7 +72,8 @@ class YOSWC_Loyalty_Settings_Extra_Points {
                         <label for="loyalty_extra_login_points"><?php esc_html_e('Log-in', 'loyalty-for-woocommerce'); ?></label>
                     </th>
                     <td>
-                        <input type="number" name="loyalty_extra_login_points" style="width: 84px;" value="<?php echo esc_attr($extra_points['login_points'] ?? ''); ?>" placeholder="<?php esc_attr_e('Points', 'loyalty-for-woocommerce'); ?>" min="0" <?php disabled( ! $ready['login'] ); ?> />
+                        <input type="number" id="loyalty_extra_login_points" name="loyalty_extra_login_points" style="width: 84px;" value="<?php echo esc_attr($extra_points['login_points'] ?? ''); ?>" placeholder="<?php esc_attr_e('Points', 'loyalty-for-woocommerce'); ?>" min="0" <?php disabled( ! $ready['login'] ); ?> />
+                        <?php if (!$ready['login']) { echo '<p>'.YOWCL_Free_Migrations::held_link('login').'</p>'; } ?>
                         <p class="description"><?php esc_html_e('Points awarded to customers when they log-in daily.', 'loyalty-for-woocommerce'); ?></p>
                     </td>
                 </tr>
@@ -79,7 +82,8 @@ class YOSWC_Loyalty_Settings_Extra_Points {
                         <label for="loyalty_extra_review_points"><?php esc_html_e('Product review', 'loyalty-for-woocommerce'); ?></label>
                     </th>
                     <td>
-                        <input type="number" name="loyalty_extra_review_points" style="width: 84px;" value="<?php echo esc_attr($extra_points['review_points'] ?? ''); ?>" placeholder="<?php esc_attr_e('Points', 'loyalty-for-woocommerce'); ?>" min="0" <?php disabled( ! $ready['review'] ); ?> />
+                        <input type="number" id="loyalty_extra_review_points" name="loyalty_extra_review_points" style="width: 84px;" value="<?php echo esc_attr($extra_points['review_points'] ?? ''); ?>" placeholder="<?php esc_attr_e('Points', 'loyalty-for-woocommerce'); ?>" min="0" <?php disabled( ! $ready['review'] ); ?> />
+                        <?php if (!$ready['review']) { echo '<p>'.YOWCL_Free_Migrations::held_link('review').'</p>'; } ?>
                         <p class="description"><?php esc_html_e('Points awarded to customers for leaving a product review.', 'loyalty-for-woocommerce'); ?></p>
                     </td>
                 </tr>
@@ -112,7 +116,8 @@ class YOSWC_Loyalty_Settings_Extra_Points {
 									</tr>
 								<?php endforeach; ?>
 							</table>
-							<p class="description"><?php esc_html_e('Points awarded to customers for reaching a level role.', 'loyalty-for-woocommerce'); ?></p>
+							<?php if (!$ready['levelup']) { echo '<p>'.YOWCL_Free_Migrations::held_link('levelup').'</p>'; } ?>
+                            <p class="description"><?php esc_html_e('Points awarded to customers for reaching a level role.', 'loyalty-for-woocommerce'); ?></p>
 						</div>
 					</td>
 				</tr>
@@ -221,6 +226,11 @@ class YOSWC_Loyalty_Settings_Extra_Points {
                 }
                 if ( null !== $first ) { YOWCL_Free_First_Purchase::save( isset( $_POST['loyalty_extra_first_purchase_enabled'] ),$first ); $saved[] = __( 'First purchase','loyalty-for-woocommerce' ); }
             } );
+            $held=array(); foreach(array('signup','login','review','levelup') as $feature) { if (!YOWCL_Free_Migrations::ready($feature) || !YOWCL_Free_Migrations::readable($feature)) { $held[]=$feature; } }
+            if ($held && class_exists('WC_Admin_Settings')) {
+                /* translators: Names of settings whose saves completed. */
+                WC_Admin_Settings::add_error(sprintf(__('Held rewards were skipped. Confirmed saved settings: %s. Review the held rewards in Migration Review.','loyalty-for-woocommerce'),$saved?implode(', ',$saved):__('None submitted','loyalty-for-woocommerce')));
+            }
         } catch ( Throwable $e ) {
             $message = $e->getMessage();
             if ( $saved ) {

@@ -60,7 +60,7 @@ fi
                 file.write_text(text)
                 file.chmod(0o755)
             env = dict(os.environ, PATH=str(bin_dir) + ':' + os.environ['PATH'], TMPDIR=str(tmp),
-                       LOY_RUNTIME_DISPOSABLE='1', LOY_DB_HOST='127.0.0.1', LOY_DB_USER='root',
+                       LOYF_SKIP_BROWSER='1', LOY_RUNTIME_DISPOSABLE='1', LOY_DB_HOST='127.0.0.1', LOY_DB_USER='root',
                        LOY_DB_PASSWORD='disposable-only', CALLS=str(log), FAKE_FAIL=failure,
                        FAKE_REPO=checkout, FAKE_DIRTY='1' if dirty else '0')
             result = subprocess.run(['bash', str(RUNNER)], cwd=ROOT, env=env, capture_output=True)
@@ -71,10 +71,14 @@ fi
     def test_full_runs_both_exact_sources_and_cleans(self):
         result, calls = self.run_case()
         self.assertEqual(0, result.returncode, result.stderr)
-        self.assertEqual(2, calls.count('CREATE DATABASE'))
-        self.assertEqual(2, calls.count('DROP DATABASE'))
-        self.assertEqual(1, calls.count('characterization.php'))
+        self.assertEqual(3, calls.count('CREATE DATABASE'))
+        self.assertEqual(3, calls.count('DROP DATABASE'))
+        self.assertEqual(2, calls.count('characterization.php'))
         self.assertEqual(1, calls.count('hardened.php'))
+        self.assertEqual(2, calls.count('migration-review.php'))
+        uncaptured = calls.split('/uncaptured')[1:]
+        self.assertTrue(uncaptured)
+        self.assertFalse(any('capture-legacy.php' in line for line in calls.splitlines() if '/uncaptured' in line))
         self.assertIn('historical baseline and hardened candidate PASS', result.stdout.decode())
 
     def test_failure_cleanup_and_mismatch(self):
