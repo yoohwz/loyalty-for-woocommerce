@@ -15,7 +15,7 @@ if ('upgrade'===$mode) {
  foreach($current['logs'] as $i=>$row){$current['logs'][$i]=array_intersect_key($row,$before['logs'][$i]??array());}
  loyf_equal($before,$current,'Actual old-Free upgrade without capture preserves existing raw terms, balances and logs');
  foreach(YOWCL_Free_Migrations::features() as $f){loyf_assert(!YOWCL_Free_Migrations::ready($f),'Actual uncaptured upgrade held '.$f);loyf_equal(null,YOWCL_Free_Migrations::read(YOWCL_Free_Migrations::witness($f).'_before'),'No manufactured provenance '.$f);}
- ob_start();YOWCL_Free_Migrations::render_review();$html=ob_get_clean();loyf_assert(strpos($html,'Loyalty Migration Review')!==false && strpos($html,'<pre')===false,'Native bounded review without raw JSON');
+ ob_start();YOWCL_Free_Migrations::render_review();$html=ob_get_clean();loyf_assert(strpos($html,'Loyalty Migration Status')!==false && strpos($html,'<pre')===false,'Native bounded review without raw JSON');
  $after=$snapshot();foreach($after['logs'] as $i=>$row){$after['logs'][$i]=array_intersect_key($row,$before['logs'][$i]??array());}
  loyf_equal($before,$after,'Review GET does not write reviewed data');
  echo "Actual old-Free upgrade WITHOUT pre-capture PASS: eight held features, exact raw options/balances/logs, read-only review.\n";return;
