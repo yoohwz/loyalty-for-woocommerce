@@ -62,6 +62,7 @@ class YOSWC_Loyalty_Settings {
 			'customization' => __('Customization', 'loyalty-for-woocommerce'),
 			'notification' => __('Notification', 'loyalty-for-woocommerce'),
 			'tools' => __('Tools', 'loyalty-for-woocommerce'),
+            'migration_review' => __('Migration Review', 'loyalty-for-woocommerce'),
 			'premium' => __('Premium', 'loyalty-for-woocommerce')
 		);
 
@@ -70,7 +71,7 @@ class YOSWC_Loyalty_Settings {
 
 		foreach ($sub_sub_tabs as $section_id => $section_label) {
 			$class = ($current_section === $section_id) ? 'current' : '';
-			echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=loyalty&section=' . $section_id ) ) . '" class="' . esc_attr( $class ) . '">' . esc_html( $section_label ) . '</a>';
+			echo '<li><a href="' . esc_url( 'migration_review' === $section_id ? YOWCL_Free_Migrations::review_url() : admin_url( 'admin.php?page=wc-settings&tab=loyalty&section=' . $section_id ) ) . '" class="' . esc_attr( $class ) . '">' . esc_html( $section_label ) . '</a>';
 			if ($i < $count) {
 				echo ' | ';
 			}
@@ -388,21 +389,40 @@ class YOSWC_Loyalty_Settings {
 				'id'   => 'loyalty_points_section_end'
 			),
 		);
+        if (!YOWCL_Free_Migrations::ready('redemption') || !YOWCL_Free_Migrations::readable('redemption')) {
+            $settings['loyalty_using_point']['custom_attributes'] = array('disabled'=>'disabled');
+            $settings['loyalty_using_point']['desc'] = YOWCL_Free_Migrations::held_link('redemption');
+        }
 		return $settings;
 	}
 
 	public function update_loyalty_settings() {
+		if (!current_user_can('manage_options') || !YOWCL_Free_Core::owns() || 'POST' !== ($_SERVER['REQUEST_METHOD'] ?? '')) { return; }
 		$current_section = $this->get_query_value( 'section', 'general' );
 		$current_subsection = $this->get_query_value( 'subsection' );
 	
 		if ($current_section === 'general' && $current_subsection !== 'add_remove_role') {
 
-			if (!isset($_POST['loyalty_levels_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['loyalty_levels_nonce'])), 'loyalty_levels_nonce_action')) {
+			if (!is_string($_POST['loyalty_levels_nonce']??null) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['loyalty_levels_nonce'])), 'loyalty_levels_nonce_action')) {
 				return;
 			}
 			
+            $saved=array(); $expected=array();
+            $observe=static function($value,$option) use (&$expected) { $expected[$option]=maybe_serialize($value); return $value; };
+            try { YOWCL_Free_Migrations::locked(function() use (&$saved,&$expected,$observe) {
+                $editable=YOWCL_Free_Migrations::ready('redemption') && YOWCL_Free_Migrations::readable('redemption');
+                if ($editable) { $this->using_point_input(); }
+                // Validate editable numeric fields before native Woo writes.
+                foreach(array('loyalty_level_from','loyalty_earning_points','loyalty_earning_amount') as $key) {
+                    if (!isset($_POST[$key])) { continue; }
+                    if (!is_array($_POST[$key])) { throw new RuntimeException('loyalty_settings_invalid'); }
+                    foreach($_POST[$key] as $value) { if (!is_string($value) || (''!==$value && (!is_numeric($value) || !is_finite((float)$value) || (float)$value<0))) { throw new RuntimeException('loyalty_settings_invalid'); } }
+                }
+            add_filter('pre_update_option',$observe,PHP_INT_MAX,2);
+            try {
 			woocommerce_update_options($this->get_loyalty_levels_settings());
-			woocommerce_update_options($this->get_loyalty_points_settings());
+			 $fields=$this->get_loyalty_points_settings(); unset($fields['loyalty_using_point']);
+            woocommerce_update_options($fields);
 	
 			$selected_roles = isset($_POST['loyalty_levels_roles']) ? array_map('sanitize_text_field', wp_unslash((array) $_POST['loyalty_levels_roles'])) : array();
 	
@@ -427,7 +447,24 @@ class YOSWC_Loyalty_Settings {
 	
 			$this->save_level_rules();
 			$this->save_earning_point_rules();
-			$this->save_using_point_rules();
+            } finally { remove_filter('pre_update_option',$observe,PHP_INT_MAX); }
+            foreach($expected as $name=>$raw) { if (YOWCL_Free_Migrations::read($name)!==$raw) { throw new RuntimeException('loyalty_settings_readback_failed'); } }
+            $saved[] = __('General earning and level settings','loyalty-for-woocommerce');
+            if ($editable) {
+                $this->save_using_point_rules();
+                $using=isset($_POST['loyalty_points_using_point']) ? 'yes' : 'no';
+                update_option('loyalty_points_using_point', $using);
+                if (YOWCL_Free_Migrations::read('loyalty_points_using_point')!==$using) { throw new RuntimeException('loyalty_settings_readback_failed'); }
+                $saved[] = __('Redemption','loyalty-for-woocommerce');
+            } else {
+                WC_Admin_Settings::add_error(__('Redemption was skipped because it is on hold. General earning and level settings were saved. Review redemption before editing it.','loyalty-for-woocommerce').' <a href="'.esc_url(YOWCL_Free_Migrations::review_url('redemption')).'">'.esc_html__('Review redemption','loyalty-for-woocommerce').'</a>');
+            }
+            }); } catch(Throwable $e) {
+                $message=__('The save could not be completed. Reload to review current settings.','loyalty-for-woocommerce');
+                if ($saved) { $message.=' '.sprintf(__('Settings saved before this error: %s.','loyalty-for-woocommerce'),implode(', ',$saved)); }
+                WC_Admin_Settings::add_error($message);
+            }
+
 		}
 	
 		if ($current_section === 'extra_points') {
@@ -492,23 +529,27 @@ class YOSWC_Loyalty_Settings {
 		update_option('loyalty_points_earning_rules', $loyalty_points_earning_rules);
 	}
 	
-	public function save_using_point_rules() {
-        if (!YOWCL_Free_Migrations::readable('redemption')) { return; }
-		if (!isset($_POST['using_point_rules_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['using_point_rules_nonce'])), 'save_using_point_rules')) {
-			return;
-		}
-
-		$points = isset($_POST['loyalty_using_points']) ? floatval(wp_unslash($_POST['loyalty_using_points'])) : 0;
-		$amount = isset($_POST['loyalty_using_amount']) ? floatval(wp_unslash($_POST['loyalty_using_amount'])) : 0;		
-
-		$loyalty_points_using_rules = array(
-			'points' => $points,
-			'amount' => $amount,
-		);
-
-		if (!current_user_can('manage_options')) { return; }
-		try { YOWCL_Free_Migrations::save('redemption', 'loyalty_points_using_rules', $loyalty_points_using_rules); } catch (Throwable $e) { wp_die(esc_html($e->getMessage())); }
-	}
+    private function using_point_input() {
+        if (!is_string($_POST['using_point_rules_nonce']??null) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['using_point_rules_nonce'])), 'save_using_point_rules')) { throw new RuntimeException('loyalty_settings_invalid'); }
+        $result=array();
+        foreach(array('points'=>'loyalty_using_points','amount'=>'loyalty_using_amount') as $key=>$field) {
+            $value=$_POST[$field]??null;
+            if (!is_string($value) || !preg_match('/^[0-9]+(?:\.[0-9]+)?$/D',$value) || !is_finite((float)$value) || (float)$value<0 || (isset($_POST['loyalty_points_using_point']) && (float)$value<=0) || (float)$value>2147483647) { throw new RuntimeException('loyalty_settings_invalid'); }
+            if ('amount'===$key && false!==strpos($value,'.') && strlen(substr(strrchr($value,'.'),1))>wc_get_price_decimals()) { throw new RuntimeException('loyalty_settings_invalid'); }
+            $result[$key]=(float)$value;
+        }
+        return $result;
+    }
+    public function save_using_point_rules() {
+        if (!current_user_can('manage_options') || !YOWCL_Free_Core::owns() || !YOWCL_Free_Migrations::ready('redemption') || !YOWCL_Free_Migrations::readable('redemption')) { return; }
+        YOWCL_Free_Migrations::locked(function() {
+            $rules=$this->using_point_input();
+            // An unchanged displayed value retains its original representation.
+            $current=YOWCL_Free_Migrations::canonical('redemption');
+            foreach($rules as $key=>$value) { if (is_scalar($current[$key]??null) && is_numeric($current[$key]) && (float)$current[$key]===$value) { $rules[$key]=$current[$key]; } }
+            YOWCL_Free_Migrations::save('redemption', 'loyalty_points_using_rules', $rules);
+        });
+    }
 
 	public function wc_loyalty_get_user_roles() {
 		$roles = wp_roles()->roles;

@@ -17,7 +17,7 @@ $data=unserialize(file_get_contents($file));opaque_edition_equal($data['held'],$
 if('free'===$phase){
  if(!class_exists('YOWCL_Free_Migrations',false)||!YOWCL_Free_Core::owns()){throw new RuntimeException('Free edition owner required');}wp_set_current_user(1);YOWCL_Free_Migrations::run();
  foreach($targets as$f=>$n){if(YOWCL_Free_Migrations::readable($f)||YOWCL_Free_Migrations::canonical($f)!==array()){throw new RuntimeException('Opaque edition admitted policy');}foreach(array('canonical','legacy','disable')as$mode){try{YOWCL_Free_Migrations::preview($f,$mode);throw new LogicException('Opaque edition resolution offered');}catch(RuntimeException$e){opaque_edition_equal('migration_opaque_target',$e->getMessage(),'Opaque edition diagnostic');}}}
- ob_start();YOWCL_Free_Migrations::notices();$html=ob_get_clean();if(strpos($html,'unsupported format')===false||strpos($html,'opaque-private')!==false||strpos($html,'<form')!==false){throw new RuntimeException('Opaque edition notice unsafe');}
+ ob_start();YOWCL_Free_Migrations::render_review();$html=ob_get_clean();if(strpos($html,'unsupported format')===false||strpos($html,'opaque-private')!==false||strpos($html,'<form')!==false){throw new RuntimeException('Opaque edition on-demand review unsafe');}
  opaque_edition_equal($data['held'],$snapshot(),'Free opaque retry changed retained rows');
 }elseif('restore'===$phase){
  foreach(array_unique(array_values($targets))as$n){$row=$data['original']['options'][$n];$wpdb->delete($wpdb->options,array('option_name'=>$n));if(null!==$row){$wpdb->insert($wpdb->options,array('option_name'=>$n,'option_value'=>$row['option_value'],'autoload'=>$row['autoload']));}}

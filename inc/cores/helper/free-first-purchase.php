@@ -105,9 +105,12 @@ class YOWCL_Free_First_Purchase {
         } while ( $page <= $result['max_num_pages'] );
         return false;
     }
+    public static function held() {
+        try { $config=self::configuration(); return $config['effective'] && !$config['ready']; } catch(Throwable $e) { return true; }
+    }
     public static function notices() {
         if ( ! current_user_can( 'manage_options' ) ) { return; }
         try { $config = self::configuration(); $held = $config['effective'] && ! $config['ready']; } catch ( Throwable $e ) { $held = true; }
-        if ( $held ) { echo '<div class="notice notice-warning"><p>' . esc_html__( 'First Purchase rewards are held. Explicitly save an enabled First Purchase configuration in Loyalty Extra points settings to establish its activation cutoff.', 'loyalty-for-woocommerce' ) . '</p></div>'; }
+        if ( $held ) { echo '<div class="notice notice-warning"><p>' . esc_html__( 'First Purchase rewards are held. Explicitly save an enabled First Purchase configuration in Loyalty Extra points settings to establish its activation cutoff.', 'loyalty-for-woocommerce' ) . ' <a href="'.esc_url(admin_url('admin.php?page=wc-settings&tab=loyalty&section=extra_points')).'">'.esc_html__('Review First Purchase','loyalty-for-woocommerce').'</a></p></div>'; }
     }
 }

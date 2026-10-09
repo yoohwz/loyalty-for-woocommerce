@@ -295,6 +295,7 @@ class YOWCL_Free_Onboarding {
         if ( ! $fresh ) {
             $text = 'complete' === $s['status'] ? __( 'Quick Start completed. Current settings below may include later edits.','loyalty-for-woocommerce' ) : __( 'Review only. Use the existing Loyalty settings screens to change your program. An interrupted Launch may have saved some of your selected settings; it will not run again.','loyalty-for-woocommerce' );
             echo '<p>' . esc_html( $text ) . '</p>';
+            if (current_user_can('manage_options') && YOWCL_Free_Migrations::has_holds()) { echo '<p><a href="'.esc_url(YOWCL_Free_Migrations::review_url()).'">'.esc_html__('Review held Loyalty settings','loyalty-for-woocommerce').'</a></p>'; }
             if ( 'complete' === $s['status'] && is_array( $s['terms'] ?? null ) ) {
                 $t = $s['terms'];
                 if ( is_numeric( $t['amount'] ?? null ) && (float) $t['amount'] > 0 && is_numeric( $t['points'] ?? null ) ) {

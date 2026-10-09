@@ -1,18 +1,25 @@
 <?php
 /** Production protocol with WP/storage stand-ins; native evidence is separate. */
 define('ABSPATH','/loyf-stand-in/');
+class YOWCL_Free_Core { public static function owns(){return true;} }
 function is_serialized($v){return is_string($v)&&(preg_match('/^(?:a|O|s|i|d|b|C):/',$v)||'N;'===$v);}
 function maybe_unserialize($v){if(!is_serialized($v)){return $v;}$r=@unserialize($v);return false===$r&&'b:0;'!==$v?$v:$r;}
 function maybe_serialize($v){return is_array($v)||is_object($v)||is_serialized($v)?serialize($v):(string)$v;}
 function sanitize_key($v){return preg_replace('/[^a-z0-9_-]/','',strtolower($v));}
 function current_user_can($v){return true;}
+function get_woocommerce_currency(){return 'USD';}
+function wc_get_price_decimals(){return 2;}
+function wc_format_decimal($v,$dp,$trim=false){return rtrim(rtrim(number_format((float)$v,$dp,'.',''),'0'),'.');}
 function __($v,$d=null){return $v;}
 function esc_html($v){return htmlspecialchars($v);}
 function esc_html__($v,$d=null){return esc_html($v);}
 function esc_attr($v){return htmlspecialchars($v);}
 function esc_url($v){return $v;}
+function add_action(...$args){}
+function wp_roles(){return (object)array('roles'=>array());}
 function admin_url($v){return '/'.$v;}
 function wp_json_encode($v){return json_encode($v);}
+function wp_create_nonce($v){return 'stand-in';}
 function wp_nonce_field($v){echo '<input name="nonce" value="stand-in">';}
 class LOYF_Opaque_DB {
  public $options='stand_in_options',$last_error='',$rows=array();
@@ -32,7 +39,7 @@ foreach($targets as$f=>$target){
   foreach(array('canonical','legacy','disable')as$mode){try{YOWCL_Free_Migrations::preview($f,$mode);throw new LogicException('Opaque choice offered');}catch(RuntimeException$e){opaque_assert('migration_opaque_target'===$e->getMessage(),'Specific opaque diagnostic');}$count++;}
   opaque_assert($before===$wpdb->rows,'Raw target/source/evidence/witness rows preserved');
   $errors=new ReflectionProperty('YOWCL_Free_Migrations','errors');if(PHP_VERSION_ID<80100){$errors->setAccessible(true);}$errors->setValue(null,array($f=>'migration_opaque_target'));
-  ob_start();YOWCL_Free_Migrations::notices();$html=ob_get_clean();opaque_assert(false!==strpos($html,'Restore or repair the original complete container'),'Explicit manual review path');opaque_assert(false!==strpos($html,$target),'Container identified');opaque_assert(false===strpos($html,'<form')&&false===strpos($html,'opaque-private'),'No misleading choices or raw content');
+  ob_start();YOWCL_Free_Migrations::render_review();$page=ob_get_clean();preg_match('/<section id="loyf-review-'.preg_quote($f,'/').'".*?<\/section>/s',$page,$match);$html=$match[0]??'';opaque_assert(false!==strpos($html,'Restore or repair the original complete container'),'Explicit manual review path');opaque_assert(false!==strpos($html,$target),'Container identified');opaque_assert(false===strpos($html,'<form')&&false===strpos($html,'opaque-private'),'No misleading choices or raw content');
  }}
  $wpdb->rows=array();$spec=YOWCL_Free_Migrations::preview($f,'disable');opaque_assert(null===$spec['before']&&YOWCL_Free_Migrations::readable($f),'Absent target remains supported');
 }

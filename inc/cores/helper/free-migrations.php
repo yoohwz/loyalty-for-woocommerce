@@ -35,7 +35,7 @@ class YOWCL_Free_Migrations {
             try { self::target_settings($feature); }
             catch (Throwable $e) { if ('migration_opaque_target'===$e->getMessage()) { return self::opaque_message($feature); } }
         }
-        return __('The saved Loyalty settings cannot be read safely. Their original data was preserved. Review the compatibility notice before changing this feature.', 'loyalty-for-woocommerce');
+        return __('This feature is on hold and is not active. Its saved settings are preserved until an administrator explicitly reviews and confirms them in Migration Review.', 'loyalty-for-woocommerce');
     }
     private static function opaque_message( $feature ) {
         /* translators: Canonical option container name, never its stored contents. */
@@ -349,8 +349,12 @@ class YOWCL_Free_Migrations {
         $method=is_string($_SERVER['REQUEST_METHOD']??null)?sanitize_key(wp_unslash($_SERVER['REQUEST_METHOD'])):'';
         if ('post'!==$method || !current_user_can('manage_options') || !YOWCL_Free_Core::owns() || !in_array($feature,self::features(),true) || !in_array($mode,array('canonical','legacy','disable'),true) || !preg_match('/^[a-f0-9]{64}$/D',$fingerprint) || !wp_verify_nonce($nonce,'loyf_resolve_'.$feature)) { wp_die('migration_resolution_denied'); }
         try { self::resolve($feature,$mode,$fingerprint,$nonce); }
-        catch(Throwable $e) { wp_die(esc_html($e->getMessage())); }
-        wp_safe_redirect(admin_url('admin.php?page=wc-settings&tab=loyalty')); exit;
+        catch(Throwable $e) {
+            $code=in_array($e->getMessage(),array('migration_resolution_stale','migration_target_changed'),true)?$e->getMessage():'unconfirmed';
+            wp_safe_redirect(add_query_arg(array('feature'=>$feature,'result'=>$code,'choice'=>$mode),admin_url('admin.php?page=loyf-migration-review')).'#loyf-review-'.$feature); exit;
+        }
+        $result='confirmed'===self::review_state($feature)?'confirmed':'unconfirmed';
+        wp_safe_redirect(add_query_arg(array('feature'=>$feature,'result'=>$result),admin_url('admin.php?page=loyf-migration-review')).'#loyf-review-'.$feature); exit;
     }
     /** Completed historical evidence is for manual assessment, never rollback authority. */
     public static function historical_evidence( $feature ) {
@@ -383,32 +387,134 @@ class YOWCL_Free_Migrations {
             catch ( Throwable $e ) { self::$errors[$feature] = $e->getMessage(); }
         }
     }
+    public static function review_url( $feature = '' ) {
+        return admin_url('admin.php?page=loyf-migration-review') . (in_array($feature,self::features(),true) ? '#loyf-review-'.$feature : '');
+    }
+    public static function held_link( $feature ) {
+        return '<strong>'.esc_html__('On hold / not active','loyalty-for-woocommerce').'</strong> '.esc_html__('New actions for this feature are paused. Saved data is preserved.','loyalty-for-woocommerce').' <a href="'.esc_url(self::review_url($feature)).'">'.esc_html__('Review this setting','loyalty-for-woocommerce').'</a>';
+    }
+    /** Derive all UI states from the existing rows; storage failures never imply readiness. */
+    public static function review_state( $feature ) {
+        try {
+            self::target_settings($feature);
+            $witness=self::read(self::witness($feature));
+            if ('1'===$witness) { return 'confirmed'; }
+            if (null!==$witness) { return 'manual'; }
+            $pending=self::read(self::witness($feature).'_resolution');
+            if (null!==$pending) {
+                $spec=self::decode($pending); self::validate_spec($feature,$spec,true);
+                if (!in_array($spec['mode']??null,array('canonical','legacy','disable'),true)) { return 'manual'; }
+                return 'pending';
+            }
+            return 'review';
+        } catch(Throwable $e) { return in_array($e->getMessage(),array('migration_opaque_target','migration_malformed_option','migration_malformed_evidence','migration_malformed_points','migration_malformed_role_map','migration_malformed_email'),true) ? 'manual' : 'unavailable'; }
+    }
+    public static function has_holds() {
+        foreach(self::features() as $feature) { if ('confirmed'!==self::review_state($feature)) { return true; } }
+        return false;
+    }
     public static function notices() {
-        if ( ! current_user_can( 'manage_options' ) ) { return; }
-        foreach ( self::$errors as $feature => $code ) {
-            /* translators: 1: feature name, 2: migration diagnostic code. */
-            echo '<div class="notice notice-error"><p>' . esc_html( sprintf( __( 'Loyalty compatibility migration needs attention (%1$s: %2$s). This feature is held until storage/settings are repaired and migration succeeds.', 'loyalty-for-woocommerce' ), $feature, $code ) ) . '</p>';
-            if ('migration_opaque_target'===$code) {
-                echo '<p>'.esc_html(self::opaque_message($feature)).'</p></div>';
-                continue;
+        if (!current_user_can('manage_options') || !YOWCL_Free_Core::owns()) { return; }
+        $screen=function_exists('get_current_screen') ? get_current_screen() : null;
+        if (!$screen || !in_array($screen->id,array('woocommerce_page_wc-settings','dashboard','plugins'),true)) { return; }
+        $tab=is_string($_GET['tab']??null)?sanitize_key(wp_unslash($_GET['tab'])):'';
+        if ('woocommerce_page_wc-settings'===$screen->id && !in_array($tab,array('loyalty','email'),true)) { return; }
+        $count=0; foreach(self::features() as $feature) { if ('confirmed'!==self::review_state($feature)) { $count++; } }
+        if (!$count) { return; }
+        /* translators: Number of held Loyalty features. */
+        echo '<div class="notice notice-warning"><p><strong>'.esc_html(sprintf(_n('%s Loyalty setting needs review','%s Loyalty settings need review',$count,'loyalty-for-woocommerce'),number_format_i18n($count))).'</strong> '.esc_html__('Some new rewards, redemption or emails are paused. Existing balances and history are unchanged.','loyalty-for-woocommerce').' <a href="'.esc_url(self::review_url()).'">'.esc_html__('Review Loyalty settings','loyalty-for-woocommerce').'</a></p></div>';
+    }
+    public static function register_review() {
+        add_submenu_page('woocommerce',__('Loyalty Migration Review','loyalty-for-woocommerce'),__('Loyalty Migration Review','loyalty-for-woocommerce'),'manage_options','loyf-migration-review',array(__CLASS__,'render_review'));
+    }
+    private static function feature_labels() {
+        return array('signup'=>__('Sign-up reward','loyalty-for-woocommerce'),'login'=>__('Daily login reward','loyalty-for-woocommerce'),'review'=>__('Product review reward','loyalty-for-woocommerce'),'levelup'=>__('Level-up reward','loyalty-for-woocommerce'),'redemption'=>__('Points redemption','loyalty-for-woocommerce'),'email_reward'=>__('Points earned email','loyalty-for-woocommerce'),'email_deduct'=>__('Points deducted email','loyalty-for-woocommerce'),'email_level'=>__('Level update email','loyalty-for-woocommerce'));
+    }
+    /** Presentation only. Never write formatted numbers back to stored terms. */
+    public static function display_number( $value ) {
+        if (''===$value) { return __('Not configured','loyalty-for-woocommerce'); }
+        if (!is_scalar($value) || !is_numeric($value) || !is_finite((float)$value)) { return __('Unsupported value','loyalty-for-woocommerce'); }
+        return (string)$value;
+    }
+    private static function scoped_terms( $feature, $value ) {
+        $keys=self::keys($feature);
+        if ('redemption'===$feature) { $keys=array_merge($keys,array('points','amount')); }
+        return array_intersect_key($value,array_flip($keys));
+    }
+    private static function terms_html( $feature, $terms ) {
+        $labels=array('enabled'=>__('Delivery','loyalty-for-woocommerce'),'points'=>__('Exchange points','loyalty-for-woocommerce'),'amount'=>__('Discount amount','loyalty-for-woocommerce'),'min_points'=>__('Minimum points','loyalty-for-woocommerce'),'max_points'=>__('Maximum points','loyalty-for-woocommerce'),'min_cart'=>__('Minimum cart amount','loyalty-for-woocommerce'));
+        $keys=self::keys($feature);
+        if ('redemption'===$feature) { $keys=array_merge(array('points','amount'),$keys); }
+        $html='<ul>';
+        foreach($keys as $key) {
+            $label=$labels[$key]??(substr($key,-8)==='_enabled' ? __('Future rewards','loyalty-for-woocommerce') : __('Reward points','loyalty-for-woocommerce'));
+            if (!array_key_exists($key,$terms)) { $text=__('Absent / unknown','loyalty-for-woocommerce'); }
+            elseif ('enabled'===$key || substr($key,-8)==='_enabled') { $text='yes'===$terms[$key] ? __('Enabled after confirmation','loyalty-for-woocommerce') : ('no'===$terms[$key] ? __('Disabled','loyalty-for-woocommerce') : __('Unsupported value','loyalty-for-woocommerce')); }
+            elseif ('levelup_points'===$key) {
+                $html.='<li>'.esc_html__('Per-role reward points','loyalty-for-woocommerce').'<ul>';
+                if (!is_array($terms[$key])) { $html.='<li>'.esc_html__('Unsupported value','loyalty-for-woocommerce').'</li>'; }
+                elseif (!$terms[$key]) { $html.='<li>'.esc_html__('No configured role rewards','loyalty-for-woocommerce').'</li>'; }
+                else { foreach($terms[$key] as $role=>$rule) { if (!is_string($role) || sanitize_key($role)!==$role) { continue; } $roles=wp_roles()->roles; $role_label=is_string($roles[$role]['name']??null)?$roles[$role]['name']:$role; $html.='<li>'.esc_html($role_label).' : <strong>'.esc_html(self::display_number(is_array($rule)?($rule['awarded']??''):null)).'</strong></li>'; } }
+                $html.='</ul></li>'; continue;
+            } else { $text=self::display_number($terms[$key]); if (('amount'===$key || 'min_cart'===$key) && ''!==$terms[$key]) { if (''!==$terms[$key] && is_scalar($terms[$key]) && is_numeric($terms[$key])) { $text=wc_format_decimal($terms[$key],wc_get_price_decimals(),true); } $text.=' '.get_woocommerce_currency(); } }
+            $html.='<li>'.esc_html($label).': <strong>'.esc_html($text).'</strong></li>';
+        }
+        return $html.'</ul>';
+    }
+    private static function resolution_message( $code ) {
+        if ('migration_resolution_stale'===$code || 'migration_target_changed'===$code) { return __('The reviewed settings changed. Nothing was confirmed by this request. Reload and review the current terms before choosing again.','loyalty-for-woocommerce'); }
+        return __('The decision could not be confirmed. Saved data and any pending choice are preserved. Reload and review this item; retry only the pending choice when available. For unsupported data, ask a qualified administrator to review verified backups.','loyalty-for-woocommerce');
+    }
+    public static function render_review() {
+        if (!current_user_can('manage_options') || !YOWCL_Free_Core::owns()) { wp_die('migration_resolution_denied'); }
+        $labels=self::feature_labels();
+        $states=array('review'=>__('Needs review','loyalty-for-woocommerce'),'confirmed'=>__('Confirmed','loyalty-for-woocommerce'),'pending'=>__('Incomplete / pending','loyalty-for-woocommerce'),'manual'=>__('Unsupported data / manual repair','loyalty-for-woocommerce'),'unavailable'=>__('Unavailable','loyalty-for-woocommerce'));
+        echo '<div class="wrap"><h1>'.esc_html__('Loyalty Migration Review','loyalty-for-woocommerce').'</h1><p>'.esc_html__('Review one feature at a time. Your explicit choice authorizes future rewards, redemption or email delivery only. Existing points, history and historical evidence are not changed. An update without verified pre-upgrade evidence cannot establish which edition last wrote these settings.','loyalty-for-woocommerce').'</p><p><a href="'.esc_url(admin_url('admin.php?page=wc-settings&tab=loyalty')).'">'.esc_html__('Return to Loyalty settings','loyalty-for-woocommerce').'</a></p>';
+        $result=is_string($_GET['result']??null)?sanitize_key(wp_unslash($_GET['result'])):'';
+        $selected=is_string($_GET['feature']??null)?sanitize_key(wp_unslash($_GET['feature'])):'';
+        $attempt=is_string($_GET['choice']??null)?sanitize_key(wp_unslash($_GET['choice'])):'';
+        foreach($labels as $feature=>$label) {
+            if ('signup'===$feature || 'redemption'===$feature || 'email_reward'===$feature) { echo '<h2>'.esc_html('signup'===$feature ? __('Rewards','loyalty-for-woocommerce') : ('redemption'===$feature ? __('Redemption','loyalty-for-woocommerce') : __('Email delivery','loyalty-for-woocommerce'))).'</h2>'; }
+            $state=self::review_state($feature); $current=array();
+            echo '<section id="loyf-review-'.esc_attr($feature).'" class="card" style="max-width:100%;box-sizing:border-box" tabindex="-1" aria-labelledby="loyf-title-'.esc_attr($feature).'"><h3 id="loyf-title-'.esc_attr($feature).'">'.esc_html($label).'</h3><p role="status"><strong>'.esc_html($states[$state]).'</strong></p>';
+            if ($selected===$feature && $result) {
+                $ok='confirmed'===$state && 'confirmed'===$result;
+                echo '<div role="'.($ok?'status':'alert').'" class="notice notice-'.($ok?'success':'error').' inline"><p>'.esc_html($ok ? __('Confirmed from current server storage. Review the next item or return to settings to edit this feature.','loyalty-for-woocommerce') : self::resolution_message($result)).'</p></div>';
             }
-            foreach(array('canonical'=>__('Keep current canonical','loyalty-for-woocommerce'),'legacy'=>__('Adopt legacy Free semantics','loyalty-for-woocommerce'),'disable'=>__('Disable using Free settings','loyalty-for-woocommerce')) as $mode=>$label) {
+            try { $current=self::target_settings($feature); echo '<h4>'.esc_html__('Current canonical terms','loyalty-for-woocommerce').'</h4>'.self::terms_html($feature,self::scoped_terms($feature,$current)); }
+            catch(Throwable $e) { echo '<p>'.esc_html(self::held_settings_message($feature)).'</p>'; }
+            if ('confirmed'!==$state) {
                 try {
-                    $spec=self::preview($feature,$mode);
-                    echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'">';
-                    echo '<p>'.esc_html($label).' — '.esc_html(wp_json_encode($spec['patch'])).'</p>';
-                    foreach(array('action'=>'loyf_resolve_migration','feature'=>$feature,'mode'=>$mode,'fingerprint'=>hash('sha256',serialize($spec))) as $key=>$value) { echo '<input type="hidden" name="'.esc_attr($key).'" value="'.esc_attr($value).'">'; }
-                    wp_nonce_field('loyf_resolve_'.$feature);
-                    echo '<button type="submit" class="button">'.esc_html($label).'</button></form>';
-                } catch(Throwable $e) { /* Unavailable choices grant no authority. */ }
+                    $legacy=self::preview($feature,'legacy');
+                    echo '<h4>'.esc_html__('Valid legacy terms for comparison','loyalty-for-woocommerce').'</h4>'.self::terms_html($feature,self::scoped_terms($feature,array_replace(self::decode($legacy['before']),$legacy['patch'])));
+                } catch(Throwable $e) { echo '<p>'.esc_html__('Valid legacy terms are absent, unsupported or unavailable for the pending choice. This is not a zero or disabled setting.','loyalty-for-woocommerce').'</p>'; }
+                echo '<p>'.esc_html__('On hold / not active. Compare the terms below before confirming. Zero values or disabled choices stop future activity for this feature. Other ready settings can be saved independently.','loyalty-for-woocommerce').'</p>';
+                foreach(array('canonical'=>__('Keep current','loyalty-for-woocommerce'),'legacy'=>__('Use proven legacy','loyalty-for-woocommerce'),'disable'=>__('Disable','loyalty-for-woocommerce')) as $mode=>$choice) {
+                    try {
+                        if (in_array($state,array('manual','unavailable'),true)) { continue; }
+                        $spec=self::preview($feature,$mode);
+                        $after=array_replace(self::decode($spec['before']),$spec['patch']);
+                        echo '<details'.($selected===$feature && $attempt===$mode ? ' open' : '').'><summary>'.esc_html($choice).'</summary><p>'.esc_html('legacy'===$mode ? __('These are valid historical Free terms, not proof of the last writer. Choose them only after reviewing this comparison.','loyalty-for-woocommerce') : __('This is an explicit decision about future settings.','loyalty-for-woocommerce')).'</p>'.self::terms_html($feature,self::scoped_terms($feature,$after));
+                        if ('legacy'===$mode && !$spec['patch']) { echo '<p>'.esc_html__('No setting values will change; confirmation authorizes the displayed existing redemption terms.','loyalty-for-woocommerce').'</p>'; }
+                        if (self::scoped_terms($feature,$current??array())!==self::scoped_terms($feature,$after)) { echo '<p><strong>'.esc_html__('The displayed terms differ from the current canonical terms. Check each amount and role before confirming.','loyalty-for-woocommerce').'</strong></p>'; }
+                        echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'">';
+                        foreach(array('action'=>'loyf_resolve_migration','feature'=>$feature,'mode'=>$mode,'fingerprint'=>hash('sha256',serialize($spec))) as $key=>$value) { echo '<input type="hidden" name="'.esc_attr($key).'" value="'.esc_attr($value).'">'; }
+                        echo '<input type="hidden" name="_wpnonce" value="'.esc_attr(wp_create_nonce('loyf_resolve_'.$feature)).'">';
+                        /* translators: Explicit feature choice. */
+                        echo '<p><button class="button" type="submit">'.esc_html(sprintf(__('Confirm: %s','loyalty-for-woocommerce'),$choice)).'</button></p></form></details>';
+                    } catch(Throwable $e) { echo '<p>'.esc_html($choice).' — '.esc_html__('Unavailable for the current data or pending choice.','loyalty-for-woocommerce').'</p>'; }
+                }
+                echo '<p><a href="'.esc_url(self::review_url($feature)).'">'.esc_html__('Reload and review this item','loyalty-for-woocommerce').'</a></p>';
             }
-            echo '</div>';
+            if ('confirmed'===$state) {
+                $sections=array('email_reward'=>'yowcl_wc_email_loyalty_points_reward','email_deduct'=>'yowcl_wc_email_loyalty_points_deduct','email_level'=>'yowcl_wc_email_loyalty_level_update');
+                $edit=isset($sections[$feature]) ? admin_url('admin.php?page=wc-settings&tab=email&section='.$sections[$feature]) : admin_url('admin.php?page=wc-settings&tab=loyalty&section='.('redemption'===$feature?'general':'extra_points'));
+                echo '<p><a href="'.esc_url($edit).'">'.esc_html__('Edit confirmed settings','loyalty-for-woocommerce').'</a></p>';
+            }
+            try { $history=self::historical_evidence($feature); if (null!==$history) { echo '<details><summary>'.esc_html__('Historical Loyalty migration evidence','loyalty-for-woocommerce').'</summary><p>'.esc_html__('Read-only evidence; this does not grant rollback authority or prove which edition last wrote these terms.','loyalty-for-woocommerce').'</p>'; foreach($history as $kind=>$terms) { $titles=array('before'=>__('Before migration','loyalty-for-woocommerce'),'migration'=>__('Migration terms','loyalty-for-woocommerce'),'current'=>__('Current terms','loyalty-for-woocommerce')); echo '<h4>'.esc_html($titles[$kind]??__('Evidence','loyalty-for-woocommerce')).'</h4>'.(is_array($terms)?self::terms_html($feature,$terms):esc_html__('Unavailable','loyalty-for-woocommerce')); } echo '</details>'; } } catch(Throwable $e) { echo '<p>'.esc_html__('Historical evidence unavailable.','loyalty-for-woocommerce').'</p>'; }
+            echo '</section>';
         }
-        foreach(self::features() as $feature) {
-            try { $evidence=self::historical_evidence($feature); } catch(Throwable $e) { continue; }
-            if (null===$evidence) { continue; }
-            echo '<div class="notice notice-info"><details><summary>'.esc_html__('Historical Loyalty migration evidence','loyalty-for-woocommerce').' — '.esc_html($feature).'</summary><p>'.esc_html__('These stored terms do not prove which edition last wrote them. Review the before, migration and current terms manually. No automatic restore is performed.','loyalty-for-woocommerce').'</p><pre>'.esc_html(wp_json_encode($evidence)).'</pre></details></div>';
-        }
+        echo '</div><script>document.addEventListener("DOMContentLoaded",function(){var id=window.location.hash.slice(1);if(/^loyf-review-(signup|login|review|levelup|redemption|email_reward|email_deduct|email_level)$/.test(id)){var item=document.getElementById(id);if(item){item.focus();}}});</script>';
     }
     /** Canonical merchant saves cannot race or precede unfinished initial migration. */
     public static function save( $feature, $target, $patch ) {
@@ -427,3 +533,5 @@ class YOWCL_Free_Migrations {
         wc_add_notice( __( 'Please reapply loyalty points after the upgrade. Your points balance has not changed.', 'loyalty-for-woocommerce' ), 'notice' );
     }
 }
+
+add_action('admin_menu',array('YOWCL_Free_Migrations','register_review'));

@@ -7,11 +7,14 @@ class YOSWC_Loyalty_Notifications_Email {
         foreach (array('points_reward','points_deduct','level_update') as $family) {
             $id='yowcl_loyalty_'.$family;
             $feature='level_update'===$family ? 'email_level' : ('points_deduct'===$family ? 'email_deduct' : 'email_reward');
+            add_action('woocommerce_update_options_email_'.$id, static function() use($feature) {
+                if (!YOWCL_Free_Migrations::ready($feature) || !YOWCL_Free_Migrations::readable($feature)) { WC_Admin_Settings::add_error(YOWCL_Free_Migrations::held_settings_message($feature)); }
+            }, 0);
             add_filter('woocommerce_settings_api_form_fields_'.$id, function($fields) use($feature,$id,$family) {
-                if (YOWCL_Free_Migrations::readable($feature)) { return $fields; }
+                if (YOWCL_Free_Migrations::ready($feature) && YOWCL_Free_Migrations::readable($feature)) { return $fields; }
                 $section=$GLOBALS['current_section']??($_GET['section']??'');
                 if (in_array($section,array($id,'yowcl_wc_email_loyalty_'.$family),true)) { $GLOBALS['hide_save_button']=true; }
-                return array('loyf_preserved_settings'=>array('type'=>'title','default'=>'','title'=>__('Settings preserved','loyalty-for-woocommerce'),'description'=>YOWCL_Free_Migrations::held_settings_message($feature)));
+                return array('loyf_preserved_settings'=>array('type'=>'title','default'=>'','title'=>__('Settings preserved','loyalty-for-woocommerce'),'description'=>YOWCL_Free_Migrations::held_settings_message($feature).' '.YOWCL_Free_Migrations::held_link($feature)));
             });
             add_filter('pre_update_option_woocommerce_'.$id.'_settings', function($value,$old) use($feature) {
                 if (YOWCL_Free_Migrations::readable($feature)) { return $value; }

@@ -310,7 +310,7 @@
     {
       "target": "inc/backend/actions/emails/notifications-email.php",
       "mode": "100644",
-      "sha256": "958f3b169057f18c47a7b18580c8b8f9cef0c865d0fe5fd3539396be5c8256f7"
+      "sha256": "c3ea7712c8fad993f52a0993bec6562658a614a53b2e0446fa75400477cd12ec"
     },
     {
       "target": "inc/backend/actions/extra-points/level-up.php",
@@ -345,7 +345,7 @@
     {
       "target": "inc/backend/settings.php",
       "mode": "100644",
-      "sha256": "8f3983019f6daf93362d31b65a3209944adb19de08212ef157abead9ca4e038e"
+      "sha256": "e195c7e4ba2108528446b63e56de7b533132056589c2ab717b4ca9090b38510e"
     },
     {
       "target": "inc/backend/settings/customization.php",
@@ -355,7 +355,7 @@
     {
       "target": "inc/backend/settings/extra-points.php",
       "mode": "100644",
-      "sha256": "2fe4bcb744941f5fba606a6871da008d08d9936630753ac6bf63b588b965391c"
+      "sha256": "a309fe3e610ff8f156c446863119457f94b28df5ab372ec27187cd26d8874d3f"
     },
     {
       "target": "inc/backend/settings/files/yol_import_sample.csv",
@@ -385,7 +385,7 @@
     {
       "target": "inc/backend/settings/general-using-point-rules.php",
       "mode": "100644",
-      "sha256": "5405bdd78790e183a65da1ee2d7541c4bbe14e3686d5506c27a7b35980fe0afb"
+      "sha256": "b0e6d1369c2369e6e849cbdaed0349bfd3eb4e019b21ac2737d82b2ef8e68101"
     },
     {
       "target": "inc/backend/settings/notification.php",
@@ -400,7 +400,7 @@
     {
       "target": "inc/backend/settings/tools.php",
       "mode": "100644",
-      "sha256": "b5de685ee0be69ef46a0f936c15634f4e292a8d4e073c3c9c75abbcad16565c0"
+      "sha256": "e407e32d1f03310952bf5225218074b86dd608c7223beb0175c66b46cc7baefb"
     },
     {
       "target": "inc/backend/users.php",
@@ -495,17 +495,17 @@
     {
       "target": "inc/cores/helper/free-first-purchase.php",
       "mode": "100644",
-      "sha256": "2c9bca69c9be5fd77f625a80d0517be24b7cac2b69933cb01dbbf5b55e437455"
+      "sha256": "6d4262f453a4404d683cfd35177138b9385c6832b215c283d24eefe145246321"
     },
     {
       "target": "inc/cores/helper/free-migrations.php",
       "mode": "100644",
-      "sha256": "6f92efa1981e1c3089a13735114785d17b3ce43dc3ee32fca542ff1881942284"
+      "sha256": "2041f2722b10dac17f22dc49fd50e6258cd1865372ce7ed866b75f812a25a9f2"
     },
     {
       "target": "inc/cores/helper/free-onboarding.php",
       "mode": "100644",
-      "sha256": "b6a7d5b4b229d7a753d8daaa7ac2d52134861c496652ec296dd82b61bfe1ae13"
+      "sha256": "0d8ce2d88cc66f8d27d60936e9d49c89ba605636545a2bf49625b8a5fb5b4fb1"
     },
     {
       "target": "inc/cores/helper/free-order-actions.php",
@@ -530,7 +530,7 @@
     {
       "target": "inc/cores/notices.php",
       "mode": "100644",
-      "sha256": "4222d94b067b2171111e3faabefcfe1efea63c84d8730dec592cdf6695728595"
+      "sha256": "e49f6223ab60dab8ce5374ed0f5124047325a0465e42658c115ec05dc83c2d77"
     },
     {
       "target": "inc/frontend/cart-checkout.php",
@@ -620,7 +620,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "eff9fd3270a8eac6587f05b1675dd1088caab4695d705af19493348e9be524ae"
+      "sha256": "8b4cbeda76cca02efff7b7895f45d5674d9b7445ba037f7563e6dcb792998683"
     },
     {
       "target": "license.txt",

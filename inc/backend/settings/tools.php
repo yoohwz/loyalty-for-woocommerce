@@ -6,9 +6,11 @@ class YOSWC_Loyalty_Settings_Tools {
 	public function __construct() {
 		add_action('admin_post_redefine_loyalty_level', [$this, 'handle_redefine_loyalty_level']);
 		add_action('admin_notices', [$this, 'maybe_show_admin_notices']);
+        add_filter('woocommerce_save_settings_loyalty_tools','__return_false');
 	}
 
 	public function display_tools_settings() {
+        $GLOBALS['hide_save_button']=true;
         YOWCL_Free_Reader_Admin::form();
 		if ( null !== filter_input( INPUT_POST, 'import_csv', FILTER_UNSAFE_RAW ) ) {
 			$this->import_csv();
@@ -30,19 +32,19 @@ class YOSWC_Loyalty_Settings_Tools {
 			<tr>
 				<th><?php esc_html_e('Import CSV', 'loyalty-for-woocommerce'); ?></th>
 				<td>
-					<form method="post" enctype="multipart/form-data">
+
 						<span class="yobm-upload-form">
 							<input type="file" name="import_file" id="import_file" accept=".csv">
 							<?php wp_nonce_field('wc_loyalty_import_action', 'wc_loyalty_import_nonce'); ?>
                             <input type="hidden" name="operation_id" value="<?php echo esc_attr( $operation_id ); ?>">
-							<input type="submit" name="import_csv" id="import_csv" class="button-primary" value="<?php esc_attr_e('Import', 'loyalty-for-woocommerce'); ?>" disabled>
+							<input type="submit" name="import_csv" formenctype="multipart/form-data" id="import_csv" class="button-primary" value="<?php esc_attr_e('Import', 'loyalty-for-woocommerce'); ?>" disabled>
 						</span>
-					</form>
-                    <form method="post">
+
+
                         <?php wp_nonce_field( 'loyf_start_new_import', 'loyf_start_new_import_nonce' ); ?>
                         <input type="hidden" name="previous_operation_id" value="<?php echo esc_attr( $operation_id ); ?>">
                         <button type="submit" name="start_new_import" class="button"><?php esc_html_e( 'Start another import', 'loyalty-for-woocommerce' ); ?></button>
-                    </form>
+
                     <p class="description"><?php esc_html_e( 'Retry the original file to continue the current import. Start another import only after reviewing the previous results.', 'loyalty-for-woocommerce' ); ?></p>
 					<p class="description" style="margin-top: 20px;">
 						<?php
