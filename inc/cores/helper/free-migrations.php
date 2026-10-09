@@ -314,7 +314,7 @@ class YOWCL_Free_Migrations {
             if (!YOWCL_Free_Core::owns()) { throw new RuntimeException('migration_owner_changed'); }
             if ($resolution && !isset($spec['consent'])) {
                 self::interactive_actor();
-                if ('redemption' === $feature) { self::assert_direct_redemption_context($spec); }
+                if ('redemption' === $feature && !$completion) { self::assert_direct_redemption_context($spec); }
             }
             if (isset($spec['consent'])) {
                 self::consent($feature,$spec,$interactive);

@@ -12,7 +12,7 @@ function loyf_upgrade_migrate() {
         if(YOWCL_Free_Migrations::ready($feature)) { continue; }
         try {
             $spec=YOWCL_Free_Migrations::preview($feature,'legacy');
-            YOWCL_Free_Migrations::resolve($feature,'legacy',hash('sha256',serialize($spec)),wp_create_nonce('loyf_resolve_'.$feature));
+            YOWCL_Free_Migrations::resolve($feature,'legacy',YOWCL_Free_Migrations::resolution_fingerprint($feature,$spec),wp_create_nonce('loyf_resolve_'.$feature));
         } catch(Throwable $e) { /* Fault fixtures retain the native hold. */ }
     }
     wp_set_current_user($actor);

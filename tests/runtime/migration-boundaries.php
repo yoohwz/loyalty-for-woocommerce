@@ -10,7 +10,7 @@ $names=array_merge($names,array('wc_loyalty_version','yowcl_email_legacy_options
 $saved=array();foreach($names as $n){$saved[$n]=$wpdb->get_row($wpdb->prepare("SELECT option_value,autoload FROM {$wpdb->options} WHERE option_name=%s",$n),ARRAY_A);}
 $recovery_user=0;
 $clear=function($f)use($wpdb){foreach(array('','_before','_resolution') as $suffix){delete_option(YOWCL_Free_Migrations::witness($f).$suffix);}};
-$choose=function($f,$mode){$spec=YOWCL_Free_Migrations::preview($f,$mode);YOWCL_Free_Migrations::resolve($f,$mode,hash('sha256',serialize($spec)),wp_create_nonce('loyf_resolve_'.$f));};
+$choose=function($f,$mode){$spec=YOWCL_Free_Migrations::preview($f,$mode);YOWCL_Free_Migrations::resolve($f,$mode,YOWCL_Free_Migrations::resolution_fingerprint($f,$spec),wp_create_nonce('loyf_resolve_'.$f));};
 try {
  foreach(YOWCL_Free_Migrations::features() as $f){$clear($f);}
  update_option('wc_loyalty_version','1.2.2');

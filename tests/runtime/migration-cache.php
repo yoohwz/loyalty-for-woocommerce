@@ -41,7 +41,7 @@ $spawn=static function($role,$extra=array())use(&$children,$base){
 };
 $join=static function($index)use(&$children){list($process,$log)=$children[$index];$until=microtime(true)+25;do{$state=proc_get_status($process);if(!$state['running']){break;}usleep(20000);}while(microtime(true)<$until);if($state['running']){proc_terminate($process);throw new RuntimeException('Cache reader timeout');}$code=$state['exitcode'];proc_close($process);$children[$index][0]=null;loyf_equal(0,$code,'Native child process: '.file_get_contents($log));echo file_get_contents($log);};
 $clear=static function($f){foreach(array('','_before','_resolution')as$s){delete_option(YOWCL_Free_Migrations::witness($f).$s);}};
-$choose=static function($f){$spec=YOWCL_Free_Migrations::preview($f,'disable');YOWCL_Free_Migrations::resolve($f,'disable',hash('sha256',serialize($spec)),wp_create_nonce('loyf_resolve_'.$f));};
+$choose=static function($f){$spec=YOWCL_Free_Migrations::preview($f,'disable');YOWCL_Free_Migrations::resolve($f,'disable',YOWCL_Free_Migrations::resolution_fingerprint($f,$spec),wp_create_nonce('loyf_resolve_'.$f));};
 try{
  foreach(YOWCL_Free_Migrations::features()as$f){$clear($f);}foreach($targets as$n=>$value){update_option($n,$value);$wpdb->update($wpdb->options,array('autoload'=>'yes'),array('option_name'=>$n));}wp_cache_flush();
  $user=wp_insert_user(array('user_login'=>'cache_'.substr(wp_generate_uuid4(),0,8),'user_email'=>'cache@example.invalid','user_pass'=>'disposable-only','role'=>'customer'));loyf_assert(is_int($user),'Native cache probe customer');

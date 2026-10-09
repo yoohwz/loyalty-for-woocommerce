@@ -24,7 +24,7 @@ if('free-seed'===$phase){
  loyf_assert(class_exists('YOSWC_Loyalty',false)&&!class_exists('YOWCL_Loyalty',false),'Separate Free seed owner');
  wp_set_current_user(1);$fixture=json_decode(file_get_contents(__DIR__.'/../fixtures/free-1.2.2.json'),true);
  foreach($fixture['options'] as $n=>$value){update_option($n,$value);}add_role('loyf_gold','Fixture Gold',array('read'=>true));
- foreach(YOWCL_Free_Migrations::features() as $f){if(!YOWCL_Free_Migrations::ready($f)){$spec=YOWCL_Free_Migrations::preview($f,'legacy');YOWCL_Free_Migrations::resolve($f,'legacy',hash('sha256',serialize($spec)),wp_create_nonce('loyf_resolve_'.$f));}}
+ foreach(YOWCL_Free_Migrations::features() as $f){if(!YOWCL_Free_Migrations::ready($f)){$spec=YOWCL_Free_Migrations::preview($f,'legacy');YOWCL_Free_Migrations::resolve($f,'legacy',YOWCL_Free_Migrations::resolution_fingerprint($f,$spec),wp_create_nonce('loyf_resolve_'.$f));}}
  $_POST=array('extra_points_settings_nonce'=>wp_create_nonce('save_extra_points_settings_action'),'loyalty_extra_signup_points'=>'5','loyalty_extra_login_points'=>'3','loyalty_extra_review_points'=>'7','loyalty_extra_levelup_loyf_gold'=>'11');(new YOSWC_Loyalty_Settings_Extra_Points())->save_extra_points_settings();$_POST=array();
  YOWCL_Free_First_Purchase::save(true,25);YOWCL_Free_Referral::save(true,17);$cutoff=YOWCL_Free_First_Purchase::configuration()['epoch']['cutoff'];while(time()<=$cutoff){usleep(100000);}
  $run=substr(wp_generate_uuid4(),0,8);
