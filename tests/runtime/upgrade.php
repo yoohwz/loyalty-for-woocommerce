@@ -17,6 +17,12 @@ function loyf_upgrade_migrate() {
     }
     wp_set_current_user($actor);
 }
+// Captured upgrade boot schedules only; the native AS runner completes the retained specs.
+foreach(YOWCL_Free_Migrations::features() as $feature) { loyf_assert(!YOWCL_Free_Migrations::ready($feature),'No synchronous captured conversion at boot'); }
+YOWCL_Free_Migrations::schedule();
+$actions=as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'group'=>YOWCL_Free_Migrations::GROUP,'status'=>'pending','per_page'=>20),'ids');
+loyf_equal(8,count($actions),'Eight bounded captured actions');
+foreach($actions as $action){ActionScheduler_QueueRunner::instance()->process_action($action,'LOYF-27 captured runtime');}
 $before = get_option('loyf_upgrade_before');
 loyf_assert(is_array($before), 'Actual old-Free fixture');
 loyf_equal($before['meta'], $wpdb->get_results("SELECT * FROM {$wpdb->usermeta} ORDER BY umeta_id", ARRAY_A), 'All user meta byte preservation on boot');

@@ -12,7 +12,7 @@ const fixture = mode => execFileSync(process.env.LOYF25_PHP || 'php', [process.e
   const settings=section=>base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section='+section;
   const review=base+'/wp-admin/admin.php?page=loyf-migration-review';
   await page.goto(settings('general'));
-  assert.equal(await page.locator('.notice').filter({hasText:'8 Loyalty settings need review'}).count(),1,'One count derived from eight held features');
+  assert.equal(await page.locator('#loyf-migration-notice').count(),1,'One count derived from eight held features');
   assert.equal(await page.locator('input[name=loyalty_using_amount]').isDisabled(),true);
   assert.equal(await page.locator('#loyalty_points_using_point').isDisabled(),true);
   await page.locator('#loyalty_points_rounding').selectOption('round_up');
@@ -78,6 +78,20 @@ const fixture = mode => execFileSync(process.env.LOYF25_PHP || 'php', [process.e
   assert(await page.locator('#loyf-review-redemption').isVisible());assert.equal(await page.evaluate(()=>document.activeElement.id),'loyf-review-redemption');
   await page.keyboard.press('Tab');assert.equal(await page.evaluate(()=>document.activeElement.tagName),'A');
   if(process.env.LOYF25_SCREENSHOT){await page.screenshot({path:process.env.LOYF25_SCREENSHOT,fullPage:true});}
+  fixture('background-seed');await page.goto(review);
+  assert.equal(await page.locator('#loyf-status select').count(),8,'One reviewed vector');
+  assert((await page.locator('#loyf-status').innerText()).includes('includes 8 eligible settings; 0 are excluded'));
+  await page.getByRole('button',{name:'Keep current settings for eligible features',exact:true}).click();
+  assert.equal(await page.evaluate(()=>document.activeElement.textContent),'Confirm selected future settings','Keyboard focus reaches deliberate confirmation');
+  const batchForm=await page.locator('#loyf-keep-current').evaluate(b=>Object.fromEntries(new FormData(b.form)));
+  await Promise.all([page.waitForURL(u=>u.searchParams.get('batch_result')==='admitted'),page.getByRole('button',{name:'Confirm selected future settings',exact:true}).click()]);
+  fixture('verify-queued');const duplicateBatch=await context.request.post(base+'/wp-admin/admin-post.php',{form:batchForm});assert(duplicateBatch.url().includes('batch_result=admitted'));fixture('verify-queued');
+  await page.goto(settings('general'));assert((await page.locator('#loyf-migration-notice').innerText()).includes('updating your settings in the background'));
+  await page.locator('#loyf-migration-notice .notice-dismiss').click();await page.locator('#loyf-migration-notice').waitFor({state:'detached'});
+  await page.reload();assert.equal(await page.locator('#loyf-migration-notice').count(),0,'Dismiss persists after reload');fixture('verify-queued');
+  await page.getByRole('link',{name:'Migration status',exact:true}).click();assert((await page.locator('#loyf-status').innerText()).includes('Queued or running: 8'));
+  fixture('drain-background');fixture('verify-background');await page.reload();assert((await page.locator('#loyf-status').innerText()).includes('Verified: 8'));
+  await page.goto(settings('general'));assert.equal(await page.locator('#loyf-migration-notice').count(),0,'Completed notice disappears');
   console.log('Native migration review browser PASS: held/forged General and email save, independent First Purchase and ready email save, eight scoped links/email holds, role/decimal/privacy comparison, stale and individual keep/legacy/disable PRG/focus, fractional native save, Tools form ownership, responsive keyboard; no value/log events.');
  } finally {await browser.close();}
 })().catch(error=>{console.error(error);process.exit(1);});

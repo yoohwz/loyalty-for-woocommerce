@@ -1,0 +1,78 @@
+<?php
+/** Native LOYF-27 protocol and AS delivery; disposable sites only. */
+require_once __DIR__.'/assertions.php';
+if (!defined('LOYF_RUNTIME_DISPOSABLE')) { throw new RuntimeException('Disposable required'); }
+global $wpdb;
+if ('worker'===($args[0]??'')) {
+    ActionScheduler_QueueRunner::instance()->process_action((int)$args[1],'LOYF-27 independent worker');return;
+}
+wp_set_current_user(1);
+$targets=array('signup'=>'loyalty_extra_points_rules','login'=>'loyalty_extra_points_rules','review'=>'loyalty_extra_reviews_gamification_rules','levelup'=>'loyalty_extra_reviews_gamification_rules','redemption'=>'loyalty_points_using_rules','email_reward'=>'woocommerce_yowcl_loyalty_points_reward_settings','email_deduct'=>'woocommerce_yowcl_loyalty_points_deduct_settings','email_level'=>'woocommerce_yowcl_loyalty_level_update_settings');
+$names=array_merge(array_values($targets),array('loyalty_extra_levelup_points_rules','loyalty_notification_email','loyalty_points_using_point'));
+foreach(YOWCL_Free_Migrations::features() as $f){foreach(array('','_before','_resolution','_background') as $s){$names[]=YOWCL_Free_Migrations::witness($f).$s;}}
+$names=array_unique($names);$saved=array();foreach($names as $n){$saved[$n]=$wpdb->get_row($wpdb->prepare("SELECT option_value,autoload FROM {$wpdb->options} WHERE option_name=%s",$n),ARRAY_A);}
+$business=static function()use($wpdb){return array($wpdb->get_results("SELECT * FROM {$wpdb->usermeta} WHERE meta_key IN ('user_points','user_earning_points') ORDER BY umeta_id",ARRAY_A),$wpdb->get_results("SELECT * FROM {$wpdb->prefix}yo_loyalty_points_log ORDER BY id",ARRAY_A),get_option($wpdb->prefix.'user_roles'));};
+$before=$business();$children=array();$actor=0;
+$store=static function($name,$raw,$autoload='no')use($wpdb){$wpdb->query($wpdb->prepare("INSERT INTO {$wpdb->options}(option_name,option_value,autoload) VALUES(%s,%s,%s) ON DUPLICATE KEY UPDATE option_value=VALUES(option_value),autoload=VALUES(autoload)",$name,$raw,$autoload));wp_cache_delete($name,'options');wp_cache_delete('alloptions','options');wp_cache_delete('notoptions','options');};
+$reset=static function()use($store){
+    as_unschedule_all_actions(YOWCL_Free_Migrations::HOOK,null,YOWCL_Free_Migrations::GROUP);
+    foreach(YOWCL_Free_Migrations::features() as $f){foreach(array('','_before','_resolution','_background') as $s){delete_option(YOWCL_Free_Migrations::witness($f).$s);}}
+    $store('loyalty_extra_points_rules',serialize(serialize(array('signup_points'=>'15','signup_enabled'=>'no','login_points'=>'7','login_enabled'=>'yes','unknown'=>(object)array('keep'=>'009')))),'yes');
+    $store('loyalty_extra_reviews_gamification_rules',serialize(array('review_points'=>'30','review_enabled'=>'yes','levelup_enabled'=>'yes','levelup_points'=>array('customer'=>array('awarded'=>'30')),'unknown'=>'007')));
+    $store('loyalty_extra_levelup_points_rules',serialize(array('customer'=>array('awarded'=>'50'))));
+    $store('loyalty_notification_email',serialize(array('points_update'=>false,'level_update'=>true)));
+    $store('loyalty_points_using_rules',serialize(serialize(array('points'=>'10','amount'=>'0.7010','min_points'=>'','max_points'=>'','min_cart'=>'','unknown'=>'003'))));
+    $store('loyalty_points_using_point','yes');
+    foreach(array('points_reward','points_deduct','level_update') as $id){$store('woocommerce_yowcl_loyalty_'.$id.'_settings',serialize(array('enabled'=>'yes','subject'=>'Retain native subject','heading'=>'Retain native heading')));}
+};
+$choices=static function($modes){$out=array();foreach($modes as $f=>$mode){$spec=YOWCL_Free_Migrations::preview($f,$mode);$out[$f]=array('mode'=>$mode,'fingerprint'=>hash('sha256',serialize($spec)));}return $out;};
+$admit=static function($modes)use($choices){$vector=$choices($modes);$batch=wp_generate_uuid4();YOWCL_Free_Migrations::admit($vector,$batch,wp_create_nonce('loyf_confirm_migrations'));return array($vector,$batch);};
+$drain=static function(){for($i=0;$i<4;$i++){$ids=as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'group'=>YOWCL_Free_Migrations::GROUP,'status'=>'pending','per_page'=>50),'ids');if(!$ids){return;}foreach($ids as$id){ActionScheduler_QueueRunner::instance()->process_action($id,'LOYF-27 native replay');}}};
+$deny=static function($callback,$code){try{$callback();throw new LogicException('Unexpected admission');}catch(RuntimeException $e){loyf_equal($code,$e->getMessage(),'Native refusal');}};
+try {
+    $reset();YOWCL_Free_Migrations::schedule();loyf_equal('needs_attention',YOWCL_Free_Migrations::status()['state'],'Uncaptured cannot queue');loyf_equal(array(),as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'status'=>'pending','per_page'=>20),'ids'),'No endless ambiguous queue');
+    ob_start();YOWCL_Free_Migrations::render_review();$html=ob_get_clean();loyf_assert(strpos($html,'50')!==false&&strpos($html,'30')!==false&&strpos($html,'0.7')!==false,'Visible reviewed role and currency differences');
+    // Genuine aggregate POST through its registered endpoint; redirect interception avoids fixture exit.
+    $vector=$choices(array('signup'=>'canonical','login'=>'disable','review'=>'legacy','levelup'=>'legacy','redemption'=>'canonical','email_reward'=>'legacy','email_deduct'=>'canonical','email_level'=>'disable'));$batch=wp_generate_uuid4();
+    $_SERVER['REQUEST_METHOD']='POST';$_POST=array('choices'=>$vector,'batch'=>$batch,'_wpnonce'=>wp_create_nonce('loyf_confirm_migrations'));
+    $redirect=static function($url){throw new RuntimeException('redirect:'.$url);};add_filter('wp_redirect',$redirect,0);
+    try{do_action('admin_post_loyf_confirm_migrations');throw new LogicException('No native POST handler');}catch(RuntimeException $e){loyf_assert(strpos($e->getMessage(),'batch_result=admitted')!==false,'Native one POST vector admitted');}finally{remove_filter('wp_redirect',$redirect,0);$_POST=array();}
+    foreach(YOWCL_Free_Migrations::features() as $f){loyf_assert(!YOWCL_Free_Migrations::ready($f),'Admission is not completion');loyf_assert(get_option(YOWCL_Free_Migrations::witness($f).'_resolution')!==false,'Entire vector recorded');}
+    $raw=YOWCL_Free_Migrations::read('loyalty_points_using_rules');YOWCL_Free_Migrations::admit($vector,$batch,wp_create_nonce('loyf_confirm_migrations'));
+    loyf_equal(8,count(as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'status'=>'pending','per_page'=>20),'ids')),'Duplicate submit deduplicates');
+    $drain();loyf_equal('completed',YOWCL_Free_Migrations::status()['state'],'Eight independently verified witnesses');
+    loyf_equal($raw,YOWCL_Free_Migrations::read('loyalty_points_using_rules'),'Keep current exact raw fractional wrapper');loyf_equal(30,YOWCL_Free_Core::extra('review'),'Selected legacy review');loyf_equal('50',YOWCL_Free_Core::level_rules()['customer']['awarded'],'Selected role50');
+    $confirmed=$business();$drain();YOWCL_Free_Migrations::admit($vector,$batch,wp_create_nonce('loyf_confirm_migrations'));loyf_equal($confirmed,$business(),'Replay creates no economics');
+    // Atomic admission rollback on a real failed second intent INSERT.
+    $reset();$vector=$choices(array('signup'=>'canonical','login'=>'canonical'));$fault=static function($sql)use($wpdb){return strpos($sql,'INSERT INTO '.$wpdb->options)!==false&&strpos($sql,"'loyf_migration_login_v1_resolution'")!==false?'SELECT * FROM loyf27_no_admission_table':$sql;};
+    add_filter('query',$fault,PHP_INT_MAX);try{$deny(static function()use($vector){YOWCL_Free_Migrations::admit($vector,wp_generate_uuid4(),wp_create_nonce('loyf_confirm_migrations'));},'migration_write_failed');}finally{remove_filter('query',$fault,PHP_INT_MAX);}
+    foreach(array('signup','login')as$f){loyf_equal(null,YOWCL_Free_Migrations::read(YOWCL_Free_Migrations::witness($f).'_resolution'),'No partial executable intent');}
+    loyf_equal(array(),as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'status'=>'pending','per_page'=>20),'ids'),'Rollback never queued');
+    // Stale whole vector denies admission before writing any intent.
+    $reset();$vector=$choices(array('signup'=>'canonical','login'=>'canonical'));$v=maybe_unserialize(maybe_unserialize(YOWCL_Free_Migrations::read('loyalty_extra_points_rules')));$v['login_points']='8';$store('loyalty_extra_points_rules',serialize(serialize($v)),'yes');
+    $deny(static function()use($vector){YOWCL_Free_Migrations::admit($vector,wp_generate_uuid4(),wp_create_nonce('loyf_confirm_migrations'));},'migration_resolution_stale');loyf_equal(null,YOWCL_Free_Migrations::read('loyf_migration_signup_v1_resolution'),'Stale vector has no early admission');
+    // Later owned edit stops only that feature; independent sibling converges.
+    $reset();$admit(array('signup'=>'canonical','login'=>'disable'));$v=maybe_unserialize(maybe_unserialize(YOWCL_Free_Migrations::read('loyalty_extra_points_rules')));$v['signup_points']='99';$store('loyalty_extra_points_rules',serialize(serialize($v)),'yes');$drain();
+    loyf_assert(!YOWCL_Free_Migrations::ready('signup')&&YOWCL_Free_Migrations::ready('login'),'Partial execution truth');loyf_equal('99',maybe_unserialize(maybe_unserialize(YOWCL_Free_Migrations::read('loyalty_extra_points_rules')))['signup_points'],'Merchant edit wins');
+    // Expiry and revocation cannot continue; old pending intents cannot enter AS.
+    $reset();$admit(array('signup'=>'canonical'));$spec=get_option('loyf_migration_signup_v1_resolution');$spec['consent']['issued']=time()-86401;$spec['consent']['expires']=time()-1;$store('loyf_migration_signup_v1_resolution',serialize($spec));$drain();loyf_assert(!YOWCL_Free_Migrations::ready('signup'),'Expired consent held');
+    $reset();$actor=wp_insert_user(array('user_login'=>'loyf27_'.substr(wp_generate_uuid4(),0,8),'user_pass'=>'disposable-only','role'=>'administrator'));wp_set_current_user($actor);$admit(array('signup'=>'canonical'));(new WP_User($actor))->set_role('subscriber');wp_set_current_user(1);$drain();loyf_assert(!YOWCL_Free_Migrations::ready('signup'),'Revoked actor held');
+    $reset();$spec=YOWCL_Free_Migrations::preview('signup','canonical');$store('loyf_migration_signup_v1_resolution',serialize($spec));YOWCL_Free_Migrations::schedule();loyf_equal(array(),as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'status'=>'pending','per_page'=>20),'ids'),'Old pending never auto replayed');
+    // Finite real witness failure retries and no budget restart on later boots.
+    $reset();$admit(array('signup'=>'canonical'));$fault=static function($sql)use($wpdb){return strpos($sql,'INSERT INTO '.$wpdb->options)!==false&&strpos($sql,"'loyf_migration_signup_v1'")!==false?'SELECT * FROM loyf27_no_witness_table':$sql;};add_filter('query',$fault,PHP_INT_MAX);try{$drain();}finally{remove_filter('query',$fault,PHP_INT_MAX);}
+    loyf_equal(3,get_option('loyf_migration_signup_v1_background')['attempts'],'Three attempts maximum');YOWCL_Free_Migrations::schedule();loyf_equal('failed',YOWCL_Free_Migrations::status()['state'],'Honest exhausted state');loyf_equal(array(),as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'status'=>'pending','per_page'=>20),'ids'),'No infinite retry');
+    // Pending cron held too long is stalled, not a permanent running label.
+    $reset();$admit(array('signup'=>'canonical'));$work=get_option('loyf_migration_signup_v1_background');$work['updated']=time()-901;$store('loyf_migration_signup_v1_background',serialize($work));loyf_equal('migration_stalled',YOWCL_Free_Migrations::status()['features']['signup']['reason'],'No-WP-Cron honest status');
+    // Two independent real AS deliveries share the original options owner.
+    $reset();$admit(array('signup'=>'canonical'));$work=get_option('loyf_migration_signup_v1_background');as_schedule_single_action(time(),YOWCL_Free_Migrations::HOOK,array('signup',$work['run']),YOWCL_Free_Migrations::GROUP,false);
+    $ids=as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'status'=>'pending','per_page'=>20),'ids');loyf_equal(2,count($ids),'Duplicate native actions');
+    foreach($ids as$id){$log=tempnam(sys_get_temp_dir(),'loyf27-worker-');$cmd=array(PHP_BINARY,getenv('LOYF_WP_CLI_PHAR'),'--path='.ABSPATH,'eval-file',__FILE__,'worker',(string)$id,'--quiet');$process=proc_open($cmd,array(0=>array('file','/dev/null','r'),1=>array('file',$log,'a'),2=>array('file',$log,'a')),$pipes);loyf_assert(is_resource($process),'Independent worker');$children[]=array($process,$log);}
+    foreach($children as$i=>$child){loyf_equal(0,proc_close($child[0]),'Independent native worker '.file_get_contents($child[1]));$children[$i][0]=null;unlink($child[1]);}
+    loyf_assert(YOWCL_Free_Migrations::ready('signup'),'Two workers converge once');loyf_equal($before,$business(),'All native cases preserve balances/history/roles');
+    echo "LOYF-27 native background PASS: aggregate POST, atomic admission rollback, duplicate submit/two AS workers, stale terms, partial independent convergence, exact fractions, expiry/revocation/old-intent refusal, finite retries/stalled cron; no economic mutations.\n";
+} finally {
+    foreach($children as$child){if(is_resource($child[0])){proc_terminate($child[0]);proc_close($child[0]);}if(is_file($child[1])){unlink($child[1]);}}
+    as_unschedule_all_actions(YOWCL_Free_Migrations::HOOK,null,YOWCL_Free_Migrations::GROUP);
+    foreach($saved as$n=>$row){if(null===$row){delete_option($n);}else{$store($n,$row['option_value'],$row['autoload']);}}
+    if($actor){require_once ABSPATH.'wp-admin/includes/user.php';wp_delete_user($actor);}wp_set_current_user(1);
+}

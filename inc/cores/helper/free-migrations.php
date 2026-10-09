@@ -4,6 +4,8 @@ defined( 'ABSPATH' ) || exit;
 class YOWCL_Free_Migrations {
     private static $errors = array();
     private static $owner = null;
+    const HOOK = 'loyf_migrate_feature';
+    const GROUP = 'loyf-migrations';
     public static function witness( $feature ) { return 'loyf_migration_' . $feature . '_v1'; }
     public static function read( $name ) {
         global $wpdb;
@@ -259,6 +261,11 @@ class YOWCL_Free_Migrations {
                 mysqli_free_result($result);
             }
             if (null!==self::read(self::witness($feature))) { throw new RuntimeException('migration_witness_changed'); }
+            if (isset($spec['consent'])) {
+                $r=self::query($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name=%s FOR UPDATE",'active_plugins'));if($r instanceof mysqli_result){mysqli_free_result($r);}
+                if (!YOWCL_Free_Core::owns()) { throw new RuntimeException('migration_owner_changed'); }
+                self::consent($feature,$spec);
+            }
             self::finish_locked($feature,$spec,$resolution);
             self::query('COMMIT');
         } catch(Throwable $e) {
@@ -389,6 +396,306 @@ class YOWCL_Free_Migrations {
         try { $current=$select(self::read(self::target($feature))); } catch(Throwable $e) { $current=__('Unavailable','loyalty-for-woocommerce'); }
         return array('before'=>$select($spec['before']),'migration'=>$select(serialize($spec['patch'])),'current'=>$current);
     }
+    /** F1: only the request with actual conservative freshness proof may mutate at boot. */
+    public static function boot() {
+        if (YOWCL_Free_Onboarding::initial_proof()) { self::run(); }
+        else {
+            // Keep completed-policy cache handover without any synchronous conversion.
+            foreach(self::features() as $feature) { if (self::ready($feature)) { self::invalidate($feature); } }
+        }
+        add_action(self::HOOK,array(__CLASS__,'worker'),10,2);
+        add_action('action_scheduler_init',array(__CLASS__,'schedule'));
+        add_action('init',array(__CLASS__,'schedule'),20);
+        add_action('admin_post_loyf_confirm_migrations',array(__CLASS__,'handle_batch'));
+        add_action('admin_post_loyf_retry_migration',array(__CLASS__,'handle_retry'));
+        add_action('wp_ajax_loyf_dismiss_migration',array(__CLASS__,'dismiss'));
+    }
+    private static function scheduler() {
+        return class_exists('WooCommerce',false) && class_exists('ActionScheduler',false) && ActionScheduler::is_initialized() && function_exists('as_schedule_single_action') && function_exists('as_get_scheduled_actions');
+    }
+    private static function work_name($feature) { return self::witness($feature).'_background'; }
+    private static function work($feature) {
+        $raw=self::read(self::work_name($feature));
+        if (null===$raw) { return null; }
+        $w=self::decode($raw);
+        if (!is_string($w['run']??null) || !preg_match('/^[a-f0-9-]{36}$/D',$w['run']) || !is_string($w['identity']??null) || !preg_match('/^[a-f0-9]{64}$/D',$w['identity']) || !is_int($w['attempts']??null) || $w['attempts']<0 || $w['attempts']>3 || !is_int($w['updated']??null) || !is_string($w['error']??null)) { throw new RuntimeException('migration_malformed_work'); }
+        return $w;
+    }
+    private static function store_work($feature,$work) {
+        $name=self::work_name($feature); self::put($name,serialize($work),self::read($name));
+    }
+    /** Reuse the existing spec; this never infers provenance or writes evidence. */
+    private static function authorized_spec($feature) {
+        self::target_settings($feature);
+        $witness=self::read(self::witness($feature));
+        if ('1'===$witness) { return null; }
+        if (null!==$witness) { throw new RuntimeException('migration_malformed_witness'); }
+        $pending=self::read(self::witness($feature).'_resolution');
+        if (null!==$pending) {
+            $spec=self::decode($pending); self::validate_spec($feature,$spec,true);
+            self::consent($feature,$spec);
+        } else {
+            if (self::premium_history()) { throw new RuntimeException('migration_origin_unresolved'); }
+            $raw=self::read(self::witness($feature).'_before');
+            if (null===$raw) { throw new RuntimeException('migration_origin_unresolved'); }
+            $spec=self::decode($raw); self::validate_spec($feature,$spec);
+            if ('legacy:3c1aac240df03101561b856cddb603b1501fa41b'!==($spec['origin']??null)) { throw new RuntimeException('migration_origin_unresolved'); }
+            $frozen=self::specification($feature,$spec['source'],true);
+            if (serialize($frozen['patch'])!==serialize($spec['patch']) || $frozen['target']!==$spec['target']) { throw new RuntimeException('migration_malformed_evidence'); }
+        }
+        $keys=self::keys($feature);
+        if (null!==$pending && 'redemption'===$feature) { $keys=array_merge($keys,array('points','amount')); }
+        $raw=self::read($spec['target']);
+        $post=self::encode(array_replace(self::decode($spec['before']),$spec['patch']),$spec['before']);
+        if (self::owned($raw,$keys)!==self::owned($spec['before'],$keys) && self::owned($raw,$keys)!==self::owned($post,$keys)) { throw new RuntimeException('migration_target_changed'); }
+        return $spec;
+    }
+    /** Only newly admitted, immutable LOYF-27 consent can continue in a worker. */
+    private static function consent($feature,$spec) {
+        global $wpdb;
+        $c=$spec['consent']??null;
+        if (!is_array($c) || 27!==($c['version']??null) || ($c['feature']??null)!==$feature || ($c['site']??null)!==$wpdb->options || !is_int($c['actor']??null) || $c['actor']<1 || !is_int($c['issued']??null) || !is_int($c['expires']??null) || $c['expires']<=$c['issued'] || $c['expires']-$c['issued']>86400 || !is_string($c['batch']??null) || !preg_match('/^[a-f0-9-]{36}$/D',$c['batch']) || !is_string($c['set']??null) || !preg_match('/^[a-f0-9]{64}$/D',$c['set']) || !in_array($spec['mode']??null,array('canonical','legacy','disable'),true)) { throw new RuntimeException('migration_resolution_pending'); }
+        $base=$spec;unset($base['consent']);
+        if (!is_string($c['fingerprint']??null) || !hash_equals(hash('sha256',serialize($base)),$c['fingerprint'])) { throw new RuntimeException('migration_malformed_evidence'); }
+        if ($c['issued']>time() || $c['expires']<=time()) { throw new RuntimeException('migration_consent_expired'); }
+        clean_user_cache($c['actor']);
+        if (!user_can($c['actor'],'manage_options')) { throw new RuntimeException('migration_consent_revoked'); }
+        if ('redemption'===$feature && (($c['currency']??null)!==get_woocommerce_currency() || !array_key_exists('enabled',$c) || $c['enabled']!==self::read('loyalty_points_using_point'))) { throw new RuntimeException('migration_target_changed'); }
+        if ('legacy'===$spec['mode']) {
+            // Compare the legacy inputs actually used by this feature, not shared siblings.
+            $current=self::specification($feature);$old=self::decode($spec['source']);$now=self::decode($current['source']);
+            $keys='levelup'===$feature ? array_keys($old+$now) : ('redemption'===$feature ? array('points','amount','min_points','max_points','min_cart') : (0===strpos($feature,'email_') ? array('email_level'===$feature?'level_update':'points_update') : array($feature.'_points')));
+            if (self::owned($current['source'],$keys)!==self::owned($spec['source'],$keys)) { throw new RuntimeException('migration_source_changed'); }
+        }
+    }
+    public static function schedule() {
+        if (!self::scheduler() || !YOWCL_Free_Core::owns()) { return; }
+        foreach(self::features() as $feature) {
+            try {
+                self::locked(function()use($feature){
+                    $spec=self::authorized_spec($feature);
+                    if (null===$spec) { return; }
+                    $id=hash('sha256',serialize($spec));$work=self::work($feature);
+                    // Existing operational records never restart an exhausted or abandoned budget on boot.
+                    if (null!==$work && ($work['identity']===$id || !isset($spec['consent']))) { return; }
+                    $work=array('run'=>wp_generate_uuid4(),'identity'=>$id,'attempts'=>0,'updated'=>time(),'error'=>'');
+                    self::store_work($feature,$work);self::enqueue($feature,$work);
+                });
+            } catch(Throwable $e) { self::$errors[$feature]=$e->getMessage(); }
+        }
+    }
+    private static function enqueue($feature,$work,$delay=0) {
+        if (!self::scheduler() || !YOWCL_Free_Core::owns()) { throw new RuntimeException('migration_scheduler_unavailable'); }
+        $args=array($feature,$work['run']);
+        if (as_has_scheduled_action(self::HOOK,$args,self::GROUP)) { return; }
+        if (!as_schedule_single_action(time()+$delay,self::HOOK,$args,self::GROUP,true)) { throw new RuntimeException('migration_schedule_failed'); }
+    }
+    private static function transient($code) {
+        return in_array($code,array('migration_lock_unavailable','migration_ownership_lost','migration_storage_unavailable','migration_write_failed','migration_readback_failed','migration_semantics_readback_failed','migration_transaction_unavailable'),true);
+    }
+    public static function worker($feature,$run) {
+        if (!in_array($feature,self::features(),true) || !is_string($run) || !self::scheduler() || !YOWCL_Free_Core::owns()) { return; }
+        $retry=null;
+        try {
+            self::locked(function()use($feature,$run,&$retry){
+                $work=self::work($feature);
+                if (!$work || !hash_equals($work['run'],$run) || $work['attempts']>=3) { return; }
+                if ('1'===self::read(self::witness($feature))) { return; }
+                $work['attempts']++;$work['updated']=time();$work['error']='';self::store_work($feature,$work);
+                try {
+                    if (!YOWCL_Free_Core::owns()) { throw new RuntimeException('migration_owner_changed'); }
+                    $spec=self::authorized_spec($feature);
+                    if (null===$spec) { return; }
+                    if (!hash_equals($work['identity'],hash('sha256',serialize($spec)))) { throw new RuntimeException('migration_target_changed'); }
+                    if (isset($spec['consent'])) { self::finish($feature,$spec,true); }
+                    else { self::migrate($feature); }
+                } catch(Throwable $e) {
+                    $work['error']=$e->getMessage();$work['updated']=time();self::store_work($feature,$work);
+                    if (self::transient($work['error']) && $work['attempts']<3) { $retry=$work; }
+                }
+            });
+        } catch(Throwable $e) {
+            // Lost ownership cannot safely update retry evidence. Queue/status exposes interrupted work.
+            self::$errors[$feature]=$e->getMessage();
+        }
+        if ($retry) {
+            // The current action is still in-progress; a successor has a distinct, bounded attempt arg.
+            $args=array($feature,$retry['run']);
+            if (!as_schedule_single_action(time()+60,self::HOOK,$args,self::GROUP,false)) { self::$errors[$feature]='migration_schedule_failed'; }
+        }
+    }
+    private static function batch_preview($feature,$mode) {
+        if (!in_array($feature,self::features(),true) || null!==self::read(self::witness($feature)) || null!==self::read(self::witness($feature).'_resolution')) { throw new RuntimeException('migration_resolution_pending'); }
+        $spec=self::preview($feature,$mode);
+        if ('redemption'===$feature) {
+            $v=self::decode($spec['before']);
+            foreach(array('points','amount') as $key) { if (!array_key_exists($key,$v)) { throw new RuntimeException('migration_canonical_incomplete'); } self::points($v[$key]); }
+        }
+        return $spec;
+    }
+    /** One POST atomically admits a vector of per-feature intents; it never completes them here. */
+    public static function admit($choices,$batch,$nonce) {
+        global $wpdb;
+        if (!current_user_can('manage_options') || !YOWCL_Free_Core::owns() || !wp_verify_nonce($nonce,'loyf_confirm_migrations') || !is_string($batch) || !preg_match('/^[a-f0-9-]{36}$/D',$batch) || !is_array($choices) || !$choices || count($choices)>8 || array_diff(array_keys($choices),self::features())) { throw new RuntimeException('migration_resolution_denied'); }
+        $ordered=array();foreach(self::features() as $feature){if(isset($choices[$feature])){$ordered[$feature]=$choices[$feature];}}
+        $set=hash('sha256',serialize($ordered));$actor=get_current_user_id();
+        self::locked(function()use($ordered,$batch,$set,$actor,$wpdb){
+            $specs=array();$duplicates=0;
+            foreach($ordered as $feature=>$choice) {
+                if (!is_array($choice) || array_keys($choice)!==array('mode','fingerprint') || !is_string($choice['mode']) || !in_array($choice['mode'],array('canonical','legacy','disable'),true) || !is_string($choice['fingerprint']) || !preg_match('/^[a-f0-9]{64}$/D',$choice['fingerprint'])) { throw new RuntimeException('migration_resolution_invalid'); }
+                $pending=self::read(self::witness($feature).'_resolution');
+                if (null!==$pending) {
+                    $old=self::decode($pending);$c=$old['consent']??array();
+                    if (($c['batch']??null)===$batch && ($c['set']??null)===$set && ($c['actor']??null)===$actor && ($c['site']??null)===$wpdb->options && ($c['fingerprint']??null)===$choice['fingerprint'] && ($old['mode']??null)===$choice['mode']) { $duplicates++;continue; }
+                    throw new RuntimeException('migration_resolution_pending');
+                }
+                $spec=self::batch_preview($feature,$choice['mode']);
+                if (!hash_equals(hash('sha256',serialize($spec)),$choice['fingerprint'])) { throw new RuntimeException('migration_resolution_stale'); }
+                $spec['consent']=array('version'=>27,'feature'=>$feature,'site'=>$wpdb->options,'actor'=>$actor,'issued'=>time(),'expires'=>time()+86400,'batch'=>$batch,'set'=>$set,'fingerprint'=>$choice['fingerprint']);
+                if ('redemption'===$feature) { $spec['consent']['currency']=get_woocommerce_currency();$spec['consent']['enabled']=self::read('loyalty_points_using_point'); }
+                $specs[$feature]=$spec;
+            }
+            if ($duplicates) { if ($duplicates===count($ordered)) { return; } throw new RuntimeException('migration_resolution_pending'); }
+            $engine=$wpdb->get_var($wpdb->prepare('SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s',$wpdb->options));self::assert_owner();$db=self::$owner['db'];
+            if ($wpdb->last_error || 'InnoDB'!==$engine || YOWCL_Points_Lock::has_transaction($db)) { throw new RuntimeException('migration_transaction_unavailable'); }
+            self::query('START TRANSACTION');
+            try {
+                $names=array('active_plugins');
+                foreach($specs as $feature=>$spec) {
+                    $names[]=self::target($feature);$names[]=self::witness($feature);$names[]=self::witness($feature).'_resolution';
+                    if ('legacy'===$spec['mode']) { $names[]='levelup'===$feature ? 'loyalty_extra_levelup_points_rules' : (0===strpos($feature,'email_') ? 'loyalty_notification_email' : ('redemption'===$feature ? 'loyalty_points_using_rules' : 'loyalty_extra_points_rules')); }
+                    if ('redemption'===$feature) { $names[]='loyalty_points_using_point'; }
+                }
+                $names=array_unique($names);sort($names);
+                foreach($names as $name) { $r=self::query($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name=%s FOR UPDATE",$name));if($r instanceof mysqli_result){mysqli_free_result($r);} }
+                if (!YOWCL_Free_Core::owns() || !current_user_can('manage_options')) { throw new RuntimeException('migration_resolution_denied'); }
+                foreach($specs as $feature=>$spec) {
+                    $fresh=self::batch_preview($feature,$spec['mode']);
+                    if (!hash_equals($spec['consent']['fingerprint'],hash('sha256',serialize($fresh)))) { throw new RuntimeException('migration_resolution_stale'); }
+                    if ('redemption'===$feature && $spec['consent']['enabled']!==self::read('loyalty_points_using_point')) { throw new RuntimeException('migration_resolution_stale'); }
+                }
+                foreach($specs as $feature=>$spec) {
+                    self::put(self::witness($feature).'_resolution',serialize($spec),null);
+                }
+                self::query('COMMIT');
+            } catch(Throwable $e) { try{mysqli_query($db,'ROLLBACK');}catch(Throwable $ignored){} throw $e; }
+            finally { foreach($specs as $feature=>$spec){self::invalidate($feature);wp_cache_delete(self::witness($feature).'_resolution','options');} }
+        });
+        self::schedule();
+    }
+    public static function handle_batch() {
+        if ('POST'!==($_SERVER['REQUEST_METHOD']??'')) { wp_die('migration_resolution_denied'); }
+        $choices=array();$input=$_POST['choices']??null;
+        if (!is_array($input) || count($input)>8) { wp_die('migration_resolution_invalid'); }
+        foreach($input as $feature=>$choice) {
+            if (!is_array($choice) || !is_string($choice['mode']??null) || !is_string($choice['fingerprint']??null)) { wp_die('migration_resolution_invalid'); }
+            if (''===$choice['mode']) { continue; }
+            $choices[$feature]=array('mode'=>wp_unslash($choice['mode']),'fingerprint'=>wp_unslash($choice['fingerprint']));
+        }
+        try { self::admit($choices,is_string($_POST['batch']??null)?wp_unslash($_POST['batch']):'',is_string($_POST['_wpnonce']??null)?wp_unslash($_POST['_wpnonce']):'');$result='admitted'; }
+        catch(Throwable $e) { $result='unconfirmed'; }
+        wp_safe_redirect(add_query_arg('batch_result',$result,self::review_url()).'#loyf-status');exit;
+    }
+    public static function handle_retry() {
+        if ('POST'!==($_SERVER['REQUEST_METHOD']??'') || !current_user_can('manage_options') || !YOWCL_Free_Core::owns() || !is_string($_POST['feature']??null) || !is_string($_POST['_wpnonce']??null)) { wp_die('migration_resolution_denied'); }
+        $feature=wp_unslash($_POST['feature']);
+        if (!in_array($feature,self::features(),true) || !wp_verify_nonce(wp_unslash($_POST['_wpnonce']),'loyf_retry_'.$feature)) { wp_die('migration_resolution_denied'); }
+        try {
+            self::locked(function()use($feature){
+                $spec=self::authorized_spec($feature);if(!$spec){return;}
+                $old=self::work($feature);
+                if ($old && self::scheduler() && as_has_scheduled_action(self::HOOK,array($feature,$old['run']),self::GROUP)) { throw new RuntimeException('migration_worker_active'); }
+                $work=array('run'=>wp_generate_uuid4(),'identity'=>hash('sha256',serialize($spec)),'attempts'=>0,'updated'=>time(),'error'=>'');
+                self::store_work($feature,$work);self::enqueue($feature,$work);
+            });
+        } catch(Throwable $e) { self::$errors[$feature]=$e->getMessage(); }
+        wp_safe_redirect(self::review_url().'#loyf-status');exit;
+    }
+    public static function status() {
+        $result=array('state'=>'completed','confirmed'=>0,'queued'=>0,'running'=>0,'held'=>0,'failed'=>0,'features'=>array(),'runs'=>array());
+        foreach(self::features() as $feature) {
+            $state='held';$reason='migration_origin_unresolved';
+            try {
+                if ('confirmed'===self::review_state($feature)) { $state='confirmed';$reason=''; }
+                else {
+                    $spec=self::authorized_spec($feature);$work=self::work($feature);
+                    if (!$work || !hash_equals($work['identity'],hash('sha256',serialize($spec)))) { $reason='migration_not_scheduled'; }
+                    elseif (!self::scheduler()) { $reason='migration_scheduler_unavailable'; }
+                    else {
+                        if ($work['error'] && !self::transient($work['error'])) { $reason=$work['error']; }
+                        elseif ($work['attempts']>=3) { $state='failed';$reason='migration_retry_exhausted'; }
+                        else {
+                            $ids=as_get_scheduled_actions(array('hook'=>self::HOOK,'args'=>array($feature,$work['run']),'group'=>self::GROUP,'status'=>array('pending','in-progress'),'per_page'=>2),'ids');
+                            if ($ids && time()-$work['updated']<=900) { $state='queued';$reason='';foreach($ids as $id){if('in-progress'===ActionScheduler::store()->get_status($id)){$state='running';}} }
+                            else { $reason='migration_stalled'; }
+                        }
+                    }
+                }
+                $w=self::work($feature);if($w){$result['runs'][]=$w['run'];}
+            } catch(Throwable $e) { $reason=$e->getMessage();if(self::transient($reason)){$state='failed';} }
+            $result[$state]++;$result['features'][$feature]=array('state'=>$state,'reason'=>$reason);
+        }
+        if($result['failed']){$result['state']='failed';}elseif($result['held']){$result['state']='needs_attention';}elseif($result['running']){$result['state']='running';}elseif($result['queued']){$result['state']='queued';}
+        return $result;
+    }
+    private static function notice_token($status) {
+        $state=in_array($status['state'],array('queued','running'),true)?'active':$status['state'];
+        return hash('sha256','loyf27|'.$state.'|'.serialize($status['runs']));
+    }
+    public static function dismiss() {
+        if ('POST'!==($_SERVER['REQUEST_METHOD']??'') || !current_user_can('manage_options') || !YOWCL_Free_Core::owns() || !is_string($_POST['_wpnonce']??null) || !wp_verify_nonce(wp_unslash($_POST['_wpnonce']),'loyf_dismiss_migration') || !is_string($_POST['token']??null)) { wp_send_json_error(); }
+        $token=self::notice_token(self::status());
+        if (!hash_equals($token,wp_unslash($_POST['token']))) { wp_send_json_error(); }
+        update_user_meta(get_current_user_id(),'loyf_migration_notice_dismissed',$token);
+        if (get_user_meta(get_current_user_id(),'loyf_migration_notice_dismissed',true)!==$token) { wp_send_json_error(); }
+        wp_send_json_success();
+    }
+    private static function render_status() {
+        $status=self::status();$labels=self::feature_labels();
+        echo '<section id="loyf-status" tabindex="-1" aria-labelledby="loyf-status-title"><h2 id="loyf-status-title">'.esc_html__('Migration status','loyalty-for-woocommerce').'</h2><p role="status">';
+        /* translators: Counts of verified, queued and held migration features. */
+        echo esc_html(sprintf(__('Verified: %1$d. Queued or running: %2$d. Needs attention: %3$d. Failed: %4$d.','loyalty-for-woocommerce'),$status['confirmed'],$status['queued']+$status['running'],$status['held'],$status['failed'])).'</p>';
+        if ('admitted'===($_GET['batch_result']??'')) { echo '<p role="status">'.esc_html__('The reviewed choices were admitted. Completion is verified separately for each setting below.','loyalty-for-woocommerce').'</p>'; }
+        if ('unconfirmed'===($_GET['batch_result']??'')) { echo '<p role="alert">'.esc_html__('No new set of choices was admitted. Reload and review the current settings. Any earlier pending choices are preserved.','loyalty-for-woocommerce').'</p>'; }
+        echo '<p>'.esc_html__('Pending, stalled or failed settings stay on hold. If background processing is unavailable, ask an administrator to check WooCommerce Scheduled Actions and the site cron/loopback service. Retry only after resolving the cause.','loyalty-for-woocommerce').'</p>';
+        $reasons=array('migration_consent_expired'=>__('Approval expired. Review the same pending choice before deliberately confirming again.','loyalty-for-woocommerce'),'migration_consent_revoked'=>__('The approving administrator no longer has permission. An authorized administrator must review the pending choice.','loyalty-for-woocommerce'),'migration_target_changed'=>__('The reviewed settings changed. Review the current terms; no stale choice will be applied.','loyalty-for-woocommerce'),'migration_source_changed'=>__('The reviewed legacy source changed. Review the current terms.','loyalty-for-woocommerce'),'migration_resolution_pending'=>__('An existing pending choice requires deliberate review and confirmation.','loyalty-for-woocommerce'),'migration_stalled'=>__('Background processing has stalled. Check Scheduled Actions and cron before retrying.','loyalty-for-woocommerce'),'migration_retry_exhausted'=>__('The automatic retry limit was reached. Resolve the storage problem before deliberately retrying.','loyalty-for-woocommerce'),'migration_scheduler_unavailable'=>__('WooCommerce background processing is unavailable.','loyalty-for-woocommerce'));
+        echo '<ul>';
+        foreach($status['features'] as $feature=>$item) { if(!in_array($item['state'],array('held','failed'),true)){continue;} echo '<li>'.esc_html($labels[$feature]).': '.esc_html($reasons[$item['reason']]??__('Review required. Saved settings are preserved.','loyalty-for-woocommerce')).'</li>'; }
+        echo '</ul>';
+        foreach($status['features'] as $feature=>$item) {
+            if (in_array($item['reason'],array('migration_stalled','migration_not_scheduled','migration_scheduler_unavailable','migration_retry_exhausted'),true)) {
+                try{if(!self::authorized_spec($feature)){continue;}}catch(Throwable $e){continue;}
+                echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'"><input type="hidden" name="action" value="loyf_retry_migration"><input type="hidden" name="feature" value="'.esc_attr($feature).'"><input type="hidden" name="_wpnonce" value="'.esc_attr(wp_create_nonce('loyf_retry_'.$feature)).'"><p><button class="button">'.esc_html(sprintf(__('Retry background processing: %s','loyalty-for-woocommerce'),$labels[$feature])).'</button></p></form>';
+            }
+        }
+        self::render_batch();echo '</section>';
+    }
+    private static function render_batch() {
+        $eligible=array();$keep=array();$labels=self::feature_labels();
+        foreach(self::features() as $feature) {
+            foreach(array('canonical','legacy','disable') as $mode) {
+                try{$spec=self::batch_preview($feature,$mode);$eligible[$feature][$mode]=$spec;if('canonical'===$mode){$keep[$feature]=$spec;}}catch(Throwable $e){}
+            }
+        }
+        if(!$eligible){return;}
+        $batch=wp_generate_uuid4();
+        echo '<h3>'.esc_html__('Review future settings once','loyalty-for-woocommerce').'</h3><p>'.esc_html__('Confirmation authorizes the displayed future Free rewards, redemption and email behavior. Valid legacy terms are not proof of the last writer. Unselected or unsupported settings remain on hold.','loyalty-for-woocommerce').'</p>';
+        /* translators: Number included in the deliberate keep-current action, and number excluded. */
+        echo '<p>'.esc_html(sprintf(__('Keep current includes %1$d eligible settings; %2$d are excluded.','loyalty-for-woocommerce'),count($keep),8-count($keep))).'</p>';
+        echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'"><input type="hidden" name="action" value="loyf_confirm_migrations"><input type="hidden" name="batch" value="'.esc_attr($batch).'"><input type="hidden" name="_wpnonce" value="'.esc_attr(wp_create_nonce('loyf_confirm_migrations')).'">';
+        foreach($eligible as $feature=>$modes) {
+            echo '<fieldset><legend><strong>'.esc_html($labels[$feature]).'</strong></legend><p>'.esc_html__('Current terms','loyalty-for-woocommerce').'</p>';
+            try{echo self::terms_html($feature,self::scoped_terms($feature,self::target_settings($feature)));}catch(Throwable $e){}
+            echo '<label>'.esc_html__('Choose future behavior','loyalty-for-woocommerce').' <select name="choices['.esc_attr($feature).'][mode]" data-feature="'.esc_attr($feature).'"><option value="">'.esc_html__('Leave on hold','loyalty-for-woocommerce').'</option>';
+            foreach($modes as $mode=>$spec){$title=array('canonical'=>__('Keep current','loyalty-for-woocommerce'),'legacy'=>__('Use reviewed legacy','loyalty-for-woocommerce'),'disable'=>__('Disable','loyalty-for-woocommerce'));echo '<option value="'.esc_attr($mode).'">'.esc_html($title[$mode]).'</option>';}
+            echo '</select></label><input type="hidden" name="choices['.esc_attr($feature).'][fingerprint]" value="">';
+            foreach($modes as $mode=>$spec){echo '<details data-choice="'.esc_attr($mode).'" data-fingerprint="'.esc_attr(hash('sha256',serialize($spec))).'"><summary>'.esc_html(array('canonical'=>__('Keep current proposal','loyalty-for-woocommerce'),'legacy'=>__('Legacy proposal — review differences','loyalty-for-woocommerce'),'disable'=>__('Disable proposal','loyalty-for-woocommerce'))[$mode]).'</summary>'.self::terms_html($feature,self::scoped_terms($feature,array_replace(self::decode($spec['before']),$spec['patch']))).'</details>';}
+            echo '</fieldset>';
+        }
+        echo '<p><button type="button" class="button" id="loyf-keep-current">'.esc_html__('Keep current settings for eligible features','loyalty-for-woocommerce').'</button> <button type="submit" class="button button-primary">'.esc_html__('Confirm selected future settings','loyalty-for-woocommerce').'</button></p></form>';
+        // Keep-current deliberately selects the visible vector; the separate confirm button submits once.
+        echo '<script>(function(){var b=document.getElementById("loyf-keep-current");if(!b)return;var f=b.form;function update(s){var field=s.closest("fieldset"),d=field.querySelector("details[data-choice=\\\""+s.value+"\\\"]");field.querySelector("input[type=hidden]").value=d?d.dataset.fingerprint:"";field.querySelectorAll("details").forEach(function(x){x.open=x===d;});}f.querySelectorAll("select").forEach(function(s){s.addEventListener("change",function(){update(s);});});b.addEventListener("click",function(){f.querySelectorAll("select").forEach(function(s){s.value=s.querySelector("option[value=canonical]")?"canonical":"";update(s);});f.querySelector("button[type=submit]").focus();});})();</script>';
+    }
     public static function run() {
         if ( ! YOWCL_Free_Core::owns() ) { return; }
         foreach ( self::features() as $feature ) {
@@ -428,13 +735,17 @@ class YOWCL_Free_Migrations {
         if (!$screen || !in_array($screen->id,array('woocommerce_page_wc-settings','dashboard','plugins'),true)) { return; }
         $tab=is_string($_GET['tab']??null)?sanitize_key(wp_unslash($_GET['tab'])):'';
         if ('woocommerce_page_wc-settings'===$screen->id && !in_array($tab,array('loyalty','email'),true)) { return; }
-        $count=0; foreach(self::features() as $feature) { if ('confirmed'!==self::review_state($feature)) { $count++; } }
-        if (!$count) { return; }
-        /* translators: Number of held Loyalty features. */
-        echo '<div class="notice notice-warning"><p><strong>'.esc_html(sprintf(_n('%s Loyalty setting needs review','%s Loyalty settings need review',$count,'loyalty-for-woocommerce'),number_format_i18n($count))).'</strong> '.esc_html__('Some new rewards, redemption or emails are paused. Existing balances and history are unchanged.','loyalty-for-woocommerce').' <a href="'.esc_url(self::review_url()).'">'.esc_html__('Review Loyalty settings','loyalty-for-woocommerce').'</a></p></div>';
+        $status=self::status();
+        if ('completed'===$status['state'] || get_user_meta(get_current_user_id(),'loyf_migration_notice_dismissed',true)===self::notice_token($status)) { return; }
+        $active=in_array($status['state'],array('queued','running'),true);
+        $message=$active ? __('Loyalty is updating your settings in the background. Existing points and history are unchanged.','loyalty-for-woocommerce') : __('Loyalty settings need attention. Some new rewards, redemption or emails are paused. Existing points and history are unchanged.','loyalty-for-woocommerce');
+        if ('failed'===$status['state']) { $message=__('Loyalty could not finish updating its settings. Review the migration status before retrying. Existing points and history are unchanged.','loyalty-for-woocommerce'); }
+        echo '<div id="loyf-migration-notice" class="notice notice-'.($active?'info':'warning').'" data-token="'.esc_attr(self::notice_token($status)).'"><p>'.esc_html($message).' <a href="'.esc_url(self::review_url()).'">'.esc_html__('Migration status','loyalty-for-woocommerce').'</a></p><button type="button" class="notice-dismiss" aria-label="'.esc_attr__('Dismiss this notice','loyalty-for-woocommerce').'"><span class="screen-reader-text">'.esc_html__('Dismiss this notice','loyalty-for-woocommerce').'</span></button></div>';
+        $url=wp_json_encode(admin_url('admin-ajax.php'));$nonce=wp_json_encode(wp_create_nonce('loyf_dismiss_migration'));
+        echo '<script>(function(){var n=document.getElementById("loyf-migration-notice");if(!n)return;n.querySelector("button").addEventListener("click",function(){var b=this;b.disabled=true;fetch('.$url.',{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({action:"loyf_dismiss_migration",_wpnonce:'.$nonce.',token:n.dataset.token})}).then(function(r){return r.json();}).then(function(r){if(!r.success)throw new Error();n.remove();}).catch(function(){b.disabled=false;});});})();</script>';
     }
     public static function register_review() {
-        add_submenu_page('woocommerce',__('Loyalty Migration Review','loyalty-for-woocommerce'),__('Loyalty Migration Review','loyalty-for-woocommerce'),'manage_options','loyf-migration-review',array(__CLASS__,'render_review'));
+        add_submenu_page('woocommerce',__('Loyalty Migration Status','loyalty-for-woocommerce'),__('Loyalty Migration Status','loyalty-for-woocommerce'),'manage_options','loyf-migration-review',array(__CLASS__,'render_review'));
     }
     private static function feature_labels() {
         return array('signup'=>__('Sign-up reward','loyalty-for-woocommerce'),'login'=>__('Daily login reward','loyalty-for-woocommerce'),'review'=>__('Product review reward','loyalty-for-woocommerce'),'levelup'=>__('Level-up reward','loyalty-for-woocommerce'),'redemption'=>__('Points redemption','loyalty-for-woocommerce'),'email_reward'=>__('Points earned email','loyalty-for-woocommerce'),'email_deduct'=>__('Points deducted email','loyalty-for-woocommerce'),'email_level'=>__('Level update email','loyalty-for-woocommerce'));
@@ -478,7 +789,8 @@ class YOWCL_Free_Migrations {
         if (!current_user_can('manage_options') || !YOWCL_Free_Core::owns()) { wp_die('migration_resolution_denied'); }
         $labels=self::feature_labels();
         $states=array('review'=>__('Needs review','loyalty-for-woocommerce'),'confirmed'=>__('Confirmed','loyalty-for-woocommerce'),'pending'=>__('Incomplete / pending','loyalty-for-woocommerce'),'manual'=>__('Unsupported data / manual repair','loyalty-for-woocommerce'),'unavailable'=>__('Unavailable','loyalty-for-woocommerce'));
-        echo '<div class="wrap"><h1>'.esc_html__('Loyalty Migration Review','loyalty-for-woocommerce').'</h1><p>'.esc_html__('Review one feature at a time. Your explicit choice authorizes future rewards, redemption or email delivery only. Existing points, history and historical evidence are not changed. An update without verified pre-upgrade evidence cannot establish which edition last wrote these settings.','loyalty-for-woocommerce').'</p><p><a href="'.esc_url(admin_url('admin.php?page=wc-settings&tab=loyalty')).'">'.esc_html__('Return to Loyalty settings','loyalty-for-woocommerce').'</a></p>';
+        echo '<div class="wrap"><h1>'.esc_html__('Loyalty Migration Review','loyalty-for-woocommerce').'</h1><p>'.esc_html__('Review the future settings together or use the individual controls below. Your explicit choice authorizes future rewards, redemption or email delivery only. Existing points, history and historical evidence are not changed. An update without verified pre-upgrade evidence cannot establish which edition last wrote these settings.','loyalty-for-woocommerce').'</p><p><a href="'.esc_url(admin_url('admin.php?page=wc-settings&tab=loyalty')).'">'.esc_html__('Return to Loyalty settings','loyalty-for-woocommerce').'</a></p>';
+        self::render_status();
         $result=is_string($_GET['result']??null)?sanitize_key(wp_unslash($_GET['result'])):'';
         $selected=is_string($_GET['feature']??null)?sanitize_key(wp_unslash($_GET['feature'])):'';
         $attempt=is_string($_GET['choice']??null)?sanitize_key(wp_unslash($_GET['choice'])):'';

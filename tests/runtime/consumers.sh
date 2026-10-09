@@ -62,6 +62,7 @@ for versions in "${versions_list[@]}"; do
     wp eval-file "$repo/tests/runtime/consumers.php" --quiet
     wp eval-file "$repo/tests/runtime/installation-report-retired.php" --quiet
     wp eval-file "$repo/tests/runtime/migration-boundaries.php" --quiet
+    wp eval-file "$repo/tests/runtime/migration-background.php" --quiet
     wp eval-file "$repo/tests/runtime/extra-points-held.php" --quiet
     wp eval-file "$repo/tests/runtime/migration-cache.php" --quiet
     wp eval-file "$repo/tests/runtime/opaque-containers.php" --quiet
