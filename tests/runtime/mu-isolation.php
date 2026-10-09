@@ -24,3 +24,13 @@ add_filter('query',static function($sql){
     }
     return $sql;
 },PHP_INT_MAX);
+
+// Fail a later witness read only inside the custom redemption save.
+add_filter('query',static function($sql){
+    if (isset($_POST['_loyf25_redemption_read_fault']) && 0===strpos($sql,'SELECT ') && false!==strpos($sql,"loyf_migration_redemption_v1") && function_exists('wp_get_current_user') && current_user_can('manage_options') && is_string($_POST['_wpnonce']??null) && wp_verify_nonce($_POST['_wpnonce'],'woocommerce-settings')) {
+        foreach(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS) as $frame) {
+            if ('save_using_point_rules'===($frame['function']??'')) { global $wpdb;$wpdb->suppress_errors(true);return 'SELECT * FROM loyf25_deliberately_unavailable_witness'; }
+        }
+    }
+    return $sql;
+},PHP_INT_MAX);

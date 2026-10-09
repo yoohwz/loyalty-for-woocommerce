@@ -464,7 +464,7 @@ class YOSWC_Loyalty_Settings {
             if ($failed) { throw new RuntimeException('loyalty_settings_readback_failed'); }
             $saved=array(__('General earning and level settings','loyalty-for-woocommerce'));
             if ($editable) {
-                $this->save_using_point_rules();
+                if (!$this->save_using_point_rules()) { throw new RuntimeException('migration_incomplete'); }
                 $using=isset($_POST['loyalty_points_using_point']) ? 'yes' : 'no';
                 update_option('loyalty_points_using_point', $using);
                 if (YOWCL_Free_Migrations::read('loyalty_points_using_point')!==$using) { throw new RuntimeException('loyalty_settings_readback_failed'); }
@@ -554,8 +554,8 @@ class YOSWC_Loyalty_Settings {
         return $result;
     }
     public function save_using_point_rules() {
-        if (!current_user_can('manage_options') || !YOWCL_Free_Core::owns() || !YOWCL_Free_Migrations::ready('redemption') || !YOWCL_Free_Migrations::readable('redemption')) { return; }
-        YOWCL_Free_Migrations::locked(function() {
+        if (!current_user_can('manage_options') || !YOWCL_Free_Core::owns() || !YOWCL_Free_Migrations::ready('redemption') || !YOWCL_Free_Migrations::readable('redemption')) { return false; }
+        return YOWCL_Free_Migrations::locked(function() {
             $rules=$this->using_point_input();
             // An unchanged displayed value retains its original representation.
             $current=YOWCL_Free_Migrations::canonical('redemption');
@@ -565,6 +565,7 @@ class YOSWC_Loyalty_Settings {
                 if ((float)$display===$value) { $rules[$key]=$current[$key]; }
             }
             YOWCL_Free_Migrations::save('redemption', 'loyalty_points_using_rules', $rules);
+            return true;
         });
     }
 
