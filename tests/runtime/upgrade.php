@@ -22,7 +22,28 @@ foreach(YOWCL_Free_Migrations::features() as $feature) { loyf_assert(!YOWCL_Free
 YOWCL_Free_Migrations::schedule();
 $actions=as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'group'=>YOWCL_Free_Migrations::GROUP,'status'=>'pending','per_page'=>20),'ids');
 loyf_equal(8,count($actions),'Eight bounded captured actions');
-foreach($actions as $action){ActionScheduler_QueueRunner::instance()->process_action($action,'LOYF-27 captured runtime');}
+// Genuine captured AS proof survives an ownership race without authorizing a Premium-owned write.
+$review_action=null;foreach($actions as $action){$args=ActionScheduler::store()->fetch_action($action)->get_args();if('review'===($args[0]??null)){$review_action=$action;break;}}loyf_assert(null!==$review_action,'Actual captured review action');
+$plugins=$wpdb->get_row($wpdb->prepare("SELECT option_value,autoload FROM {$wpdb->options} WHERE option_name=%s",'active_plugins'),ARRAY_A);$active=maybe_unserialize($plugins['option_value']);$active[]='wc-loyalty/wc-loyalty.php';$premium=serialize($active);
+$target=YOWCL_Free_Migrations::read('loyalty_extra_reviews_gamification_rules');$capture=YOWCL_Free_Migrations::read('loyf_migration_review_v1_before');$switched=false;
+$write_owner=static function($raw,$expect_blocked=false)use($wpdb){
+    $other=new mysqli(getenv('LOY_DB_HOST'),DB_USER,DB_PASSWORD,DB_NAME,(int)(getenv('LOY_DB_PORT')?:3306));$other->query('SET SESSION innodb_lock_wait_timeout=1');$stmt=$other->prepare("UPDATE {$wpdb->options} SET option_value=? WHERE option_name='active_plugins'");$stmt->bind_param('s',$raw);
+    try{$result=$stmt->execute();loyf_assert($expect_blocked?(false===$result&&1205===$stmt->errno):true===$result,'Actual InnoDB owner lock determines concurrent edition write');}catch(mysqli_sql_exception $e){loyf_assert($expect_blocked&&1205===$e->getCode(),'Actual InnoDB owner lock blocks concurrent edition update');}finally{$stmt->close();$other->close();}
+};
+$fault=static function($sql)use(&$switched,$write_owner,$premium){if(!$switched&&'START TRANSACTION'===$sql){$switched=true;$write_owner($premium);}return $sql;};add_filter('query',$fault,PHP_INT_MAX);
+try{ActionScheduler_QueueRunner::instance()->process_action($review_action,'LOYF-27 captured pre-lock owner race');}finally{remove_filter('query',$fault,PHP_INT_MAX);}
+loyf_assert($switched&&!YOWCL_Free_Core::owns(),'Independent edition change committed before row lock');loyf_equal($target,YOWCL_Free_Migrations::read('loyalty_extra_reviews_gamification_rules'),'Premium-owned canonical target unchanged');loyf_assert(!YOWCL_Free_Migrations::ready('review'),'Ownership race cannot publish witness');loyf_equal($capture,YOWCL_Free_Migrations::read('loyf_migration_review_v1_before'),'Genuine capture evidence remains exact');
+$write_owner($plugins['option_value']);wp_cache_delete('active_plugins','options');wp_cache_delete('alloptions','options');loyf_assert(YOWCL_Free_Core::owns(),'Returned Free owner');
+$_SERVER['REQUEST_METHOD']='POST';$_POST=array('feature'=>'review','_wpnonce'=>wp_create_nonce('loyf_retry_review'));$redirect=static function($url){throw new RuntimeException('redirect:'.$url);};add_filter('wp_redirect',$redirect,0);
+try{do_action('admin_post_loyf_retry_migration');throw new LogicException('Missing native captured retry');}catch(RuntimeException $e){loyf_assert(strpos($e->getMessage(),'#loyf-status')!==false,'Deliberate captured retry redirects');}finally{remove_filter('wp_redirect',$redirect,0);$_POST=array();}
+$retry=null;foreach(as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'group'=>YOWCL_Free_Migrations::GROUP,'status'=>'pending','per_page'=>20),'ids') as $action){$args=ActionScheduler::store()->fetch_action($action)->get_args();if('review'===($args[0]??null)){$retry=$action;break;}}loyf_assert(null!==$retry,'New captured retry action');$blocked=false;
+$fault=static function($sql)use(&$blocked,$wpdb,$write_owner,$premium){if(!$blocked&&strpos($sql,"option_name='loyalty_extra_reviews_gamification_rules' FOR UPDATE")!==false){$blocked=true;$write_owner($premium,true);}return $sql;};add_filter('query',$fault,PHP_INT_MAX);
+try{ActionScheduler_QueueRunner::instance()->process_action($retry,'LOYF-27 captured post-lock owner race');}finally{remove_filter('query',$fault,PHP_INT_MAX);}
+loyf_assert($blocked&&YOWCL_Free_Core::owns()&&YOWCL_Free_Migrations::ready('review'),'Captured worker owns row through verified completion');loyf_equal($capture,YOWCL_Free_Migrations::read('loyf_migration_review_v1_before'),'Retry preserves actual historical capture');$completed=YOWCL_Free_Migrations::read('loyalty_extra_reviews_gamification_rules');
+$write_owner($premium);$run=get_option('loyf_migration_review_v1_background')['run'];YOWCL_Free_Migrations::worker('review',$run);loyf_equal($completed,YOWCL_Free_Migrations::read('loyalty_extra_reviews_gamification_rules'),'Later Premium owner cannot replay completed captured policy');$write_owner($plugins['option_value']);wp_cache_delete('active_plugins','options');wp_cache_delete('alloptions','options');
+loyf_equal($plugins,$wpdb->get_row($wpdb->prepare("SELECT option_value,autoload FROM {$wpdb->options} WHERE option_name=%s",'active_plugins'),ARRAY_A),'Native owner race restores exact edition row/autoload');
+foreach($actions as $action){if($action!==$review_action){ActionScheduler_QueueRunner::instance()->process_action($action,'LOYF-27 captured runtime');}}
+echo "Captured worker edition owner race PASS: actual historical capture, independent pre-lock write denied, post-lock write blocked, deliberate retry and terminal replay; native predicate, no commercial entitlement claim.\n";
 $before = get_option('loyf_upgrade_before');
 loyf_assert(is_array($before), 'Actual old-Free fixture');
 loyf_equal($before['meta'], $wpdb->get_results("SELECT * FROM {$wpdb->usermeta} ORDER BY umeta_id", ARRAY_A), 'All user meta byte preservation on boot');

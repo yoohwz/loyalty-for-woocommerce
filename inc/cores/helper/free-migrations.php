@@ -255,9 +255,9 @@ class YOWCL_Free_Migrations {
         if ($wpdb->last_error || 'InnoDB'!==$engine || YOWCL_Points_Lock::has_transaction($db)) { throw new RuntimeException('migration_transaction_unavailable'); }
         self::query('START TRANSACTION');$commit_attempted=false;
         try {
-            $names=array(self::target($feature),self::witness($feature));
+            $names=array('active_plugins',self::target($feature),self::witness($feature));
             if(isset($spec['consent'])) {
-                $names[]=self::witness($feature).'_resolution';$names[]='active_plugins';
+                $names[]=self::witness($feature).'_resolution';
                 if('legacy'===$spec['mode']){$names[]='levelup'===$feature?'loyalty_extra_levelup_points_rules':(0===strpos($feature,'email_')?'loyalty_notification_email':('redemption'===$feature?'loyalty_points_using_rules':'loyalty_extra_points_rules'));}
                 if('redemption'===$feature){$names[]='woocommerce_currency';$names[]='loyalty_points_using_point';}
             }
@@ -269,8 +269,8 @@ class YOWCL_Free_Migrations {
                 mysqli_free_result($result);
             }
             if (null!==self::read(self::witness($feature))) { throw new RuntimeException('migration_witness_changed'); }
+            if (!YOWCL_Free_Core::owns()) { throw new RuntimeException('migration_owner_changed'); }
             if (isset($spec['consent'])) {
-                if (!YOWCL_Free_Core::owns()) { throw new RuntimeException('migration_owner_changed'); }
                 self::consent($feature,$spec,$interactive);
             }
             if ($completion) { $completion['check'](); }
@@ -669,7 +669,8 @@ class YOWCL_Free_Migrations {
         if (!current_user_can('manage_options') || !YOWCL_Free_Core::owns() || !wp_verify_nonce($nonce,'loyf_confirm_migrations') || !is_string($batch) || !preg_match('/^[a-f0-9-]{36}$/D',$batch) || !is_array($choices) || !$choices || count($choices)>8 || array_diff(array_keys($choices),self::features())) { throw new RuntimeException('migration_resolution_denied'); }
         $ordered=array();foreach(self::features() as $feature){if(isset($choices[$feature])){$ordered[$feature]=$choices[$feature];}}
         $set=hash('sha256',serialize($ordered));$actor=get_current_user_id();
-        self::locked(function()use($ordered,$batch,$set,$actor,$wpdb){
+        $commit_attempted=false;
+        try { self::locked(function()use($ordered,$batch,$set,$actor,$wpdb,&$commit_attempted){
             $specs=array();$duplicates=0;$issued=time();
             foreach($ordered as $feature=>$choice) {
                 if (!is_array($choice) || array_keys($choice)!==array('mode','fingerprint') || !is_string($choice['mode']) || !in_array($choice['mode'],array('canonical','legacy','disable'),true) || !is_string($choice['fingerprint']) || !preg_match('/^[a-f0-9]{64}$/D',$choice['fingerprint'])) { throw new RuntimeException('migration_resolution_invalid'); }
@@ -688,7 +689,7 @@ class YOWCL_Free_Migrations {
             if ($duplicates) { if ($duplicates===count($ordered)) { return; } throw new RuntimeException('migration_resolution_pending'); }
             $engine=$wpdb->get_var($wpdb->prepare('SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s',$wpdb->options));self::assert_owner();$db=self::$owner['db'];
             if ($wpdb->last_error || 'InnoDB'!==$engine || YOWCL_Points_Lock::has_transaction($db)) { throw new RuntimeException('migration_transaction_unavailable'); }
-            self::query('START TRANSACTION');$commit_attempted=false;
+            self::query('START TRANSACTION');
             try {
                 $names=array('active_plugins');
                 foreach($specs as $feature=>$spec) {
@@ -708,10 +709,11 @@ class YOWCL_Free_Migrations {
                     self::put(self::witness($feature).'_resolution',serialize($spec),null);
                 }
                 $commit_attempted=true;self::query('COMMIT');
-            } catch(Throwable $e) { try{mysqli_query($db,'ROLLBACK');}catch(Throwable $ignored){} if($commit_attempted){throw new RuntimeException('migration_admission_unknown');} throw $e; }
+            } catch(Throwable $e) { try{mysqli_query($db,'ROLLBACK');}catch(Throwable $ignored){} throw $e; }
             finally { foreach($specs as $feature=>$spec){self::invalidate($feature);wp_cache_delete(self::witness($feature).'_resolution','options');} }
         });
         self::schedule();
+        } catch(Throwable $e) { if($commit_attempted){throw new RuntimeException('migration_admission_unknown');}throw $e; }
     }
     public static function handle_batch() {
         if ('POST'!==($_SERVER['REQUEST_METHOD']??'')) { wp_die('migration_resolution_denied'); }

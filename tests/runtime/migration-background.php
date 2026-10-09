@@ -38,6 +38,13 @@ $replacement=static function($feature,$mode,$expected='confirmed') {
 };
 $edit=static function($name,$patch)use($wpdb,$store){$row=$wpdb->get_row($wpdb->prepare("SELECT option_value,autoload FROM {$wpdb->options} WHERE option_name=%s",$name),ARRAY_A);$v=maybe_unserialize(maybe_unserialize($row['option_value']));$v=array_replace($v,$patch);$raw=is_string(maybe_unserialize($row['option_value']))?serialize(serialize($v)):serialize($v);$store($name,$raw,$row['autoload']);};
 $deny=static function($callback,$code){try{$callback();throw new LogicException('Unexpected admission');}catch(RuntimeException $e){loyf_equal($code,$e->getMessage(),'Native refusal');}};
+$cache_fault=static function($key) {
+    return new class($key) extends WP_Object_Cache {
+        public $armed=false;private $fault_key;
+        public function __construct($key){parent::__construct();$this->fault_key=$key;}
+        public function delete($key,$group='default',$deprecated=false){if($this->armed&&$this->fault_key===$key){$this->armed=false;throw new RuntimeException('loyf27_cache_response_failure');}return parent::delete($key,$group,$deprecated);}
+    };
+};
 try {
     $reset();YOWCL_Free_Migrations::schedule();loyf_equal('needs_attention',YOWCL_Free_Migrations::status()['state'],'Uncaptured cannot queue');loyf_equal(array(),as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'status'=>'pending','per_page'=>20),'ids'),'No endless ambiguous queue');
     ob_start();YOWCL_Free_Migrations::render_review();$html=ob_get_clean();loyf_assert(strpos($html,'50')!==false&&strpos($html,'30')!==false&&strpos($html,'0.7')!==false,'Visible reviewed role and currency differences');
@@ -55,6 +62,21 @@ try {
     try{do_action('admin_post_loyf_confirm_migrations');throw new LogicException('No native POST handler');}catch(RuntimeException $e){loyf_assert(strpos($e->getMessage(),'batch_result=unknown')!==false,'Lost COMMIT response is honestly unknown');}finally{remove_filter('query',$fault,PHP_INT_MAX);remove_filter('wp_redirect',$redirect,0);$_POST=array();}
     foreach(array('signup','login') as$f){$c=get_option(YOWCL_Free_Migrations::witness($f).'_resolution')['consent'];loyf_equal($batch,$c['batch'],'Whole committed vector persists with exact batch identity');}
     YOWCL_Free_Migrations::admit($vector,$batch,wp_create_nonce('loyf_confirm_migrations'));$drain();loyf_assert(YOWCL_Free_Migrations::ready('signup')&&YOWCL_Free_Migrations::ready('login'),'Exact duplicate recovers unknown admission without extra choices');$reset();
+    // Admission cleanup cannot turn a durable vector into a definitive rejection, even after a lost COMMIT response.
+    foreach(array('rollback','committed','lost-response') as $outcome) {
+        $reset();$vector=$choices(array('signup'=>'disable','login'=>'disable'));$batch=wp_generate_uuid4();$target=YOWCL_Free_Migrations::read('loyalty_extra_points_rules');$cache=$GLOBALS['wp_object_cache'];$fault_cache=$cache_fault('loyalty_extra_points_rules');$GLOBALS['wp_object_cache']=$fault_cache;
+        $fault=static function($sql)use($wpdb,$outcome,$fault_cache){
+            if('rollback'===$outcome&&0===strpos($sql,'INSERT INTO '.$wpdb->options)&&strpos($sql,"'loyf_migration_login_v1_resolution'")!==false){$fault_cache->armed=true;return 'SELECT * FROM loyf27_admission_cleanup_rollback';}
+            if('COMMIT'===$sql){$fault_cache->armed=true;if('lost-response'===$outcome){mysqli_query($wpdb->dbh,'COMMIT');return 'SELECT * FROM loyf27_admission_cleanup_response';}}
+            return $sql;
+        };
+        $_SERVER['REQUEST_METHOD']='POST';$_POST=array('choices'=>$vector,'batch'=>$batch,'_wpnonce'=>wp_create_nonce('loyf_confirm_migrations'));$redirect=static function($url){throw new RuntimeException('redirect:'.$url);};add_filter('query',$fault,PHP_INT_MAX);add_filter('wp_redirect',$redirect,0);
+        try{do_action('admin_post_loyf_confirm_migrations');throw new LogicException('No admission POST');}catch(RuntimeException $e){loyf_assert(strpos($e->getMessage(),'batch_result='.('rollback'===$outcome?'unconfirmed':'unknown'))!==false,'Admission cleanup reports actual authority boundary '.$outcome);}finally{remove_filter('query',$fault,PHP_INT_MAX);remove_filter('wp_redirect',$redirect,0);$GLOBALS['wp_object_cache']=$cache;wp_cache_flush();$_POST=array();}
+        loyf_assert(!$fault_cache->armed,'Actual admission cleanup exception exercised');loyf_equal($target,YOWCL_Free_Migrations::read('loyalty_extra_points_rules'),'Admission never completes targets');
+        foreach(array('signup','login') as $f){$pending=YOWCL_Free_Migrations::read(YOWCL_Free_Migrations::witness($f).'_resolution');loyf_equal('rollback'!==$outcome,null!==$pending,'Atomic admission storage after cleanup');loyf_assert(!YOWCL_Free_Migrations::ready($f),'Admission is not completion');if('rollback'!==$outcome){loyf_equal($batch,get_option(YOWCL_Free_Migrations::witness($f).'_resolution')['consent']['batch'],'Committed vector retains reviewed identity');}}
+        if('rollback'!==$outcome){YOWCL_Free_Migrations::admit($vector,$batch,wp_create_nonce('loyf_confirm_migrations'));$drain();loyf_assert(YOWCL_Free_Migrations::ready('signup')&&YOWCL_Free_Migrations::ready('login'),'Same-identity retry recovers unknown admission');loyf_equal(0,YOWCL_Free_Core::extra('signup'),'Reviewed disable is effective');}else{YOWCL_Free_Migrations::schedule();loyf_equal(array(),as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'status'=>'pending','per_page'=>20),'ids'),'Failed admission has no worker authority');}
+    }
+    $reset();
     // Genuine aggregate POST through its registered endpoint; redirect interception avoids fixture exit.
     $vector=$choices(array('signup'=>'canonical','login'=>'disable','review'=>'legacy','levelup'=>'legacy','redemption'=>'canonical','email_reward'=>'legacy','email_deduct'=>'canonical','email_level'=>'disable'));$batch=wp_generate_uuid4();
     $_SERVER['REQUEST_METHOD']='POST';$_POST=array('choices'=>$vector,'batch'=>$batch,'_wpnonce'=>wp_create_nonce('loyf_confirm_migrations'));
@@ -115,10 +137,7 @@ try {
 
     // Cache invalidation after a successful COMMIT is also outside definitive failure authority.
     $reset();$admit(array('signup'=>'disable'));$original=YOWCL_Free_Migrations::read('loyf_migration_signup_v1_resolution');$cache=$GLOBALS['wp_object_cache'];
-    $fault_cache=new class extends WP_Object_Cache {
-        public $armed=false;
-        public function delete($key,$group='default',$deprecated=false){if($this->armed&&'loyalty_extra_points_rules'===$key){$this->armed=false;throw new RuntimeException('loyf27_cache_response_failure');}return parent::delete($key,$group,$deprecated);}
-    };
+    $fault_cache=$cache_fault('loyalty_extra_points_rules');
     $GLOBALS['wp_object_cache']=$fault_cache;$fault=static function($sql)use($fault_cache){if('COMMIT'===$sql){$fault_cache->armed=true;}return $sql;};add_filter('query',$fault,PHP_INT_MAX);
     try{$direct('signup','disable','unknown');}finally{remove_filter('query',$fault,PHP_INT_MAX);$GLOBALS['wp_object_cache']=$cache;wp_cache_flush();}
     loyf_assert(YOWCL_Free_Migrations::ready('signup'),'Post-COMMIT cache failure retains verified witness');loyf_equal($original,YOWCL_Free_Migrations::read('loyf_migration_signup_v1_resolution'),'Post-COMMIT cache failure preserves original intent');loyf_equal(0,YOWCL_Free_Core::extra('signup'),'Post-COMMIT cache failure cannot report rollback');
