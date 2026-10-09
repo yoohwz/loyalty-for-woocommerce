@@ -305,7 +305,7 @@ class YOSWC_Loyalty_Info_Bubble {
 		}
 
 		$items = array();
-		$using_rules = maybe_unserialize(get_option('loyalty_points_using_rules', array()));
+		$using_rules = YOWCL_Free_Cart::rules();
 		$points = isset($using_rules['points']) ? (float) $using_rules['points'] : 0;
 		$amount = isset($using_rules['amount']) ? (float) $using_rules['amount'] : 0;
 

@@ -88,6 +88,7 @@ jobs:
           PYTHONDONTWRITEBYTECODE=1 python3 tests/ci/runtime-test.py
           PYTHONDONTWRITEBYTECODE=1 python3 tests/ci/import-contract-test.py
           PYTHONDONTWRITEBYTECODE=1 python3 tests/ci/extraction-test.py
+          php tests/migration-opaque.php
           node tests/js/admin-replay.cjs
           PYTHONDONTWRITEBYTECODE=1 python3 scripts/free-import.py verify-source --root "$PWD"
 
@@ -138,7 +139,7 @@ jobs:
     if: needs.syntax.outputs.mode == 'FULL'
     name: Disposable WordPress and WooCommerce runtime
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 30
     services:
       mysql:
         image: mysql:8.0

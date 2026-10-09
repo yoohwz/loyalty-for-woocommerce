@@ -36,9 +36,11 @@ if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
   fi
   if [[ -z "${LOYF_BROWSER_EXECUTABLE:-}" ]]; then node "$(dirname "$LOYF_PLAYWRIGHT_PATH")/playwright/cli.js" install --with-deps chromium; fi
 fi
-for versions in '6.8.3:9.9.5' '7.0:11.1.2'; do
+versions_list=('6.8.3:9.9.5' '7.0:11.1.2'); storages=(cpt hpos)
+if [[ "${LOYF13_COMPAT_SUPPLEMENT:-}" == 1 ]]; then versions_list=('6.3:8.2.2' '7.1.3:11.2.0'); storages=(cpt); fi
+for versions in "${versions_list[@]}"; do
   wordpress=${versions%:*}; woocommerce=${versions#*:}
-  for storage in cpt hpos; do
+  for storage in "${storages[@]}"; do
     database="loyf_rt_$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')"; databases+=( "$database" )
     mysql --host="$LOY_DB_HOST" --port="${LOY_DB_PORT:-3306}" --user="$LOY_DB_USER" -e "CREATE DATABASE \`$database\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
     site="$task_tmp/$woocommerce-$storage"; mkdir -p "$site"
@@ -55,8 +57,14 @@ for versions in '6.8.3:9.9.5' '7.0:11.1.2'; do
     wp option update woocommerce_custom_orders_table_data_sync_enabled no --quiet
     if [[ "$storage" == hpos ]]; then wp option update woocommerce_custom_orders_table_enabled yes --quiet; fi
     wp plugin activate loyalty-for-woocommerce --quiet
+    for feature in signup login review levelup redemption email_reward email_deduct email_level; do wp eval-file "$repo/tests/runtime/resolve-fixture.php" "$feature" --quiet; done
     export LOYF_STORAGE="$storage"
     wp eval-file "$repo/tests/runtime/consumers.php" --quiet
+    wp eval-file "$repo/tests/runtime/installation-report-retired.php" --quiet
+    wp eval-file "$repo/tests/runtime/migration-boundaries.php" --quiet
+    wp eval-file "$repo/tests/runtime/extra-points-held.php" --quiet
+    wp eval-file "$repo/tests/runtime/migration-cache.php" --quiet
+    wp eval-file "$repo/tests/runtime/opaque-containers.php" --quiet
     if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
       curl -fsSL --retry 3 https://downloads.wordpress.org/theme/twentytwentyfive.1.3.zip -o "$task_tmp/theme.zip"
       wp theme install "$task_tmp/theme.zip" --activate --skip-plugins --skip-themes --quiet

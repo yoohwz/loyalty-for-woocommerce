@@ -68,13 +68,19 @@ class YOWCL_Free_Core {
             YOWCL_Core_Rewards::award( $user, (int) $points, $key, $action, $description ?? $labels[$action], $project, array( 'YOWCL_Core_Rewards', 'notify_user' ) );
         } catch ( Throwable $e ) { self::hold( $user, $e->getMessage() ); }
     }
+    private static function configured_points( $value ) {
+        if (''===$value) { return 0; }
+        return is_scalar($value) && is_numeric($value) && is_finite((float)$value) && (float)$value>=0 && (float)$value<=2147483647 ? (int)$value : null;
+    }
     public static function level_rules() {
-        if ( ! YOWCL_Free_Migrations::ready( 'levelup' ) ) { return array(); }
-        $merged = maybe_unserialize( get_option( 'loyalty_extra_reviews_gamification_rules', array() ) );
-        return is_array( $merged ) && 'yes' === ( $merged['levelup_enabled'] ?? 'no' ) && is_array( $merged['levelup_points'] ?? null ) ? $merged['levelup_points'] : array();
+        $merged = YOWCL_Free_Migrations::canonical( 'levelup' );
+        if ('yes'!==($merged['levelup_enabled']??'no') || !is_array($merged['levelup_points']??null)) { return array(); }
+        $rules=$merged['levelup_points'];
+        foreach($rules as$role=>$rule) { if (!is_array($rule) || null===self::configured_points($rule['awarded']??0)) { unset($rules[$role]); } }
+        return $rules;
     }
     public static function level_bonus( $user, $role ) {
-        if ( ! YOWCL_Free_Migrations::ready( 'levelup' ) ) { return; }
+        // Held terms yield zero new value; the canonical owner still recovers an already committed event first.
         $rules = self::level_rules();
         $role = sanitize_key( $role );
         if ( '' !== $role ) { self::user_reward( $user, 'reward:level_up:' . (int) $user . ':' . $role, 'level_up_reward', (int) ( $rules[$role]['awarded'] ?? 0 ), __( 'Level up bonus for role:', 'loyalty-for-woocommerce' ) . ' ' . ( wp_roles()->roles[$role]['name'] ?? $role ) ); }
@@ -91,14 +97,12 @@ class YOWCL_Free_Core {
         return ( $value >= 0 ? '+' : '-' ) . abs( $value );
     }
     public static function extra( $kind ) {
-        if ( ! YOWCL_Free_Migrations::ready( $kind ) ) { return 0; }
-        $rules = maybe_unserialize( get_option( 'loyalty_extra_points_rules', array() ) );
+        $rules = YOWCL_Free_Migrations::canonical( $kind );
         if ( 'review' === $kind ) {
-            $merged = maybe_unserialize( get_option( 'loyalty_extra_reviews_gamification_rules', array() ) );
-            return is_array( $merged ) && 'yes' === ( $merged['review_enabled'] ?? 'no' ) ? (int) ( $merged['review_points'] ?? 0 ) : 0;
+            return 'yes' === ( $rules['review_enabled'] ?? 'no' ) ? ( self::configured_points($rules['review_points']??0) ?? 0 ) : 0;
         }
         $flag = 'signup' === $kind ? 'signup_enabled' : 'login_enabled';
         if ( ! is_array( $rules ) || 'yes' !== ( $rules[$flag] ?? 'no' ) ) { return 0; }
-        return (int) ( $rules[$kind . '_points'] ?? 0 );
+        return self::configured_points($rules[$kind . '_points']??0) ?? 0;
     }
 }

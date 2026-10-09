@@ -25,7 +25,17 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     await page.locator('[data-yoswc-loyalty-info] .yoswc-loyalty-info__bubble').click();
     const button=page.locator('[data-loyf-referral-copy="loyf-referral-bubble"]');
     assert.equal(await page.locator('#loyf-referral-bubble').inputValue(),base+'/?ref='+f.token);
-    const posts=[];page.on('request',r=>{if(r.method()==='POST')posts.push(r.url());});
+    await page.waitForLoadState('networkidle'); // Finish Woo's initial customer/address hydration before measuring Copy.
+    const posts=[];page.on('request',r=>{
+      if(r.method()!=='POST')return;
+      // Woo11.2 transports a cart GET inside its POST batch middleware.
+      // Only that exact read-only shape is allowed; unknown/mutating batches fail.
+      const url=new URL(r.url()),route=url.searchParams.get('rest_route')||url.pathname;
+      if(route==='/wc/store/v1/batch'){
+        try{const body=JSON.parse(r.postData());if(Array.isArray(body.requests)&&body.requests.length>0&&body.requests.every(q=>q.method==='GET'&&typeof q.path==='string'&&q.path.split('?')[0]==='/wc/store/v1/cart'))return;}catch(e){}
+      }
+      posts.push({url:r.url(),body:r.postData()});
+    });
     await button.click();await page.waitForFunction(()=>document.querySelector('#loyf-referral-bubble').parentElement.querySelector('[role="status"]').textContent==='Link copied');
     assert.equal(await page.evaluate(()=>navigator.clipboard.readText()),base+'/?ref='+f.token);assert.deepEqual(posts,[]);
     await page.goto(base+'/?page_id='+f.account+'&'+encodeURIComponent(f.account_slug)+'=1');

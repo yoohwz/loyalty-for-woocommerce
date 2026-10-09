@@ -36,7 +36,9 @@ if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
   fi
   if [[ -z "${LOYF_BROWSER_EXECUTABLE:-}" ]]; then node "$(dirname "$LOYF_PLAYWRIGHT_PATH")/playwright/cli.js" install --with-deps chromium; fi
 fi
-for versions in '6.8.3:9.9.5' '7.0:11.1.2'; do
+versions_list=('6.8.3:9.9.5' '7.0:11.1.2')
+if [[ "${LOYF13_CURRENT_STABLE:-}" == 1 ]]; then versions_list=('7.1.3:11.2.0'); fi
+for versions in "${versions_list[@]}"; do
   wordpress=${versions%:*}; woocommerce=${versions#*:}
   for storage in cpt hpos; do
     database="loyf_rt_$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')"; databases+=( "$database" )
@@ -55,6 +57,7 @@ for versions in '6.8.3:9.9.5' '7.0:11.1.2'; do
     wp option update woocommerce_custom_orders_table_data_sync_enabled no --quiet
     if [[ "$storage" == hpos ]]; then wp option update woocommerce_custom_orders_table_enabled yes --quiet; fi
     wp plugin activate loyalty-for-woocommerce --quiet
+    for feature in signup login review levelup redemption email_reward email_deduct email_level; do wp eval-file "$repo/tests/runtime/resolve-fixture.php" "$feature" --quiet; done
     export LOYF_STORAGE="$storage"
     wp eval-file "$repo/tests/runtime/referral-lite.php" --quiet
     wp eval-file "$repo/tests/runtime/referral-origins.php" --quiet

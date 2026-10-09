@@ -33,6 +33,7 @@ class YOWCL_Free_Referral {
         if ( $referrer && ! $self && get_userdata( $referrer ) && get_userdata( $referee ) ) {
             $terms['events'][] = array( 'key'=>'referral:link:' . $order->get_id() . ':referrer', 'user_id'=>$referrer, 'points'=>$config['points'],
                 'action'=>'referral_link_referrer_reward', 'marker'=>'_yo_link_referrer_awarded',
+                /* translators: 1: referral type, 2: recipient type, 3: order number. */
                 'description'=>sprintf( __( 'Referral %1$s reward (%2$s) for order %3$s', 'loyalty-for-woocommerce' ), 'link', 'referrer', $order->get_order_number() ) );
         }
         return $terms;

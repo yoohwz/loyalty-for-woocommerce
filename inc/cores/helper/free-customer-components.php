@@ -71,9 +71,11 @@ class YOWCL_Free_Customer_Components {
             $role = $customer['level']; $rules = $customer['levels'];
             $markup = self::text( wp_roles()->roles[$role]['name'] ?? $role );
             if ( null === $customer['earned']['value'] ) { return $markup . self::text( $unavailable ); }
+            /* translators: Stored earned points. */
             $markup .= self::text( sprintf( __( 'Earned points: %s', 'loyalty-for-woocommerce' ), $customer['earned']['value'] ) );
             $next = null;
             foreach ( $rules as $slug => $rule ) { if ( (int) $rule['from'] > (int) ( $rules[$role]['from'] ?? 0 ) && ( null === $next || (int) $rule['from'] < (int) $rules[$next]['from'] ) ) { $next = $slug; } }
+            /* translators: 1: next Loyalty level, 2: earned points threshold. */
             if ( null !== $next ) { $markup .= self::text( sprintf( __( 'Next level: %1$s at %2$s earned points.', 'loyalty-for-woocommerce' ), wp_roles()->roles[$next]['name'] ?? $next, (string) $rules[$next]['from'] ) ); }
             return $markup;
         }

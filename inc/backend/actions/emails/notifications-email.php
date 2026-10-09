@@ -4,10 +4,48 @@ defined('ABSPATH') || exit;
 class YOSWC_Loyalty_Notifications_Email {
     public function __construct() {
         add_filter('woocommerce_email_classes', array($this, 'register'));
+        foreach (array('points_reward','points_deduct','level_update') as $family) {
+            $id='yowcl_loyalty_'.$family;
+            $feature='level_update'===$family ? 'email_level' : ('points_deduct'===$family ? 'email_deduct' : 'email_reward');
+            add_filter('woocommerce_settings_api_form_fields_'.$id, function($fields) use($feature,$id,$family) {
+                if (YOWCL_Free_Migrations::readable($feature)) { return $fields; }
+                $section=$GLOBALS['current_section']??($_GET['section']??'');
+                if (in_array($section,array($id,'yowcl_wc_email_loyalty_'.$family),true)) { $GLOBALS['hide_save_button']=true; }
+                return array('loyf_preserved_settings'=>array('type'=>'title','default'=>'','title'=>__('Settings preserved','loyalty-for-woocommerce'),'description'=>YOWCL_Free_Migrations::held_settings_message($feature)));
+            });
+            add_filter('pre_update_option_woocommerce_'.$id.'_settings', function($value,$old) use($feature) {
+                if (YOWCL_Free_Migrations::readable($feature)) { return $value; }
+                if (class_exists('WC_Admin_Settings')) { WC_Admin_Settings::add_error(YOWCL_Free_Migrations::held_settings_message($feature)); }
+                return $old; // WordPress declines the unchanged value before any row/autoload write.
+            }, PHP_INT_MAX, 2);
+            add_filter('pre_option_woocommerce_' . $id.'_settings', function($pre,$option) use($feature) { return YOWCL_Free_Migrations::readable($feature) ? $this->committed_settings($pre,$option) : array(); }, PHP_INT_MAX, 2);
+            add_filter('woocommerce_email_enabled_'.$id, array($this,'refresh_enabled'), PHP_INT_MIN, 3);
+            add_filter('woocommerce_email_enabled_'.$id, array($this,'guard_enabled'), PHP_INT_MAX, 3);
+        }
         foreach (array('points_reward' => 4, 'points_deduct' => 4, 'level_update' => 3) as $event => $argc) {
             foreach (array('yowcl_', 'woocommerce_') as $prefix) { add_action($prefix . 'loyalty_' . $event, array($this, 'send_' . $event . '_email'), 5, $argc); }
         }
         if (did_action('woocommerce_email') && WC()->mailer()) { WC()->mailer()->emails = $this->register(WC()->mailer()->emails); }
+    }
+    /** Preserve native option shape while bypassing pre-transaction cache images. */
+    public function committed_settings($pre, $option) {
+        try { $raw=YOWCL_Free_Migrations::read($option); return null===$raw ? array() : maybe_unserialize($raw); }
+        catch (Throwable $e) { return array(); }
+    }
+    private function enabled_policy($email) {
+        $feature='yowcl_loyalty_level_update'===$email->id ? 'email_level' : ('yowcl_loyalty_points_deduct'===$email->id ? 'email_deduct' : 'email_reward');
+        return 'yes'===(YOWCL_Free_Migrations::canonical($feature)['enabled']??'no');
+    }
+    public function refresh_enabled($enabled, $object = null, $email = null) {
+        $email=$email instanceof WC_Email ? $email : $object;
+        if (!$email instanceof WC_Email) { return false; }
+        // Warm WC_Email instances may predate the feature resolution.
+        $current=$this->enabled_policy($email);$email->enabled=$current ? 'yes' : 'no';return $current;
+    }
+    public function guard_enabled($enabled, $object = null, $email = null) {
+        $email=$email instanceof WC_Email ? $email : $object;
+        if (!$email instanceof WC_Email) { return false; }
+        return $enabled && $this->enabled_policy($email);
     }
     public function register($emails) {
         require_once __DIR__ . '/class-yowcl-wc-email-loyalty-base.php';

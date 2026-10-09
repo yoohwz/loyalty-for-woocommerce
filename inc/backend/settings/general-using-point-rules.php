@@ -8,7 +8,7 @@ class YOSWC_Loyalty_Settings_Using_Point_Rules {
 	}
 
 	public function render_using_point_field( $value ) {
-		$saved_using_points = maybe_unserialize(get_option('loyalty_points_using_rules', array('points' => '', 'amount' => '')));
+		$saved_using_points = YOWCL_Free_Migrations::readable('redemption') ? maybe_unserialize(get_option('loyalty_points_using_rules', array('points' => '', 'amount' => ''))) : array();
         $saved_using_points = is_array($saved_using_points) ? $saved_using_points : array('points' => '', 'amount' => '');
 
 		?>
@@ -18,7 +18,7 @@ class YOSWC_Loyalty_Settings_Using_Point_Rules {
 			</th>
 			<td class="forminp">
 				<div id="loyalty_using_points">
-					<?php 
+					<?php
 					echo wp_kses(
 						$this->get_point_html( $saved_using_points ),
 						array(
@@ -29,7 +29,7 @@ class YOSWC_Loyalty_Settings_Using_Point_Rules {
 								'style' => array(),
 								'value' => array(),
 								'placeholder' => array(),
-								'min' => array()
+								'min' => array(), 'disabled' => array()
 							),
 							'span' => array(),
 							'strong' => array(),
@@ -52,9 +52,10 @@ class YOSWC_Loyalty_Settings_Using_Point_Rules {
 		ob_start();
 		?>
 		<div class="loyalty_using_point">
-			<input type="number" name="loyalty_using_points" style="width: 84px;" value="<?php echo esc_attr($settings['points']); ?>" placeholder="<?php esc_attr_e('points', 'loyalty-for-woocommerce'); ?>" min="1" />
-			<?php echo esc_html__( 'point(s) for', 'loyalty-for-woocommerce' ); ?> 
-			<input type="number" name="loyalty_using_amount" style="width: 84px;" value="<?php echo esc_attr($settings['amount']); ?>" placeholder="<?php esc_attr_e('amount', 'loyalty-for-woocommerce'); ?>" min="1" /> 
+        <?php $blocked=!YOWCL_Free_Migrations::ready('redemption') || !YOWCL_Free_Migrations::readable('redemption'); ?>
+			<input type="number" name="loyalty_using_points" style="width: 84px;" value="<?php echo esc_attr($settings['points'] ?? ''); ?>" placeholder="<?php esc_attr_e('points', 'loyalty-for-woocommerce'); ?>" min="1" <?php disabled($blocked); ?> />
+			<?php echo esc_html__( 'point(s) for', 'loyalty-for-woocommerce' ); ?>
+			<input type="number" name="loyalty_using_amount" style="width: 84px;" value="<?php echo esc_attr($settings['amount'] ?? ''); ?>" placeholder="<?php esc_attr_e('amount', 'loyalty-for-woocommerce'); ?>" min="1" <?php disabled($blocked); ?> />
 			<?php echo esc_html( get_woocommerce_currency_symbol() ); ?>
 		</div>
 		<?php
