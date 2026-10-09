@@ -17,7 +17,7 @@ $store=static function($name,$raw,$autoload='no')use($wpdb){$wpdb->query($wpdb->
 $reset=static function()use($store){
     as_unschedule_all_actions(YOWCL_Free_Migrations::HOOK,null,YOWCL_Free_Migrations::GROUP);
     foreach(YOWCL_Free_Migrations::features() as $f){foreach(array('','_before','_resolution','_background') as $s){delete_option(YOWCL_Free_Migrations::witness($f).$s);}}
-    $store('loyalty_extra_points_rules',serialize(serialize(array('signup_points'=>'15','signup_enabled'=>'no','login_points'=>'7','login_enabled'=>'yes','unknown'=>(object)array('keep'=>'009')))),'yes');
+    $store('loyalty_extra_points_rules',serialize(serialize(array('signup_points'=>'15','signup_enabled'=>'no','login_points'=>'7','login_enabled'=>'yes','review_points'=>'25','unknown'=>(object)array('keep'=>'009')))),'yes');
     $store('loyalty_extra_reviews_gamification_rules',serialize(array('review_points'=>'30','review_enabled'=>'yes','levelup_enabled'=>'yes','levelup_points'=>array('customer'=>array('awarded'=>'30')),'unknown'=>'007')));
     $store('loyalty_extra_levelup_points_rules',serialize(array('customer'=>array('awarded'=>'50'))));
     $store('loyalty_notification_email',serialize(array('points_update'=>false,'level_update'=>true)));
@@ -41,7 +41,7 @@ try {
     $raw=YOWCL_Free_Migrations::read('loyalty_points_using_rules');YOWCL_Free_Migrations::admit($vector,$batch,wp_create_nonce('loyf_confirm_migrations'));
     loyf_equal(8,count(as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'status'=>'pending','per_page'=>20),'ids')),'Duplicate submit deduplicates');
     $drain();loyf_equal('completed',YOWCL_Free_Migrations::status()['state'],'Eight independently verified witnesses');
-    loyf_equal($raw,YOWCL_Free_Migrations::read('loyalty_points_using_rules'),'Keep current exact raw fractional wrapper');loyf_equal(30,YOWCL_Free_Core::extra('review'),'Selected legacy review');loyf_equal('50',YOWCL_Free_Core::level_rules()['customer']['awarded'],'Selected role50');
+    loyf_equal($raw,YOWCL_Free_Migrations::read('loyalty_points_using_rules'),'Keep current exact raw fractional wrapper');loyf_equal(25,YOWCL_Free_Core::extra('review'),'Selected legacy review');loyf_equal('50',YOWCL_Free_Core::level_rules()['customer']['awarded'],'Selected role50');
     $confirmed=$business();$drain();YOWCL_Free_Migrations::admit($vector,$batch,wp_create_nonce('loyf_confirm_migrations'));loyf_equal($confirmed,$business(),'Replay creates no economics');
     // Atomic admission rollback on a real failed second intent INSERT.
     $reset();$vector=$choices(array('signup'=>'canonical','login'=>'canonical'));$fault=static function($sql)use($wpdb){return strpos($sql,'INSERT INTO '.$wpdb->options)!==false&&strpos($sql,"'loyf_migration_login_v1_resolution'")!==false?'SELECT * FROM loyf27_no_admission_table':$sql;};
