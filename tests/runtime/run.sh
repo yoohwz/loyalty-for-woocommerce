@@ -84,7 +84,7 @@ for phase in baseline uncaptured candidate; do
             export LOYF_BROWSER_URL="http://127.0.0.1:$port" LOYF25_SITE="$site" LOYF25_FIXTURE="$repo/tests/runtime/migration-review.php"
             wp option update home "$LOYF_BROWSER_URL" --quiet
             wp option update siteurl "$LOYF_BROWSER_URL" --quiet
-            wp config set DOING_AJAX false --raw --quiet
+            wp config delete DOING_AJAX --quiet
             wp eval-file "$LOYF25_FIXTURE" browser-seed --quiet
             php -d opcache.enable=0 -d opcache.enable_cli=0 -d opcache.jit=0 -d opcache.jit_buffer_size=0 -S "127.0.0.1:$port" -t "$site" > "$tmp/browser.log" 2>&1 & server_pid=$!
             node "$repo/tests/runtime/migration-review-browser.cjs"

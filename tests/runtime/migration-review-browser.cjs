@@ -87,7 +87,8 @@ const fixture = mode => execFileSync(process.env.LOYF25_PHP || 'php', [process.e
   await Promise.all([page.waitForURL(u=>u.searchParams.get('batch_result')==='admitted'),page.getByRole('button',{name:'Confirm selected future settings',exact:true}).click()]);
   fixture('verify-queued');const duplicateBatch=await context.request.post(base+'/wp-admin/admin-post.php',{form:batchForm});assert(duplicateBatch.url().includes('batch_result=admitted'));fixture('verify-queued');
   await page.goto(settings('general'));assert((await page.locator('#loyf-migration-notice').innerText()).includes('updating your settings in the background'));
-  await page.locator('#loyf-migration-notice .notice-dismiss').click();await page.locator('#loyf-migration-notice').waitFor({state:'detached'});
+  const dismissResponse=page.waitForResponse(r=>r.url().includes('admin-ajax.php')&&r.request().postData()?.includes('loyf_dismiss_migration'));
+  await page.locator('#loyf-migration-notice .notice-dismiss').click();assert.equal((await (await dismissResponse).json()).success,true,'Native dismiss returns clean JSON');await page.locator('#loyf-migration-notice').waitFor({state:'detached'});
   await page.reload();assert.equal(await page.locator('#loyf-migration-notice').count(),0,'Dismiss persists after reload');fixture('verify-queued');
   await page.getByRole('link',{name:'Migration status',exact:true}).click();assert((await page.locator('#loyf-status').innerText()).includes('Queued or running: 8'));
   fixture('drain-background');fixture('verify-background');await page.reload();assert((await page.locator('#loyf-status').innerText()).includes('Verified: 8'));
