@@ -130,6 +130,21 @@ class YOWCL_Free_Migrations {
             try { $result=mysqli_query($db,$wpdb->prepare('SELECT RELEASE_LOCK(%s)',$lock)); if($result instanceof mysqli_result){mysqli_free_result($result);} } catch(Throwable $e) {}
         }
     }
+    /** Rebuild the interactive actor after serialization; the request's WP_User may be stale. */
+    private static function interactive_actor($actor=null) {
+        if(null===$actor){$actor=get_current_user_id();}
+        if(!is_int($actor)||$actor<1||get_current_user_id()!==$actor){throw new RuntimeException('migration_resolution_denied');}
+        if(!self::actor_can_manage($actor)){throw new RuntimeException('migration_resolution_denied');}
+    }
+    private static function actor_can_manage($actor) {
+        global $wpdb;
+        // Both user capabilities and site role definitions may have changed since bootstrap.
+        wp_cache_delete($wpdb->prefix.'user_roles','options');wp_cache_delete('alloptions','options');wp_cache_delete('notoptions','options');
+        $roles=wp_roles();$roles->roles=array();$roles->role_objects=array();$roles->role_names=array();
+        $roles->for_site(get_current_blog_id());
+        clean_user_cache($actor);
+        return user_can(new WP_User($actor),'manage_options');
+    }
     private static function points( $value ) {
         if ( '' === $value ) { return $value; }
         if ( ! is_scalar( $value ) || ! is_numeric( $value ) || ! is_finite( (float) $value ) || (float) $value < 0 || (float) $value > 2147483647 ) { throw new RuntimeException( 'migration_malformed_points' ); }
@@ -196,6 +211,7 @@ class YOWCL_Free_Migrations {
         if ( ! current_user_can('manage_options') || ! wp_verify_nonce($nonce,'loyf_capture_legacy_'.$feature) ) { throw new RuntimeException('migration_capture_denied'); }
         self::target($feature);
         self::locked(function() use($feature) {
+            self::interactive_actor();
             if ( self::premium_history() || self::read('wc_loyalty_db_version') !== null || self::read('loyf_core_cutover_v1') !== null ) { throw new RuntimeException('migration_origin_unresolved'); }
             $active = self::decode(self::read('active_plugins'));
             if ( ! in_array(YOSWC_LOYALTY_PLUGIN_BASENAME,$active,true) || in_array('wc-loyalty/wc-loyalty.php',$active,true) || is_multisite() ) { throw new RuntimeException('migration_origin_unresolved'); }
@@ -270,6 +286,7 @@ class YOWCL_Free_Migrations {
             }
             if (null!==self::read(self::witness($feature))) { throw new RuntimeException('migration_witness_changed'); }
             if (!YOWCL_Free_Core::owns()) { throw new RuntimeException('migration_owner_changed'); }
+            if ($resolution && !isset($spec['consent'])) { self::interactive_actor(); }
             if (isset($spec['consent'])) {
                 self::consent($feature,$spec,$interactive);
             }
@@ -357,7 +374,15 @@ class YOWCL_Free_Migrations {
             $spec=array('source'=>$raw,'target'=>$target,'patch'=>$patch);
         }
         $spec['before']=$raw; $spec['mode']=$mode;
-        if ('redemption'===$feature) { $spec['context']=array('currency'=>get_woocommerce_currency(),'currency_option'=>self::read('woocommerce_currency'),'enabled'=>self::read('loyalty_points_using_point')); }
+        if ('redemption'===$feature) {
+            // Validate the complete proposed owned terms, including retained legacy fields.
+            $terms=array_replace(self::decode($raw),$spec['patch']);
+            foreach(array('points','amount','min_points','max_points','min_cart') as $key){
+                if(!array_key_exists($key,$terms)){throw new RuntimeException('migration_legacy_source_missing');}
+                self::points($terms[$key]);
+            }
+            $spec['context']=array('currency'=>get_woocommerce_currency(),'currency_option'=>self::read('woocommerce_currency'),'enabled'=>self::read('loyalty_points_using_point'));
+        }
         self::validate_spec($feature,$spec,true); return $spec;
     }
     /** A fresh direct review binds immutable evidence and currently displayed storage. */
@@ -418,6 +443,7 @@ class YOWCL_Free_Migrations {
         if (!in_array($feature,self::features(),true) || !in_array($mode,array('canonical','legacy','disable'),true) || !is_string($fingerprint) || !preg_match('/^[a-f0-9]{64}$/D',$fingerprint) || !current_user_can('manage_options') || !YOWCL_Free_Core::owns() || !wp_verify_nonce($nonce,'loyf_replace_'.$feature)) { throw new RuntimeException('migration_resolution_denied'); }
         $committed=false;
         try { return self::locked(function()use($feature,$mode,$fingerprint,&$committed){
+            self::interactive_actor();
             if ('1'===self::read(self::witness($feature))) { self::target_settings($feature);return 'already_confirmed'; }
             $proposal=self::replacement_preview($feature,$mode);
             if (!hash_equals($proposal['fingerprint'],$fingerprint)) { throw new RuntimeException('migration_resolution_stale'); }
@@ -426,8 +452,8 @@ class YOWCL_Free_Migrations {
             if ('legacy'===$mode || 'legacy'===$proposal['old']['mode']) { $locks[]=self::source_name($feature); }
             if ('redemption'===$feature) { $locks[]= 'woocommerce_currency';$locks[]='loyalty_points_using_point'; }
             $completion=array('locks'=>$locks,'check'=>function()use($feature,$mode,$fingerprint,$actor){
-                clean_user_cache($actor);
-                if (!user_can(new WP_User($actor),'manage_options') || !YOWCL_Free_Core::owns()) { throw new RuntimeException('migration_resolution_denied'); }
+                self::interactive_actor($actor);
+                if (!YOWCL_Free_Core::owns()) { throw new RuntimeException('migration_resolution_denied'); }
                 $fresh=self::replacement_preview($feature,$mode);
                 if (!hash_equals($fingerprint,$fresh['fingerprint'])) { throw new RuntimeException('migration_resolution_stale'); }
             },'audit'=>function()use($feature,$mode,$proposal,$actor,$spec){
@@ -466,6 +492,7 @@ class YOWCL_Free_Migrations {
         if (!current_user_can('manage_options') || !YOWCL_Free_Core::owns() || !wp_verify_nonce($nonce,'loyf_resolve_'.$feature)) { throw new RuntimeException('migration_resolution_denied'); }
         $committed=false;
         try { return self::locked(function() use($feature,$mode,$fingerprint,&$committed) {
+            self::interactive_actor();
             self::target_settings($feature);
             if (self::ready($feature)) { return 'already_confirmed'; }
             if (null!==self::read(self::witness($feature))) { throw new RuntimeException('migration_malformed_witness'); }
@@ -587,9 +614,8 @@ class YOWCL_Free_Migrations {
         global $wpdb;
         $c=self::consent_structure($feature,$spec);
         if ($c['issued']>time() || (!$interactive && $c['expires']<=time())) { throw new RuntimeException('migration_consent_expired'); }
-        if ($interactive && !current_user_can('manage_options')) { throw new RuntimeException('migration_resolution_denied'); }
-        clean_user_cache($c['actor']);
-        if (!$interactive && !user_can($c['actor'],'manage_options')) { throw new RuntimeException('migration_consent_revoked'); }
+        if ($interactive) { self::interactive_actor(); }
+        if (!$interactive && !self::actor_can_manage($c['actor'])) { throw new RuntimeException('migration_consent_revoked'); }
         if ('redemption'===$feature && (($c['currency']??null)!==get_woocommerce_currency() || ($spec['context']['currency_option']??null)!==self::read('woocommerce_currency') || !array_key_exists('enabled',$c) || $c['enabled']!==self::read('loyalty_points_using_point'))) { throw new RuntimeException('migration_target_changed'); }
         if ('legacy'===$spec['mode']) {
             // Compare the legacy inputs actually used by this feature, not shared siblings.
@@ -671,6 +697,7 @@ class YOWCL_Free_Migrations {
         $set=hash('sha256',serialize($ordered));$actor=get_current_user_id();
         $commit_attempted=false;
         try { self::locked(function()use($ordered,$batch,$set,$actor,$wpdb,&$commit_attempted){
+            self::interactive_actor($actor);
             $specs=array();$duplicates=0;$issued=time();
             foreach($ordered as $feature=>$choice) {
                 if (!is_array($choice) || array_keys($choice)!==array('mode','fingerprint') || !is_string($choice['mode']) || !in_array($choice['mode'],array('canonical','legacy','disable'),true) || !is_string($choice['fingerprint']) || !preg_match('/^[a-f0-9]{64}$/D',$choice['fingerprint'])) { throw new RuntimeException('migration_resolution_invalid'); }
@@ -699,7 +726,8 @@ class YOWCL_Free_Migrations {
                 }
                 $names=array_unique($names);sort($names);
                 foreach($names as $name) { $r=self::query($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name=%s FOR UPDATE",$name));if($r instanceof mysqli_result){mysqli_free_result($r);} }
-                if (!YOWCL_Free_Core::owns() || !current_user_can('manage_options')) { throw new RuntimeException('migration_resolution_denied'); }
+                self::interactive_actor($actor);
+                if (!YOWCL_Free_Core::owns()) { throw new RuntimeException('migration_resolution_denied'); }
                 foreach($specs as $feature=>$spec) {
                     $fresh=self::batch_preview($feature,$spec['mode']);
                     if (!hash_equals($spec['consent']['fingerprint'],hash('sha256',serialize($fresh)))) { throw new RuntimeException('migration_resolution_stale'); }
@@ -734,6 +762,7 @@ class YOWCL_Free_Migrations {
         if (!in_array($feature,self::features(),true) || !wp_verify_nonce(wp_unslash($_POST['_wpnonce']),'loyf_retry_'.$feature)) { wp_die('migration_resolution_denied'); }
         try {
             self::locked(function()use($feature){
+                self::interactive_actor();
                 $spec=self::authorized_spec($feature);if(!$spec){return;}
                 if (!self::scheduler()) { throw new RuntimeException('migration_scheduler_unavailable'); }
                 $old=self::work($feature);
