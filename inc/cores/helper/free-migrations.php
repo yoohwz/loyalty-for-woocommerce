@@ -520,7 +520,7 @@ class YOWCL_Free_Migrations {
             self::$errors[$feature]=$e->getMessage();
         }
         if ($retry) {
-            // The current action is still in-progress; a successor has a distinct, bounded attempt arg.
+            // A successor shares this run; the persisted attempt budget is rechecked under ownership.
             $args=array($feature,$retry['run']);
             if (!as_schedule_single_action(time()+60,self::HOOK,$args,self::GROUP,false)) { self::$errors[$feature]='migration_schedule_failed'; }
         }

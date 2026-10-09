@@ -13,7 +13,7 @@ $names=array_merge(array_values($targets),array('loyalty_extra_levelup_points_ru
 foreach(YOWCL_Free_Migrations::features() as $f){foreach(array('','_before','_resolution','_background') as $s){$names[]=YOWCL_Free_Migrations::witness($f).$s;}}
 $names=array_unique($names);$saved=array();foreach($names as $n){$saved[$n]=$wpdb->get_row($wpdb->prepare("SELECT option_value,autoload FROM {$wpdb->options} WHERE option_name=%s",$n),ARRAY_A);}
 $business=static function()use($wpdb){return array($wpdb->get_results("SELECT * FROM {$wpdb->usermeta} WHERE meta_key IN ('user_points','user_earning_points') ORDER BY umeta_id",ARRAY_A),$wpdb->get_results("SELECT * FROM {$wpdb->prefix}yo_loyalty_points_log ORDER BY id",ARRAY_A),get_option($wpdb->prefix.'user_roles'));};
-$before=$business();$children=array();$actor=0;
+$before=$business();$children=array();$actor=0;$notice_exists=metadata_exists('user',1,'loyf_migration_notice_dismissed');$notice_before=get_user_meta(1,'loyf_migration_notice_dismissed',true);
 $store=static function($name,$raw,$autoload='no')use($wpdb){$wpdb->query($wpdb->prepare("INSERT INTO {$wpdb->options}(option_name,option_value,autoload) VALUES(%s,%s,%s) ON DUPLICATE KEY UPDATE option_value=VALUES(option_value),autoload=VALUES(autoload)",$name,$raw,$autoload));wp_cache_delete($name,'options');wp_cache_delete('alloptions','options');wp_cache_delete('notoptions','options');};
 $reset=static function()use($store){
     as_unschedule_all_actions(YOWCL_Free_Migrations::HOOK,null,YOWCL_Free_Migrations::GROUP);
@@ -44,6 +44,11 @@ try {
     $drain();loyf_equal('completed',YOWCL_Free_Migrations::status()['state'],'Eight independently verified witnesses');
     loyf_equal($raw,YOWCL_Free_Migrations::read('loyalty_points_using_rules'),'Keep current exact raw fractional wrapper');loyf_equal(25,YOWCL_Free_Core::extra('review'),'Selected legacy review');loyf_equal('50',YOWCL_Free_Core::level_rules()['customer']['awarded'],'Selected role50');
     $confirmed=$business();$drain();YOWCL_Free_Migrations::admit($vector,$batch,wp_create_nonce('loyf_confirm_migrations'));loyf_equal($confirmed,$business(),'Replay creates no economics');
+    // Native AJAX dismissal guards and preference readback; none of these authorizes migration.
+    $reset();set_current_screen('dashboard');ob_start();YOWCL_Free_Migrations::notices();$notice=ob_get_clean();preg_match('/data-token="([a-f0-9]{64})"/',$notice,$match);loyf_assert(isset($match[1]),'Authorized notice token');
+    $die=static function(){return static function(){throw new RuntimeException('loyf27-json-exit');};};add_filter('wp_die_ajax_handler',$die,PHP_INT_MAX);add_filter('wp_die_handler',$die,PHP_INT_MAX);
+    $json=static function($post){$_SERVER['REQUEST_METHOD']='POST';$_POST=$post;ob_start();try{do_action('wp_ajax_loyf_dismiss_migration');}catch(RuntimeException $e){loyf_equal('loyf27-json-exit',$e->getMessage(),'Native JSON termination');}finally{$_POST=array();}return json_decode(ob_get_clean(),true);};
+    try{loyf_equal(false,$json(array('_wpnonce'=>'invalid','token'=>$match[1]))['success'],'Dismiss denied nonce');loyf_equal(false,$json(array('_wpnonce'=>wp_create_nonce('loyf_dismiss_migration'),'token'=>str_repeat('0',64)))['success'],'Dismiss denied stale state');loyf_equal(true,$json(array('_wpnonce'=>wp_create_nonce('loyf_dismiss_migration'),'token'=>$match[1]))['success'],'Guarded persistent dismissal');loyf_equal($match[1],get_user_meta(1,'loyf_migration_notice_dismissed',true),'Dismiss preference persisted');foreach(YOWCL_Free_Migrations::features()as$f){loyf_assert(!YOWCL_Free_Migrations::ready($f),'Dismiss never creates witness');}}finally{remove_filter('wp_die_ajax_handler',$die,PHP_INT_MAX);remove_filter('wp_die_handler',$die,PHP_INT_MAX);}
     // Atomic admission rollback on a real failed second intent INSERT.
     $reset();$vector=$choices(array('signup'=>'canonical','login'=>'canonical'));$fault=static function($sql)use($wpdb){return strpos($sql,'INSERT INTO '.$wpdb->options)!==false&&strpos($sql,"'loyf_migration_login_v1_resolution'")!==false?'SELECT * FROM loyf27_no_admission_table':$sql;};
     add_filter('query',$fault,PHP_INT_MAX);try{$deny(static function()use($vector){YOWCL_Free_Migrations::admit($vector,wp_generate_uuid4(),wp_create_nonce('loyf_confirm_migrations'));},'migration_write_failed');}finally{remove_filter('query',$fault,PHP_INT_MAX);}
@@ -89,5 +94,6 @@ try {
     foreach($children as$child){if(is_resource($child[0])){proc_terminate($child[0]);proc_close($child[0]);}if(is_file($child[1])){unlink($child[1]);}}
     as_unschedule_all_actions(YOWCL_Free_Migrations::HOOK,null,YOWCL_Free_Migrations::GROUP);
     foreach($saved as$n=>$row){if(null===$row){delete_option($n);}else{$store($n,$row['option_value'],$row['autoload']);}}
+    if($notice_exists){update_user_meta(1,'loyf_migration_notice_dismissed',$notice_before);}else{delete_user_meta(1,'loyf_migration_notice_dismissed');}
     if($actor){require_once ABSPATH.'wp-admin/includes/user.php';wp_delete_user($actor);}wp_set_current_user(1);
 }
