@@ -547,6 +547,7 @@ class YOSWC_Loyalty_Settings {
         $result=array();
         foreach(array('points'=>'loyalty_using_points','amount'=>'loyalty_using_amount') as $key=>$field) {
             $value=$_POST[$field]??null;
+            if (''===$value && !isset($_POST['loyalty_points_using_point'])) { $result[$key]=''; continue; }
             if (!is_string($value) || !preg_match('/^[0-9]+(?:\.[0-9]+)?$/D',$value) || !is_finite((float)$value) || (float)$value<0 || (isset($_POST['loyalty_points_using_point']) && (float)$value<=0) || (float)$value>2147483647) { throw new RuntimeException('loyalty_settings_invalid'); }
             if ('amount'===$key && false!==strpos($value,'.') && strlen(substr(strrchr($value,'.'),1))>wc_get_price_decimals()) { throw new RuntimeException('loyalty_settings_invalid'); }
             $result[$key]=(float)$value;
@@ -558,8 +559,9 @@ class YOSWC_Loyalty_Settings {
         return YOWCL_Free_Migrations::locked(function() {
             $rules=$this->using_point_input();
             // An unchanged displayed value retains its original representation.
-            $current=YOWCL_Free_Migrations::canonical('redemption');
+            $current=YOWCL_Free_Migrations::canonical('redemption', true);
             foreach($rules as $key=>$value) {
+                if (''===$value && !array_key_exists($key,$current)) { unset($rules[$key]); continue; }
                 if (!is_scalar($current[$key]??null) || !is_numeric($current[$key])) { continue; }
                 $display='amount'===$key ? wc_format_decimal($current[$key],wc_get_price_decimals(),true) : (string)$current[$key];
                 if ((float)$display===$value) { $rules[$key]=$current[$key]; }

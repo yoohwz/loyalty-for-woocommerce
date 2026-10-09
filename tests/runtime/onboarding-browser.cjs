@@ -15,12 +15,20 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         if (page.url().includes('wp-login')) throw new Error('Native admin login: ' + page.url() + ' ' + (await page.locator('body').innerText()).slice(0,2000));
         await page.goto(base + '/wp-admin/admin.php?page=loyf-setup');
         try { await page.locator('[data-loyf-step="0"]').waitFor({ state: 'visible' }); } catch (e) { console.error('Onboarding browser page:', page.url(), (await page.locator('body').innerText()).slice(0,2400)); throw e; }
-        if (process.env.LOYF11_CASE === 'browser-exit') {
+        if (['browser-exit','browser-blank'].includes(process.env.LOYF11_CASE)) {
             await page.locator('[data-loyf-next]').click();
             await Promise.all([page.waitForNavigation(), page.getByRole('button', { name: 'Exit Quick Start', exact: true }).click()]);
             assert.equal(await page.locator('#loyf-quick-start').count(),0);
             await page.reload(); assert.equal(await page.locator('#loyf-quick-start').count(),0);
-            console.log('Shipped native onboarding Exit/refresh browser PASS'); return;
+            console.log('Shipped native onboarding Exit/refresh browser PASS');
+            if (process.env.LOYF11_CASE==='browser-blank') {
+                await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section=general');
+                assert.equal(await page.locator('[name=loyalty_using_points]').inputValue(),'');assert.equal(await page.locator('[name=loyalty_using_amount]').inputValue(),'');
+                await page.locator('[name="loyalty_earning_points[customer]"]').fill('7');await page.locator('#loyalty_points_rounding').selectOption('round_down');
+                await page.locator('button[name=save]').click();await page.getByText('Your settings have been saved.',{exact:false}).waitFor();
+                console.log('Shipped fresh skipped Quick Start native General Save with blank redemption PASS');
+            }
+            return;
         }
         const posts = []; page.on('request', r => { if (r.method() === 'POST') posts.push(r.url()); });
         for (let step = 0; step < 5; step++) {

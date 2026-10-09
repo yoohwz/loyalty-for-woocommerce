@@ -34,3 +34,14 @@ add_filter('query',static function($sql){
     }
     return $sql;
 },PHP_INT_MAX);
+
+// One transient target read fault at the raw-preservation read, not initial readiness.
+add_filter('query',static function($sql){
+    static $failed=false;
+    if (!$failed && isset($_POST['_loyf25_redemption_term_fault']) && 0===strpos($sql,'SELECT ') && false!==strpos($sql,"loyalty_points_using_rules") && function_exists('wp_get_current_user') && current_user_can('manage_options') && is_string($_POST['_wpnonce']??null) && wp_verify_nonce($_POST['_wpnonce'],'woocommerce-settings')) {
+        foreach(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS) as $frame) {
+            if ('canonical'===($frame['function']??'')) { $failed=true;global $wpdb;$wpdb->suppress_errors(true);return 'SELECT * FROM loyf25_deliberately_unavailable_term'; }
+        }
+    }
+    return $sql;
+},PHP_INT_MAX);

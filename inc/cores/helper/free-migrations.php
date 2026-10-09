@@ -17,9 +17,17 @@ class YOWCL_Free_Migrations {
         try { return '1' === self::read( self::witness( $feature ) ); } catch ( Throwable $e ) { return false; }
     }
     /** Read committed canonical policy independently of local/shared option caches. */
-    public static function canonical( $feature ) {
-        try { return self::ready($feature) ? self::decode(self::read(self::target($feature))) : array(); }
-        catch ( Throwable $e ) { return array(); }
+    public static function canonical( $feature, $required = false ) {
+        try {
+            if ('1'!==self::read(self::witness($feature))) {
+                if ($required) { throw new RuntimeException('migration_incomplete'); }
+                return array();
+            }
+            return self::decode(self::read(self::target($feature)));
+        } catch ( Throwable $e ) {
+            if ($required) { throw $e; }
+            return array();
+        }
     }
     /** Readability never grants witness or repair authority. Missing targets remain supported. */
     public static function readable( $feature ) {
