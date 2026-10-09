@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-09T02:45:00+00:00\n"
+"POT-Creation-Date: 2026-10-09T08:50:44+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
@@ -148,7 +148,9 @@ msgid "Tools"
 msgstr ""
 
 #: inc/backend/settings.php:65
-msgid "Migration Review"
+#: inc/cores/helper/free-migrations.php:874
+#: inc/cores/helper/free-migrations.php:963
+msgid "Migration status"
 msgstr ""
 
 #: inc/backend/settings.php:66
@@ -409,7 +411,7 @@ msgid "General earning and level settings"
 msgstr ""
 
 #: inc/backend/settings.php:474
-#: inc/cores/helper/free-migrations.php:486
+#: inc/cores/helper/free-migrations.php:1024
 msgid "Redemption"
 msgstr ""
 
@@ -926,7 +928,7 @@ msgid "Set how many points to exchange for a discount to the customers."
 msgstr ""
 
 #: inc/backend/settings/general-using-point-rules.php:57
-#: inc/cores/helper/free-migrations.php:454
+#: inc/cores/helper/free-migrations.php:985
 msgid "Exchange points"
 msgstr ""
 
@@ -935,7 +937,7 @@ msgid "point(s) for"
 msgstr ""
 
 #: inc/backend/settings/general-using-point-rules.php:59
-#: inc/cores/helper/free-migrations.php:454
+#: inc/cores/helper/free-migrations.php:985
 msgid "Discount amount"
 msgstr ""
 
@@ -1309,30 +1311,30 @@ msgstr ""
 msgid "Points used"
 msgstr ""
 
-#: inc/cores/helper/free-core.php:67
+#: inc/cores/helper/free-core.php:69
 msgid "Sign-up bonus"
 msgstr ""
 
-#: inc/cores/helper/free-core.php:67
+#: inc/cores/helper/free-core.php:69
 msgid "Daily login bonus"
 msgstr ""
 
-#: inc/cores/helper/free-core.php:67
+#: inc/cores/helper/free-core.php:69
 msgid "Product review bonus"
 msgstr ""
 
-#: inc/cores/helper/free-core.php:67
+#: inc/cores/helper/free-core.php:69
 msgid "Level up bonus"
 msgstr ""
 
-#: inc/cores/helper/free-core.php:86
+#: inc/cores/helper/free-core.php:88
 msgid "Level up bonus for role:"
 msgstr ""
 
-#: inc/cores/helper/free-core.php:95
-#: inc/cores/helper/free-migrations.php:389
-#: inc/cores/helper/free-migrations.php:480
-#: inc/cores/helper/free-migrations.php:523
+#: inc/cores/helper/free-core.php:97
+#: inc/cores/helper/free-migrations.php:596
+#: inc/cores/helper/free-migrations.php:1017
+#: inc/cores/helper/free-migrations.php:1062
 #: inc/cores/helper/free-reader-admin.php:13
 msgid "Unavailable"
 msgstr ""
@@ -1436,277 +1438,429 @@ msgstr ""
 msgid "Review First Purchase"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:46
+#: inc/cores/helper/free-migrations.php:49
 msgid "This feature is on hold and is not active. Its saved settings are preserved until an administrator explicitly reviews and confirms them in Migration Review."
 msgstr ""
 
 #. translators: Canonical option container name, never its stored contents.
-#: inc/cores/helper/free-migrations.php:50
+#: inc/cores/helper/free-migrations.php:53
 #, php-format
 msgid "The saved Loyalty settings container (%s) has an unsupported format. Its original data was preserved. Restore or repair the original complete container using verified backups before changing this feature."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:403
+#: inc/cores/helper/free-migrations.php:532
+#: inc/cores/helper/free-migrations.php:910
+#: inc/cores/helper/free-migrations.php:1039
+msgid "Keep current"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:532
+#: inc/cores/helper/free-migrations.php:910
+msgid "Use reviewed legacy"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:532
+#: inc/cores/helper/free-migrations.php:910
+#: inc/cores/helper/free-migrations.php:1039
+msgid "Disable"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:534
+msgid "Review changed settings"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:534
+msgid "The original background choice no longer matches the saved settings. Review a new choice for this feature. It will complete only when you confirm it now. The original decision remains evidence and is superseded only after verified success."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:536
+msgid "These valid saved legacy terms do not prove the last writer."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:536
+msgid "This choice authorizes the displayed future behavior."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:539
+#, php-format
+msgid "Confirm replacement: %s"
+msgstr ""
+
+#. translators: Counts of verified, queued and held migration features.
+#: inc/cores/helper/free-migrations.php:876
+#, php-format
+msgid "Verified: %1$d. Queued or running: %2$d. Needs attention: %3$d. Failed: %4$d."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:877
+msgid "The reviewed choices were admitted. Completion is verified separately for each setting below."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:878
+msgid "No new set of choices was admitted. Reload and review the current settings. Any earlier pending choices are preserved."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:879
+msgid "The admission result could not be verified. The choices may have been saved. Reload Migration status to inspect the recorded choices before submitting again."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:880
+msgid "Pending, stalled or failed settings stay on hold. If background processing is unavailable, ask an administrator to check WooCommerce Scheduled Actions and the site cron/loopback service. Retry only after resolving the cause."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:881
+msgid "Approval expired. Review the same pending choice before deliberately confirming again."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:881
+msgid "The approving administrator no longer has permission. An authorized administrator must review the pending choice."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:881
+msgid "The reviewed settings changed. Review the changed settings below if a replacement choice is available. Current settings and original evidence are preserved."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:881
+msgid "The reviewed legacy source changed. Review the changed settings below if a replacement choice is available. Current settings and original evidence are preserved."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:881
+msgid "An existing pending choice requires deliberate review and confirmation."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:881
+msgid "Background processing has stalled. Check Scheduled Actions and cron before retrying."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:881
+msgid "The automatic retry limit was reached. Resolve the storage problem before deliberately retrying."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:881
+msgid "WooCommerce background processing is unavailable."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:883
+msgid "Review required. Saved settings are preserved."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:888
+#, php-format
+msgid "Retry background processing: %s"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:902
+msgid "Review future settings once"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:902
+msgid "Confirmation authorizes the displayed future Free rewards, redemption and email behavior. Valid legacy terms are not proof of the last writer. Unselected or unsupported settings remain on hold."
+msgstr ""
+
+#. translators: Number included in the deliberate keep-current action, and number excluded.
+#: inc/cores/helper/free-migrations.php:904
+#, php-format
+msgid "Keep current includes %1$d eligible settings; %2$d are excluded."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:907
+#: inc/cores/helper/free-migrations.php:1062
+msgid "Current terms"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:909
+msgid "Choose future behavior"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:909
+msgid "Leave on hold"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:912
+msgid "Keep current proposal"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:912
+msgid "Legacy proposal — review differences"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:912
+msgid "Disable proposal"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:915
+msgid "Keep current settings for eligible features"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:915
+msgid "Confirm selected future settings"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:930
 msgid "On hold / not active"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:403
+#: inc/cores/helper/free-migrations.php:930
 msgid "New actions for this feature are paused. Saved data is preserved."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:403
+#: inc/cores/helper/free-migrations.php:930
 msgid "Review this setting"
 msgstr ""
 
-#. translators: Number of held Loyalty features.
-#: inc/cores/helper/free-migrations.php:434
-#, php-format
-msgid "%s Loyalty setting needs review"
-msgid_plural "%s Loyalty settings need review"
-msgstr[0] ""
-msgstr[1] ""
-
-#. translators: Number of held Loyalty features.
-#: inc/cores/helper/free-migrations.php:434
-msgid "Some new rewards, redemption or emails are paused. Existing balances and history are unchanged."
+#: inc/cores/helper/free-migrations.php:961
+msgid "Loyalty is updating your settings in the background. Existing points and history are unchanged."
 msgstr ""
 
-#. translators: Number of held Loyalty features.
-#: inc/cores/helper/free-migrations.php:434
-msgid "Review Loyalty settings"
+#: inc/cores/helper/free-migrations.php:961
+msgid "Loyalty settings need attention. Some new rewards, redemption or emails are paused. Existing points and history are unchanged."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:437
-#: inc/cores/helper/free-migrations.php:481
-msgid "Loyalty Migration Review"
+#: inc/cores/helper/free-migrations.php:962
+msgid "Loyalty could not finish updating its settings. Review the migration status before retrying. Existing points and history are unchanged."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:440
+#: inc/cores/helper/free-migrations.php:963
+msgid "Dismiss this notice"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:968
+#: inc/cores/helper/free-migrations.php:1018
+msgid "Loyalty Migration Status"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:971
 msgid "Sign-up reward"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:440
+#: inc/cores/helper/free-migrations.php:971
 msgid "Daily login reward"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:440
+#: inc/cores/helper/free-migrations.php:971
 msgid "Product review reward"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:440
+#: inc/cores/helper/free-migrations.php:971
 msgid "Level-up reward"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:440
+#: inc/cores/helper/free-migrations.php:971
 msgid "Points redemption"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:440
+#: inc/cores/helper/free-migrations.php:971
 msgid "Points earned email"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:440
+#: inc/cores/helper/free-migrations.php:971
 msgid "Points deducted email"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:440
+#: inc/cores/helper/free-migrations.php:971
 msgid "Level update email"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:444
+#: inc/cores/helper/free-migrations.php:975
 #: inc/frontend/loyalty-info-bubble.php:660
 msgid "Not configured"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:445
-#: inc/cores/helper/free-migrations.php:461
-#: inc/cores/helper/free-migrations.php:464
+#: inc/cores/helper/free-migrations.php:976
+#: inc/cores/helper/free-migrations.php:997
+#: inc/cores/helper/free-migrations.php:1000
 msgid "Unsupported value"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:454
+#: inc/cores/helper/free-migrations.php:985
 msgid "Delivery"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:454
+#: inc/cores/helper/free-migrations.php:985
 msgid "Minimum points"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:454
+#: inc/cores/helper/free-migrations.php:985
 msgid "Maximum points"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:454
+#: inc/cores/helper/free-migrations.php:985
 msgid "Minimum cart amount"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:459
-msgid "Future rewards"
+#: inc/cores/helper/free-migrations.php:991
+msgid "Enabled"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:459
-msgid "Reward points"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:460
-msgid "Absent / unknown"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:461
-msgid "Enabled after confirmation"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:461
+#: inc/cores/helper/free-migrations.php:991
+#: inc/cores/helper/free-migrations.php:997
 msgid "Disabled"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:463
+#: inc/cores/helper/free-migrations.php:991
+#: inc/cores/helper/free-migrations.php:996
+msgid "Absent / unknown"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:992
+msgid "Redemption enablement"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:995
+msgid "Future rewards"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:995
+msgid "Reward points"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:997
+msgid "Enabled after confirmation"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:999
 msgid "Per-role reward points"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:465
+#: inc/cores/helper/free-migrations.php:1001
 msgid "No configured role rewards"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:474
+#: inc/cores/helper/free-migrations.php:1010
+msgid "The decision result could not be verified. It may have committed. Reload this item to inspect current server storage before trying again."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:1011
 msgid "The reviewed settings changed. Nothing was confirmed by this request. Reload and review the current terms before choosing again."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:475
+#: inc/cores/helper/free-migrations.php:1012
 msgid "The decision could not be confirmed. Saved data and any pending choice are preserved. Reload and review this item; retry only the pending choice when available. For unsupported data, ask a qualified administrator to review verified backups."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:480
+#: inc/cores/helper/free-migrations.php:1017
 msgid "Needs review"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:480
+#: inc/cores/helper/free-migrations.php:1017
 msgid "Confirmed"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:480
+#: inc/cores/helper/free-migrations.php:1017
 msgid "Incomplete / pending"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:480
+#: inc/cores/helper/free-migrations.php:1017
 msgid "Unsupported data / manual repair"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:481
-msgid "Review one feature at a time. Your explicit choice authorizes future rewards, redemption or email delivery only. Existing points, history and historical evidence are not changed. An update without verified pre-upgrade evidence cannot establish which edition last wrote these settings."
+#: inc/cores/helper/free-migrations.php:1018
+msgid "Review the future settings together or use the individual controls below. Your explicit choice authorizes future rewards, redemption or email delivery only. Existing points, history and historical evidence are not changed. An update without verified pre-upgrade evidence cannot establish which edition last wrote these settings."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:481
+#: inc/cores/helper/free-migrations.php:1018
 msgid "Return to Loyalty settings"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:486
+#: inc/cores/helper/free-migrations.php:1024
 msgid "Rewards"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:486
+#: inc/cores/helper/free-migrations.php:1024
 msgid "Email delivery"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:491
+#: inc/cores/helper/free-migrations.php:1029
 msgid "This feature was already confirmed. No new choice was applied. Review the current terms below."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:491
+#: inc/cores/helper/free-migrations.php:1029
 msgid "Confirmed from current server storage. Review the next item or return to settings to edit this feature."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:493
+#: inc/cores/helper/free-migrations.php:1031
 msgid "Current canonical terms"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:498
+#: inc/cores/helper/free-migrations.php:1036
 msgid "Valid legacy terms for comparison"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:499
+#: inc/cores/helper/free-migrations.php:1037
 msgid "Valid legacy terms are absent, unsupported or unavailable for the pending choice. This is not a zero or disabled setting."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:500
+#: inc/cores/helper/free-migrations.php:1038
 msgid "On hold / not active. Compare the terms below before confirming. Zero values or disabled choices stop future activity for this feature. Other ready settings can be saved independently."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:501
-msgid "Keep current"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:501
+#: inc/cores/helper/free-migrations.php:1039
 msgid "Use proven legacy"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:501
-msgid "Disable"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:506
+#: inc/cores/helper/free-migrations.php:1044
 msgid "These are valid historical Free terms, not proof of the last writer. Choose them only after reviewing this comparison."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:506
+#: inc/cores/helper/free-migrations.php:1044
+msgid "Confirming completes this same pending choice now. It does not renew background approval."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:1044
 msgid "This is an explicit decision about future settings."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:507
+#: inc/cores/helper/free-migrations.php:1045
 msgid "No setting values will change; confirmation authorizes the displayed existing redemption terms."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:508
+#: inc/cores/helper/free-migrations.php:1046
 msgid "The displayed terms differ from the current canonical terms. Check each amount and role before confirming."
 msgstr ""
 
 #. translators: Explicit feature choice.
-#: inc/cores/helper/free-migrations.php:513
+#: inc/cores/helper/free-migrations.php:1051
 #, php-format
 msgid "Confirm: %s"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:514
+#: inc/cores/helper/free-migrations.php:1052
 msgid "Unavailable for the current data or pending choice."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:516
+#: inc/cores/helper/free-migrations.php:1055
 msgid "Reload and review this item"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:521
+#: inc/cores/helper/free-migrations.php:1060
 msgid "Edit confirmed settings"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:523
+#: inc/cores/helper/free-migrations.php:1062
 msgid "Historical Loyalty migration evidence"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:523
+#: inc/cores/helper/free-migrations.php:1062
 msgid "Read-only evidence; this does not grant rollback authority or prove which edition last wrote these terms."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:523
+#: inc/cores/helper/free-migrations.php:1062
 msgid "Before migration"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:523
+#: inc/cores/helper/free-migrations.php:1062
 msgid "Migration terms"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:523
-msgid "Current terms"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:523
+#: inc/cores/helper/free-migrations.php:1062
 msgid "Evidence"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:523
+#: inc/cores/helper/free-migrations.php:1062
 msgid "Historical evidence unavailable."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:542
+#: inc/cores/helper/free-migrations.php:1081
 msgid "Please reapply loyalty points after the upgrade. Your points balance has not changed."
 msgstr ""
 

@@ -19,6 +19,7 @@ function add_action(...$args){}
 function wp_roles(){return (object)array('roles'=>array());}
 function admin_url($v){return '/'.$v;}
 function wp_json_encode($v){return json_encode($v);}
+function wp_generate_uuid4(){return '00000000-0000-4000-8000-000000000027';}
 function wp_create_nonce($v){return 'stand-in';}
 function wp_nonce_field($v){echo '<input name="nonce" value="stand-in">';}
 class LOYF_Opaque_DB {

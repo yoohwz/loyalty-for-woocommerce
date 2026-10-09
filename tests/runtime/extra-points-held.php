@@ -9,7 +9,7 @@ foreach($features as $f){foreach(array('','_before','_resolution')as$s){$names[]
 $snapshot=static function()use($wpdb,$names){$rows=array();foreach($names as$n){$rows[$n]=$wpdb->get_row($wpdb->prepare("SELECT option_value,autoload FROM {$wpdb->options} WHERE option_name=%s",$n),ARRAY_A);}return $rows;};
 $original=$snapshot();$ledger=$wpdb->get_results('SELECT * FROM '.YOWCL_Points_Log::table_name().' ORDER BY id',ARRAY_A);
 $die=static function(){return static function($message){throw new RuntimeException((string)$message);};};add_filter('wp_die_handler',$die);add_filter('wp_die_ajax_handler',$die);
-$choose=static function($f){$spec=YOWCL_Free_Migrations::preview($f,'canonical');YOWCL_Free_Migrations::resolve($f,'canonical',hash('sha256',serialize($spec)),wp_create_nonce('loyf_resolve_'.$f));};
+$choose=static function($f){$spec=YOWCL_Free_Migrations::preview($f,'canonical');YOWCL_Free_Migrations::resolve($f,'canonical',YOWCL_Free_Migrations::resolution_fingerprint($f,$spec),wp_create_nonce('loyf_resolve_'.$f));};
 $save=static function(){(new YOSWC_Loyalty_Settings_Extra_Points())->save_extra_points_settings();};
 $pair=static function($f)use($account,$merged){$terms=maybe_unserialize(get_option(in_array($f,array('signup','login'),true)?$account:$merged));return array($terms[$f.'_enabled'],$terms[$f.'_points']);};
 try{

@@ -62,7 +62,7 @@ class YOSWC_Loyalty_Settings {
 			'customization' => __('Customization', 'loyalty-for-woocommerce'),
 			'notification' => __('Notification', 'loyalty-for-woocommerce'),
 			'tools' => __('Tools', 'loyalty-for-woocommerce'),
-            'migration_review' => __('Migration Review', 'loyalty-for-woocommerce'),
+            'migration_review' => __('Migration status', 'loyalty-for-woocommerce'),
 			'premium' => __('Premium', 'loyalty-for-woocommerce')
 		);
 
