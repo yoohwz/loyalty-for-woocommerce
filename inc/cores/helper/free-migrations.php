@@ -138,12 +138,22 @@ class YOWCL_Free_Migrations {
     }
     private static function actor_can_manage($actor) {
         global $wpdb;
-        // Both user capabilities and site role definitions may have changed since bootstrap.
-        wp_cache_delete($wpdb->prefix.'user_roles','options');wp_cache_delete('alloptions','options');wp_cache_delete('notoptions','options');
-        $roles=wp_roles();$roles->roles=array();$roles->role_objects=array();$roles->role_names=array();
-        $roles->for_site(get_current_blog_id());
-        clean_user_cache($actor);
-        return user_can(new WP_User($actor),'manage_options');
+        if(null===self::$owner){return self::locked(static function()use($actor){return self::actor_can_manage($actor);});}
+        // Current locking reads also bypass an already established InnoDB snapshot.
+        $read=static function($sql){$result=self::query($sql);if(!($result instanceof mysqli_result)){throw new RuntimeException('migration_storage_unavailable');}try{return mysqli_fetch_all($result,MYSQLI_ASSOC);}finally{mysqli_free_result($result);}};
+        $role_rows=$read($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name=%s FOR UPDATE",$wpdb->prefix.'user_roles'));
+        $users=$read($wpdb->prepare("SELECT ID FROM {$wpdb->users} WHERE ID=%d FOR UPDATE",$actor));
+        $caps_rows=$read($wpdb->prepare("SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id=%d AND meta_key=%s ORDER BY umeta_id FOR UPDATE",$actor,$wpdb->prefix.'capabilities'));
+        if(count($users)!==1||count($role_rows)!==1||count($caps_rows)!==1){return false;}
+        $definitions=maybe_unserialize($role_rows[0]['option_value']);$caps=maybe_unserialize($caps_rows[0]['meta_value']);
+        if(!is_array($definitions)||!is_array($caps)){return false;}
+        $roles=wp_roles();$saved=array($roles->roles,$roles->role_objects,$roles->role_names);
+        try {
+            $roles->roles=$definitions;$roles->role_objects=array();$roles->role_names=array();
+            foreach($definitions as $name=>$definition){if(!is_string($name)||!is_array($definition)||!is_array($definition['capabilities']??null)||!is_string($definition['name']??null)){return false;}$roles->role_objects[$name]=new WP_Role($name,$definition['capabilities']);$roles->role_names[$name]=$definition['name'];}
+            $user=new WP_User($actor);$user->caps=$caps;$user->get_role_caps();
+            return user_can($user,'manage_options');
+        } finally {list($roles->roles,$roles->role_objects,$roles->role_names)=$saved;}
     }
     private static function points( $value ) {
         if ( '' === $value ) { return $value; }
@@ -266,25 +276,33 @@ class YOWCL_Free_Migrations {
     private static function finish( $feature, $spec, $resolution=false, $interactive=false, $completion=null ) {
         global $wpdb;
         self::assert_owner(); $db=self::$owner['db'];
+        $evidence_name=self::witness($feature).'_resolution';$evidence_raw=null;
+        if($resolution && !$completion){
+            $evidence_raw=self::read($evidence_name);
+            if(null===$evidence_raw || serialize(self::decode($evidence_raw))!==serialize($spec)){throw new RuntimeException('migration_malformed_evidence');}
+        }
         $engine=$wpdb->get_var($wpdb->prepare('SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s',$wpdb->options));
         self::assert_owner();
         if ($wpdb->last_error || 'InnoDB'!==$engine || YOWCL_Points_Lock::has_transaction($db)) { throw new RuntimeException('migration_transaction_unavailable'); }
         self::query('START TRANSACTION');$commit_attempted=false;
         try {
             $names=array('active_plugins',self::target($feature),self::witness($feature));
+            if($resolution && !$completion){$names[]=$evidence_name;}
             if(isset($spec['consent'])) {
                 $names[]=self::witness($feature).'_resolution';
                 if('legacy'===$spec['mode']){$names[]='levelup'===$feature?'loyalty_extra_levelup_points_rules':(0===strpos($feature,'email_')?'loyalty_notification_email':('redemption'===$feature?'loyalty_points_using_rules':'loyalty_extra_points_rules'));}
                 if('redemption'===$feature){$names[]='woocommerce_currency';$names[]='loyalty_points_using_point';}
             }
             if ($completion) { $names=array_merge($names,$completion['locks']); }
-            $names=array_unique($names);sort($names);
+            $names=array_unique($names);sort($names);$locked_evidence=null;
             foreach($names as $name) {
                 $result=self::query($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name=%s FOR UPDATE",$name));
                 if (!($result instanceof mysqli_result)) { throw new RuntimeException('migration_storage_unavailable'); }
+                if($name===$evidence_name){$row=mysqli_fetch_row($result);$locked_evidence=$row?$row[0]:null;}
                 mysqli_free_result($result);
             }
             if (null!==self::read(self::witness($feature))) { throw new RuntimeException('migration_witness_changed'); }
+            if($resolution && !$completion && $locked_evidence!==$evidence_raw){throw new RuntimeException('migration_malformed_evidence');}
             if (!YOWCL_Free_Core::owns()) { throw new RuntimeException('migration_owner_changed'); }
             if ($resolution && !isset($spec['consent'])) { self::interactive_actor(); }
             if (isset($spec['consent'])) {
