@@ -14,7 +14,7 @@ php /absolute/wp.phar --path=/absolute/disposable/site \
 
 The runtime bootstrap must load the activated checker; merely requiring its CLI file without the active plugin is not valid runtime evidence. The official CLI documentation is at https://github.com/WordPress/plugin-check/blob/trunk/docs/CLI.md. Native transport is intercepted in the disposable site; no service-provider subscription/license endpoint is contacted. Only the exact Free plugin is scanned.
 
-The executed scan at `66ed6c8b94cf63417e7cf6ed08685ceff1bd75d2`, source/stage/ZIP/extraction102 files and verification ZIP SHA256 `50b34854138462b9bcdf5d38099a5c9e6f117588710625282bf34976f209e425`, reports **97 ERROR /230 WARNING (327 findings)**. The row inventory below uses that exact source's lines. The CLI renders temporary symlink paths as `/privateinc/...` or `/privatetemplates/...`; the table normalizes only that leading `/private`, and every resulting source path was inspected. Later candidates must rerun the scan and reconcile any changes before acceptance.
+The executed scan at `d701348a40fc01b641c7fb87d3f80e0566d91137`, source/stage/ZIP/extraction102 files and verification ZIP SHA256 `4e97dab24af55bc1526934ab489dc8dbbc9bf5e5d87d8fc124d8cd3ac9943c06`, reports **97 ERROR /234 WARNING (331 findings)**. The row inventory below uses that exact source's lines. The CLI renders temporary symlink paths as `/privateinc/...` or `/privatetemplates/...`; the table normalizes only that leading `/private`, and every resulting source path was inspected. Later candidates must rerun the scan and reconcile any changes before acceptance.
 
 ## Corrections and dispositions
 
@@ -28,9 +28,9 @@ A true output-boundary issue was found while tracing exception findings: Classic
 | D | Deliberate direct database operations for live lock/witness/schema/raw duplicate-sensitive evidence and consistent accounting snapshots. A cached options/usermeta projection cannot replace raw rows at these concurrency boundaries. Schema changes are additive literal columns/indexes in the pinned helper; no destructive repair is added. Capability scans and store/order discovery fail closed on errors, ambiguity or safe limits. Each query/write's concrete source is listed below. |
 | M | The pinned transaction layer and Free migration owner operate on the exact mysqli connection holding its named/row locks and transaction, checks the original thread/table/lock holder around writes, checks affected rows and transaction ownership, inspects error numbers/results/insert IDs and frees results. Nested native services reuse that verified owner without reacquiring or releasing its lock. Actual connection-KILL and outer-transaction fixtures prove rollback/no replacement-connection witness and preservation of caller transaction ownership. Substituting WordPress reconnecting/cached convenience calls would change ownership/failure semantics. This is an accepted native MySQL protocol requirement, not permission for arbitrary raw SQL; Q applies to every supplied query. |
 | E | Exceptions are protocol/control flow, not an HTML output site. Extra points translated validation exceptions are caught and rendered with `esc_html`, including the finite translated list of confirmed setting saves after a storage failure. `points-lock` emits a fixed database code/integer error number; `referral-rewards` combines bounded result enums/codes; `free-blocks` returns fixed RouteException text through Woo REST/React; `free-cart` throws fixed translated text. Native Woo checkout notices render through `wc_kses_notice`; Free admin diagnostics use `esc_html`. The Classic AJAX raw exception boundary is corrected as described above; its new native regression is required. Exceptions are not blanket escaped at throw time, which would corrupt machine codes or double-escape downstream output. |
-| N | Actual mutation owners check capability/nonce/ownership: the Extra points save closure is invoked only after its outer typed nonce/capability/Free owner guard; Tools dispatch delegates to `start_new_import()` nonce then `import_locked()` capability and exact current UUID; `import_csv()` checks the import nonce and user-owned identity. Checkout UUID reads are hints only; `prepare()` calls `request_owner()` /`assert_identity()`, binds user/session/immutable funded terms and serialized admission; `recover_checkout()` binds stored user/session and native Woo checkout validation. Public referral GET only selects a strictly validated12-character token/cookie; it awards no value. Dashboard GET only chooses the literal30-day reader view. Activation request hints can deny Free ownership, never grant a mutation. Native denied nonce/capability, forged ownership and replay tests remain required. |
-| V | The flagged values are independently validated before use: digit/range grammar for whole points and user IDs; UUID grammar plus current per-user intent for import/manual actions;12-character referral token validation; finite component kind allowlist and current-user-only identity; nonce verification on typed strings; literal request-method comparison. Inputs are rejected instead of normalizing malformed economic terms into another request. Nonces are typed/sanitized or checked through the native nonce verifier; unexpected quote/backslash values cannot pass the numeric/UUID/token grammar or equal a valid nonce. The new resolution handler additionally follows standard typed sanitation. These are specific validation paths, not a global sanitizer exemption. |
-| P | The `query` filter is WordPress's existing SQL-observer contract, retained around connection-bound writes; `woocommerce_*` hooks are native Woo contracts; `yowcl_*`, `yoswc_*` and `loyf_*` preserve admitted public identities. Email template variables are local to Woo `wc_get_template()` inclusion, not globals registered by the plugin; their names match the email's template arguments. Renaming imported hook/argument contracts to satisfy heuristic prefixes would break compatibility. |
+| N | Actual mutation owners check capability/nonce/ownership: the Extra points save closure is invoked only after its outer typed nonce/capability/Free owner guard; Tools dispatch delegates to `start_new_import()` nonce then `import_locked()` capability and exact current UUID; `import_csv()` checks the import nonce and user-owned identity. Checkout UUID reads are hints only; `prepare()` calls `request_owner()` /`assert_identity()`, binds user/session/immutable funded terms and serialized admission; `recover_checkout()` binds stored user/session and native Woo checkout validation. Public referral GET only selects a strictly validated12-character token/cookie; it awards no value. Dashboard GET only chooses the literal30-day reader view. Activation request hints can deny Free ownership, never grant a mutation. The email section GET is compared strictly against two fixed native identifiers only to hide a Save button on an already unreadable container; it grants no read, mutation or enablement authority. Native denied nonce/capability, forged ownership and replay tests remain required. |
+| V | The flagged values are independently validated before use: digit/range grammar for whole points and user IDs; UUID grammar plus current per-user intent for import/manual actions;12-character referral token validation; finite component kind allowlist and current-user-only identity; nonce verification on typed strings; literal request-method comparison. Inputs are rejected instead of normalizing malformed economic terms into another request. The email section hint is consumed only by a strict finite string comparison; malformed, slashed or nonscalar values cannot select another policy or grant a write. Nonces are typed/sanitized or checked through the native nonce verifier; unexpected quote/backslash values cannot pass the numeric/UUID/token grammar or equal a valid nonce. The new resolution handler additionally follows standard typed sanitation. These are specific validation paths, not a global sanitizer exemption. |
+| P | The `query` filter is WordPress's existing SQL-observer contract, retained around connection-bound writes; `woocommerce_*` hooks are native Woo contracts; `yowcl_*`, `yoswc_*` and `loyf_*` preserve admitted public identities. Email template variables are local to Woo `wc_get_template()` inclusion, not globals registered by the plugin; their names match the email's template arguments. The native Woo `$hide_save_button` global is its existing settings-display contract, set only for the matching opaque email section. Renaming imported hook/argument contracts or this Woo global to satisfy heuristic prefixes would break compatibility. |
 | T | One real, non-security translation-style omission at pinned `referral-rewards.php:273`. The placeholders and order number are used correctly; runtime English behavior is verified. It is non-blocking P3, retained because the admitted29 imports must remain exactly bound to read-only upstream. No missing translations/POT terms or unsafe output is claimed away. |
 | F | `fclose()` closes the previously opened `php://output` CSV response stream in `finally`; it does not access/delete a server file. WordPress filesystem abstraction cannot replace a response stream. Private response headers, capability/nonce and the final completion record are tested natively. |
 | B | First Purchase excludes the current order through Woo's native `wc_get_orders()` API, with bounded paginated history, stable cutoff, cache disabled and failed/partial reads held. The exclusion is necessary to prove an earlier qualifying order; it is not an unbounded caller-controlled query. CPT/HPOS history/failure tests cover it. |
@@ -39,10 +39,14 @@ This table records implementation-owned source assessment. Independent Technical
 
 ## Complete finding inventory at the scan SHA
 
-Repeated findings on the same file/line/code are counted in the last column. Counts sum to327; every returned finding is represented.
+Repeated findings on the same file/line/code are counted in the last column. Counts sum to331; every returned finding is represented.
 
 | Source at scan SHA | Line | PCP code | Disposition | Count |
 | --- | ---: | --- | --- | ---: |
+| `inc/backend/actions/emails/notifications-email.php` | 12 | `WordPress.Security.NonceVerification.Recommended` | N | 1 |
+| `inc/backend/actions/emails/notifications-email.php` | 12 | `WordPress.Security.ValidatedSanitizedInput.InputNotSanitized` | V | 1 |
+| `inc/backend/actions/emails/notifications-email.php` | 12 | `WordPress.Security.ValidatedSanitizedInput.MissingUnslash` | V | 1 |
+| `inc/backend/actions/emails/notifications-email.php` | 13 | `WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound` | P | 1 |
 | `inc/backend/actions/helper/referrals.php` | 83 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` | D | 1 |
 | `inc/backend/actions/helper/referrals.php` | 83 | `WordPress.DB.DirectDatabaseQuery.NoCaching` | D | 1 |
 | `inc/backend/actions/helper/referrals.php` | 103 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` | D | 1 |
@@ -53,20 +57,20 @@ Repeated findings on the same file/line/code are counted in the last column. Cou
 | `inc/backend/actions/helper/referrals.php` | 129 | `WordPress.Security.NonceVerification.Recommended` | N | 1 |
 | `inc/backend/actions/helper/referrals.php` | 129 | `WordPress.Security.ValidatedSanitizedInput.InputNotSanitized` | V | 1 |
 | `inc/backend/actions/helper/referrals.php` | 140 | `WordPress.Security.ValidatedSanitizedInput.InputNotSanitized` | V | 1 |
-| `inc/backend/settings/extra-points.php` | 180 | `WordPress.Security.NonceVerification.Missing` | N | 1 |
-| `inc/backend/settings/extra-points.php` | 180 | `WordPress.Security.ValidatedSanitizedInput.InputNotSanitized` | V | 1 |
-| `inc/backend/settings/extra-points.php` | 180 | `WordPress.Security.ValidatedSanitizedInput.MissingUnslash` | V | 1 |
-| `inc/backend/settings/extra-points.php` | 185 | `WordPress.Security.NonceVerification.Missing` | N | 1 |
-| `inc/backend/settings/extra-points.php` | 186 | `WordPress.Security.NonceVerification.Missing` | N | 1 |
-| `inc/backend/settings/extra-points.php` | 186 | `WordPress.Security.ValidatedSanitizedInput.InputNotSanitized` | V | 1 |
-| `inc/backend/settings/extra-points.php` | 186 | `WordPress.Security.ValidatedSanitizedInput.MissingUnslash` | V | 1 |
-| `inc/backend/settings/extra-points.php` | 187 | `WordPress.Security.EscapeOutput.ExceptionNotEscaped` | E | 1 |
-| `inc/backend/settings/extra-points.php` | 194 | `WordPress.Security.NonceVerification.Missing` | N | 1 |
-| `inc/backend/settings/extra-points.php` | 195 | `WordPress.Security.NonceVerification.Missing` | N | 1 |
-| `inc/backend/settings/extra-points.php` | 195 | `WordPress.Security.ValidatedSanitizedInput.InputNotSanitized` | V | 1 |
-| `inc/backend/settings/extra-points.php` | 195 | `WordPress.Security.ValidatedSanitizedInput.MissingUnslash` | V | 1 |
-| `inc/backend/settings/extra-points.php` | 196 | `WordPress.Security.EscapeOutput.ExceptionNotEscaped` | E | 1 |
-| `inc/backend/settings/extra-points.php` | 217 | `WordPress.Security.NonceVerification.Missing` | N | 1 |
+| `inc/backend/settings/extra-points.php` | 184 | `WordPress.Security.NonceVerification.Missing` | N | 1 |
+| `inc/backend/settings/extra-points.php` | 184 | `WordPress.Security.ValidatedSanitizedInput.InputNotSanitized` | V | 1 |
+| `inc/backend/settings/extra-points.php` | 184 | `WordPress.Security.ValidatedSanitizedInput.MissingUnslash` | V | 1 |
+| `inc/backend/settings/extra-points.php` | 189 | `WordPress.Security.NonceVerification.Missing` | N | 1 |
+| `inc/backend/settings/extra-points.php` | 190 | `WordPress.Security.NonceVerification.Missing` | N | 1 |
+| `inc/backend/settings/extra-points.php` | 190 | `WordPress.Security.ValidatedSanitizedInput.InputNotSanitized` | V | 1 |
+| `inc/backend/settings/extra-points.php` | 190 | `WordPress.Security.ValidatedSanitizedInput.MissingUnslash` | V | 1 |
+| `inc/backend/settings/extra-points.php` | 191 | `WordPress.Security.EscapeOutput.ExceptionNotEscaped` | E | 1 |
+| `inc/backend/settings/extra-points.php` | 198 | `WordPress.Security.NonceVerification.Missing` | N | 1 |
+| `inc/backend/settings/extra-points.php` | 200 | `WordPress.Security.NonceVerification.Missing` | N | 1 |
+| `inc/backend/settings/extra-points.php` | 200 | `WordPress.Security.ValidatedSanitizedInput.InputNotSanitized` | V | 1 |
+| `inc/backend/settings/extra-points.php` | 200 | `WordPress.Security.ValidatedSanitizedInput.MissingUnslash` | V | 1 |
+| `inc/backend/settings/extra-points.php` | 201 | `WordPress.Security.EscapeOutput.ExceptionNotEscaped` | E | 1 |
+| `inc/backend/settings/extra-points.php` | 222 | `WordPress.Security.NonceVerification.Missing` | N | 1 |
 | `inc/backend/settings/referrals.php` | 20 | `WordPress.Security.ValidatedSanitizedInput.InputNotSanitized` | V | 1 |
 | `inc/backend/settings/referrals.php` | 21 | `WordPress.Security.ValidatedSanitizedInput.InputNotSanitized` | V | 1 |
 | `inc/backend/settings/referrals.php` | 21 | `WordPress.Security.ValidatedSanitizedInput.MissingUnslash` | V | 1 |
@@ -142,24 +146,24 @@ Repeated findings on the same file/line/code are counted in the last column. Cou
 | `inc/cores/helper/free-first-purchase.php` | 91 | `WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude` | B | 1 |
 | `inc/cores/helper/free-migrations.php` | 11 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` | D | 1 |
 | `inc/cores/helper/free-migrations.php` | 11 | `WordPress.DB.DirectDatabaseQuery.NoCaching` | D | 1 |
-| `inc/cores/helper/free-migrations.php` | 49 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_thread_id` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 50 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_query` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 52 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_fetch_row` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 52 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_free_result` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 59 | `WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound` | P | 1 |
-| `inc/cores/helper/free-migrations.php` | 61 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_query` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 73 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_affected_rows` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 87 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` | D | 1 |
-| `inc/cores/helper/free-migrations.php` | 87 | `WordPress.DB.DirectDatabaseQuery.NoCaching` | D | 1 |
-| `inc/cores/helper/free-migrations.php` | 91 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_thread_id` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 96 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_free_result` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 96 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_query` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 154 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` | D | 1 |
-| `inc/cores/helper/free-migrations.php` | 154 | `WordPress.DB.DirectDatabaseQuery.NoCaching` | D | 1 |
-| `inc/cores/helper/free-migrations.php` | 219 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` | D | 1 |
-| `inc/cores/helper/free-migrations.php` | 219 | `WordPress.DB.DirectDatabaseQuery.NoCaching` | D | 1 |
-| `inc/cores/helper/free-migrations.php` | 227 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_free_result` | M | 1 |
-| `inc/cores/helper/free-migrations.php` | 233 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_query` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 73 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_thread_id` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 74 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_query` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 76 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_fetch_row` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 76 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_free_result` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 83 | `WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound` | P | 1 |
+| `inc/cores/helper/free-migrations.php` | 85 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_query` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 97 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_affected_rows` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 111 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` | D | 1 |
+| `inc/cores/helper/free-migrations.php` | 111 | `WordPress.DB.DirectDatabaseQuery.NoCaching` | D | 1 |
+| `inc/cores/helper/free-migrations.php` | 115 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_thread_id` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 120 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_free_result` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 120 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_query` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 178 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` | D | 1 |
+| `inc/cores/helper/free-migrations.php` | 178 | `WordPress.DB.DirectDatabaseQuery.NoCaching` | D | 1 |
+| `inc/cores/helper/free-migrations.php` | 243 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` | D | 1 |
+| `inc/cores/helper/free-migrations.php` | 243 | `WordPress.DB.DirectDatabaseQuery.NoCaching` | D | 1 |
+| `inc/cores/helper/free-migrations.php` | 251 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_free_result` | M | 1 |
+| `inc/cores/helper/free-migrations.php` | 257 | `WordPress.DB.RestrictedFunctions.mysql_mysqli_query` | M | 1 |
 | `inc/cores/helper/free-onboarding.php` | 13 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` | D | 1 |
 | `inc/cores/helper/free-onboarding.php` | 13 | `WordPress.DB.DirectDatabaseQuery.NoCaching` | D | 1 |
 | `inc/cores/helper/free-onboarding.php` | 24 | `PluginCheck.Security.DirectDB.UnescapedDBParameter` | Q | 1 |
