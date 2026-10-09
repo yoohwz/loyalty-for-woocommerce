@@ -24,8 +24,9 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
             if (process.env.LOYF11_CASE==='browser-blank') {
                 await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section=general');
                 assert.equal(await page.locator('[name=loyalty_using_points]').inputValue(),'');assert.equal(await page.locator('[name=loyalty_using_amount]').inputValue(),'');
-                await page.locator('[name="loyalty_earning_points[customer]"]').fill('7');await page.locator('#loyalty_points_rounding').selectOption('round_down');
+                await page.locator('#loyalty_points_rounding').selectOption('round_down');
                 await page.locator('button[name=save]').click();await page.getByText('Your settings have been saved.',{exact:false}).waitFor();
+                await page.locator('[name="loyalty_earning_points[customer]"]').fill('7');await page.locator('button[name=save]').click();await page.getByText('Your settings have been saved.',{exact:false}).waitFor();
                 console.log('Shipped fresh skipped Quick Start native General Save with blank redemption PASS');
             }
             return;

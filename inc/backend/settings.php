@@ -466,8 +466,11 @@ class YOSWC_Loyalty_Settings {
             if ($editable) {
                 if (!$this->save_using_point_rules()) { throw new RuntimeException('migration_incomplete'); }
                 $using=isset($_POST['loyalty_points_using_point']) ? 'yes' : 'no';
-                update_option('loyalty_points_using_point', $using);
-                if (YOWCL_Free_Migrations::read('loyalty_points_using_point')!==$using) { throw new RuntimeException('loyalty_settings_readback_failed'); }
+                $previous_using=YOWCL_Free_Migrations::read('loyalty_points_using_point');
+                // An absent, unchecked flag remains absent on a fresh independent save.
+                if (null!==$previous_using || 'yes'===$using) { update_option('loyalty_points_using_point', $using); }
+                $expected_using=null===$previous_using && 'no'===$using ? null : $using;
+                if (YOWCL_Free_Migrations::read('loyalty_points_using_point')!==$expected_using) { throw new RuntimeException('loyalty_settings_readback_failed'); }
                 $saved[] = __('Redemption','loyalty-for-woocommerce');
             } else {
                 WC_Admin_Settings::add_error(__('Redemption was skipped because it is on hold. General earning and level settings were saved. Review redemption before editing it.','loyalty-for-woocommerce').' <a href="'.esc_url(YOWCL_Free_Migrations::review_url('redemption')).'">'.esc_html__('Review redemption','loyalty-for-woocommerce').'</a>');
