@@ -49,7 +49,7 @@ class YOSWC_Loyalty_Notices {
 	}
 
 	public function admin_notice() {
-        if (YOWCL_Free_Migrations::has_holds() || YOWCL_Free_First_Purchase::held()) { return; }
+        if (!class_exists('YOWCL_Free_Migrations',false) || !class_exists('YOWCL_Free_First_Purchase',false) || YOWCL_Free_Migrations::has_holds() || YOWCL_Free_First_Purchase::held()) { return; }
 		$user_id = get_current_user_id();
 		$activation_time = get_user_meta($user_id, 'yoswc_loyalty_activation_time', true);
 		$current_time = current_time('timestamp');

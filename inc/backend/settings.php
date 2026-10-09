@@ -404,6 +404,7 @@ class YOSWC_Loyalty_Settings {
 		if ($current_section === 'general' && $current_subsection !== 'add_remove_role') {
 
 			if (!is_string($_POST['loyalty_levels_nonce']??null) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['loyalty_levels_nonce'])), 'loyalty_levels_nonce_action')) {
+                WC_Admin_Settings::add_error(__('Settings were not saved because the confirmation expired. Reload this page and try again.','loyalty-for-woocommerce'));
 				return;
 			}
 			
@@ -412,6 +413,10 @@ class YOSWC_Loyalty_Settings {
             try { YOWCL_Free_Migrations::locked(function() use (&$saved,&$expected,$observe) {
                 $editable=YOWCL_Free_Migrations::ready('redemption') && YOWCL_Free_Migrations::readable('redemption');
                 if ($editable) { $this->using_point_input(); }
+                foreach(array('loyalty_level_rules_nonce'=>'save_loyalty_level_rules','earning_point_rules_nonce'=>'save_earning_point_rules') as $key=>$action) {
+                    $submitted='loyalty_level_rules_nonce'===$key ? isset($_POST['loyalty_level_from']) : (isset($_POST['loyalty_earning_points']) || isset($_POST['loyalty_earning_amount']));
+                    if ((isset($_POST[$key]) || $submitted) && (!is_string($_POST[$key]??null) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST[$key])),$action))) { throw new RuntimeException('loyalty_settings_invalid'); }
+                }
                 // Validate editable numeric fields before native Woo writes.
                 foreach(array('loyalty_level_from','loyalty_earning_points','loyalty_earning_amount') as $key) {
                     if (!isset($_POST[$key])) { continue; }
@@ -420,7 +425,8 @@ class YOSWC_Loyalty_Settings {
                 }
             add_filter('pre_update_option',$observe,PHP_INT_MAX,2);
             try {
-			woocommerce_update_options($this->get_loyalty_levels_settings());
+			$level_fields=$this->get_loyalty_levels_settings();
+            woocommerce_update_options($level_fields);
 			 $fields=$this->get_loyalty_points_settings(); unset($fields['loyalty_using_point']);
             woocommerce_update_options($fields);
 	
@@ -448,8 +454,15 @@ class YOSWC_Loyalty_Settings {
 			$this->save_level_rules();
 			$this->save_earning_point_rules();
             } finally { remove_filter('pre_update_option',$observe,PHP_INT_MAX); }
-            foreach($expected as $name=>$raw) { if (YOWCL_Free_Migrations::read($name)!==$raw) { throw new RuntimeException('loyalty_settings_readback_failed'); } }
-            $saved[] = __('General earning and level settings','loyalty-for-woocommerce');
+            $labels=array();
+            foreach(array_merge($level_fields,$fields) as $field) { if (is_array($field) && isset($field['id'])) { $labels[$field['id']]=$field['name']??($field['title']??__('General settings','loyalty-for-woocommerce')); } }
+            $failed=false;
+            foreach($expected as $name=>$raw) {
+                try { $confirmed=YOWCL_Free_Migrations::read($name)===$raw; } catch(Throwable $e) { $confirmed=false; }
+                if ($confirmed) { $saved[]=$labels[$name]??__('General settings','loyalty-for-woocommerce'); } else { $failed=true; }
+            }
+            if ($failed) { throw new RuntimeException('loyalty_settings_readback_failed'); }
+            $saved=array(__('General earning and level settings','loyalty-for-woocommerce'));
             if ($editable) {
                 $this->save_using_point_rules();
                 $using=isset($_POST['loyalty_points_using_point']) ? 'yes' : 'no';
@@ -546,7 +559,11 @@ class YOSWC_Loyalty_Settings {
             $rules=$this->using_point_input();
             // An unchanged displayed value retains its original representation.
             $current=YOWCL_Free_Migrations::canonical('redemption');
-            foreach($rules as $key=>$value) { if (is_scalar($current[$key]??null) && is_numeric($current[$key]) && (float)$current[$key]===$value) { $rules[$key]=$current[$key]; } }
+            foreach($rules as $key=>$value) {
+                if (!is_scalar($current[$key]??null) || !is_numeric($current[$key])) { continue; }
+                $display='amount'===$key ? wc_format_decimal($current[$key],wc_get_price_decimals(),true) : (string)$current[$key];
+                if ((float)$display===$value) { $rules[$key]=$current[$key]; }
+            }
             YOWCL_Free_Migrations::save('redemption', 'loyalty_points_using_rules', $rules);
         });
     }

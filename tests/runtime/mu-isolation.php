@@ -16,3 +16,11 @@ if (isset($_GET['loyf10_ssl'])) { $_SERVER['HTTPS']='on'; }
 add_action('template_redirect',function(){
     if(isset($_GET['loyf10_capture'])) { wp_send_json(array('referrer'=>YOWCL_Helper_Referrals::get_referrer_from_cookie(),'cookie'=>$_COOKIE['yowcl_ref']??'')); }
 },0);
+// Test-only native Woo General POST failure: a rejected scalar UPDATE must not certify all saves.
+add_filter('query',static function($sql){
+    static $failed=false;
+    if (!$failed && isset($_POST['_loyf25_rounding_fault']) && 0===strpos($sql,'UPDATE ') && false!==strpos($sql,"'loyalty_points_rounding'") && function_exists('wp_get_current_user') && current_user_can('manage_options') && is_string($_POST['_wpnonce']??null) && wp_verify_nonce($_POST['_wpnonce'],'woocommerce-settings')) {
+        $failed=true;global $wpdb;$wpdb->suppress_errors(true);return 'SELECT * FROM loyf25_deliberately_unavailable_rounding';
+    }
+    return $sql;
+},PHP_INT_MAX);

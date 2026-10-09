@@ -345,7 +345,7 @@
     {
       "target": "inc/backend/settings.php",
       "mode": "100644",
-      "sha256": "e195c7e4ba2108528446b63e56de7b533132056589c2ab717b4ca9090b38510e"
+      "sha256": "aefa0460198bb7c181e98dc92b4c115be6a1695b70bfac9ddd6832882af306a7"
     },
     {
       "target": "inc/backend/settings/customization.php",
@@ -500,12 +500,12 @@
     {
       "target": "inc/cores/helper/free-migrations.php",
       "mode": "100644",
-      "sha256": "2041f2722b10dac17f22dc49fd50e6258cd1865372ce7ed866b75f812a25a9f2"
+      "sha256": "0822517d5587618c4f2308de377eb35c3bed907568f53aa5a4c5b42378c61a69"
     },
     {
       "target": "inc/cores/helper/free-onboarding.php",
       "mode": "100644",
-      "sha256": "0d8ce2d88cc66f8d27d60936e9d49c89ba605636545a2bf49625b8a5fb5b4fb1"
+      "sha256": "cd830ba9ed6cefe6153d37b6b12a5b529f5071541007e0417c50b009a087901d"
     },
     {
       "target": "inc/cores/helper/free-order-actions.php",
@@ -530,7 +530,7 @@
     {
       "target": "inc/cores/notices.php",
       "mode": "100644",
-      "sha256": "e49f6223ab60dab8ce5374ed0f5124047325a0465e42658c115ec05dc83c2d77"
+      "sha256": "2ae30abc21073f5112edacc8730175ea887cf27efb9c52b5662142c976d47361"
     },
     {
       "target": "inc/frontend/cart-checkout.php",
@@ -620,7 +620,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "8b4cbeda76cca02efff7b7895f45d5674d9b7445ba037f7563e6dcb792998683"
+      "sha256": "e0b056dee95ed9072333bd08020ae5ad64fde8574ec04622c7bd136fa35aa584"
     },
     {
       "target": "license.txt",

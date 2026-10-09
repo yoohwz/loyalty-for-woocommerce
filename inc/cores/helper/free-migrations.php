@@ -330,15 +330,16 @@ class YOWCL_Free_Migrations {
     }
     public static function resolve( $feature, $mode, $fingerprint, $nonce ) {
         if (!current_user_can('manage_options') || !YOWCL_Free_Core::owns() || !wp_verify_nonce($nonce,'loyf_resolve_'.$feature)) { throw new RuntimeException('migration_resolution_denied'); }
-        self::locked(function() use($feature,$mode,$fingerprint) {
+        return self::locked(function() use($feature,$mode,$fingerprint) {
             self::target_settings($feature);
-            if (self::ready($feature)) { return; }
+            if (self::ready($feature)) { return 'already_confirmed'; }
             if (null!==self::read(self::witness($feature))) { throw new RuntimeException('migration_malformed_witness'); }
             $spec=self::preview($feature,$mode);
             if (!hash_equals(hash('sha256',serialize($spec)),(string)$fingerprint)) { throw new RuntimeException('migration_resolution_stale'); }
             $name=self::witness($feature).'_resolution';
             self::put($name,serialize($spec),self::read($name));
             self::finish($feature,$spec,true);
+            return 'confirmed';
         });
     }
     public static function handle_resolution() {
@@ -348,12 +349,12 @@ class YOWCL_Free_Migrations {
         $nonce=is_string($_POST['_wpnonce']??null)?sanitize_text_field(wp_unslash($_POST['_wpnonce'])):'';
         $method=is_string($_SERVER['REQUEST_METHOD']??null)?sanitize_key(wp_unslash($_SERVER['REQUEST_METHOD'])):'';
         if ('post'!==$method || !current_user_can('manage_options') || !YOWCL_Free_Core::owns() || !in_array($feature,self::features(),true) || !in_array($mode,array('canonical','legacy','disable'),true) || !preg_match('/^[a-f0-9]{64}$/D',$fingerprint) || !wp_verify_nonce($nonce,'loyf_resolve_'.$feature)) { wp_die('migration_resolution_denied'); }
-        try { self::resolve($feature,$mode,$fingerprint,$nonce); }
+        try { $decision=self::resolve($feature,$mode,$fingerprint,$nonce); }
         catch(Throwable $e) {
             $code=in_array($e->getMessage(),array('migration_resolution_stale','migration_target_changed'),true)?$e->getMessage():'unconfirmed';
             wp_safe_redirect(add_query_arg(array('feature'=>$feature,'result'=>$code,'choice'=>$mode),admin_url('admin.php?page=loyf-migration-review')).'#loyf-review-'.$feature); exit;
         }
-        $result='confirmed'===self::review_state($feature)?'confirmed':'unconfirmed';
+        $result='confirmed'===self::review_state($feature)?$decision:'unconfirmed';
         wp_safe_redirect(add_query_arg(array('feature'=>$feature,'result'=>$result),admin_url('admin.php?page=loyf-migration-review')).'#loyf-review-'.$feature); exit;
     }
     /** Completed historical evidence is for manual assessment, never rollback authority. */
@@ -478,8 +479,8 @@ class YOWCL_Free_Migrations {
             $state=self::review_state($feature); $current=array();
             echo '<section id="loyf-review-'.esc_attr($feature).'" class="card" style="max-width:100%;box-sizing:border-box" tabindex="-1" aria-labelledby="loyf-title-'.esc_attr($feature).'"><h3 id="loyf-title-'.esc_attr($feature).'">'.esc_html($label).'</h3><p role="status"><strong>'.esc_html($states[$state]).'</strong></p>';
             if ($selected===$feature && $result) {
-                $ok='confirmed'===$state && 'confirmed'===$result;
-                echo '<div role="'.($ok?'status':'alert').'" class="notice notice-'.($ok?'success':'error').' inline"><p>'.esc_html($ok ? __('Confirmed from current server storage. Review the next item or return to settings to edit this feature.','loyalty-for-woocommerce') : self::resolution_message($result)).'</p></div>';
+                $ok='confirmed'===$state && in_array($result,array('confirmed','already_confirmed'),true);
+                echo '<div role="'.($ok?'status':'alert').'" class="notice notice-'.($ok?'success':'error').' inline"><p>'.esc_html($ok ? ('already_confirmed'===$result ? __('This feature was already confirmed. No new choice was applied. Review the current terms below.','loyalty-for-woocommerce') : __('Confirmed from current server storage. Review the next item or return to settings to edit this feature.','loyalty-for-woocommerce')) : self::resolution_message($result)).'</p></div>';
             }
             try { $current=self::target_settings($feature); echo '<h4>'.esc_html__('Current canonical terms','loyalty-for-woocommerce').'</h4>'.self::terms_html($feature,self::scoped_terms($feature,$current)); }
             catch(Throwable $e) { echo '<p>'.esc_html(self::held_settings_message($feature)).'</p>'; }
