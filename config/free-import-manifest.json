@@ -345,7 +345,7 @@
     {
       "target": "inc/backend/settings.php",
       "mode": "100644",
-      "sha256": "abfe24150962ea66c1dc90648d2b6c886c6868346aa4b57137616c39feb12f72"
+      "sha256": "543e4c9f68b7eab7f6853ad1031b0b54aa07ddfa2bdccba9ecb1bbcf20bff6c0"
     },
     {
       "target": "inc/backend/settings/customization.php",
@@ -620,7 +620,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "45169d1da4ce296c1047743723d74a61e9c9b1528a88fb7f36f48b95491516d4"
+      "sha256": "b121bd8062a3585e6855d5d524c5686bb578a417c3ac383e0d1dfdfece7d7677"
     },
     {
       "target": "license.txt",

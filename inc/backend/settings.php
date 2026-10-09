@@ -545,12 +545,18 @@ class YOSWC_Loyalty_Settings {
 		update_option('loyalty_points_earning_rules', $loyalty_points_earning_rules);
 	}
 	
-    private function using_point_input() {
+    private function using_point_input($current = null) {
         if (!is_string($_POST['using_point_rules_nonce']??null) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['using_point_rules_nonce'])), 'save_using_point_rules')) { throw new RuntimeException('loyalty_settings_invalid'); }
+        if (null===$current) { $current=YOWCL_Free_Migrations::canonical('redemption', true); }
         $result=array();
         foreach(array('points'=>'loyalty_using_points','amount'=>'loyalty_using_amount') as $key=>$field) {
             $value=$_POST[$field]??null;
-            if (''===$value && !isset($_POST['loyalty_points_using_point'])) { $result[$key]=''; continue; }
+            if (''===$value && !isset($_POST['loyalty_points_using_point'])) { if (array_key_exists($key,$current)) { $result[$key]=''; } continue; }
+            // Unchanged presentation retains valid stored terms even below currency precision.
+            if (is_string($value) && is_numeric($value) && is_numeric($current[$key]??null) && is_finite((float)$current[$key]) && (float)$current[$key]>=0 && (!isset($_POST['loyalty_points_using_point']) || (float)$current[$key]>0)) {
+                $display='amount'===$key ? wc_format_decimal($current[$key],wc_get_price_decimals(),true) : (string)$current[$key];
+                if ((float)$display===(float)$value) { $result[$key]=$current[$key]; continue; }
+            }
             if (!is_string($value) || !preg_match('/^[0-9]+(?:\.[0-9]+)?$/D',$value) || !is_finite((float)$value) || (float)$value<0 || (isset($_POST['loyalty_points_using_point']) && (float)$value<=0) || (float)$value>2147483647) { throw new RuntimeException('loyalty_settings_invalid'); }
             if ('amount'===$key && false!==strpos($value,'.') && strlen(substr(strrchr($value,'.'),1))>wc_get_price_decimals()) { throw new RuntimeException('loyalty_settings_invalid'); }
             $result[$key]=(float)$value;
@@ -560,15 +566,8 @@ class YOSWC_Loyalty_Settings {
     public function save_using_point_rules() {
         if (!current_user_can('manage_options') || !YOWCL_Free_Core::owns() || !YOWCL_Free_Migrations::ready('redemption') || !YOWCL_Free_Migrations::readable('redemption')) { return false; }
         return YOWCL_Free_Migrations::locked(function() {
-            $rules=$this->using_point_input();
-            // An unchanged displayed value retains its original representation.
             $current=YOWCL_Free_Migrations::canonical('redemption', true);
-            foreach($rules as $key=>$value) {
-                if (''===$value && !array_key_exists($key,$current)) { unset($rules[$key]); continue; }
-                if (!is_scalar($current[$key]??null) || !is_numeric($current[$key])) { continue; }
-                $display='amount'===$key ? wc_format_decimal($current[$key],wc_get_price_decimals(),true) : (string)$current[$key];
-                if ((float)$display===$value) { $rules[$key]=$current[$key]; }
-            }
+            $rules=$this->using_point_input($current);
             YOWCL_Free_Migrations::save('redemption', 'loyalty_points_using_rules', $rules);
             return true;
         });

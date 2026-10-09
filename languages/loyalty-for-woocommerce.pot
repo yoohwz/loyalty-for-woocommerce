@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-09T02:28:18+00:00\n"
+"POT-Creation-Date: 2026-10-09T02:45:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
@@ -408,24 +408,24 @@ msgstr ""
 msgid "General earning and level settings"
 msgstr ""
 
-#: inc/backend/settings.php:471
+#: inc/backend/settings.php:474
 #: inc/cores/helper/free-migrations.php:486
 msgid "Redemption"
 msgstr ""
 
-#: inc/backend/settings.php:473
+#: inc/backend/settings.php:476
 msgid "Redemption was skipped because it is on hold. General earning and level settings were saved. Review redemption before editing it."
 msgstr ""
 
-#: inc/backend/settings.php:473
+#: inc/backend/settings.php:476
 msgid "Review redemption"
 msgstr ""
 
-#: inc/backend/settings.php:476
+#: inc/backend/settings.php:479
 msgid "The save could not be completed. Reload to review current settings."
 msgstr ""
 
-#: inc/backend/settings.php:477
+#: inc/backend/settings.php:480
 #, php-format
 msgid "Settings saved before this error: %s."
 msgstr ""
