@@ -48,7 +48,8 @@ function loyf_ajax($hook, $fields) {
 function loyf_retained_protocol($action) {
     if ('POST'!==($_SERVER['REQUEST_METHOD']??'') || !current_user_can('manage_options') || !YOWCL_Free_Core::owns()) { throw new RuntimeException('migration_resolution_denied'); }
     $f=$_POST['feature']??'';$mode=$_POST['mode']??'';$nonce=$_POST['_wpnonce']??'';
-    $nonce_action='confirm'===$action?'loyf_confirm_migrations':('retry'===$action?'loyf_retry_'.$f:('replace'===$action?'loyf_replace_'.$f:'loyf_resolve_'.$f));
+    $label=is_string($f)?$f:'';
+    $nonce_action='confirm'===$action?'loyf_confirm_migrations':('retry'===$action?'loyf_retry_'.$label:('replace'===$action?'loyf_replace_'.$label:'loyf_resolve_'.$label));
     if(!is_string($nonce) || !wp_verify_nonce($nonce,$nonce_action)){throw new RuntimeException('migration_resolution_denied');}
     if('retry'===$action){throw new RuntimeException('retired:#loyf-status');}
     if('confirm'!==$action && (!is_string($f)||!in_array($f,YOWCL_Free_Migrations::features(),true)||!is_string($mode)||!in_array($mode,array('canonical','legacy','disable'),true)||!is_string($_POST['fingerprint']??null)||!preg_match('/^[a-f0-9]{64}$/D',$_POST['fingerprint']))){throw new RuntimeException('migration_resolution_denied');}
@@ -56,6 +57,6 @@ function loyf_retained_protocol($action) {
         if('confirm'===$action){YOWCL_Free_Migrations::admit($_POST['choices']??array(),$_POST['batch']??'',wp_unslash($nonce));$result='admitted';}
         elseif('replace'===$action){$result=YOWCL_Free_Migrations::replace_pending($f,$mode,wp_unslash($_POST['fingerprint']),wp_unslash($nonce));}
         else{$result=YOWCL_Free_Migrations::resolve($f,$mode,wp_unslash($_POST['fingerprint']),wp_unslash($nonce));}
-    } catch(Throwable $e){$result=in_array($e->getMessage(),array('migration_completion_unknown','migration_admission_unknown'),true)?'unknown':'unconfirmed';}
-    throw new RuntimeException('retained-kernel:result='.$result.'&batch_result='.$result.'#loyf-review-'.$f);
+    } catch(Throwable $e){$result=in_array($e->getMessage(),array('migration_completion_unknown','migration_admission_unknown'),true)?'unknown':('resolve'===$action&&in_array($e->getMessage(),array('migration_resolution_stale','migration_target_changed'),true)?$e->getMessage():'unconfirmed');}
+    throw new RuntimeException('retained-kernel:result='.$result.'&batch_result='.$result.'#loyf-review-'.$label);
 }
