@@ -11,6 +11,7 @@ update_option('loyalty_extra_reviews_gamification_rules', array('review_enabled'
 update_option('woocommerce_yowcl_loyalty_points_reward_settings', array('enabled' => 'no', 'subject' => 'Custom {earned_points}', 'heading' => 'Fixture heading', 'email_type' => 'plain', 'unknown' => '001', 'unknown_object' => (object) array('exact' => '011')));
 update_option('woocommerce_yowcl_loyalty_points_deduct_settings', array('enabled' => 'no', 'subject' => 'Deduct fixture'));
 update_option('woocommerce_yowcl_loyalty_level_update_settings', array('enabled' => 'no', 'heading' => 'Level fixture'));
+$using=maybe_unserialize(get_option('loyalty_points_using_rules'));$using['amount']='0.7010';$using['unknown']=array('exact'=>'003');update_option('loyalty_points_using_rules',serialize($using));
 $state = array(
  'meta' => $wpdb->get_results("SELECT * FROM {$wpdb->usermeta} ORDER BY umeta_id", ARRAY_A),
  'rows' => $wpdb->get_results("SELECT * FROM {$wpdb->prefix}yo_loyalty_points_log ORDER BY id", ARRAY_A),

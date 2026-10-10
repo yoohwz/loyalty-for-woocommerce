@@ -1,5 +1,7 @@
 # Free transition semantics
 
+LOYF-29 Plan Review6091688724 and scope addendum6091755542 supersede the interactive confirmation requirements below only for the admitted Free→Free automatic policy. See `MIGRATION-REVIEW.md` for current behavior. Earlier capture, persistence, ownership and accounting invariants remain; the historical text documents the original provenance boundary, not a reachable merchant migration workflow.
+
 Authority: [LOYF-6](https://github.com/yoohwz/loyalty-for-woocommerce/issues/6), specifically the approved [one-time legacy-effective precedence](https://github.com/yoohwz/loyalty-for-woocommerce/issues/6#issuecomment-6031794246). This is an implementation contract, not another workflow registry.
 
 The approved [LOYF-13 provenance/hold supplement](https://github.com/yoohwz/loyalty-for-woocommerce/issues/13#issuecomment-6057343128) limits initial conversion to independently proven old-Free or conservative same-request fresh origin. Unknown, mixed or Premium origin retains raw source/target bytes and holds only the affected unwitnessed feature. See `CERTIFICATION-CONTRACT.md` for the current partial-recovery and explicit per-feature resolution boundary; version/cutover markers alone do not prove origin.

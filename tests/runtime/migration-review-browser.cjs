@@ -17,7 +17,7 @@ const fixture = mode => execFileSync(process.env.LOYF25_PHP || 'php', [process.e
   assert.equal(await page.locator('#loyalty_points_using_point').isDisabled(),true);
   await page.locator('#loyalty_points_rounding').selectOption('round_up');
   await page.locator('button[name=save]').click();
-  await page.getByText('Redemption was skipped because it is on hold.',{exact:false}).waitFor();
+  await page.getByText('Redemption is not active while its settings are being updated.',{exact:false}).waitFor();
   assert(!(await page.locator('body').innerText()).includes('Your settings have been saved.'),'Partial save cannot report all saved');
   fixture('verify-held');
   const form=await page.locator('#mainform').evaluate(f=>Object.fromEntries(new FormData(f)));form.save='Save changes';form.loyalty_using_amount='99';form.loyalty_using_points='88';form.loyalty_points_using_point='1';
@@ -27,37 +27,28 @@ const fixture = mode => execFileSync(process.env.LOYF25_PHP || 'php', [process.e
   await page.locator('#mainform').evaluate(f=>{const input=document.createElement('input');input.type='hidden';input.name='_loyf25_rounding_fault';input.value='1';f.append(input);});
   await page.locator('button[name=save]').click();await page.getByText('The save could not be completed.',{exact:false}).waitFor();assert((await page.locator('body').innerText()).includes('Settings saved before this error:'));assert(!(await page.locator('body').innerText()).includes('Your settings have been saved.'));fixture('verify-partial');fixture('verify-held');
   await page.goto(settings('extra_points'));
-  for(const name of ['signup','login','review']){assert(await page.locator('[name=loyalty_extra_'+name+'_points]').isDisabled());assert.equal(await page.locator('a[href$="#loyf-review-'+name+'"]').count(),1);}
-  assert.equal(await page.locator('a[href$="#loyf-review-levelup"]').count(),1);
-  await page.locator('[name=loyalty_extra_first_purchase_points]').fill('31');await page.locator('#loyalty_extra_first_purchase_enabled').check();await page.locator('button[name=save]').click();await page.getByText('Held rewards were skipped.',{exact:false}).waitFor();fixture('verify-held');fixture('verify-first');
+  for(const name of ['signup','login','review']){assert(await page.locator('[name=loyalty_extra_'+name+'_points]').isDisabled());assert.equal(await page.locator('a[href*=loyf-migration-review]').count(),0);}
+  assert.equal(await page.locator('a[href*=loyf-migration-review]').count(),0);
+  await page.locator('[name=loyalty_extra_first_purchase_points]').fill('31');await page.locator('#loyalty_extra_first_purchase_enabled').check();await page.locator('button[name=save]').click();await page.getByText('Rewards being updated were skipped.',{exact:false}).waitFor();fixture('verify-held');fixture('verify-first');
   for(const section of ['yowcl_wc_email_loyalty_points_reward','yowcl_wc_email_loyalty_points_deduct','yowcl_wc_email_loyalty_level_update']){
    await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=email&section='+section);
-   assert((await page.locator('#mainform').innerText()).includes('On hold / not active'));
+   assert((await page.locator('#mainform').innerText()).includes('Not active'));
    assert.equal(await page.locator('button[name=save]').count(),0,'Held email has no false native save');
    const emailForm=await page.locator('#mainform').evaluate(f=>Object.fromEntries(new FormData(f)));emailForm.save='Save changes';emailForm.woocommerce_yowcl_loyalty_points_reward_enabled='1';
    const result=await context.request.post(page.url(),{form:emailForm});const html=await result.text();assert(!html.includes('Your settings have been saved.'),'Forged held native email POST suppresses false success');fixture('verify-held');
   }
-  await page.goto(base+'/wp-admin/admin.php?page=loyf-setup');assert.equal(await page.locator('#loyf-quick-start').count(),0,'Historical Quick Start has no Launch authority');assert(!(await page.locator('body').innerText()).includes('private-dormant'));assert.equal(await page.locator('.wrap').getByRole('link',{name:'Review held Loyalty settings',exact:true}).count(),1);
-  await page.goto(review);
-  assert.equal(await page.locator('section[id^=loyf-review-]').count(),8);
-  const body=await page.locator('body').innerText();assert(!body.includes('private-dormant'));assert(!body.includes('0.699999999999'));assert(body.includes('0.7 USD'));
-  assert((await page.locator('#loyf-review-levelup').innerText()).includes('platinum : 50'));assert((await page.locator('#loyf-review-levelup').innerText()).includes('platinum : 30'));
-  const legacy=page.locator('#loyf-review-levelup details').filter({has:page.locator('summary',{hasText:'Use proven legacy'})});await legacy.locator('summary').click();assert((await legacy.innerText()).includes('platinum : 30'));
-  const empty=page.locator('#loyf-review-redemption details').filter({has:page.locator('summary',{hasText:'Use proven legacy'})});await empty.locator('summary').click();assert((await empty.innerText()).includes('No setting values will change'));
-  // Bind a stale form to old terms, then change only its owned pair in an independent native request.
-  const stale=await page.locator('#loyf-review-login form').first().evaluate(f=>Object.fromEntries(new FormData(f)));fixture('stale');
-  const staleResponse=await context.request.post(base+'/wp-admin/admin-post.php',{form:stale});assert(staleResponse.url().includes('result=migration_resolution_stale'));assert((await staleResponse.text()).includes('The reviewed settings changed.'));
-  for(const [feature,choice] of [['signup','Keep current'],['levelup','Use proven legacy'],['review','Disable'],['redemption','Keep current'],['email_reward','Keep current']]){
-   await page.goto(review+'&item='+feature+'#loyf-review-'+feature);
-   const item=page.locator('#loyf-review-'+feature);const details=item.locator('details').filter({has:page.locator('summary',{hasText:choice})});await details.locator('summary').click();
-   const duplicate=await details.locator('form').evaluate(f=>Object.fromEntries(new FormData(f)));
-   await Promise.all([page.waitForURL(u=>u.searchParams.get('result')==='confirmed'),details.getByRole('button',{name:'Confirm: '+choice,exact:true}).click()]);
-   await item.getByText('Confirmed from current server storage.',{exact:false}).waitFor();
-   assert.equal(await page.evaluate(()=>document.activeElement.id),'loyf-review-'+feature,'PRG keyboard focus returns to reviewed item');
-   const replay=await context.request.post(base+'/wp-admin/admin-post.php',{form:duplicate});assert(replay.url().includes('result=already_confirmed'));assert((await replay.text()).includes('No new choice was applied.'));
+  await page.goto(base+'/wp-admin/admin.php?page=loyf-setup');assert.equal(await page.locator('#loyf-quick-start').count(),0,'Historical Quick Start has no Launch authority');assert(!(await page.locator('body').innerText()).includes('private-dormant'));assert.equal(await page.locator('a[href*=loyf-migration-review]').count(),0);
+  await page.goto(review);assert.equal(await page.locator('section[id^=loyf-review-]').count(),0,'Direct migration page is not routable');
+  assert.equal(await page.locator('form[action*=admin-post]').count(),0,'No hidden migration form');
+  for(const action of ['loyf_resolve_migration','loyf_confirm_migrations','loyf_replace_migration','loyf_retry_migration']){
+   const result=await context.request.post(base+'/wp-admin/admin-post.php',{form:{action}});assert.equal(result.status(),400,'Retired endpoint has no handler '+action);
   }
+  fixture('verify-held');fixture('drain-background');fixture('verify-background');
+  await page.goto(settings('general'));assert.equal(await page.locator('#loyalty_points_using_point').isChecked(),false,'Inactive gate is reflected in the ordinary checkbox');
+  assert((await page.locator('#loyf-migration-notice').innerText()).includes('previous configuration could not be verified'),'Completed pause is truthful');
+  await page.locator('#loyalty_points_using_point').check();
   await page.goto(settings('general'));const amount=page.locator('[name=loyalty_using_amount]');assert.equal(await amount.inputValue(),'0.7');assert.equal(await amount.getAttribute('step'),'0.01');assert(await amount.evaluate(x=>x.checkValidity()));
-  await page.locator('#loyalty_points_rounding').selectOption('round_down');await page.locator('button[name=save]').click();
+  await page.locator('#loyalty_points_using_point').check();await page.locator('#loyalty_points_rounding').selectOption('round_down');await page.locator('button[name=save]').click();
   await page.getByText('Your settings have been saved.',{exact:false}).waitFor();fixture('verify-ready');fixture('verify-value');
   fixture('subprecision');await page.goto(settings('general'));assert.equal(await page.locator('[name=loyalty_using_amount]').inputValue(),'0');await page.locator('#loyalty_points_rounding').selectOption('round_up');await page.locator('button[name=save]').click();await page.getByText('Your settings have been saved.',{exact:false}).waitFor();fixture('verify-subprecision');fixture('verify-value');
   fixture('read-fault');await page.goto(settings('general'));await page.locator('[name=loyalty_using_amount]').fill('0.8');await page.locator('[name=loyalty_points_using_point]').uncheck();await page.locator('#mainform').evaluate(f=>{const i=document.createElement('input');i.type='hidden';i.name='_loyf25_redemption_read_fault';i.value='1';f.append(i);});await page.locator('button[name=save]').click();await page.getByText('The save could not be completed.',{exact:false}).waitFor();assert(!(await page.locator('body').innerText()).includes('Your settings have been saved.'));fixture('verify-read-fault');fixture('verify-value');
@@ -74,32 +65,21 @@ const fixture = mode => execFileSync(process.env.LOYF25_PHP || 'php', [process.e
   assert.equal(await page.locator('[name=loyf_start_new_import_nonce]').evaluate(x=>x.form.id),'mainform');
   assert.equal(await page.locator('[name=wc_loyalty_import_nonce]').evaluate(x=>x.form.id),'mainform');
   const identity=await page.locator('[name=operation_id]').inputValue();await page.locator('[name=start_new_import]').click();assert.notEqual(await page.locator('[name=operation_id]').inputValue(),identity,'Explicit new import changes only the existing recovery pointer');assert(!(await page.locator('body').innerText()).includes('Your settings have been saved.'));fixture('verify-value');
-  await page.setViewportSize({width:390,height:844});await page.goto(review+'#loyf-review-redemption');
-  assert(await page.locator('#loyf-review-redemption').isVisible());assert.equal(await page.evaluate(()=>document.activeElement.id),'loyf-review-redemption');
-  await page.keyboard.press('Tab');assert(await page.locator('#loyf-review-redemption').evaluate(s=>document.activeElement===Array.from(s.querySelectorAll('a,summary,button,input,select')).find(e=>e.getClientRects().length>0&&!e.disabled)),'Tab reaches the first visible scoped control');
+  await page.setViewportSize({width:390,height:844});
+  for(const section of ['general','extra_points','tools']){
+   await page.goto(settings(section));assert.equal(await page.locator('a[href*=loyf-migration-review],form[action*=loyf_confirm],form[action*=loyf_retry]').count(),0,'No stale controls '+section);
+   assert.equal(await page.getByRole('link',{name:'Loyalty Migration Status',exact:true}).count(),0,'No submenu');
+   await page.keyboard.press('Tab');assert(await page.evaluate(()=>document.activeElement!==document.body),'Keyboard reaches ordinary controls');
+  }
   if(process.env.LOYF25_SCREENSHOT){await page.screenshot({path:process.env.LOYF25_SCREENSHOT,fullPage:true});}
-  fixture('background-seed');await page.goto(review);
-  assert.equal(await page.locator('#loyf-status select').count(),8,'One reviewed vector');
-  assert((await page.locator('#loyf-status').innerText()).includes('includes 8 eligible settings; 0 are excluded'));
-  await page.getByRole('button',{name:'Keep current settings for eligible features',exact:true}).click();
-  assert.equal(await page.evaluate(()=>document.activeElement.textContent),'Confirm selected future settings','Keyboard focus reaches deliberate confirmation');
-  const batchForm=await page.locator('#loyf-keep-current').evaluate(b=>Object.fromEntries(new FormData(b.form)));
-  await Promise.all([page.waitForURL(u=>u.searchParams.get('batch_result')==='admitted'),page.getByRole('button',{name:'Confirm selected future settings',exact:true}).click()]);
-  fixture('verify-queued');const duplicateBatch=await context.request.post(base+'/wp-admin/admin-post.php',{form:batchForm});assert(duplicateBatch.url().includes('batch_result=admitted'));fixture('verify-queued');
-  await page.goto(settings('general'));assert((await page.locator('#loyf-migration-notice').innerText()).includes('updating your settings in the background'));
+  fixture('background-seed');await page.goto(settings('general'));fixture('verify-queued');
+  assert((await page.locator('#loyf-migration-notice').innerText()).includes('updating your settings in the background'));
   const dismissResponse=page.waitForResponse(r=>r.url().includes('admin-ajax.php')&&r.request().postData()?.includes('loyf_dismiss_migration'));
-  await page.locator('#loyf-migration-notice .notice-dismiss').click();assert.equal((await (await dismissResponse).json()).success,true,'Native dismiss returns clean JSON');await page.locator('#loyf-migration-notice').waitFor({state:'detached'});
-  await page.reload();assert.equal(await page.locator('#loyf-migration-notice').count(),0,'Dismiss persists after reload');fixture('verify-queued');
-  await page.getByRole('link',{name:'Migration status',exact:true}).click();assert((await page.locator('#loyf-status').innerText()).includes('Queued or running: 8'));
-  fixture('drain-background');fixture('verify-background');await page.reload();assert((await page.locator('#loyf-status').innerText()).includes('Verified: 8'));
-  await page.goto(settings('general'));assert.equal(await page.locator('#loyf-migration-notice').count(),0,'Completed notice disappears');
-  fixture('replacement-seed');await page.goto(review+'#loyf-review-signup');
-  const replacement=page.locator('#loyf-review-signup .loyf-replacement');await replacement.getByText('Review changed settings',{exact:true}).click();
-  const disable=replacement.locator('details').filter({has:page.locator('summary').getByText('Disable',{exact:true})});await disable.locator('summary').click();
-  assert((await disable.innerText()).includes('Disabled'));const replacementForm=await disable.locator('form').evaluate(f=>Object.fromEntries(new FormData(f)));
-  await Promise.all([page.waitForURL(u=>u.searchParams.get('result')==='confirmed'),disable.getByRole('button',{name:'Confirm replacement: Disable',exact:true}).click()]);fixture('verify-replacement');
-  assert.equal(await page.evaluate(()=>document.activeElement.id),'loyf-review-signup');assert.equal(await page.locator('#loyf-review-signup .loyf-replacement').count(),0,'Completed replacement has no next generation');
-  const replay=await context.request.post(base+'/wp-admin/admin-post.php',{form:replacementForm});assert(replay.url().includes('result=already_confirmed'));fixture('verify-replacement');fixture('drain-background');fixture('verify-replacement');
-  console.log('Native migration review browser PASS: held/forged General and email save, independent First Purchase and ready email save, eight scoped links/email holds, role/decimal/privacy comparison, stale and individual keep/legacy/disable PRG/focus, fractional native save, Tools form ownership, responsive keyboard; no value/log events.');
+  await page.locator('#loyf-migration-notice .notice-dismiss').click();assert.equal((await (await dismissResponse).json()).success,true);
+  await page.locator('#loyf-migration-notice').waitFor({state:'detached'});await page.reload();assert.equal(await page.locator('#loyf-migration-notice').count(),0);fixture('verify-queued');
+  fixture('drain-background');fixture('verify-background');await page.reload();assert.equal(await page.locator('#loyf-migration-notice').count(),1,'Meaningful completed pause has one new dismissal token');
+  const pauseResponse=page.waitForResponse(r=>r.url().includes('admin-ajax.php')&&r.request().postData()?.includes('loyf_dismiss_migration'));
+  await page.locator('#loyf-migration-notice .notice-dismiss').click();assert.equal((await (await pauseResponse).json()).success,true);await page.locator('#loyf-migration-notice').waitFor({state:'detached'});await page.reload();assert.equal(await page.locator('#loyf-migration-notice').count(),0,'Pause dismissal persists without requeue');fixture('verify-background');
+  console.log('Native automatic migration browser PASS: no submenu/direct page/POST handler/forms/dead links; queued/paused dismissal without queue mutation; held General/email denial and partial saves; ordinary redemption/email enablement, raw decimal preservation, Tools form and keyboard/mobile controls; no accounting events.');
  } finally {await browser.close();}
 })().catch(error=>{console.error(error);process.exit(1);});

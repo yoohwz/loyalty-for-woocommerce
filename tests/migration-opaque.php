@@ -40,7 +40,7 @@ foreach($targets as$f=>$target){
   foreach(array('canonical','legacy','disable')as$mode){try{YOWCL_Free_Migrations::preview($f,$mode);throw new LogicException('Opaque choice offered');}catch(RuntimeException$e){opaque_assert('migration_opaque_target'===$e->getMessage(),'Specific opaque diagnostic');}$count++;}
   opaque_assert($before===$wpdb->rows,'Raw target/source/evidence/witness rows preserved');
   $errors=new ReflectionProperty('YOWCL_Free_Migrations','errors');if(PHP_VERSION_ID<80100){$errors->setAccessible(true);}$errors->setValue(null,array($f=>'migration_opaque_target'));
-  ob_start();YOWCL_Free_Migrations::render_review();$page=ob_get_clean();preg_match('/<section id="loyf-review-'.preg_quote($f,'/').'".*?<\/section>/s',$page,$match);$html=$match[0]??'';opaque_assert(false!==strpos($html,'Restore or repair the original complete container'),'Explicit manual review path');opaque_assert(false!==strpos($html,$target),'Container identified');opaque_assert(false===strpos($html,'<form')&&false===strpos($html,'opaque-private'),'No misleading choices or raw content');
+  $html=YOWCL_Free_Migrations::held_link($f);opaque_assert(false!==strpos($html,'Restore or repair the original complete container'),'Specific opaque diagnosis');opaque_assert(false!==strpos($html,$target),'Container identified');opaque_assert(false===strpos($html,'<form')&&false===strpos($html,'opaque-private'),'No controls or raw contents');
  }}
  $wpdb->rows=array();$spec=YOWCL_Free_Migrations::preview($f,'disable');opaque_assert(null===$spec['before']&&YOWCL_Free_Migrations::readable($f),'Absent target remains supported');
 }

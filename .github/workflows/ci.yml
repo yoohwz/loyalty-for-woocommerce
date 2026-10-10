@@ -89,6 +89,7 @@ jobs:
           PYTHONDONTWRITEBYTECODE=1 python3 tests/ci/import-contract-test.py
           PYTHONDONTWRITEBYTECODE=1 python3 tests/ci/extraction-test.py
           php tests/migration-opaque.php
+          php tests/migration-automatic.php
           node tests/js/admin-replay.cjs
           PYTHONDONTWRITEBYTECODE=1 python3 scripts/free-import.py verify-source --root "$PWD"
 

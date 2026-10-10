@@ -44,7 +44,7 @@ class YOSWC_Loyalty_Settings_Extra_Points {
 
         ?>
         <h2><?php esc_html_e('Extra points settings', 'loyalty-for-woocommerce'); ?></h2>
-        <?php if ( in_array( false, $ready, true ) ) { echo '<p class="description">' . esc_html__( 'Rewards on hold are read-only. Review each affected reward in Migration Review. You can save the other rewards.', 'loyalty-for-woocommerce' ) . '</p>'; } ?>
+        <?php if ( in_array( false, $ready, true ) ) { echo '<p class="description">' . esc_html__( 'Rewards being updated are read-only. You can save the other rewards.', 'loyalty-for-woocommerce' ) . '</p>'; } ?>
         
         <table class="form-table">
         <?php wp_nonce_field('save_extra_points_settings_action', 'extra_points_settings_nonce'); ?>
@@ -229,7 +229,7 @@ class YOSWC_Loyalty_Settings_Extra_Points {
             $held=array(); foreach(array('signup','login','review','levelup') as $feature) { if (!YOWCL_Free_Migrations::ready($feature) || !YOWCL_Free_Migrations::readable($feature)) { $held[]=$feature; } }
             if ($held && class_exists('WC_Admin_Settings')) {
                 /* translators: Names of settings whose saves completed. */
-                WC_Admin_Settings::add_error(sprintf(__('Held rewards were skipped. Confirmed saved settings: %s. Review the held rewards in Migration Review.','loyalty-for-woocommerce'),$saved?implode(', ',$saved):__('None submitted','loyalty-for-woocommerce')));
+                WC_Admin_Settings::add_error(sprintf(__('Rewards being updated were skipped. Saved settings: %s.','loyalty-for-woocommerce'),$saved?implode(', ',$saved):__('None submitted','loyalty-for-woocommerce')));
             }
         } catch ( Throwable $e ) {
             $message = $e->getMessage();

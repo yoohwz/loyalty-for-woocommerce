@@ -3,6 +3,7 @@ defined( 'ABSPATH' ) || exit;
 
 /** Selection adapter only; order-redemption is the sole debit/return owner. */
 class YOWCL_Free_Cart {
+    const FEE_ID = 'loyf-redemption';
     public static function balance() {
         global $wpdb;
         $result = YOWCL_Points_Lock::query( $wpdb->dbh, $wpdb->prepare( "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id=%d AND meta_key='user_points'", get_current_user_id() ) );
@@ -11,7 +12,7 @@ class YOWCL_Free_Cart {
         return array( 'available' => (int) ( $values[0] ?? 0 ) );
     }
     public static function rules() {
-        $rules = YOWCL_Free_Migrations::canonical( 'redemption' );
+        $rules = YOWCL_Free_Migrations::redemption_policy();
         if ( (float) ( $rules['points'] ?? 0 ) <= 0 || (float) ( $rules['amount'] ?? 0 ) <= 0 ) { return array(); }
         foreach ( array( 'points', 'amount' ) as $key ) { if ( ! is_numeric( $rules[$key] ) || ! is_finite( (float) $rules[$key] ) ) { return array(); } }
         return array( 'points' => (float) $rules['points'], 'amount' => (float) $rules['amount'] );
@@ -33,6 +34,10 @@ class YOWCL_Free_Cart {
         return $selection;
     }
     public static function apply( $points, $id = null ) {
+        // One options owner covers quote, discount and signature through unfunded admission.
+        return YOWCL_Free_Migrations::locked( static function() use ( $points, $id ) { return self::apply_locked( $points, $id ); } );
+    }
+    private static function apply_locked( $points, $id ) {
         if ( ! YOWCL_Free_Core::owns() || ! is_user_logged_in() || ! WC()->session || ! WC()->cart ) { throw new DomainException( __( 'Please sign in to use points.', 'loyalty-for-woocommerce' ) ); }
         if ( ! is_scalar( $points ) || ! preg_match( '/^[0-9]{1,8}$/D', (string) $points ) ) { throw new DomainException( __( 'A valid whole points amount is required.', 'loyalty-for-woocommerce' ) ); }
         $points = (int) $points;
@@ -71,6 +76,6 @@ class YOWCL_Free_Cart {
         if ( ! $selection ) { return; }
         try { $balance = self::balance(); } catch ( Throwable $e ) { return; }
         if ( $selection['points'] > $balance['available'] + YOWCL_Order_Redemption::funded_selection_points() || (float) $selection['discount'] > max( 0, $cart->get_subtotal() - $cart->get_discount_total() ) ) { return; }
-        $cart->add_fee( __( 'Points used', 'loyalty-for-woocommerce' ), -(float) $selection['discount'], false );
+        $cart->fees_api()->add_fee( array( 'id'=>self::FEE_ID, 'name'=>__( 'Points used', 'loyalty-for-woocommerce' ), 'amount'=>-(float) $selection['discount'], 'taxable'=>false ) );
     }
 }
