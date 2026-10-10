@@ -5,7 +5,7 @@ wp_set_current_user(1);
 $account='loyalty_extra_points_rules';$merged='loyalty_extra_reviews_gamification_rules';
 $features=array('signup','login','review','levelup');
 $names=array($account,$merged,'loyalty_levels_roles',YOWCL_Free_First_Purchase::RULES,YOWCL_Free_First_Purchase::WITNESS);
-foreach($features as $f){foreach(array('','_before','_resolution')as$s){$names[]=YOWCL_Free_Migrations::witness($f).$s;}}
+foreach($features as $f){foreach(array('','_before','_resolution','_background','_supersession','_automatic','_automatic_background','_automatic_enabled')as$s){$names[]=YOWCL_Free_Migrations::witness($f).$s;}}
 $snapshot=static function()use($wpdb,$names){$rows=array();foreach($names as$n){$rows[$n]=$wpdb->get_row($wpdb->prepare("SELECT option_value,autoload FROM {$wpdb->options} WHERE option_name=%s",$n),ARRAY_A);}return $rows;};
 $original=$snapshot();$ledger=$wpdb->get_results('SELECT * FROM '.YOWCL_Points_Log::table_name().' ORDER BY id',ARRAY_A);
 $die=static function(){return static function($message){throw new RuntimeException((string)$message);};};add_filter('wp_die_handler',$die);add_filter('wp_die_ajax_handler',$die);
@@ -15,13 +15,13 @@ $pair=static function($f)use($account,$merged){$terms=maybe_unserialize(get_opti
 try{
  update_option('loyalty_levels_roles',array('customer'));
  foreach($features as$held){
-  foreach($features as$f){foreach(array('','_before','_resolution')as$s){delete_option(YOWCL_Free_Migrations::witness($f).$s);}}
+  foreach($features as$f){foreach(array('','_before','_resolution','_background','_supersession','_automatic','_automatic_background','_automatic_enabled')as$s){delete_option(YOWCL_Free_Migrations::witness($f).$s);}}
   update_option($account,serialize(array('signup_points'=>'17','signup_enabled'=>'yes','login_points'=>'19','login_enabled'=>'yes','review_points'=>'73','unknown'=>array('keep'=>'009'))));
   update_option($merged,serialize(array('review_points'=>'23','review_enabled'=>'yes','levelup_points'=>array('customer'=>array('awarded'=>'29','dormant'=>'007')),'levelup_enabled'=>'yes','unknown'=>array('keep'=>'003'))));
   foreach($features as$f){if($f!==$held){$choose($f);}}
   YOWCL_Free_First_Purchase::save(false,'0');$before=$snapshot();$held_pair=$pair($held);
   ob_start();(new YOSWC_Loyalty_Settings_Extra_Points())->display_extra_points_settings();$html=ob_get_clean();
-  loyf_assert(strpos($html,'Rewards on hold are read-only.')!==false,'Native hold explanation');
+  loyf_assert(strpos($html,'Rewards being updated are read-only.')!==false,'Native hold explanation');
   foreach($features as$f){$field='levelup'===$f?'loyalty_extra_levelup_customer':'loyalty_extra_'.$f.'_points';loyf_assert(1===preg_match('~<input[^>]*name="'.preg_quote($field,'~').'"[^>]*>~',$html,$match),'Native reward control '.$f);loyf_equal($f===$held,strpos($match[0],'disabled=')!==false,'Only held control disabled '.$f);}
   $_POST=array('extra_points_settings_nonce'=>wp_create_nonce('save_extra_points_settings_action'),'loyalty_extra_signup_points'=>'31','loyalty_extra_login_points'=>'37','loyalty_extra_review_points'=>'41','loyalty_extra_levelup_customer'=>'43','loyalty_extra_first_purchase_enabled'=>'yes','loyalty_extra_first_purchase_points'=>'25');
   $field='levelup'===$held?'loyalty_extra_levelup_customer':'loyalty_extra_'.$held.'_points';$_POST[$field]=array('forged');
@@ -30,7 +30,7 @@ try{
   try{$save();throw new LogicException('Invalid editable points admitted');}catch(RuntimeException$e){loyf_assert(strpos($e->getMessage(),'A valid whole points amount is required.')!==false,'Native editable validation');}
   loyf_equal($before,$snapshot(),'Invalid editable terms leave every rule/witness/First Purchase epoch intact');$_POST['loyalty_extra_'.$safe.'_points']=$good;
   $save();loyf_equal($held_pair,$pair($held),'Held owned pair remains exact '.$held);
-  foreach(array('','_before','_resolution')as$s){$n=YOWCL_Free_Migrations::witness($held).$s;loyf_equal($before[$n],$snapshot()[$n],'Held witness/evidence untouched');}
+  foreach(array('','_before','_resolution','_background','_supersession','_automatic','_automatic_background','_automatic_enabled')as$s){$n=YOWCL_Free_Migrations::witness($held).$s;loyf_equal($before[$n],$snapshot()[$n],'Held witness/evidence untouched');}
   foreach(array('signup'=>31,'login'=>37,'review'=>41)as$f=>$points){if($f!==$held){loyf_equal($points,YOWCL_Free_Core::extra($f),'Native independently ready save '.$f);}}
   if('levelup'!==$held){loyf_equal('43',YOWCL_Free_Core::level_rules()['customer']['awarded'],'Native independent level save');}
   $a=get_option($account);$m=get_option($merged);loyf_assert(is_string($a)&&is_string($m),'Both serialized wrappers retained');$a=maybe_unserialize($a);$m=maybe_unserialize($m);

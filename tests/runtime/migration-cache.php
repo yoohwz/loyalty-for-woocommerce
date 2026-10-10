@@ -29,7 +29,7 @@ wp_set_current_user(1);
 $account='loyalty_extra_points_rules';$merged='loyalty_extra_reviews_gamification_rules';$redemption='loyalty_points_using_rules';
 $targets=array($account=>serialize(array('signup_enabled'=>'yes','signup_points'=>99,'login_enabled'=>'yes','login_points'=>99,'unknown'=>'009')),$merged=>serialize(array('review_enabled'=>'yes','review_points'=>99,'levelup_enabled'=>'yes','levelup_points'=>array('customer'=>array('awarded'=>99)),'unknown'=>'007')),$redemption=>serialize(array('points'=>10,'amount'=>1,'min_points'=>'','max_points'=>'','min_cart'=>'','unknown'=>'003')));
 foreach(array('points_reward','points_deduct','level_update')as$id){$targets['woocommerce_yowcl_loyalty_'.$id.'_settings']=array('enabled'=>'yes','subject'=>'Retained merchant subject');}
-$names=array_keys($targets);foreach(YOWCL_Free_Migrations::features()as$f){foreach(array('','_before','_resolution')as$s){$names[]=YOWCL_Free_Migrations::witness($f).$s;}}
+$names=array_keys($targets);foreach(YOWCL_Free_Migrations::features()as$f){foreach(array('','_before','_resolution','_background','_supersession','_automatic','_automatic_background','_automatic_enabled')as$s){$names[]=YOWCL_Free_Migrations::witness($f).$s;}}
 $saved=array();foreach($names as$n){$saved[$n]=$wpdb->get_row($wpdb->prepare("SELECT option_value,autoload FROM {$wpdb->options} WHERE option_name=%s",$n),ARRAY_A);}
 $base=tempnam(sys_get_temp_dir(),'loyf-cache-');unlink($base);putenv('LOYF_CACHE_BARRIER='.$base);
 $children=array();$user=0;$product=0;$comments=array();$mu=ABSPATH.'wp-content/mu-plugins/loyf-cache-prefill.php';
@@ -40,7 +40,7 @@ $spawn=static function($role,$extra=array())use(&$children,$base){
  $children[]=array($process,$log);return count($children)-1;
 };
 $join=static function($index)use(&$children){list($process,$log)=$children[$index];$until=microtime(true)+25;do{$state=proc_get_status($process);if(!$state['running']){break;}usleep(20000);}while(microtime(true)<$until);if($state['running']){proc_terminate($process);throw new RuntimeException('Cache reader timeout');}$code=$state['exitcode'];proc_close($process);$children[$index][0]=null;loyf_equal(0,$code,'Native child process: '.file_get_contents($log));echo file_get_contents($log);};
-$clear=static function($f){foreach(array('','_before','_resolution')as$s){delete_option(YOWCL_Free_Migrations::witness($f).$s);}};
+$clear=static function($f){foreach(array('','_before','_resolution','_background','_supersession','_automatic','_automatic_background','_automatic_enabled')as$s){delete_option(YOWCL_Free_Migrations::witness($f).$s);}};
 $choose=static function($f){$spec=YOWCL_Free_Migrations::preview($f,'disable');YOWCL_Free_Migrations::resolve($f,'disable',YOWCL_Free_Migrations::resolution_fingerprint($f,$spec),wp_create_nonce('loyf_resolve_'.$f));};
 try{
  foreach(YOWCL_Free_Migrations::features()as$f){$clear($f);}foreach($targets as$n=>$value){update_option($n,$value);$wpdb->update($wpdb->options,array('autoload'=>'yes'),array('option_name'=>$n));}wp_cache_flush();
