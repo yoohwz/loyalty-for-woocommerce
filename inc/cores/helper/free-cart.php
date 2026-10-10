@@ -3,6 +3,7 @@ defined( 'ABSPATH' ) || exit;
 
 /** Selection adapter only; order-redemption is the sole debit/return owner. */
 class YOWCL_Free_Cart {
+    const FEE_ID = 'loyf-redemption';
     public static function balance() {
         global $wpdb;
         $result = YOWCL_Points_Lock::query( $wpdb->dbh, $wpdb->prepare( "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id=%d AND meta_key='user_points'", get_current_user_id() ) );
@@ -75,6 +76,6 @@ class YOWCL_Free_Cart {
         if ( ! $selection ) { return; }
         try { $balance = self::balance(); } catch ( Throwable $e ) { return; }
         if ( $selection['points'] > $balance['available'] + YOWCL_Order_Redemption::funded_selection_points() || (float) $selection['discount'] > max( 0, $cart->get_subtotal() - $cart->get_discount_total() ) ) { return; }
-        $cart->add_fee( __( 'Points used', 'loyalty-for-woocommerce' ), -(float) $selection['discount'], false );
+        $cart->fees_api()->add_fee( array( 'id'=>self::FEE_ID, 'name'=>__( 'Points used', 'loyalty-for-woocommerce' ), 'amount'=>-(float) $selection['discount'], 'taxable'=>false ) );
     }
 }

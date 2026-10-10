@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-10T01:02:51+00:00\n"
+"POT-Creation-Date: 2026-10-10T02:21:24+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
@@ -116,6 +116,11 @@ msgstr ""
 
 #: inc/backend/actions/extra/first-purchase.php:114
 msgid "Thanks for your first purchase. Your loyalty reward has been added."
+msgstr ""
+
+#: inc/backend/actions/use-points.php:32
+#: inc/cores/helper/free-blocks.php:33
+msgid "Your cart or redemption rules changed. Please reapply points."
 msgstr ""
 
 #: inc/backend/settings.php:26
@@ -404,19 +409,19 @@ msgstr ""
 msgid "General earning and level settings"
 msgstr ""
 
-#: inc/backend/settings.php:475
+#: inc/backend/settings.php:476
 msgid "Redemption"
 msgstr ""
 
-#: inc/backend/settings.php:477
+#: inc/backend/settings.php:479
 msgid "Redemption is not active while its settings are being updated. General earning and level settings were saved."
 msgstr ""
 
-#: inc/backend/settings.php:480
+#: inc/backend/settings.php:482
 msgid "The save could not be completed. Reload to review current settings."
 msgstr ""
 
-#: inc/backend/settings.php:481
+#: inc/backend/settings.php:483
 #, php-format
 msgid "Settings saved before this error: %s."
 msgstr ""
@@ -818,7 +823,7 @@ msgstr ""
 
 #: inc/backend/settings/extra-points.php:196
 #: inc/backend/settings/extra-points.php:206
-#: inc/cores/helper/free-cart.php:38
+#: inc/cores/helper/free-cart.php:42
 msgid "A valid whole points amount is required."
 msgstr ""
 
@@ -1271,16 +1276,12 @@ msgstr ""
 msgid "Points rewarded successfully!"
 msgstr ""
 
-#: inc/cores/helper/free-blocks.php:33
-msgid "Your cart or redemption rules changed. Please reapply points."
-msgstr ""
-
 #: inc/cores/helper/free-blocks.php:34
 msgid "Points are unavailable. Please retry or reapply points."
 msgstr ""
 
 #: inc/cores/helper/free-blocks.php:38
-#: inc/cores/helper/free-cart.php:37
+#: inc/cores/helper/free-cart.php:41
 msgid "Please sign in to use points."
 msgstr ""
 
@@ -1289,12 +1290,12 @@ msgstr ""
 msgid "Points could not be applied. Check your balance and reapply points."
 msgstr ""
 
-#: inc/cores/helper/free-cart.php:48
 #: inc/cores/helper/free-cart.php:52
+#: inc/cores/helper/free-cart.php:56
 msgid "Invalid points amount."
 msgstr ""
 
-#: inc/cores/helper/free-cart.php:75
+#: inc/cores/helper/free-cart.php:79
 msgid "Points used"
 msgstr ""
 
@@ -1433,77 +1434,77 @@ msgstr ""
 msgid "The saved Loyalty settings container (%s) has an unsupported format. Its original data was preserved. Restore or repair the original complete container using verified backups before changing this feature."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:925
+#: inc/cores/helper/free-migrations.php:939
 msgid "Not active"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:955
+#: inc/cores/helper/free-migrations.php:969
 msgid "Loyalty is updating your settings in the background. Existing points and history are unchanged."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:955
+#: inc/cores/helper/free-migrations.php:969
 msgid "Loyalty settings need attention. Some new rewards, redemption or emails are paused. Existing points and history are unchanged."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:956
+#: inc/cores/helper/free-migrations.php:970
 msgid "Loyalty preserved your stored settings, points and history. Future incentives, emails or new redemptions were paused because the previous configuration could not be verified. You can configure future activity in the ordinary Loyalty settings."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:957
+#: inc/cores/helper/free-migrations.php:971
 msgid "Loyalty could not finish updating some settings. Their saved data is preserved and new activity remains paused. Check WooCommerce Scheduled Actions and logs for processing or storage problems."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:958
+#: inc/cores/helper/free-migrations.php:972
 #: inc/cores/helper/free-onboarding.php:294
 msgid "Loyalty settings"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:958
+#: inc/cores/helper/free-migrations.php:972
 msgid "Dismiss this notice"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:963
+#: inc/cores/helper/free-migrations.php:977
 msgid "Sign-up reward"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:963
+#: inc/cores/helper/free-migrations.php:977
 msgid "Daily login reward"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:963
+#: inc/cores/helper/free-migrations.php:977
 msgid "Product review reward"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:963
+#: inc/cores/helper/free-migrations.php:977
 msgid "Level-up reward"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:963
+#: inc/cores/helper/free-migrations.php:977
 msgid "Points redemption"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:963
+#: inc/cores/helper/free-migrations.php:977
 msgid "Points earned email"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:963
+#: inc/cores/helper/free-migrations.php:977
 msgid "Points deducted email"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:963
+#: inc/cores/helper/free-migrations.php:977
 msgid "Level update email"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:967
+#: inc/cores/helper/free-migrations.php:981
 #: inc/frontend/loyalty-info-bubble.php:660
 msgid "Not configured"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:968
+#: inc/cores/helper/free-migrations.php:982
 msgid "Unsupported value"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:989
+#: inc/cores/helper/free-migrations.php:1003
 msgid "Please reapply loyalty points after the upgrade. Your points balance has not changed."
 msgstr ""
 

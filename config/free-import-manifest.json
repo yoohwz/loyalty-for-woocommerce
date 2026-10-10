@@ -340,7 +340,7 @@
     {
       "target": "inc/backend/actions/use-points.php",
       "mode": "100644",
-      "sha256": "9380266184841986df0ac8933cd7b82ca412f199ccca915a9837320f4a9b1f93"
+      "sha256": "12ba8282cf83f5d15bf11912ce5d67ef2d24c4c8abe9894367798e8390ededb6"
     },
     {
       "target": "inc/backend/settings.php",
@@ -480,7 +480,7 @@
     {
       "target": "inc/cores/helper/free-cart.php",
       "mode": "100644",
-      "sha256": "ccc2a0bd81d2f662af5c7739e0d49d21049471bdb4061a74c1837ca0ef3a8038"
+      "sha256": "a8fa43448fef705d3c201965201d9583f0118f4be4f0c80f4abf7b473f10190b"
     },
     {
       "target": "inc/cores/helper/free-core.php",
@@ -620,7 +620,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "34449063bde139cfbd892e1eba2b8d9d4fc573851eed75afe53126bf1398352d"
+      "sha256": "20c679bd1f61c28093fce6af6868ab0de8e766bcf06a2c340c828281c9d1c0b1"
     },
     {
       "target": "license.txt",
