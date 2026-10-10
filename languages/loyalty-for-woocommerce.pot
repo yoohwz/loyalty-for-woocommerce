@@ -3,13 +3,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Loyalty for WooCommerce 1.2.2\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/loyalty-for-woocommerce\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/free\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-09T08:50:44+00:00\n"
+"POT-Creation-Date: 2026-10-10T01:02:51+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
@@ -48,7 +48,7 @@ msgid "Member"
 msgstr ""
 
 #: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php:325
-#: inc/backend/settings.php:286
+#: inc/backend/settings.php:285
 #: inc/backend/settings/extra-points.php:65
 #: inc/backend/settings/extra-points.php:75
 #: inc/backend/settings/extra-points.php:85
@@ -88,7 +88,7 @@ msgstr ""
 #. translators: Store currency.
 #: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-reward.php:9
 #: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-reward.php:30
-#: inc/cores/helper/free-onboarding.php:320
+#: inc/cores/helper/free-onboarding.php:319
 msgid "Points earned"
 msgstr ""
 
@@ -148,220 +148,214 @@ msgid "Tools"
 msgstr ""
 
 #: inc/backend/settings.php:65
-#: inc/cores/helper/free-migrations.php:874
-#: inc/cores/helper/free-migrations.php:963
-msgid "Migration status"
-msgstr ""
-
-#: inc/backend/settings.php:66
-#: inc/backend/settings.php:127
-#: inc/backend/settings.php:203
+#: inc/backend/settings.php:126
+#: inc/backend/settings.php:202
 msgid "Premium"
 msgstr ""
 
-#: inc/backend/settings.php:119
+#: inc/backend/settings.php:118
 msgid "Referral coupons and referee rewards"
 msgstr ""
 
-#: inc/backend/settings.php:120
+#: inc/backend/settings.php:119
 msgid "Point expiration and advanced redemption rules"
 msgstr ""
 
-#: inc/backend/settings.php:121
+#: inc/backend/settings.php:120
 #: inc/backend/settings/extra-points.php:164
 msgid "Birthday, account anniversary, and profile completion rewards"
 msgstr ""
 
-#: inc/backend/settings.php:122
+#: inc/backend/settings.php:121
 #: inc/backend/settings/extra-points.php:165
 msgid "Purchase milestone and lifetime spend rewards"
 msgstr ""
 
-#: inc/backend/settings.php:123
+#: inc/backend/settings.php:122
 msgid "Advanced earning rules by product, category, and payment method"
 msgstr ""
 
-#: inc/backend/settings.php:124
+#: inc/backend/settings.php:123
 msgid "Level discounts and scheduled level resets"
 msgstr ""
 
-#: inc/backend/settings.php:130
+#: inc/backend/settings.php:129
 msgid "Upgrade when your loyalty program needs more automation"
 msgstr ""
 
-#: inc/backend/settings.php:132
+#: inc/backend/settings.php:131
 msgid "The free plugin includes the core loyalty point workflow. Premium adds referral campaigns, advanced earning rules, and automated rewards for stores that need deeper retention tools."
 msgstr ""
 
-#: inc/backend/settings.php:141
+#: inc/backend/settings.php:140
 msgid "Premium add-on detected."
 msgstr ""
 
-#: inc/backend/settings.php:144
-#: inc/backend/settings.php:220
+#: inc/backend/settings.php:143
+#: inc/backend/settings.php:219
 #: inc/backend/settings/extra-points.php:170
 #: inc/backend/users/user-profile-points.php:153
 #: inc/backend/users/users-points.php:136
 msgid "View Premium features"
 msgstr ""
 
-#: inc/backend/settings.php:147
+#: inc/backend/settings.php:146
 msgid "Read documentation"
 msgstr ""
 
-#: inc/backend/settings.php:197
+#: inc/backend/settings.php:196
 msgid "Premium features"
 msgstr ""
 
-#: inc/backend/settings.php:241
+#: inc/backend/settings.php:240
 #: inc/backend/settings/general-add-remove-user-role.php:72
 msgid "Loyalty levels"
 msgstr ""
 
-#: inc/backend/settings.php:243
+#: inc/backend/settings.php:242
 msgid "Add new / Remove"
 msgstr ""
 
-#: inc/backend/settings.php:247
+#: inc/backend/settings.php:246
 msgid "Set loyalty levels"
 msgstr ""
 
-#: inc/backend/settings.php:249
+#: inc/backend/settings.php:248
 msgid "Select user roles to set those are loyalty levels"
 msgstr ""
 
-#: inc/backend/settings.php:253
+#: inc/backend/settings.php:252
 msgid "Select user roles"
 msgstr ""
 
-#: inc/backend/settings.php:259
+#: inc/backend/settings.php:258
 msgid "Level rules"
 msgstr ""
 
-#: inc/backend/settings.php:265
+#: inc/backend/settings.php:264
 msgid "Advanced loyalty level controls"
 msgstr ""
 
-#: inc/backend/settings.php:266
+#: inc/backend/settings.php:265
 msgid "Premium adds scheduled level resets and automatic discounts based on loyalty levels."
 msgstr ""
 
-#: inc/backend/settings.php:268
+#: inc/backend/settings.php:267
 msgid "Reset levels monthly, quarterly, or yearly"
 msgstr ""
 
-#: inc/backend/settings.php:269
+#: inc/backend/settings.php:268
 msgid "Apply percentage discounts by loyalty level"
 msgstr ""
 
-#: inc/backend/settings.php:270
+#: inc/backend/settings.php:269
 msgid "Exclude coupons or taxes from level discounts"
 msgstr ""
 
-#: inc/backend/settings.php:292
+#: inc/backend/settings.php:291
 msgid "Earning status"
 msgstr ""
 
-#: inc/backend/settings.php:294
+#: inc/backend/settings.php:293
 msgid "Select the order status so that the customer can be earned their points."
 msgstr ""
 
-#: inc/backend/settings.php:298
-#: inc/backend/settings.php:348
+#: inc/backend/settings.php:297
+#: inc/backend/settings.php:347
 msgid "Select order status"
 msgstr ""
 
-#: inc/backend/settings.php:304
+#: inc/backend/settings.php:303
 msgid "Earning rules"
 msgstr ""
 
-#: inc/backend/settings.php:310
+#: inc/backend/settings.php:309
 msgid "Advanced earning and display controls"
 msgstr ""
 
-#: inc/backend/settings.php:311
+#: inc/backend/settings.php:310
 msgid "Premium adds more control over how points are named, displayed, and earned."
 msgstr ""
 
-#: inc/backend/settings.php:313
+#: inc/backend/settings.php:312
 msgid "Customize the point label shown to customers"
 msgstr ""
 
-#: inc/backend/settings.php:314
+#: inc/backend/settings.php:313
 msgid "Create product and category-specific earning rules"
 msgstr ""
 
-#: inc/backend/settings.php:315
+#: inc/backend/settings.php:314
 msgid "Reward selected payment methods and high-value orders"
 msgstr ""
 
-#: inc/backend/settings.php:319
+#: inc/backend/settings.php:318
 msgid "Earning options"
 msgstr ""
 
-#: inc/backend/settings.php:320
+#: inc/backend/settings.php:319
 msgid "Check the option that you want to calculate include/exclude in order value for the earning point."
 msgstr ""
 
-#: inc/backend/settings.php:325
+#: inc/backend/settings.php:324
 msgid "Price after using coupons"
 msgstr ""
 
-#: inc/backend/settings.php:326
+#: inc/backend/settings.php:325
 msgid "Excluding taxes"
 msgstr ""
 
-#: inc/backend/settings.php:330
+#: inc/backend/settings.php:329
 msgid "Point rounding"
 msgstr ""
 
-#: inc/backend/settings.php:334
-#: inc/cores/helper/free-onboarding.php:321
+#: inc/backend/settings.php:333
+#: inc/cores/helper/free-onboarding.php:320
 msgid "Round up"
 msgstr ""
 
-#: inc/backend/settings.php:335
-#: inc/cores/helper/free-onboarding.php:321
+#: inc/backend/settings.php:334
+#: inc/cores/helper/free-onboarding.php:320
 msgid "Round down"
 msgstr ""
 
-#: inc/backend/settings.php:339
+#: inc/backend/settings.php:338
 msgid "Choose how to round the earning points amount."
 msgstr ""
 
-#: inc/backend/settings.php:342
+#: inc/backend/settings.php:341
 msgid "Deduction status"
 msgstr ""
 
-#: inc/backend/settings.php:344
+#: inc/backend/settings.php:343
 msgid "Select the order status so that the customer can be deducted their points."
 msgstr ""
 
-#: inc/backend/settings.php:355
+#: inc/backend/settings.php:354
 msgid "Point expiration controls"
 msgstr ""
 
-#: inc/backend/settings.php:356
+#: inc/backend/settings.php:355
 msgid "Premium helps keep balances fresh with configurable point expiration rules."
 msgstr ""
 
-#: inc/backend/settings.php:358
+#: inc/backend/settings.php:357
 msgid "Expire points after a fixed lifetime"
 msgstr ""
 
-#: inc/backend/settings.php:359
+#: inc/backend/settings.php:358
 msgid "Expire points after customer inactivity"
 msgstr ""
 
-#: inc/backend/settings.php:360
+#: inc/backend/settings.php:359
 msgid "Set expiration duration in days, weeks, months, or years"
 msgstr ""
 
-#: inc/backend/settings.php:364
+#: inc/backend/settings.php:363
 msgid "Using points"
 msgstr ""
 
-#: inc/backend/settings.php:366
+#: inc/backend/settings.php:365
 msgid "Allow users to using points"
 msgstr ""
 
@@ -410,24 +404,19 @@ msgstr ""
 msgid "General earning and level settings"
 msgstr ""
 
-#: inc/backend/settings.php:474
-#: inc/cores/helper/free-migrations.php:1024
+#: inc/backend/settings.php:475
 msgid "Redemption"
 msgstr ""
 
-#: inc/backend/settings.php:476
-msgid "Redemption was skipped because it is on hold. General earning and level settings were saved. Review redemption before editing it."
-msgstr ""
-
-#: inc/backend/settings.php:476
-msgid "Review redemption"
-msgstr ""
-
-#: inc/backend/settings.php:479
-msgid "The save could not be completed. Reload to review current settings."
+#: inc/backend/settings.php:477
+msgid "Redemption is not active while its settings are being updated. General earning and level settings were saved."
 msgstr ""
 
 #: inc/backend/settings.php:480
+msgid "The save could not be completed. Reload to review current settings."
+msgstr ""
+
+#: inc/backend/settings.php:481
 #, php-format
 msgid "Settings saved before this error: %s."
 msgstr ""
@@ -756,7 +745,7 @@ msgid "Extra points settings"
 msgstr ""
 
 #: inc/backend/settings/extra-points.php:47
-msgid "Rewards on hold are read-only. Review each affected reward in Migration Review. You can save the other rewards."
+msgid "Rewards being updated are read-only. You can save the other rewards."
 msgstr ""
 
 #: inc/backend/settings/extra-points.php:53
@@ -769,7 +758,7 @@ msgid "Enable First Purchase bonus"
 msgstr ""
 
 #: inc/backend/settings/extra-points.php:56
-#: inc/cores/helper/free-onboarding.php:329
+#: inc/cores/helper/free-onboarding.php:328
 msgid "First Purchase points"
 msgstr ""
 
@@ -829,14 +818,14 @@ msgstr ""
 
 #: inc/backend/settings/extra-points.php:196
 #: inc/backend/settings/extra-points.php:206
-#: inc/cores/helper/free-cart.php:37
+#: inc/cores/helper/free-cart.php:38
 msgid "A valid whole points amount is required."
 msgstr ""
 
 #. translators: Names of settings whose saves completed.
 #: inc/backend/settings/extra-points.php:232
 #, php-format
-msgid "Held rewards were skipped. Confirmed saved settings: %s. Review the held rewards in Migration Review."
+msgid "Rewards being updated were skipped. Saved settings: %s."
 msgstr ""
 
 #. translators: Names of settings whose saves completed.
@@ -928,7 +917,6 @@ msgid "Set how many points to exchange for a discount to the customers."
 msgstr ""
 
 #: inc/backend/settings/general-using-point-rules.php:57
-#: inc/cores/helper/free-migrations.php:985
 msgid "Exchange points"
 msgstr ""
 
@@ -937,7 +925,6 @@ msgid "point(s) for"
 msgstr ""
 
 #: inc/backend/settings/general-using-point-rules.php:59
-#: inc/cores/helper/free-migrations.php:985
 msgid "Discount amount"
 msgstr ""
 
@@ -962,7 +949,7 @@ msgid "Enable Referral Lite"
 msgstr ""
 
 #: inc/backend/settings/referrals.php:12
-#: inc/cores/helper/free-onboarding.php:329
+#: inc/cores/helper/free-onboarding.php:328
 msgid "Referrer points"
 msgstr ""
 
@@ -1293,7 +1280,7 @@ msgid "Points are unavailable. Please retry or reapply points."
 msgstr ""
 
 #: inc/cores/helper/free-blocks.php:38
-#: inc/cores/helper/free-cart.php:36
+#: inc/cores/helper/free-cart.php:37
 msgid "Please sign in to use points."
 msgstr ""
 
@@ -1302,12 +1289,12 @@ msgstr ""
 msgid "Points could not be applied. Check your balance and reapply points."
 msgstr ""
 
-#: inc/cores/helper/free-cart.php:47
-#: inc/cores/helper/free-cart.php:51
+#: inc/cores/helper/free-cart.php:48
+#: inc/cores/helper/free-cart.php:52
 msgid "Invalid points amount."
 msgstr ""
 
-#: inc/cores/helper/free-cart.php:74
+#: inc/cores/helper/free-cart.php:75
 msgid "Points used"
 msgstr ""
 
@@ -1332,9 +1319,7 @@ msgid "Level up bonus for role:"
 msgstr ""
 
 #: inc/cores/helper/free-core.php:97
-#: inc/cores/helper/free-migrations.php:596
-#: inc/cores/helper/free-migrations.php:1017
-#: inc/cores/helper/free-migrations.php:1062
+#: inc/cores/helper/free-migrations.php:562
 #: inc/cores/helper/free-reader-admin.php:13
 msgid "Unavailable"
 msgstr ""
@@ -1439,7 +1424,7 @@ msgid "Review First Purchase"
 msgstr ""
 
 #: inc/cores/helper/free-migrations.php:49
-msgid "This feature is on hold and is not active. Its saved settings are preserved until an administrator explicitly reviews and confirms them in Migration Review."
+msgid "This feature is on hold and is not active. Its saved settings are preserved while Loyalty updates the settings automatically. Check WooCommerce logs if processing cannot finish."
 msgstr ""
 
 #. translators: Canonical option container name, never its stored contents.
@@ -1448,419 +1433,77 @@ msgstr ""
 msgid "The saved Loyalty settings container (%s) has an unsupported format. Its original data was preserved. Restore or repair the original complete container using verified backups before changing this feature."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:532
-#: inc/cores/helper/free-migrations.php:910
-#: inc/cores/helper/free-migrations.php:1039
-msgid "Keep current"
+#: inc/cores/helper/free-migrations.php:925
+msgid "Not active"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:532
-#: inc/cores/helper/free-migrations.php:910
-msgid "Use reviewed legacy"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:532
-#: inc/cores/helper/free-migrations.php:910
-#: inc/cores/helper/free-migrations.php:1039
-msgid "Disable"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:534
-msgid "Review changed settings"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:534
-msgid "The original background choice no longer matches the saved settings. Review a new choice for this feature. It will complete only when you confirm it now. The original decision remains evidence and is superseded only after verified success."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:536
-msgid "These valid saved legacy terms do not prove the last writer."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:536
-msgid "This choice authorizes the displayed future behavior."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:539
-#, php-format
-msgid "Confirm replacement: %s"
-msgstr ""
-
-#. translators: Counts of verified, queued and held migration features.
-#: inc/cores/helper/free-migrations.php:876
-#, php-format
-msgid "Verified: %1$d. Queued or running: %2$d. Needs attention: %3$d. Failed: %4$d."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:877
-msgid "The reviewed choices were admitted. Completion is verified separately for each setting below."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:878
-msgid "No new set of choices was admitted. Reload and review the current settings. Any earlier pending choices are preserved."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:879
-msgid "The admission result could not be verified. The choices may have been saved. Reload Migration status to inspect the recorded choices before submitting again."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:880
-msgid "Pending, stalled or failed settings stay on hold. If background processing is unavailable, ask an administrator to check WooCommerce Scheduled Actions and the site cron/loopback service. Retry only after resolving the cause."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:881
-msgid "Approval expired. Review the same pending choice before deliberately confirming again."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:881
-msgid "The approving administrator no longer has permission. An authorized administrator must review the pending choice."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:881
-msgid "The reviewed settings changed. Review the changed settings below if a replacement choice is available. Current settings and original evidence are preserved."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:881
-msgid "The reviewed legacy source changed. Review the changed settings below if a replacement choice is available. Current settings and original evidence are preserved."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:881
-msgid "An existing pending choice requires deliberate review and confirmation."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:881
-msgid "Background processing has stalled. Check Scheduled Actions and cron before retrying."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:881
-msgid "The automatic retry limit was reached. Resolve the storage problem before deliberately retrying."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:881
-msgid "WooCommerce background processing is unavailable."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:883
-msgid "Review required. Saved settings are preserved."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:888
-#, php-format
-msgid "Retry background processing: %s"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:902
-msgid "Review future settings once"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:902
-msgid "Confirmation authorizes the displayed future Free rewards, redemption and email behavior. Valid legacy terms are not proof of the last writer. Unselected or unsupported settings remain on hold."
-msgstr ""
-
-#. translators: Number included in the deliberate keep-current action, and number excluded.
-#: inc/cores/helper/free-migrations.php:904
-#, php-format
-msgid "Keep current includes %1$d eligible settings; %2$d are excluded."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:907
-#: inc/cores/helper/free-migrations.php:1062
-msgid "Current terms"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:909
-msgid "Choose future behavior"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:909
-msgid "Leave on hold"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:912
-msgid "Keep current proposal"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:912
-msgid "Legacy proposal — review differences"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:912
-msgid "Disable proposal"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:915
-msgid "Keep current settings for eligible features"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:915
-msgid "Confirm selected future settings"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:930
-msgid "On hold / not active"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:930
-msgid "New actions for this feature are paused. Saved data is preserved."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:930
-msgid "Review this setting"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:961
+#: inc/cores/helper/free-migrations.php:955
 msgid "Loyalty is updating your settings in the background. Existing points and history are unchanged."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:961
+#: inc/cores/helper/free-migrations.php:955
 msgid "Loyalty settings need attention. Some new rewards, redemption or emails are paused. Existing points and history are unchanged."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:962
-msgid "Loyalty could not finish updating its settings. Review the migration status before retrying. Existing points and history are unchanged."
+#: inc/cores/helper/free-migrations.php:956
+msgid "Loyalty preserved your stored settings, points and history. Future incentives, emails or new redemptions were paused because the previous configuration could not be verified. You can configure future activity in the ordinary Loyalty settings."
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:963
+#: inc/cores/helper/free-migrations.php:957
+msgid "Loyalty could not finish updating some settings. Their saved data is preserved and new activity remains paused. Check WooCommerce Scheduled Actions and logs for processing or storage problems."
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:958
+#: inc/cores/helper/free-onboarding.php:294
+msgid "Loyalty settings"
+msgstr ""
+
+#: inc/cores/helper/free-migrations.php:958
 msgid "Dismiss this notice"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:968
-#: inc/cores/helper/free-migrations.php:1018
-msgid "Loyalty Migration Status"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:971
+#: inc/cores/helper/free-migrations.php:963
 msgid "Sign-up reward"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:971
+#: inc/cores/helper/free-migrations.php:963
 msgid "Daily login reward"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:971
+#: inc/cores/helper/free-migrations.php:963
 msgid "Product review reward"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:971
+#: inc/cores/helper/free-migrations.php:963
 msgid "Level-up reward"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:971
+#: inc/cores/helper/free-migrations.php:963
 msgid "Points redemption"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:971
+#: inc/cores/helper/free-migrations.php:963
 msgid "Points earned email"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:971
+#: inc/cores/helper/free-migrations.php:963
 msgid "Points deducted email"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:971
+#: inc/cores/helper/free-migrations.php:963
 msgid "Level update email"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:975
+#: inc/cores/helper/free-migrations.php:967
 #: inc/frontend/loyalty-info-bubble.php:660
 msgid "Not configured"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:976
-#: inc/cores/helper/free-migrations.php:997
-#: inc/cores/helper/free-migrations.php:1000
+#: inc/cores/helper/free-migrations.php:968
 msgid "Unsupported value"
 msgstr ""
 
-#: inc/cores/helper/free-migrations.php:985
-msgid "Delivery"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:985
-msgid "Minimum points"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:985
-msgid "Maximum points"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:985
-msgid "Minimum cart amount"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:991
-msgid "Enabled"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:991
-#: inc/cores/helper/free-migrations.php:997
-msgid "Disabled"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:991
-#: inc/cores/helper/free-migrations.php:996
-msgid "Absent / unknown"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:992
-msgid "Redemption enablement"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:995
-msgid "Future rewards"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:995
-msgid "Reward points"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:997
-msgid "Enabled after confirmation"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:999
-msgid "Per-role reward points"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1001
-msgid "No configured role rewards"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1010
-msgid "The decision result could not be verified. It may have committed. Reload this item to inspect current server storage before trying again."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1011
-msgid "The reviewed settings changed. Nothing was confirmed by this request. Reload and review the current terms before choosing again."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1012
-msgid "The decision could not be confirmed. Saved data and any pending choice are preserved. Reload and review this item; retry only the pending choice when available. For unsupported data, ask a qualified administrator to review verified backups."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1017
-msgid "Needs review"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1017
-msgid "Confirmed"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1017
-msgid "Incomplete / pending"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1017
-msgid "Unsupported data / manual repair"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1018
-msgid "Review the future settings together or use the individual controls below. Your explicit choice authorizes future rewards, redemption or email delivery only. Existing points, history and historical evidence are not changed. An update without verified pre-upgrade evidence cannot establish which edition last wrote these settings."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1018
-msgid "Return to Loyalty settings"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1024
-msgid "Rewards"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1024
-msgid "Email delivery"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1029
-msgid "This feature was already confirmed. No new choice was applied. Review the current terms below."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1029
-msgid "Confirmed from current server storage. Review the next item or return to settings to edit this feature."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1031
-msgid "Current canonical terms"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1036
-msgid "Valid legacy terms for comparison"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1037
-msgid "Valid legacy terms are absent, unsupported or unavailable for the pending choice. This is not a zero or disabled setting."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1038
-msgid "On hold / not active. Compare the terms below before confirming. Zero values or disabled choices stop future activity for this feature. Other ready settings can be saved independently."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1039
-msgid "Use proven legacy"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1044
-msgid "These are valid historical Free terms, not proof of the last writer. Choose them only after reviewing this comparison."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1044
-msgid "Confirming completes this same pending choice now. It does not renew background approval."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1044
-msgid "This is an explicit decision about future settings."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1045
-msgid "No setting values will change; confirmation authorizes the displayed existing redemption terms."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1046
-msgid "The displayed terms differ from the current canonical terms. Check each amount and role before confirming."
-msgstr ""
-
-#. translators: Explicit feature choice.
-#: inc/cores/helper/free-migrations.php:1051
-#, php-format
-msgid "Confirm: %s"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1052
-msgid "Unavailable for the current data or pending choice."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1055
-msgid "Reload and review this item"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1060
-msgid "Edit confirmed settings"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1062
-msgid "Historical Loyalty migration evidence"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1062
-msgid "Read-only evidence; this does not grant rollback authority or prove which edition last wrote these terms."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1062
-msgid "Before migration"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1062
-msgid "Migration terms"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1062
-msgid "Evidence"
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1062
-msgid "Historical evidence unavailable."
-msgstr ""
-
-#: inc/cores/helper/free-migrations.php:1081
+#: inc/cores/helper/free-migrations.php:989
 msgid "Please reapply loyalty points after the upgrade. Your points balance has not changed."
 msgstr ""
 
@@ -1881,10 +1524,6 @@ msgstr ""
 msgid "Quick Start"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:294
-msgid "Loyalty settings"
-msgstr ""
-
 #: inc/cores/helper/free-onboarding.php:296
 msgid "Quick Start completed. Current settings may include later edits. Review them in Loyalty settings."
 msgstr ""
@@ -1893,152 +1532,148 @@ msgstr ""
 msgid "Review only. Use the existing Loyalty settings screens to change your program. An interrupted Launch may have saved some of your selected settings; it will not run again."
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:298
-msgid "Review held Loyalty settings"
-msgstr ""
-
 #. translators: 1: store currency, 2: illustrative earned points.
-#: inc/cores/helper/free-onboarding.php:304
+#: inc/cores/helper/free-onboarding.php:303
 #, php-format
 msgid "Illustrative Launch example, subtotal 100 %1$s without taxes or coupons: %2$s points. This is a saved-choice example, not a reward promise."
 msgstr ""
 
 #. translators: 1: exchanged points, 2: discount amount, 3: store currency.
-#: inc/cores/helper/free-onboarding.php:307
+#: inc/cores/helper/free-onboarding.php:306
 #, php-format
 msgid "Illustrative Launch redemption: %1$s points for %2$s %3$s, subject to the cart subtotal."
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:311
+#: inc/cores/helper/free-onboarding.php:310
 msgid "Preview only until Launch. Suggestions are illustrative; no points or orders are created."
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:314
+#: inc/cores/helper/free-onboarding.php:313
 msgid "Program"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:314
+#: inc/cores/helper/free-onboarding.php:313
 #: inc/frontend/loyalty-info-bubble.php:297
 msgid "Earn points"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:314
+#: inc/cores/helper/free-onboarding.php:313
 msgid "Redeem points"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:314
+#: inc/cores/helper/free-onboarding.php:313
 msgid "Optional growth"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:314
+#: inc/cores/helper/free-onboarding.php:313
 msgid "Customer display"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:314
+#: inc/cores/helper/free-onboarding.php:313
 msgid "Launch summary"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:317
+#: inc/cores/helper/free-onboarding.php:316
 msgid "Start with the existing Customer level at zero points. Only customers qualify; no customer roles are reassigned. Additional levels remain available in Loyalty settings."
 msgstr ""
 
 #. translators: Store currency.
-#: inc/cores/helper/free-onboarding.php:320
+#: inc/cores/helper/free-onboarding.php:319
 #, php-format
 msgid "Per subtotal amount (%s)"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:321
+#: inc/cores/helper/free-onboarding.php:320
 msgid "Rounding"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:323
+#: inc/cores/helper/free-onboarding.php:322
 msgid "Use price after coupons"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:323
+#: inc/cores/helper/free-onboarding.php:322
 msgid "Subtract order taxes (existing Free calculation)"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:324
+#: inc/cores/helper/free-onboarding.php:323
 msgid "Reverse purchase points on the selected terminal statuses:"
 msgstr ""
 
 #. translators: Store currency.
-#: inc/cores/helper/free-onboarding.php:328
+#: inc/cores/helper/free-onboarding.php:327
 msgid "Enable points redemption"
 msgstr ""
 
 #. translators: Store currency.
-#: inc/cores/helper/free-onboarding.php:328
+#: inc/cores/helper/free-onboarding.php:327
 msgid "Points exchanged"
 msgstr ""
 
 #. translators: Store currency.
-#: inc/cores/helper/free-onboarding.php:328
+#: inc/cores/helper/free-onboarding.php:327
 #, php-format
 msgid "Discount amount (%s)"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:329
+#: inc/cores/helper/free-onboarding.php:328
 msgid "Enable First Purchase bonus (orders created after Launch only)"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:329
+#: inc/cores/helper/free-onboarding.php:328
 msgid "Enable Referral Lite (registered customer, first order, link referrer only)"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:330
+#: inc/cores/helper/free-onboarding.php:329
 msgid "Show Loyalty bubble"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:330
+#: inc/cores/helper/free-onboarding.php:329
 msgid "Show My Points in My Account"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:331
+#: inc/cores/helper/free-onboarding.php:330
 msgid "Launch saves only your selected Free settings. If saving is interrupted, review the current settings before using the existing settings screens; Quick Start will not overwrite them on retry."
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:334
+#: inc/cores/helper/free-onboarding.php:333
 msgid "Back"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:334
+#: inc/cores/helper/free-onboarding.php:333
 msgid "Next"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:334
+#: inc/cores/helper/free-onboarding.php:333
 msgid "Skip optional growth"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:334
+#: inc/cores/helper/free-onboarding.php:333
 msgid "Launch / Save"
 msgstr ""
 
-#: inc/cores/helper/free-onboarding.php:334
+#: inc/cores/helper/free-onboarding.php:333
 msgid "Exit Quick Start"
 msgstr ""
 
 #. translators: 1: order subtotal or exchanged points, 2: illustrative points or discount amount.
-#: inc/cores/helper/free-onboarding.php:337
+#: inc/cores/helper/free-onboarding.php:336
 #, php-format
 msgid "Illustrative order subtotal of %1$s: %2$s points."
 msgstr ""
 
 #. translators: 1: order subtotal or exchanged points, 2: illustrative points or discount amount.
-#: inc/cores/helper/free-onboarding.php:337
+#: inc/cores/helper/free-onboarding.php:336
 #, php-format
 msgid "Illustrative redemption of %1$s points: %2$s discount, subject to the cart subtotal."
 msgstr ""
 
 #. translators: 1: order subtotal or exchanged points, 2: illustrative points or discount amount.
-#: inc/cores/helper/free-onboarding.php:337
+#: inc/cores/helper/free-onboarding.php:336
 msgid "Optional rewards and redemption remain off unless selected."
 msgstr ""
 
 #. translators: 1: order subtotal or exchanged points, 2: illustrative points or discount amount.
-#: inc/cores/helper/free-onboarding.php:337
+#: inc/cores/helper/free-onboarding.php:336
 msgid "Review the conversion amounts before Launch."
 msgstr ""
 

@@ -70,6 +70,7 @@ for phase in baseline uncaptured candidate; do
         wp eval-file "$repo/tests/runtime/characterization.php" --quiet
         cmp "$repo/tests/fixtures/free-1.2.2-expected.json" "$LOYF_SNAPSHOT"
         export LOYF25_SNAPSHOT="$tmp/uncaptured-before.json"
+        wp eval-file "$repo/tests/runtime/upgrade-seed.php" --quiet
         wp eval-file "$repo/tests/runtime/migration-review.php" before --quiet
         rm -f "$plugin/inc/cores/api/push-subscription.php"
         git -C "$repo" archive "$head" -- loyalty-for-woocommerce.php readme.txt changelog.txt license.txt css img inc js languages templates | tar -x -C "$plugin"
