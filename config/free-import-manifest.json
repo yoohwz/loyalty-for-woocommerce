@@ -480,7 +480,7 @@
     {
       "target": "inc/cores/helper/free-cart.php",
       "mode": "100644",
-      "sha256": "a28b06eb7824d84a435ec1b611e270bb39a6286630cf623e2c98f5bf93b8da7a"
+      "sha256": "ccc2a0bd81d2f662af5c7739e0d49d21049471bdb4061a74c1837ca0ef3a8038"
     },
     {
       "target": "inc/cores/helper/free-core.php",

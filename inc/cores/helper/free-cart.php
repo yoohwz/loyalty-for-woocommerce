@@ -33,6 +33,10 @@ class YOWCL_Free_Cart {
         return $selection;
     }
     public static function apply( $points, $id = null ) {
+        // One options owner covers quote, discount and signature through unfunded admission.
+        return YOWCL_Free_Migrations::locked( static function() use ( $points, $id ) { return self::apply_locked( $points, $id ); } );
+    }
+    private static function apply_locked( $points, $id ) {
         if ( ! YOWCL_Free_Core::owns() || ! is_user_logged_in() || ! WC()->session || ! WC()->cart ) { throw new DomainException( __( 'Please sign in to use points.', 'loyalty-for-woocommerce' ) ); }
         if ( ! is_scalar( $points ) || ! preg_match( '/^[0-9]{1,8}$/D', (string) $points ) ) { throw new DomainException( __( 'A valid whole points amount is required.', 'loyalty-for-woocommerce' ) ); }
         $points = (int) $points;

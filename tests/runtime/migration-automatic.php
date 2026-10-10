@@ -6,6 +6,15 @@ if('quote'===($args[0]??'')) {
     if(isset($args[1])){add_filter('query',static function($sql)use($args){static $held=false;if(!$held&&strpos($sql,"loyf_migration_redemption_v1_automatic_enabled")!==false){$held=true;file_put_contents($args[1],'owned');usleep(500000);}return $sql;},PHP_INT_MAX);}
     echo wp_json_encode(YOWCL_Free_Cart::rules());return;
 }
+if('settings-disable'===($args[0]??'')) {
+    wp_set_current_user(1);$_POST=array('using_point_rules_nonce'=>wp_create_nonce('save_using_point_rules'));
+    file_put_contents($args[1],'ready');$until=microtime(true)+10;while(!file_exists($args[2])&&microtime(true)<$until){usleep(10000);}loyf_assert(file_exists($args[2]),'Admission started settings writer');
+    YOWCL_Free_Migrations::redemption_settings(static function()use($wpdb){
+        $raw=YOWCL_Free_Migrations::read('loyalty_points_using_rules');$value=maybe_unserialize(maybe_unserialize($raw));$value['amount']='999';$wrapped=is_string(maybe_unserialize($raw));$wpdb->update($wpdb->options,array('option_value'=>$wrapped?serialize(serialize($value)):serialize($value)),array('option_name'=>'loyalty_points_using_rules'));wp_cache_delete('alloptions','options');wp_cache_delete('loyalty_points_using_rules','options');
+        update_option('loyalty_points_using_point','no');YOWCL_Free_Migrations::configure_redemption(false);
+    });
+    echo 'disabled';return;
+}
 wp_set_current_user(1);
 $names=array('loyalty_extra_points_rules','loyalty_extra_reviews_gamification_rules','loyalty_points_using_rules','loyalty_points_using_point');
 foreach(array('','_before','_resolution','_background','_supersession','_automatic','_automatic_background','_automatic_enabled')as$suffix){$names[]=YOWCL_Free_Migrations::witness('redemption').$suffix;}
@@ -14,6 +23,8 @@ $user=0;$product=null;$order=null;$id=null;$children=array();
 $decode=static function($raw){return maybe_unserialize(maybe_unserialize($raw));};
 $patch=static function($name,$fields)use($wpdb,$decode){$raw=YOWCL_Free_Migrations::read($name);$value=array_replace($decode($raw),$fields);$wrapped=is_string(maybe_unserialize($raw));$new=$wrapped?serialize(serialize($value)):serialize($value);$wpdb->update($wpdb->options,array('option_value'=>$new),array('option_name'=>$name));wp_cache_delete('alloptions','options');wp_cache_delete($name,'options');};
 $configure=static function($enabled,$callback=null) {
+    // Each ordinary save is a new request, after independent peer writes.
+    wp_cache_delete('alloptions','options');wp_cache_delete('loyalty_points_using_point','options');
     wp_set_current_user(1);$_POST=array('using_point_rules_nonce'=>wp_create_nonce('save_using_point_rules'));if($enabled){$_POST['loyalty_points_using_point']='1';}
     try {YOWCL_Free_Migrations::redemption_settings(static function()use($enabled,$callback){if($callback){$callback();}update_option('loyalty_points_using_point',$enabled?'yes':'no');YOWCL_Free_Migrations::configure_redemption($enabled);});}
     finally{$_POST=array();}
@@ -33,7 +44,25 @@ try {
     YOWCL_Points_Transaction::apply($user,100,100,'loyf29:guard:seed:'.$user);wp_set_current_user($user);
     if(!WC()->session){WC()->initialize_session();}if(!WC()->cart){WC()->initialize_cart();}
     $product=new WC_Product_Simple();$product->set_name('LOYF29 guard');$product->set_regular_price('100');$product->set_virtual(true);$product->set_status('publish');$product->save();
-    WC()->cart->empty_cart();WC()->cart->add_to_cart($product->get_id());WC()->cart->calculate_totals();$id=wp_generate_uuid4();YOWCL_Free_Cart::apply('20',$id);WC()->cart->calculate_totals();
+    WC()->cart->empty_cart();WC()->cart->add_to_cart($product->get_id());WC()->cart->calculate_totals();
+    // Actual Classic/Store API admissions contend with a separate Settings writer after the rate quote.
+    foreach(array('classic','store')as$route){
+        $configure(true,static function()use($patch){$patch('loyalty_points_using_rules',array('amount'=>'0.7010'));});wp_set_current_user($user);YOWCL_Free_Cart::clear();
+        $gate=tempnam(sys_get_temp_dir(),'loyf29-admission-');unlink($gate);$log=tempnam(sys_get_temp_dir(),'loyf29-admission-log-');$process=proc_open(array(PHP_BINARY,getenv('LOYF_WP_CLI_PHAR'),'--path='.ABSPATH,'eval-file',__FILE__,'settings-disable',$gate,$gate.'.go','--quiet'),array(0=>array('file','/dev/null','r'),1=>array('file',$log,'w'),2=>array('file',$log,'a')),$pipes);$children[]=array($process,$gate,$log);$until=microtime(true)+10;while(!file_exists($gate)&&microtime(true)<$until){usleep(10000);}loyf_assert(file_exists($gate),'Independent settings writer fully booted');$armed=true;
+        $race=static function($decimals)use(&$armed,$gate){
+            $admitting=false;foreach(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)as$frame){if('YOWCL_Free_Cart'===($frame['class']??'')&&in_array($frame['function'],array('apply','apply_locked'),true)){$admitting=true;}}
+            if($armed&&$admitting){$armed=false;file_put_contents($gate.'.go','quoted');usleep(500000);}
+            return $decimals;
+        };
+        $operation=wp_generate_uuid4();add_filter('wc_get_price_decimals',$race,PHP_INT_MAX);
+        try{
+            if('classic'===$route){$reply=loyf_ajax('wp_ajax_applying_points',array('loyalty_points_nonce'=>wp_create_nonce('apply_loyalty_points'),'loyalty_points_input'=>'20'));loyf_equal(true,$reply['success'],'Native Classic earlier admission');}
+            else{$request=new WP_REST_Request('POST','/wc/store/v1/cart/extensions');$request->set_header('Nonce',wp_create_nonce('wc_store_api'));$request->set_body_params(array('namespace'=>YOWCL_Free_Blocks::NS,'data'=>array('action'=>'apply','points'=>'20','operation_id'=>$operation)));$reply=rest_do_request($request);loyf_equal(200,$reply->get_status(),'Native Store API earlier admission');}
+        } finally{remove_filter('wc_get_price_decimals',$race,PHP_INT_MAX);}
+        loyf_assert(!$armed,'Race occurs between quote and selection signature '.$route);loyf_equal(0,proc_close($process),'Independent ordinary settings writer '.$route);$children=array();loyf_equal('disabled',file_get_contents($log),'Settings disable committed '.$route);unlink($gate);unlink($gate.'.go');unlink($log);
+        loyf_equal(array(),YOWCL_Free_Cart::rules(),'Current policy inactive '.$route);loyf_equal(null,YOWCL_Free_Cart::selection(),'Unfunded old quote invalid after disable/rate drift '.$route);WC()->cart->calculate_totals();foreach(WC()->cart->get_fees()as$fee){loyf_assert((float)$fee->amount>=0,'No discount from invalid unfunded quote '.$route);}loyf_balance($user,100,100,'Admission race creates no economic value '.$route);
+    }
+    $configure(true,static function()use($patch){$patch('loyalty_points_using_rules',array('amount'=>'0.7010'));});wp_set_current_user($user);YOWCL_Free_Cart::clear();$id=wp_generate_uuid4();YOWCL_Free_Cart::apply('20',$id);WC()->cart->calculate_totals();
     $order_id=WC()->checkout()->create_order(array('billing_email'=>'loyf29@example.invalid','payment_method'=>'cod'));loyf_assert(!is_wp_error($order_id),'Native funded Classic order');$order=wc_get_order($order_id);loyf_balance($user,80,100,'Funded debit once');
     $configure(false);wp_set_current_user($user);$before=loyf_rows($user);
     loyf_equal(array(),YOWCL_Free_Cart::rules(),'Scoped inactive denies new rules');loyf_equal($id,YOWCL_Free_Cart::selection()['id'],'Funded selection survives future inactivity');
@@ -55,9 +84,9 @@ try {
         $until=microtime(true)+10;while(!file_exists($gate)&&microtime(true)<$until){usleep(10000);}loyf_assert(file_exists($gate),'Independent quote started while writer owns transaction');usleep(200000);
     });$children[]=array($process,$gate,$log);loyf_equal(0,proc_close($process),'Writer-first process');$children=array();loyf_equal(array(),json_decode(file_get_contents($log),true),'Later quote never sees an enabled transient new rate');unlink($gate);unlink($log);
     loyf_equal($evidence,YOWCL_Free_Migrations::read('loyf_migration_redemption_v1_automatic'),'Immutable scoped evidence survives ordinary edits and both lock orders');
-    echo 'Automatic guard native PASS '.getenv('LOYF_STORAGE').': raw terms/old intent, actual Classic/Store API/Blocks denial, funded finalize/return/replay, ordinary enable/disable and two independent quote/settings lock orders. No migration POST.' . "\n";
+    echo 'Automatic guard native PASS '.getenv('LOYF_STORAGE').': raw terms/old intent, actual Classic/Store API/Blocks denial, funded finalize/return/replay, ordinary enable/disable two independent quote/settings lock orders and actual Classic/Store API admission versus concurrent disable/rate drift. No migration POST.' . "\n";
 } finally {
-    foreach($children as$child){proc_terminate($child[0]);proc_close($child[0]);foreach(array($child[1],$child[2])as$file){if(file_exists($file)){unlink($file);}}}
+    foreach($children as$child){proc_terminate($child[0]);proc_close($child[0]);foreach(array($child[1],$child[1].'.go',$child[2])as$file){if(file_exists($file)){unlink($file);}}}
     if(WC()->cart){WC()->cart->empty_cart();}YOWCL_Free_Cart::clear();if($order){$order->delete(true);}if($product){$product->delete(true);}if($id){delete_option('yowcl_order_redemption_'.$id);}
     if($user&&!is_wp_error($user)){require_once ABSPATH.'wp-admin/includes/user.php';$wpdb->delete($wpdb->prefix.'yo_loyalty_points_log',array('user_id'=>$user));wp_delete_user($user);}
     foreach($saved as$name=>$row){$wpdb->delete($wpdb->options,array('option_name'=>$name));if($row){$wpdb->insert($wpdb->options,array_merge(array('option_name'=>$name),$row));}wp_cache_delete($name,'options');}
