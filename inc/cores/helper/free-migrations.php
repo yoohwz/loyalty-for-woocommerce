@@ -702,13 +702,17 @@ class YOWCL_Free_Migrations {
             return self::ready('redemption') && 'yes'===self::read(self::automatic_name('redemption').'_enabled');
         } catch(Throwable $e) { return false; }
     }
-    /** Ordinary validated Settings saves are future configuration, not migration permission. */
-    public static function configure_redemption($enabled) {
-        if(!current_user_can('manage_options') || !is_string($_POST['using_point_rules_nonce']??null) || !wp_verify_nonce(wp_unslash($_POST['using_point_rules_nonce']),'save_using_point_rules') || $enabled!==isset($_POST['loyalty_points_using_point'])) { throw new RuntimeException('migration_resolution_denied'); }
-        self::locked(function()use($enabled){
+    /** Serialize a new quote against the scoped settings writer; funded records bypass this reader. */
+    public static function redemption_policy() {
+        try { return self::locked(static function(){return self::new_redemption_allowed()?self::canonical('redemption',true):array();}); }
+        catch(Throwable $e){return array();}
+    }
+    /** Only this task's inactive lineage adds an atomic ordinary redemption settings boundary. */
+    public static function redemption_settings($callback) {
+        return self::locked(function()use($callback){
             global $wpdb;
             $raw=self::read(self::automatic_name('redemption'));
-            if(null===$raw){return;}
+            if(null===$raw){return $callback();}
             self::validate_automatic('redemption',self::decode($raw));
             $db=self::$owner['db'];$committing=false;
             $engine=$wpdb->get_var($wpdb->prepare('SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s',$wpdb->options));self::assert_owner();
@@ -718,14 +722,24 @@ class YOWCL_Free_Migrations {
                 self::interactive_actor();
                 if(!YOWCL_Free_Core::owns() || !self::ready('redemption')){throw new RuntimeException('migration_incomplete');}
                 if(self::read(self::automatic_name('redemption'))!==$raw){throw new RuntimeException('migration_malformed_evidence');}
-                $terms=self::canonical('redemption',true);
-                if($enabled){foreach(array('points','amount')as$key){if((float)self::points($terms[$key]??0)<=0){throw new RuntimeException('migration_malformed_points');}}}
-                if(('yes'===self::read('loyalty_points_using_point'))!==$enabled){throw new RuntimeException('migration_target_changed');}
-                $name=self::automatic_name('redemption').'_enabled';self::put($name,$enabled?'yes':'no',self::read($name));
-                $committing=true;self::query('COMMIT');
+                self::canonical('redemption',true);
+                $result=$callback();self::assert_owner();$committing=true;self::query('COMMIT');return $result;
             } catch(Throwable $e){try{mysqli_query($db,'ROLLBACK');}catch(Throwable $ignored){}if($committing){throw new RuntimeException('migration_completion_unknown');}throw $e;}
-            finally{self::$transaction=false;}
+            finally{self::$transaction=false;self::invalidate('redemption');}
         });
+    }
+    /** The ordinary validated Settings transaction changes future permission, never migration evidence. */
+    public static function configure_redemption($enabled) {
+        if(!current_user_can('manage_options') || !is_string($_POST['using_point_rules_nonce']??null) || !wp_verify_nonce(wp_unslash($_POST['using_point_rules_nonce']),'save_using_point_rules') || $enabled!==isset($_POST['loyalty_points_using_point'])) { throw new RuntimeException('migration_resolution_denied'); }
+        if(null===self::read(self::automatic_name('redemption'))){return;}
+        if(!self::transaction_active()){throw new RuntimeException('migration_transaction_unavailable');}
+        self::interactive_actor();
+        if(!YOWCL_Free_Core::owns() || !self::ready('redemption')){throw new RuntimeException('migration_incomplete');}
+        self::validate_automatic('redemption',self::decode(self::read(self::automatic_name('redemption'))));
+        $terms=self::canonical('redemption',true);
+        if($enabled){foreach(array('points','amount')as$key){if((float)self::points($terms[$key]??0)<=0){throw new RuntimeException('migration_malformed_points');}}}
+        if(('yes'===self::read('loyalty_points_using_point'))!==$enabled){throw new RuntimeException('migration_target_changed');}
+        $name=self::automatic_name('redemption').'_enabled';self::put($name,$enabled?'yes':'no',self::read($name));
     }
     /** Only newly admitted, immutable LOYF-27 consent can continue in a worker. */
     private static function consent_structure($feature,$spec) {
@@ -904,7 +918,7 @@ class YOWCL_Free_Migrations {
     }
     private static function notice_token($status) {
         $state=in_array($status['state'],array('queued','running'),true)?'active':$status['state'];
-        return hash('sha256','loyf29|'.$state.'|'.serialize(array($status['runs'],$status['paused'])));
+        return hash('sha256','loyf29|'.$state.'|'.serialize(array($status['runs'],'active'===$state?array():$status['paused'])));
     }
     public static function dismiss() {
         if ('POST'!==($_SERVER['REQUEST_METHOD']??'') || !current_user_can('manage_options') || !YOWCL_Free_Core::owns() || !is_string($_POST['_wpnonce']??null) || !wp_verify_nonce(wp_unslash($_POST['_wpnonce']),'loyf_dismiss_migration') || !is_string($_POST['token']??null)) { wp_send_json_error(); }

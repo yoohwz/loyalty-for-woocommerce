@@ -345,7 +345,7 @@
     {
       "target": "inc/backend/settings.php",
       "mode": "100644",
-      "sha256": "4f269c8ddc83ba4c2867bb138d394f26d5052c95b44fccf5c437462039365fb5"
+      "sha256": "188e95b432f6dac0d8a3a72e6922bc22efaa93b9d80cfe04f68a5b306ea77cbc"
     },
     {
       "target": "inc/backend/settings/customization.php",
@@ -480,7 +480,7 @@
     {
       "target": "inc/cores/helper/free-cart.php",
       "mode": "100644",
-      "sha256": "11ceda25902e56903d238c6000e1a1eab0032a2ffcf9349fdd9a786744395d96"
+      "sha256": "a28b06eb7824d84a435ec1b611e270bb39a6286630cf623e2c98f5bf93b8da7a"
     },
     {
       "target": "inc/cores/helper/free-core.php",
@@ -500,7 +500,7 @@
     {
       "target": "inc/cores/helper/free-migrations.php",
       "mode": "100644",
-      "sha256": "875ce6a8f65a439acf59d690c2c34fed4cc20c4cf5a16567d225526ed7424c46"
+      "sha256": "fca8acb1c8701c31f5d5062791f7251e5ee5101b62d3bf5d36b0448e43fc8070"
     },
     {
       "target": "inc/cores/helper/free-onboarding.php",

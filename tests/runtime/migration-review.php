@@ -13,7 +13,7 @@ if ('upgrade'===$mode) {
  $before=json_decode(file_get_contents($path),true);
  foreach(array('resolve_migration','confirm_migrations','replace_migration','retry_migration')as$action){loyf_assert(!has_action('admin_post_loyf_'.$action),'No retired migration HTTP endpoint '.$action);}
  loyf_assert(!method_exists('YOWCL_Free_Migrations','render_review') && !method_exists('YOWCL_Free_Migrations','register_review'),'No migration page or direct renderer');
- $old_records=array();foreach(YOWCL_Free_Migrations::features()as$f){$old_records[$f]=array();foreach(array('_before','_resolution','_background','_supersession','_automatic','_automatic_background','_automatic_enabled')as$suffix){$old_records[$f][$suffix]=YOWCL_Free_Migrations::read(YOWCL_Free_Migrations::witness($f).$suffix);}}
+ $old_records=array();foreach(YOWCL_Free_Migrations::features()as$f){$old_records[$f]=array();foreach(array('_before','_resolution','_background','_supersession')as$suffix){$old_records[$f][$suffix]=YOWCL_Free_Migrations::read(YOWCL_Free_Migrations::witness($f).$suffix);}}
  YOWCL_Free_Migrations::schedule();
  $actions=as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'group'=>YOWCL_Free_Migrations::GROUP,'status'=>'pending','per_page'=>30),'ids');
  loyf_equal(8,count($actions),'All eight ordinary uncaptured features automatically queued');

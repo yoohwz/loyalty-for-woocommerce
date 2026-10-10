@@ -464,6 +464,7 @@ class YOSWC_Loyalty_Settings {
             if ($failed) { throw new RuntimeException('loyalty_settings_readback_failed'); }
             $saved=array(__('General earning and level settings','loyalty-for-woocommerce'));
             if ($editable) {
+                YOWCL_Free_Migrations::redemption_settings(function() use (&$saved) {
                 if (!$this->save_using_point_rules()) { throw new RuntimeException('migration_incomplete'); }
                 $using=isset($_POST['loyalty_points_using_point']) ? 'yes' : 'no';
                 $previous_using=YOWCL_Free_Migrations::read('loyalty_points_using_point');
@@ -473,6 +474,7 @@ class YOSWC_Loyalty_Settings {
                 if (YOWCL_Free_Migrations::read('loyalty_points_using_point')!==$expected_using) { throw new RuntimeException('loyalty_settings_readback_failed'); }
                 YOWCL_Free_Migrations::configure_redemption('yes'===$using);
                 $saved[] = __('Redemption','loyalty-for-woocommerce');
+                });
             } else {
                 WC_Admin_Settings::add_error(__('Redemption is not active while its settings are being updated. General earning and level settings were saved.','loyalty-for-woocommerce'));
             }
