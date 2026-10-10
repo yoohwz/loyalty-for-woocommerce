@@ -62,7 +62,6 @@ class YOSWC_Loyalty_Settings {
 			'customization' => __('Customization', 'loyalty-for-woocommerce'),
 			'notification' => __('Notification', 'loyalty-for-woocommerce'),
 			'tools' => __('Tools', 'loyalty-for-woocommerce'),
-            'migration_review' => __('Migration status', 'loyalty-for-woocommerce'),
 			'premium' => __('Premium', 'loyalty-for-woocommerce')
 		);
 
@@ -71,7 +70,7 @@ class YOSWC_Loyalty_Settings {
 
 		foreach ($sub_sub_tabs as $section_id => $section_label) {
 			$class = ($current_section === $section_id) ? 'current' : '';
-			echo '<li><a href="' . esc_url( 'migration_review' === $section_id ? YOWCL_Free_Migrations::review_url() : admin_url( 'admin.php?page=wc-settings&tab=loyalty&section=' . $section_id ) ) . '" class="' . esc_attr( $class ) . '">' . esc_html( $section_label ) . '</a>';
+			echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=loyalty&section=' . $section_id ) ) . '" class="' . esc_attr( $class ) . '">' . esc_html( $section_label ) . '</a>';
 			if ($i < $count) {
 				echo ' | ';
 			}
@@ -365,6 +364,7 @@ class YOSWC_Loyalty_Settings {
 				'type'     => 'checkbox',
 				'desc'     => __('Allow users to using points', 'loyalty-for-woocommerce'),
 				'id'       => 'loyalty_points_using_point',
+                'value'    => YOWCL_Free_Migrations::new_redemption_allowed() ? get_option('loyalty_points_using_point','no') : 'no',
 				'default'  => 'no',
 			),
 			array(
@@ -471,9 +471,10 @@ class YOSWC_Loyalty_Settings {
                 if (null!==$previous_using || 'yes'===$using) { update_option('loyalty_points_using_point', $using); }
                 $expected_using=null===$previous_using && 'no'===$using ? null : $using;
                 if (YOWCL_Free_Migrations::read('loyalty_points_using_point')!==$expected_using) { throw new RuntimeException('loyalty_settings_readback_failed'); }
+                YOWCL_Free_Migrations::configure_redemption('yes'===$using);
                 $saved[] = __('Redemption','loyalty-for-woocommerce');
             } else {
-                WC_Admin_Settings::add_error(__('Redemption was skipped because it is on hold. General earning and level settings were saved. Review redemption before editing it.','loyalty-for-woocommerce').' <a href="'.esc_url(YOWCL_Free_Migrations::review_url('redemption')).'">'.esc_html__('Review redemption','loyalty-for-woocommerce').'</a>');
+                WC_Admin_Settings::add_error(__('Redemption is not active while its settings are being updated. General earning and level settings were saved.','loyalty-for-woocommerce'));
             }
             }); } catch(Throwable $e) {
                 $message=__('The save could not be completed. Reload to review current settings.','loyalty-for-woocommerce');

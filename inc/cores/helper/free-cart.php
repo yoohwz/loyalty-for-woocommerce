@@ -11,6 +11,7 @@ class YOWCL_Free_Cart {
         return array( 'available' => (int) ( $values[0] ?? 0 ) );
     }
     public static function rules() {
+        if (!YOWCL_Free_Migrations::new_redemption_allowed()) { return array(); }
         $rules = YOWCL_Free_Migrations::canonical( 'redemption' );
         if ( (float) ( $rules['points'] ?? 0 ) <= 0 || (float) ( $rules['amount'] ?? 0 ) <= 0 ) { return array(); }
         foreach ( array( 'points', 'amount' ) as $key ) { if ( ! is_numeric( $rules[$key] ) || ! is_finite( (float) $rules[$key] ) ) { return array(); } }

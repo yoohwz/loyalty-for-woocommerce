@@ -10,15 +10,30 @@ $snapshot=static function()use($wpdb,$names){$result=array('options'=>array(),'m
 if ('before'===$mode) { foreach(array('signup','login','review','levelup','redemption','email_reward','email_deduct','email_level') as $f){loyf_equal(null,$wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name=%s",'loyf_migration_'.$f.'_v1_before')),'No pre-capture');}file_put_contents($path,wp_json_encode($snapshot()));echo "Original Free before uncaptured upgrade recorded.\n";return; }
 wp_set_current_user(1);
 if ('upgrade'===$mode) {
- $before=json_decode(file_get_contents($path),true); $current=$snapshot();
- // Additive schema columns are admitted; every original row/ID/column stays exact.
- foreach($current['logs'] as $i=>$row){$current['logs'][$i]=array_intersect_key($row,$before['logs'][$i]??array());}
- loyf_equal($before,$current,'Actual old-Free upgrade without capture preserves existing raw terms, balances and logs');
- foreach(YOWCL_Free_Migrations::features() as $f){loyf_assert(!YOWCL_Free_Migrations::ready($f),'Actual uncaptured upgrade held '.$f);loyf_equal(null,YOWCL_Free_Migrations::read(YOWCL_Free_Migrations::witness($f).'_before'),'No manufactured provenance '.$f);}
- ob_start();YOWCL_Free_Migrations::render_review();$html=ob_get_clean();loyf_assert(strpos($html,'Loyalty Migration Status')!==false && strpos($html,'<pre')===false,'Native bounded review without raw JSON');
- $after=$snapshot();foreach($after['logs'] as $i=>$row){$after['logs'][$i]=array_intersect_key($row,$before['logs'][$i]??array());}
- loyf_equal($before,$after,'Review GET does not write reviewed data');
- echo "Actual old-Free upgrade WITHOUT pre-capture PASS: eight held features, exact raw options/balances/logs, read-only review.\n";return;
+ $before=json_decode(file_get_contents($path),true);
+ foreach(array('resolve_migration','confirm_migrations','replace_migration','retry_migration')as$action){loyf_assert(!has_action('admin_post_loyf_'.$action),'No retired migration HTTP endpoint '.$action);}
+ loyf_assert(!method_exists('YOWCL_Free_Migrations','render_review') && !method_exists('YOWCL_Free_Migrations','register_review'),'No migration page or direct renderer');
+ $old_records=array();foreach(YOWCL_Free_Migrations::features()as$f){$old_records[$f]=array();foreach(array('_before','_resolution','_background','_supersession')as$suffix){$old_records[$f][$suffix]=YOWCL_Free_Migrations::read(YOWCL_Free_Migrations::witness($f).$suffix);}}
+ YOWCL_Free_Migrations::schedule();
+ $actions=as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'group'=>YOWCL_Free_Migrations::GROUP,'status'=>'pending','per_page'=>30),'ids');
+ loyf_equal(8,count($actions),'All eight ordinary uncaptured features automatically queued');
+ foreach($actions as$id){ActionScheduler_QueueRunner::instance()->process_action($id,'LOYF-29 ordinary uncaptured upgrade');}
+ foreach(YOWCL_Free_Migrations::features()as$f){loyf_assert(YOWCL_Free_Migrations::ready($f),'Verified automatic inactive witness '.$f);$a=get_option(YOWCL_Free_Migrations::witness($f).'_automatic');loyf_equal(29,$a['automatic'],'New policy evidence without fabricated capture '.$f);foreach($old_records[$f]as$suffix=>$raw){loyf_equal($raw,YOWCL_Free_Migrations::read(YOWCL_Free_Migrations::witness($f).$suffix),'Original evidence/intent/work untouched '.$f.$suffix);}}
+ loyf_equal(0,YOWCL_Free_Core::extra('signup'),'Previously positive old-Free signup now inactive');loyf_equal(0,YOWCL_Free_Core::extra('login'),'Previously positive login inactive');loyf_equal(0,YOWCL_Free_Core::extra('review'),'Dormant canonical positive review inactive');loyf_equal(array(),YOWCL_Free_Core::level_rules(),'Positive role map not activated');loyf_equal(array(),YOWCL_Free_Cart::rules(),'New redemption inactive without zeroing rate');
+ foreach(array('email_reward','email_deduct','email_level')as$f){loyf_equal('no',YOWCL_Free_Migrations::canonical($f)['enabled'],'New email delivery inactive');}
+ $current=$snapshot();foreach($current['logs']as$i=>$row){$current['logs'][$i]=array_intersect_key($row,$before['logs'][$i]??array());}
+ loyf_equal($before['meta'],$current['meta'],'Original balances unchanged');loyf_equal($before['logs'],$current['logs'],'Every original log row/column/ID unchanged');
+ foreach($before['options']as$n=>$row){$now=$current['options'][$n];
+  if(in_array($n,array('loyalty_extra_points_rules','loyalty_extra_reviews_gamification_rules'),true)||strpos($n,'woocommerce_yowcl_loyalty_')===0){
+   $decode=static function($v){return null===$v?array():maybe_unserialize(maybe_unserialize($v));};$original=$decode($row['option_value']??null);$actual=$decode($now['option_value']??null);
+   foreach(array('signup_enabled','login_enabled','review_enabled','levelup_enabled','enabled')as$key){unset($original[$key],$actual[$key]);}
+   loyf_equal(serialize($original),serialize($actual),'Amounts/maps/native email subjects/unknown siblings preserved '.$n);
+   if($row){loyf_equal($row['autoload'],$now['autoload'],'Autoload unchanged '.$n);}
+  }else{loyf_equal($row,$now,'Raw legacy/redemption bytes unchanged '.$n);}
+ }
+ set_current_screen('dashboard');ob_start();YOWCL_Free_Migrations::notices();$notice=ob_get_clean();loyf_assert(strpos($notice,'previous configuration could not be verified')!==false,'Meaningful policy pause is explained');loyf_equal(1,substr_count($notice,'id="loyf-migration-notice"'),'One dismissible notice');loyf_assert(strpos($notice,'loyf-migration-review')===false,'No stale notice link');
+ $after=$snapshot();YOWCL_Free_Migrations::schedule();foreach($actions as$id){$args=ActionScheduler::store()->fetch_action($id)->get_args();YOWCL_Free_Migrations::worker($args[0],$args[1]);}loyf_equal($after,$snapshot(),'Terminal replays do not rewrite policy/data');
+ echo "Actual old-Free upgrade WITHOUT capture/admin migration POST PASS: eight verified inactive features; exact amounts/maps/rates/autoload/balances/logs; no migration route; truthful policy notice.\n";return;
 }
 $store=static function($name,$value)use($wpdb){$wpdb->delete($wpdb->options,array('option_name'=>$name));if(null!==$value){$wpdb->insert($wpdb->options,array('option_name'=>$name,'option_value'=>maybe_serialize($value),'autoload'=>'no'));}wp_cache_delete($name,'options');wp_cache_delete('alloptions','options');wp_cache_delete('notoptions','options');};
 if (in_array($mode,array('browser-seed','background-seed'),true)) {
@@ -52,7 +67,7 @@ if ('drain-background'===$mode) {
  for($i=0;$i<4;$i++) { $ids=as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'group'=>YOWCL_Free_Migrations::GROUP,'status'=>'pending','per_page'=>20),'ids');if(!$ids){break;}foreach($ids as$id){ActionScheduler_QueueRunner::instance()->process_action($id,'LOYF-27 browser');} }
  return;
 }
-if ('verify-background'===$mode) { loyf_equal('completed',YOWCL_Free_Migrations::status()['state'],'Browser background verified convergence');$before=json_decode(file_get_contents($path),true);$now=$snapshot();loyf_equal($before,$now,'Keep current browser preserves all raw options/autoload/value/logs');return; }
+if ('verify-background'===$mode) { loyf_equal('completed',YOWCL_Free_Migrations::status()['state'],'Browser background verified convergence');$before=json_decode(file_get_contents($path),true);$now=$snapshot();loyf_equal($before['meta'],$now['meta'],'Automatic browser transition preserves balances');loyf_equal($before['logs'],$now['logs'],'Automatic browser transition preserves history');foreach($before['options']as$name=>$row){$actual=$now['options'][$name];if($row===null && $actual===null){continue;}$decode=static function($raw){return null===$raw?array():maybe_unserialize(maybe_unserialize($raw));};$a=$decode($row['option_value']??null);$b=$decode($actual['option_value']??null);foreach(array('signup_enabled','login_enabled','review_enabled','levelup_enabled','enabled')as$key){unset($a[$key],$b[$key]);}loyf_equal(serialize($a),serialize($b),'Configured terms preserved '.$name);if($row){loyf_equal($row['autoload'],$actual['autoload'],'Autoload preserved '.$name);}}return; }
 if ('verify-queued'===$mode) { loyf_equal(8,count(as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'group'=>YOWCL_Free_Migrations::GROUP,'status'=>'pending','per_page'=>20),'ids')),'Dismiss does not cancel queue');foreach(YOWCL_Free_Migrations::features()as$f){loyf_assert(!YOWCL_Free_Migrations::ready($f),'Dismiss is not consent completion');}return; }
 if ('stale'===$mode){$r=maybe_unserialize(YOWCL_Free_Migrations::read('loyalty_extra_points_rules'));$r['login_points']='21';$store('loyalty_extra_points_rules',$r);return;}
 if ('verify-held'===$mode){$before=json_decode(file_get_contents($path),true);$now=$snapshot();loyf_equal($before,$now,'Held native settings POST keeps raw options/balances/logs exact');loyf_equal('round_up',get_option('loyalty_points_rounding'),'Independent native General option saved');return;}
@@ -61,7 +76,7 @@ if ('verify-blank'===$mode){loyf_equal(file_get_contents($path.'.blank'),YOWCL_F
 if ('read-fault'===$mode){file_put_contents($path.'.read-fault',serialize(array(YOWCL_Free_Migrations::read('loyalty_points_using_rules'),YOWCL_Free_Migrations::read('loyalty_points_using_point'))));return;}
 if ('verify-read-fault'===$mode){loyf_equal(file_get_contents($path.'.read-fault'),serialize(array(YOWCL_Free_Migrations::read('loyalty_points_using_rules'),YOWCL_Free_Migrations::read('loyalty_points_using_point'))),'Late witness read failure preserves redemption pair and using flag');return;}
 if ('subprecision'===$mode){$r=YOWCL_Free_Migrations::canonical('redemption');$r['amount']='0.0010';$store('loyalty_points_using_rules',serialize($r));file_put_contents($path.'.subprecision',YOWCL_Free_Migrations::read('loyalty_points_using_rules'));return;}
-if ('verify-subprecision'===$mode){loyf_equal(file_get_contents($path.'.subprecision'),YOWCL_Free_Migrations::read('loyalty_points_using_rules'),'Positive subprecision raw amount stays exact despite zero display');loyf_equal('yes',YOWCL_Free_Migrations::read('loyalty_points_using_point'),'Positive subprecision redemption remains enabled');return;}
+if ('verify-subprecision'===$mode){loyf_equal(file_get_contents($path.'.subprecision'),YOWCL_Free_Migrations::read('loyalty_points_using_rules'),'Positive subprecision raw amount stays exact despite zero display');loyf_equal('yes',YOWCL_Free_Migrations::read('loyalty_points_using_point'),'Positive subprecision redemption remains enabled');loyf_assert(YOWCL_Free_Migrations::new_redemption_allowed(),'Ordinary explicit enablement keeps scoped guard active');return;}
 if ('precision'===$mode){$r=YOWCL_Free_Migrations::canonical('redemption');$r['amount']='0.7010';$store('loyalty_points_using_rules',serialize($r));file_put_contents($path.'.precision',YOWCL_Free_Migrations::read('loyalty_points_using_rules'));return;}
 if ('verify-precision'===$mode){loyf_equal(file_get_contents($path.'.precision'),YOWCL_Free_Migrations::read('loyalty_points_using_rules'),'Unchanged currency display preserves extra-precision raw string, wrapper and dormant fields');return;}
 if ('verify-partial'===$mode){$r=get_option('loyalty_points_earning_rules');loyf_equal('2',$r['customer']['points'],'Native independent earning save survives rounding UPDATE failure');loyf_equal('round_up',get_option('loyalty_points_rounding'),'Rejected native rounding remains old value');return;}

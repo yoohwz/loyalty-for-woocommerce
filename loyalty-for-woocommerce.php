@@ -54,7 +54,6 @@ class YOSWC_Loyalty {
 		require_once plugin_dir_path(__FILE__) . 'inc/cores/database.php';
 		( new YOWCL_Database() )->check_version();
 		require_once plugin_dir_path(__FILE__) . 'inc/cores/helper/free-migrations.php';
-		add_action( 'admin_post_loyf_resolve_migration', array( 'YOWCL_Free_Migrations', 'handle_resolution' ) );
 		YOWCL_Free_Migrations::boot();
 		require_once plugin_dir_path(__FILE__) . 'inc/backend/actions/extra/first-purchase.php';
 		add_action( 'admin_notices', array( 'YOWCL_Free_First_Purchase', 'notices' ) );

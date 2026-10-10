@@ -40,7 +40,7 @@ try {
  $valid=YOWCL_Free_Migrations::preview('signup','canonical');$post=array('feature'=>'signup','mode'=>'canonical','fingerprint'=>hash('sha256',serialize($valid)),'_wpnonce'=>wp_create_nonce('loyf_resolve_signup'));
  $method=$_SERVER['REQUEST_METHOD']??null;
  foreach(array(array($post,'GET'),array(array_replace($post,array('_wpnonce'=>'invalid')),'POST'),array(array_replace($post,array('feature'=>array('signup'))),'POST'),array(array_replace($post,array('fingerprint'=>array('invalid'))),'POST')) as $denied){
-  $_POST=$denied[0];$_SERVER['REQUEST_METHOD']=$denied[1];try{do_action('admin_post_loyf_resolve_migration');throw new RuntimeException('Denied native POST accepted');}catch(RuntimeException $e){loyf_equal('migration_resolution_denied',$e->getMessage(),'Native POST denial');}
+  $_POST=$denied[0];$_SERVER['REQUEST_METHOD']=$denied[1];try{loyf_retained_protocol('resolve');throw new RuntimeException('Denied native POST accepted');}catch(RuntimeException $e){loyf_equal('migration_resolution_denied',$e->getMessage(),'Native POST denial');}
  }
  $_POST=array();if(null===$method){unset($_SERVER['REQUEST_METHOD']);}else{$_SERVER['REQUEST_METHOD']=$method;}
  loyf_equal($before[$account],YOWCL_Free_Migrations::read($account),'Denied native POST leaves raw target intact');loyf_equal(null,YOWCL_Free_Migrations::read(YOWCL_Free_Migrations::witness('signup').'_resolution'),'Denied native POST leaves no intent');
@@ -50,7 +50,7 @@ try {
  // Previously completed origin-less evidence is visible without rollback or unknown fields.
  $historical=YOWCL_Free_Migrations::preview('signup','canonical');update_option(YOWCL_Free_Migrations::witness('signup').'_before',$historical);
  $evidence=YOWCL_Free_Migrations::historical_evidence('signup');loyf_assert(is_array($evidence)&&isset($evidence['before'],$evidence['migration'],$evidence['current']),'Completed historical evidence visible');
- loyf_assert(false===strpos(wp_json_encode($evidence),'unknown'),'Historical diagnostic excludes dormant unknown fields');ob_start();YOWCL_Free_Migrations::notices();$notice=ob_get_clean();loyf_assert(false===strpos($notice,'Historical Loyalty migration evidence'),'Historical evidence is not a persistent notice');ob_start();YOWCL_Free_Migrations::render_review();$review=ob_get_clean();loyf_assert(false!==strpos($review,'Historical Loyalty migration evidence'),'Historical evidence is on-demand inside authorized Review');
+ loyf_assert(false===strpos(wp_json_encode($evidence),'unknown'),'Historical diagnostic excludes dormant unknown fields');ob_start();YOWCL_Free_Migrations::notices();$notice=ob_get_clean();loyf_assert(false===strpos($notice,'Historical Loyalty migration evidence'),'Historical evidence is not a persistent notice');loyf_assert(!has_action('admin_menu',array('YOWCL_Free_Migrations','register_review')),'Historical evidence has no migration page');
  loyf_equal($before[$account],YOWCL_Free_Migrations::read($account),'Historical diagnostic performs no rollback');wp_set_current_user(0);loyf_equal(null,YOWCL_Free_Migrations::historical_evidence('signup'),'No unauthenticated historical assessment');wp_set_current_user(1);
  // A stale reviewed source/target cannot be adopted.
  $stale=YOWCL_Free_Migrations::preview('login','legacy');$terms=maybe_unserialize(get_option($account));$terms['login_points']=31;update_option($account,serialize($terms));

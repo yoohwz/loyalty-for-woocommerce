@@ -345,7 +345,7 @@
     {
       "target": "inc/backend/settings.php",
       "mode": "100644",
-      "sha256": "8a0323f6c246fff79e44a7276731e4c463fa279ce15a609f2450bdc1d586d2d1"
+      "sha256": "4f269c8ddc83ba4c2867bb138d394f26d5052c95b44fccf5c437462039365fb5"
     },
     {
       "target": "inc/backend/settings/customization.php",
@@ -355,7 +355,7 @@
     {
       "target": "inc/backend/settings/extra-points.php",
       "mode": "100644",
-      "sha256": "a309fe3e610ff8f156c446863119457f94b28df5ab372ec27187cd26d8874d3f"
+      "sha256": "149ed330ce1a4f9b3ba1fde7a1b73b3bbbf1ee2f866f9add5dcf19d11544110f"
     },
     {
       "target": "inc/backend/settings/files/yol_import_sample.csv",
@@ -480,7 +480,7 @@
     {
       "target": "inc/cores/helper/free-cart.php",
       "mode": "100644",
-      "sha256": "be8f42abb450cfadf52b628f6d0ae2a79480c141753447f61a1829e50fe84327"
+      "sha256": "11ceda25902e56903d238c6000e1a1eab0032a2ffcf9349fdd9a786744395d96"
     },
     {
       "target": "inc/cores/helper/free-core.php",
@@ -500,12 +500,12 @@
     {
       "target": "inc/cores/helper/free-migrations.php",
       "mode": "100644",
-      "sha256": "cdc2d07bff4409aec957e806d82b57fd97cfe071c02282c7549d8678de2d30e7"
+      "sha256": "875ce6a8f65a439acf59d690c2c34fed4cc20c4cf5a16567d225526ed7424c46"
     },
     {
       "target": "inc/cores/helper/free-onboarding.php",
       "mode": "100644",
-      "sha256": "cd830ba9ed6cefe6153d37b6b12a5b529f5071541007e0417c50b009a087901d"
+      "sha256": "00ca9ff3ee6988026997e298d5d2c399b0414b3a8ec2475198a6cdf78d7d89d5"
     },
     {
       "target": "inc/cores/helper/free-order-actions.php",
@@ -630,7 +630,7 @@
     {
       "target": "loyalty-for-woocommerce.php",
       "mode": "100644",
-      "sha256": "2c295a52c0b29d5b23b6c16334c4b4d28fd2cc1acaed683bf5430104fc36f575"
+      "sha256": "4368693b70304741772ef422ce2d5157e3b3e82f866cf12465d6f9b921bd79a0"
     },
     {
       "target": "readme.txt",

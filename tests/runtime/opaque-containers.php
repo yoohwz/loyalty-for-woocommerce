@@ -8,7 +8,7 @@ foreach(YOWCL_Free_Migrations::features()as$f){foreach(array('','_before','_reso
 $snapshot=static function()use($wpdb,$names){$rows=array();foreach($names as$n){$rows[$n]=$wpdb->get_row($wpdb->prepare("SELECT option_value,autoload FROM {$wpdb->options} WHERE option_name=%s",$n),ARRAY_A);}return $rows;};
 if('cold'===($args[0]??'')){
  $expected=json_decode(file_get_contents($args[1]),true);wp_set_current_user(1);loyf_equal($expected,$snapshot(),'Actual cold bootstrap preserves exact opaque/evidence/witness rows');
- ob_start();YOWCL_Free_Migrations::render_review();$html=ob_get_clean();loyf_assert(strpos($html,'unsupported format')!==false&&strpos($html,'opaque-private')===false,'Cold bootstrap diagnostic without raw contents');echo "Opaque actual cold bootstrap PASS.\n";return;
+ $html='';foreach(YOWCL_Free_Migrations::features()as$f){$html.=YOWCL_Free_Migrations::held_link($f);}loyf_assert(strpos($html,'unsupported format')!==false&&strpos($html,'opaque-private')===false,'Cold bootstrap diagnostic without raw contents');echo "Opaque actual cold bootstrap PASS.\n";return;
 }
 require_once WC_ABSPATH.'includes/admin/class-wc-admin-settings.php';
 wp_set_current_user(1);$original=$snapshot();$user=0;$product=0;$comments=array();$temp=tempnam(sys_get_temp_dir(),'loyf-opaque-cold-');
@@ -37,16 +37,16 @@ try{
   $witness=0===$i?null:(1===$i?'1':(2===$i?'malformed-witness':null));$store(YOWCL_Free_Migrations::witness($f),$witness,'no');
   get_option($target);$store($target,$raw,0===$i%2?'yes':'no');$before=$snapshot();
   YOWCL_Free_Migrations::run();YOWCL_Free_Migrations::run();loyf_equal($before,$snapshot(),'Boot/retry preserves opaque target and all evidence/witnesses');
-  ob_start();YOWCL_Free_Migrations::render_review();$page=ob_get_clean();preg_match('/<section id="loyf-review-'.preg_quote($f,'/').'".*?<\/section>/s',$page,$match);$html=$match[0]??'';loyf_assert(strpos($html,'unsupported format')!==false&&strpos($html,$target)!==false,'Specific native opaque diagnostic');loyf_assert(strpos($html,'<form')===false&&strpos($html,'opaque-private')===false,'No misleading choice or raw payload in native notice');
+  $html=YOWCL_Free_Migrations::held_link($f);loyf_assert(strpos($html,'unsupported format')!==false&&strpos($html,$target)!==false,'Specific native opaque diagnostic');loyf_assert(strpos($html,'<form')===false&&strpos($html,'opaque-private')===false,'No controls or raw payload');
   foreach(array('canonical','legacy','disable')as$mode){
    try{YOWCL_Free_Migrations::preview($f,$mode);throw new LogicException('Native opaque preview offered');}catch(RuntimeException$e){loyf_equal('migration_opaque_target',$e->getMessage(),'Native opaque preview denied');}
    $_SERVER['REQUEST_METHOD']='POST';$_POST=array('feature'=>$f,'mode'=>$mode,'fingerprint'=>str_repeat('a',64),'_wpnonce'=>wp_create_nonce('loyf_resolve_'.$f));
    $redirect=static function($url){throw new RuntimeException($url);};add_filter('wp_redirect',$redirect,0);
-   try{do_action('admin_post_loyf_resolve_migration');throw new LogicException('Native opaque POST accepted');}catch(RuntimeException$e){loyf_assert(strpos($e->getMessage(),'result=unconfirmed')!==false && strpos($e->getMessage(),'#loyf-review-'.$f)!==false,'Authorized native opaque POST returns to held item without success');}finally{remove_filter('wp_redirect',$redirect,0);}
+   try{loyf_retained_protocol('resolve');throw new LogicException('Native opaque POST accepted');}catch(RuntimeException$e){loyf_assert(strpos($e->getMessage(),'result=unconfirmed')!==false && strpos($e->getMessage(),'#loyf-review-'.$f)!==false,'Authorized native opaque POST returns to held item without success');}finally{remove_filter('wp_redirect',$redirect,0);}
    loyf_equal($before,$snapshot(),'Denied native choice creates no intent, witness or target write');$count++;
   }
-  foreach(array('GET','POST')as$method){$_SERVER['REQUEST_METHOD']=$method;$_POST['_wpnonce']='invalid';try{do_action('admin_post_loyf_resolve_migration');throw new LogicException('Invalid opaque POST accepted');}catch(RuntimeException$e){loyf_equal('migration_resolution_denied',$e->getMessage(),'Method/nonce denial');}}
-  wp_set_current_user(0);try{do_action('admin_post_loyf_resolve_migration');throw new LogicException('Unauthorized opaque POST accepted');}catch(RuntimeException$e){loyf_equal('migration_resolution_denied',$e->getMessage(),'Capability denial');}wp_set_current_user(1);
+  foreach(array('GET','POST')as$method){$_SERVER['REQUEST_METHOD']=$method;$_POST['_wpnonce']='invalid';try{loyf_retained_protocol('resolve');throw new LogicException('Invalid opaque POST accepted');}catch(RuntimeException$e){loyf_equal('migration_resolution_denied',$e->getMessage(),'Method/nonce denial');}}
+  wp_set_current_user(0);try{loyf_retained_protocol('resolve');throw new LogicException('Unauthorized opaque POST accepted');}catch(RuntimeException$e){loyf_equal('migration_resolution_denied',$e->getMessage(),'Capability denial');}wp_set_current_user(1);
   if(in_array($f,array('signup','login'),true)){
    loyf_equal(0,YOWCL_Free_Core::extra('signup'),'Opaque signup value held');loyf_equal(0,YOWCL_Free_Core::extra('login'),'Witnessed sibling login value held');
    do_action('user_register',$user);do_action('wp_login',get_userdata($user)->user_login,get_userdata($user));
