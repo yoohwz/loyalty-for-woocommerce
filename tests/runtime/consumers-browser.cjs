@@ -124,6 +124,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     await page.getByRole('navigation',{name:'Email groups'}).getByRole('link',{name:'General',exact:true}).click();
     if(versionAtLeast(fixture.version,'9.9')) {
         const nativeListing=page.locator('#wc_settings_email_listing_slotfill');await nativeListing.waitFor();
+        assert(await page.getByRole('navigation',{name:'Email groups'}).evaluate(nav=>Boolean(nav.compareDocumentPosition(document.querySelector('#wc_settings_email_listing_slotfill'))&Node.DOCUMENT_POSITION_FOLLOWING)),'Group navigation precedes native block listing');
         const types=JSON.parse(await nativeListing.getAttribute('data-email-types'));assert(types.length>3);assert(!types.some(email=>email.id.startsWith('yowcl_loyalty_')),'Native block General excludes only three Free emails');
         const templateURL=await nativeListing.getAttribute('data-edit-template-url');assert(templateURL&&templateURL.includes('post.php?post='),'Native template editing URL retained');
         const editTemplate=page.getByText('Edit template',{exact:true});await editTemplate.first().waitFor();await Promise.all([page.waitForURL(url=>url.pathname.endsWith('/post.php')),editTemplate.first().click()]);assert(page.url().includes('template='),'Native template editor reachable');

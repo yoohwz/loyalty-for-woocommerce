@@ -72,7 +72,8 @@ class YOSWC_Loyalty_Notifications_Email {
                 }
                 break;
             }
-            echo $html->get_updated_html(); // Native Woo markup; the tag processor escapes the changed attribute.
+            // The native block listing contains divs; keep them inside a valid Woo settings cell.
+            echo '<tr><td colspan="2">' . $html->get_updated_html() . '</td></tr>'; // The tag processor escapes the changed attribute.
             return;
         }
     }
