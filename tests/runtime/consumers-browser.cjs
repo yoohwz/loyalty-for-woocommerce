@@ -126,7 +126,8 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         const nativeListing=page.locator('#wc_settings_email_listing_slotfill');await nativeListing.waitFor();
         assert(await page.getByRole('navigation',{name:'Email groups'}).evaluate(nav=>Boolean(nav.compareDocumentPosition(document.querySelector('#wc_settings_email_listing_slotfill'))&Node.DOCUMENT_POSITION_FOLLOWING)),'Group navigation precedes native block listing');
         const types=JSON.parse(await nativeListing.getAttribute('data-email-types'));assert(types.length>3);assert(!types.some(email=>email.id.startsWith('yowcl_loyalty_')),'Native block General excludes only three Free emails');
-        const templateURL=await nativeListing.getAttribute('data-edit-template-url');assert(templateURL&&templateURL.includes('post.php?post='),'Native template editing URL retained');
+        // Woo may create the email post on demand; its template ID is then the native editor entry.
+        const templateURL=await nativeListing.getAttribute('data-edit-template-url');assert(templateURL?templateURL.includes('post.php?post='):Boolean(await nativeListing.getAttribute('data-email-template-id')),'Native template editor entry retained');
         const editTemplate=page.getByText('Edit template',{exact:true});await editTemplate.first().waitFor();await Promise.all([page.waitForURL(url=>url.pathname.endsWith('/post.php')),editTemplate.first().click()]);assert(page.url().includes('template='),'Native template editor reachable');
     } else { await page.locator('table.loyf-general-emails').waitFor();assert(await page.locator('table.loyf-general-emails tbody tr').count()>3);assert.equal(await page.locator('table.loyf-general-emails a[href*=yowcl_wc_email_loyalty]').count(),0,'General contains ordinary emails only'); }
 
