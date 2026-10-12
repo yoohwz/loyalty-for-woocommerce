@@ -10,10 +10,10 @@ class YOWCL_Free_Reader_Admin {
         if ( ! YOWCL_Free_Core::owns() ) { return; }
         add_menu_page( __( 'Loyalty overview', 'loyalty-for-woocommerce' ), __( 'Loyalty', 'loyalty-for-woocommerce' ), 'manage_options', 'loyf-overview', array( __CLASS__, 'overview' ), 'dashicons-awards', 56 );
         add_submenu_page( 'loyf-overview', __( 'Loyalty overview', 'loyalty-for-woocommerce' ), __( 'Overview', 'loyalty-for-woocommerce' ), 'manage_options', 'loyf-overview', array( __CLASS__, 'overview' ) );
-        $settings_hook = add_submenu_page( 'loyf-overview', __( 'Loyalty settings', 'loyalty-for-woocommerce' ), __( 'Settings', 'loyalty-for-woocommerce' ), 'manage_options', 'loyf-settings', array( __CLASS__, 'settings' ) );
-        if ( $settings_hook ) { add_action( 'load-' . $settings_hook, array( __CLASS__, 'settings' ) ); }
         $emails_hook = add_submenu_page( 'loyf-overview', __( 'Loyalty emails', 'loyalty-for-woocommerce' ), __( 'Emails', 'loyalty-for-woocommerce' ), 'manage_options', 'loyf-emails', array( __CLASS__, 'emails' ) );
         if ( $emails_hook ) { add_action( 'load-' . $emails_hook, array( __CLASS__, 'emails' ) ); }
+        $settings_hook = add_submenu_page( 'loyf-overview', __( 'Loyalty settings', 'loyalty-for-woocommerce' ), __( 'Settings', 'loyalty-for-woocommerce' ), 'manage_options', 'loyf-settings', array( __CLASS__, 'settings' ) );
+        if ( $settings_hook ) { add_action( 'load-' . $settings_hook, array( __CLASS__, 'settings' ) ); }
     }
     public static function settings() {
         if ( ! self::allowed() ) { wp_die( esc_html__( 'Loyalty settings are unavailable.', 'loyalty-for-woocommerce' ), '', array( 'response' => 403 ) ); }
