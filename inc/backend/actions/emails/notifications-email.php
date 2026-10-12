@@ -6,7 +6,7 @@ class YOSWC_Loyalty_Notifications_Email {
         add_filter('woocommerce_email_classes', array($this, 'register'));
         add_action('woocommerce_email_settings_before', array($this, 'email_group_backlink'));
         add_filter('woocommerce_email_settings', array($this, 'grouped_settings'));
-        add_action('woocommerce_admin_field_loyf_email_groups', array($this, 'group_navigation'));
+        add_action('woocommerce_sections_email', array($this, 'group_navigation'));
         add_action('woocommerce_admin_field_loyf_loyalty_emails', array($this, 'loyalty_email_table'));
         add_action('woocommerce_admin_field_loyf_general_block_emails', array($this, 'general_block_emails'));
         foreach (array('points_reward','points_deduct','level_update') as $family) {
@@ -41,7 +41,6 @@ class YOSWC_Loyalty_Notifications_Email {
         if ($loyalty) {
             return array(
                 array('type'=>'title','title'=>__('Loyalty emails','loyalty-for-woocommerce'),'desc'=>__('Manage the three Free loyalty email notifications.','loyalty-for-woocommerce')),
-                array('type'=>'loyf_email_groups'),
                 array('type'=>'loyf_loyalty_emails','group'=>'loyalty'),
                 array('type'=>'sectionend'),
             );
@@ -49,7 +48,6 @@ class YOSWC_Loyalty_Notifications_Email {
         $result = array();
         foreach ($settings as $field) {
             if (in_array($field['type'] ?? '', array('email_notification','email_notification_block_emails'), true)) {
-                $result[] = array('type'=>'loyf_email_groups');
                 $field = array('type'=>'email_notification_block_emails' === $field['type'] ? 'loyf_general_block_emails' : 'loyf_loyalty_emails','group'=>'general');
             }
             $result[] = $field;
@@ -78,13 +76,14 @@ class YOSWC_Loyalty_Notifications_Email {
         }
     }
     public function group_navigation() {
+        if (!empty($GLOBALS['current_section'])) { return; }
         $loyalty = isset($_GET['email_group']) && is_string($_GET['email_group']) && 'loyalty' === wp_unslash($_GET['email_group']);
-        echo '<tr><td colspan="2"><nav aria-label="' . esc_attr__('Email groups','loyalty-for-woocommerce') . '"><ul class="subsubsub">';
+        echo '<div role="navigation" aria-label="' . esc_attr__('Email groups','loyalty-for-woocommerce') . '"><ul class="subsubsub">';
         foreach (array(''=>__('General','loyalty-for-woocommerce'),'loyalty'=>__('Loyalty','loyalty-for-woocommerce')) as $group=>$label) {
             $current = $loyalty === ('loyalty' === $group);
             echo '<li><a href="' . esc_url(admin_url('admin.php?page=wc-settings&tab=email' . ($group ? '&email_group=loyalty' : ''))) . '"' . ($current ? ' class="current" aria-current="page"' : '') . '>' . esc_html($label) . '</a>' . ($group ? '' : ' | ') . '</li>';
         }
-        echo '</ul></nav><br class="clear" /></td></tr>';
+        echo '</ul></div><br class="clear" />';
     }
     public function email_group_backlink($email) {
         if (in_array($email->id, array('yowcl_loyalty_points_reward','yowcl_loyalty_points_deduct','yowcl_loyalty_level_update'), true)) {

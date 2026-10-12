@@ -11,6 +11,7 @@ class YOSWC_Loyalty_Settings {
 		$this->role_manager = new YOSWC_Loyalty_Settings_Add_Remove_User_Role();
 
 		add_filter('woocommerce_settings_tabs_array', array($this, 'add_loyalty_settings_tab'), 40);
+		add_action('woocommerce_sections_loyalty', array($this, 'output_sections'));
 		add_action('woocommerce_settings_tabs_loyalty', array($this, 'loyalty_settings_tab'), 10);
 		add_action('woocommerce_update_options_loyalty', array($this, 'update_loyalty_settings'));
 		add_action('woocommerce_admin_field_yoswc_premium_preview', [$this, 'render_premium_preview_card']);
@@ -31,10 +32,7 @@ class YOSWC_Loyalty_Settings {
 		$current_section = $this->get_query_value( 'section', 'general' );
 		$current_subsection = $this->get_query_value( 'subsection' );
 
-        echo '<div class="loyf-settings"><div class="loyf-admin-header"><div><h2>' . esc_html__( 'Loyalty settings', 'loyalty-for-woocommerce' ) . '</h2><p>' . esc_html__( 'Configure your Free loyalty program.', 'loyalty-for-woocommerce' ) . '</p></div></div>';
-        echo '<nav aria-label="' . esc_attr__( 'Loyalty settings sections', 'loyalty-for-woocommerce' ) . '"><ul class="subsubsub loyf-settings-tabs">';
-        $this->output_sub_sub_tabs($current_section, $current_subsection);
-		echo '</ul></nav><br class="clear" />';
+        echo '<div class="loyf-settings">';
 
         if ($current_section === 'general' && $current_subsection === 'add_remove_role') {
             $this->role_manager->display_add_remove_role();
@@ -55,6 +53,12 @@ class YOSWC_Loyalty_Settings {
         }
         echo '</div>';
     }
+
+	public function output_sections() {
+		echo '<div role="navigation" aria-label="' . esc_attr__( 'Loyalty settings sections', 'loyalty-for-woocommerce' ) . '"><ul class="subsubsub">';
+		$this->output_sub_sub_tabs( $this->get_query_value( 'section', 'general' ) );
+		echo '</ul></div><br class="clear" />';
+	}
 
 	public function output_sub_sub_tabs($current_section) {
 		$sub_sub_tabs = array(
@@ -82,20 +86,8 @@ class YOSWC_Loyalty_Settings {
 	}
 
 	public function output_loyalty_level_point_settings() {
-		$previews = array();
-		foreach ( array( $this->get_loyalty_levels_settings(), $this->get_loyalty_points_settings() ) as $settings ) {
-			$fields = array();
-			foreach ( $settings as $field ) {
-				if ( 'yoswc_premium_preview' === ( $field['type'] ?? '' ) ) { $previews[] = $field; }
-				else { $fields[] = $field; }
-			}
-			woocommerce_admin_fields( $fields );
-		}
-		if ( $previews ) {
-			echo '<details class="loyf-premium-previews"><summary>' . esc_html__( 'Explore Premium features', 'loyalty-for-woocommerce' ) . '</summary><table class="form-table"><tbody>';
-			foreach ( $previews as $preview ) { $this->render_premium_preview_card( $preview ); }
-			echo '</tbody></table></details>';
-		}
+		woocommerce_admin_fields( $this->get_loyalty_levels_settings() );
+		woocommerce_admin_fields( $this->get_loyalty_points_settings() );
 	}
 
 	public function output_extra_points_settings() {

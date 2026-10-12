@@ -30,23 +30,17 @@ class YOSWC_Loyalty_Settings_Tools {
 
 		<table class="form-table">
 			<tr>
-				<th><?php esc_html_e('Import CSV', 'loyalty-for-woocommerce'); ?></th>
+				<th scope="row"><label for="import_file"><?php esc_html_e('Import CSV', 'loyalty-for-woocommerce'); ?></label></th>
 				<td>
 
-						<span class="yobm-upload-form">
-							<input type="file" name="import_file" id="import_file" accept=".csv">
-							<?php wp_nonce_field('wc_loyalty_import_action', 'wc_loyalty_import_nonce'); ?>
-                            <input type="hidden" name="operation_id" value="<?php echo esc_attr( $operation_id ); ?>">
-							<input type="submit" name="import_csv" formenctype="multipart/form-data" id="import_csv" class="button-primary" value="<?php esc_attr_e('Import', 'loyalty-for-woocommerce'); ?>" disabled>
-						</span>
+					<div class="loyf-import-controls">
+						<input type="file" name="import_file" id="import_file" accept=".csv">
+						<?php wp_nonce_field('wc_loyalty_import_action', 'wc_loyalty_import_nonce'); ?>
+						<input type="hidden" name="operation_id" value="<?php echo esc_attr( $operation_id ); ?>">
+						<input type="submit" name="import_csv" formenctype="multipart/form-data" id="import_csv" class="button button-primary" value="<?php esc_attr_e('Import', 'loyalty-for-woocommerce'); ?>" disabled>
+					</div>
 
-
-                        <?php wp_nonce_field( 'loyf_start_new_import', 'loyf_start_new_import_nonce' ); ?>
-                        <input type="hidden" name="previous_operation_id" value="<?php echo esc_attr( $operation_id ); ?>">
-                        <button type="submit" name="start_new_import" class="button"><?php esc_html_e( 'Start another import', 'loyalty-for-woocommerce' ); ?></button>
-
-                    <p class="description"><?php esc_html_e( 'Retry the original file to continue the current import. Start another import only after reviewing the previous results.', 'loyalty-for-woocommerce' ); ?></p>
-					<p class="description" style="margin-top: 20px;">
+					<p class="description">
 						<?php
 						echo wp_kses(
 							sprintf(
@@ -64,6 +58,12 @@ class YOSWC_Loyalty_Settings_Tools {
 						);
 						?>
 					</p>
+					<div class="loyf-import-recovery">
+						<?php wp_nonce_field( 'loyf_start_new_import', 'loyf_start_new_import_nonce' ); ?>
+						<input type="hidden" name="previous_operation_id" value="<?php echo esc_attr( $operation_id ); ?>">
+						<p class="description"><?php esc_html_e( 'Retry the original file to continue the current import. Start another import only after reviewing the previous results.', 'loyalty-for-woocommerce' ); ?></p>
+						<button type="submit" name="start_new_import" class="button"><?php esc_html_e( 'Start another import', 'loyalty-for-woocommerce' ); ?></button>
+					</div>
 				</td>
 			</tr>
 		</table>

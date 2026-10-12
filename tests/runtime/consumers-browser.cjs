@@ -78,6 +78,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     assert.equal(await page.locator('#toplevel_page_loyf-overview').count(),1,'One top-level Loyalty menu');
     assert.equal(await page.locator('#toplevel_page_loyf-overview .wp-submenu a').allTextContents().then(items=>items.filter(item=>item==='Overview').length),1,'One Overview submenu');
     assert.equal(await page.locator('#toplevel_page_woocommerce .wp-submenu a[href*="loyf-overview"]').count(),0,'No duplicate Woo Overview');
+    assert.deepEqual(await page.locator('#toplevel_page_loyf-overview .wp-submenu a').allTextContents(),['Overview','Emails','Settings'],'Loyalty submenu order');
     assert.equal(await page.locator('.loyf-overview-card').count(),5);
     await page.getByLabel('Flow period',{exact:true}).selectOption('30');await page.getByRole('button',{name:'View',exact:true}).click();assert.equal(new URL(page.url()).searchParams.get('period'),'30');
     await page.setViewportSize({width:390,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile overview has no overflow');
@@ -93,6 +94,14 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     // Existing consumer browser checks and native First Purchase fixtures still run for CPT and HPOS.
     if(fixture.storage==='cpt') {
     assert.equal(await page.locator('.loyf-admin-header a[href*="loyf-overview"]').count(),0,'No Overview button on Settings');
+    assert.equal(await page.getByRole('heading',{name:'Loyalty settings',exact:true}).count(),0,'No duplicate Settings heading');
+    assert.equal(await page.getByText('Configure your Free loyalty program.',{exact:true}).count(),0,'No duplicate Settings description');
+    assert(await page.getByRole('navigation',{name:'Loyalty settings sections'}).evaluate(nav=>!nav.closest('.loyf-settings')&&Boolean(nav.compareDocumentPosition(document.querySelector('.loyf-settings'))&Node.DOCUMENT_POSITION_FOLLOWING)),'Sections precede content in native Woo location');
+    assert.equal(await page.locator('.loyf-premium-previews').count(),0,'No grouped Premium disclosure');
+    const previewRows=page.locator('.yoswc-premium-preview-row');
+    assert.equal(await previewRows.count(),4,'Four contextual General previews');
+    assert.deepEqual(await previewRows.evaluateAll(rows=>rows.map(row=>row.previousElementSibling.querySelector('label')?.textContent.trim())),['Level rules','Earning rules','Deduction status','Using rules'],'Previews follow their original related controls');
+
     await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section=extra_points');
     assert.equal(await page.locator('[name=loyalty_extra_first_purchase_enabled]').count(),0);
     assert(await page.evaluate(()=>getComputedStyle(document.querySelector('.yoswc-contextual-premium-card')).borderInlineStartColor===getComputedStyle(document.querySelector('#adminmenu a.wp-has-current-submenu')).backgroundColor),'Extra points card follows scheme');
@@ -104,15 +113,26 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section='+section);
         assert.equal(await page.locator('#mainform form').count(),0,'No nested form '+section);
         assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile Settings '+section);
+        if(section==='tools') {
+            const file=page.getByLabel('Import CSV',{exact:true});const submit=page.locator('#import_csv');
+            assert(await submit.isDisabled(),'Import requires a selected file');
+            await file.setInputFiles({name:'presentation-only.csv',mimeType:'text/csv',buffer:Buffer.from('user_id,points\n')});
+            assert(await submit.isEnabled(),'File selection enables Import');await file.setInputFiles([]);assert(await submit.isDisabled(),'Clearing file disables Import');
+            assert(await page.locator('.loyf-import-recovery button').evaluate(button=>button.getBoundingClientRect().top>document.querySelector('.loyf-import-controls').getBoundingClientRect().bottom),'Recovery action below file controls');
+            assert.equal(await page.locator('[name=operation_id]').inputValue(),await page.locator('[name=previous_operation_id]').inputValue(),'Import and recovery share the same operation identity');
+        }
+
     }
     await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link',{name:'Notification',exact:true}).click();
     await page.getByRole('link',{name:'Manage loyalty emails',exact:true}).click();await page.locator('.loyf-loyalty-emails').waitFor();
+    assert(await page.getByRole('navigation',{name:'Email groups'}).evaluate(nav=>!nav.closest('td')&&Boolean(nav.compareDocumentPosition([...document.querySelectorAll('#mainform h2')][0])&Node.DOCUMENT_POSITION_FOLLOWING)),'Email groups use the native sections location before the heading');
     assert.equal(await page.locator('.loyf-loyalty-emails tbody tr').count(),3,'Only three Free emails');
     assert.deepEqual(await page.locator('.loyf-loyalty-emails strong').allTextContents(),['Points earned','Points deducted','Level update']);
     assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile Loyalty emails');
     assert(await page.evaluate(()=>[...document.querySelectorAll('.loyf-loyalty-emails .button')].every(e=>e.getBoundingClientRect().right<=innerWidth)),'Mobile Manage buttons are not clipped');
     for(const label of ['Points earned','Points deducted','Level update']) {
         await page.getByRole('link',{name:'Manage '+label,exact:true}).click();
+        assert.equal(await page.getByRole('navigation',{name:'Email groups'}).count(),0,'Native individual email editor navigation retained');
         const enabled=page.locator('input[id$="_enabled"]');const subject=page.locator('input[id$="_subject"]');
         const wasEnabled=await enabled.isChecked();const oldSubject=await subject.inputValue();
         await enabled.setChecked(!wasEnabled);await subject.fill('LOYF-33 '+label);
@@ -125,6 +145,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         await page.getByRole('link',{name:'Back to Loyalty emails',exact:true}).click();await page.locator('.loyf-loyalty-emails').waitFor();
     }
     await page.getByRole('navigation',{name:'Email groups'}).getByRole('link',{name:'General',exact:true}).click();
+    assert(await page.getByRole('navigation',{name:'Email groups'}).evaluate(nav=>{const heading=document.querySelector('#mainform h2');return Boolean(nav.compareDocumentPosition(heading)&Node.DOCUMENT_POSITION_FOLLOWING)&&Math.abs(nav.querySelector('.subsubsub').getBoundingClientRect().left-heading.getBoundingClientRect().left)<1;}),'General email sections precede and align with the native heading');
     if(versionAtLeast(fixture.version,'9.9')) {
         const nativeListing=page.locator('#wc_settings_email_listing_slotfill');await nativeListing.waitFor();
         assert(await page.getByRole('navigation',{name:'Email groups'}).evaluate(nav=>Boolean(nav.compareDocumentPosition(document.querySelector('#wc_settings_email_listing_slotfill'))&Node.DOCUMENT_POSITION_FOLLOWING)),'Group navigation precedes native block listing');
@@ -143,6 +164,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     }
     await page.setViewportSize({width:1280,height:900});
     await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section=tools');
+    assert(await page.locator('.subsubsub').evaluate(ul=>Math.abs(ul.getBoundingClientRect().left-document.querySelector('.loyf-settings').getBoundingClientRect().left)<1),'Section navigation aligns with native settings content');
     const nonce=await page.locator('[name="loyf_export_nonce"]').inputValue();
     for(const [method,form]of[['get',{action:'loyf_export_customers',loyf_export_nonce:nonce}],['post',{action:'loyf_export_customers',loyf_export_nonce:'bad'}]]){const response=await admin.request[method](base+'/wp-admin/admin-post.php',method==='get'?{params:form}:{form});assert.equal(response.status(),403,'Intentional POST and own nonce required');}
     const downloadPromise=page.waitForEvent('download');await page.getByRole('button',{name:'Download customer CSV',exact:true}).click();const download=await downloadPromise;assert.equal(download.suggestedFilename(),'loyalty-customers.csv');

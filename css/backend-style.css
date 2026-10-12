@@ -205,12 +205,11 @@ td.current_points, td.total_earned {
 	margin: 0;
 }
 
-/* Upload form */
-.yobm-upload-form {
-    background: #f6f7f7;
-    border: 1px solid #c3c4c7;
-    padding: 20px;
-}
+/* Import controls and recovery action. */
+.loyf-import-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.loyf-import-controls input[type="file"] { min-width: 0; max-width: 100%; }
+.loyf-import-recovery { max-width: 640px; margin-top: 20px; }
+.loyf-import-recovery .description { margin-bottom: 8px; }
 
 /* Settings */
 .label-child {
@@ -297,12 +296,8 @@ td.current_points, td.total_earned {
 .loyf-overview-card p { color: #646970; margin: 0; }
 .loyf-overview-panel h2 { font-size: 16px; margin: 0 0 12px; }
 .loyf-overview-panel p:last-child { margin-bottom: 0; }
-.loyf-settings .loyf-settings-tabs { float: none; margin: 0 0 16px; }
-.loyf-settings .loyf-settings-tabs li { line-height: 2.4; }
-.loyf-settings .loyf-settings-tabs a { display: inline-block; }
 .loyf-settings .form-table { margin-bottom: 24px; }
 .loyf-settings h2 { margin-top: 24px; }
-.loyf-settings .loyf-admin-header h2 { margin-top: 0; }
 @media screen and (max-width: 960px) {
 	.loyf-overview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -318,8 +313,6 @@ td.current_points, td.total_earned {
 }
 
 /* Keep related controls together inside the native Woo settings form. */
-.loyf-premium-previews { margin: 24px 0; }
-.loyf-premium-previews summary { cursor: pointer; font-weight: 600; padding: 12px 0; }
 .loyf-settings .loyf-color-field { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 0 16px 8px 0; }
 .loyf-settings .loyf-color-field input[type="text"] { margin-right: 0 !important; }
 .loyf-settings td.loyalty_customization_membercard { display: table-cell; }
