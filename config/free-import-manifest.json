@@ -310,7 +310,7 @@
     {
       "target": "inc/backend/actions/emails/notifications-email.php",
       "mode": "100644",
-      "sha256": "09d8819a62ce2e85ba7585a47bdcf41178445529888f5c299f4af61457c6feed"
+      "sha256": "d361c3debbec118bd79376cf0775c739b37e2444fac81d243e39901ce625c927"
     },
     {
       "target": "inc/backend/actions/extra-points/level-up.php",
@@ -620,7 +620,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "89769513edfe7084bb6cf0adb7fd99565a0efbd57c8ca0ee722028f37165ba11"
+      "sha256": "5dc938f19617e3cfac4c6ae94149b8eca27f002feebb7a475a2e5e2d1c26aa0a"
     },
     {
       "target": "license.txt",

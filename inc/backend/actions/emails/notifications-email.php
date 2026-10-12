@@ -8,6 +8,7 @@ class YOSWC_Loyalty_Notifications_Email {
         add_filter('woocommerce_email_settings', array($this, 'grouped_settings'));
         add_action('woocommerce_admin_field_loyf_email_groups', array($this, 'group_navigation'));
         add_action('woocommerce_admin_field_loyf_loyalty_emails', array($this, 'loyalty_email_table'));
+        add_action('woocommerce_admin_field_loyf_general_block_emails', array($this, 'general_block_emails'));
         foreach (array('points_reward','points_deduct','level_update') as $family) {
             $id='yowcl_loyalty_'.$family;
             $feature='level_update'===$family ? 'email_level' : ('points_deduct'===$family ? 'email_deduct' : 'email_reward');
@@ -49,11 +50,31 @@ class YOSWC_Loyalty_Notifications_Email {
         foreach ($settings as $field) {
             if (in_array($field['type'] ?? '', array('email_notification','email_notification_block_emails'), true)) {
                 $result[] = array('type'=>'loyf_email_groups');
-                $field = array('type'=>'loyf_loyalty_emails','group'=>'general');
+                $field = array('type'=>'email_notification_block_emails' === $field['type'] ? 'loyf_general_block_emails' : 'loyf_loyalty_emails','group'=>'general');
             }
             $result[] = $field;
         }
         return $result;
+    }
+    /** Retain Woo's block listing/template editor, filtering only its presentation data. */
+    public function general_block_emails() {
+        foreach (WC_Admin_Settings::get_settings_pages() as $page) {
+            if ('email' !== $page->get_id()) { continue; }
+            ob_start();
+            $page->email_notification_setting_block_emails();
+            $html = new WP_HTML_Tag_Processor(ob_get_clean());
+            while ($html->next_tag()) {
+                if ('wc_settings_email_listing_slotfill' !== $html->get_attribute('id')) { continue; }
+                $types = json_decode($html->get_attribute('data-email-types'),true);
+                if (is_array($types)) {
+                    $types = array_values(array_filter($types, static function($email) { return !in_array($email['id'] ?? '', array('yowcl_loyalty_points_reward','yowcl_loyalty_points_deduct','yowcl_loyalty_level_update'),true); }));
+                    $html->set_attribute('data-email-types',wp_json_encode($types));
+                }
+                break;
+            }
+            echo $html->get_updated_html(); // Native Woo markup; the tag processor escapes the changed attribute.
+            return;
+        }
     }
     public function group_navigation() {
         $loyalty = isset($_GET['email_group']) && is_string($_GET['email_group']) && 'loyalty' === wp_unslash($_GET['email_group']);
@@ -88,6 +109,7 @@ class YOSWC_Loyalty_Notifications_Email {
             $url = admin_url('admin.php?page=wc-settings&tab=email&section=' . strtolower($key) . '&email_group=' . ($loyalty ? 'loyalty' : 'general'));
             echo '<tr' . ($loyalty ? ' data-loyf-email="' . esc_attr(strtolower(substr($key,strlen('YOWCL_WC_Email_Loyalty_')))) . '"' : '') . ' data-loyf-status="' . esc_attr($status) . '">';
             foreach ($columns as $column=>$heading) {
+                if (!in_array($column,array('status','name','email_type','recipient','actions'),true)) { do_action('woocommerce_email_setting_column_' . $column,$email); continue; }
                 echo '<td class="wc-email-settings-table-' . esc_attr($column) . '" data-title="' . esc_attr('status' === $column ? __('Status','loyalty-for-woocommerce') : $heading) . '">';
                 switch ($column) {
                     case 'status':
@@ -109,7 +131,6 @@ class YOSWC_Loyalty_Notifications_Email {
                         /* translators: Name of the email notification. */
                         echo '<a class="button alignright" aria-label="' . esc_attr(sprintf(__('Manage %s','loyalty-for-woocommerce'),$label)) . '" href="' . esc_url($url) . '">' . esc_html__('Manage','woocommerce') . '</a>';
                         break;
-                    default: do_action('woocommerce_email_setting_column_' . $column,$email);
                 }
                 echo '</td>';
             }

@@ -7,6 +7,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     const browser = await chromium.launch({ headless:true, ...(process.env.LOYF_BROWSER_EXECUTABLE ? {executablePath:process.env.LOYF_BROWSER_EXECUTABLE} : {}) });
     let debugPage;
     try {
+    function versionAtLeast(actual,minimum){const a=actual.split('.').map(Number),b=minimum.split('.').map(Number);return a[0]>b[0]||(a[0]===b[0]&&a[1]>=b[1]);}
     const kinds = ['points-balance','points-history','level-progress','ways-to-earn','referral-link'];
     async function login(context, user) {
         const page = await context.newPage(); await page.goto(base + '/wp-login.php');
@@ -120,7 +121,14 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('button[name=save]').click()]);await page.reload();assert.equal(await enabled.isChecked(),wasEnabled);assert.equal(await subject.inputValue(),oldSubject,'Native email restore');
         await page.getByRole('link',{name:'Back to Loyalty emails',exact:true}).click();await page.locator('.loyf-loyalty-emails').waitFor();
     }
-    await page.getByRole('navigation',{name:'Email groups'}).getByRole('link',{name:'General',exact:true}).click();await page.locator('table.wc_emails').waitFor();assert.equal(await page.locator('.loyf-loyalty-emails').count(),0,'Ordinary Woo email list intact');assert(await page.locator('table.loyf-general-emails tbody tr').count()>3);assert.equal(await page.locator('table.loyf-general-emails a[href*=yowcl_wc_email_loyalty]').count(),0,'General contains ordinary emails only');
+    await page.getByRole('navigation',{name:'Email groups'}).getByRole('link',{name:'General',exact:true}).click();
+    if(versionAtLeast(fixture.version,'9.9')) {
+        const nativeListing=page.locator('#wc_settings_email_listing_slotfill');await nativeListing.waitFor();
+        const types=JSON.parse(await nativeListing.getAttribute('data-email-types'));assert(types.length>3);assert(!types.some(email=>email.id.startsWith('yowcl_loyalty_')),'Native block General excludes only three Free emails');
+        const templateURL=await nativeListing.getAttribute('data-edit-template-url');assert(templateURL&&templateURL.includes('post.php?post='),'Native template editing URL retained');
+        const editTemplate=page.getByText('Edit template',{exact:true});await editTemplate.first().waitFor();await Promise.all([page.waitForURL(url=>url.pathname.endsWith('/post.php')),editTemplate.first().click()]);assert(page.url().includes('template='),'Native template editor reachable');
+    } else { await page.locator('table.loyf-general-emails').waitFor();assert(await page.locator('table.loyf-general-emails tbody tr').count()>3);assert.equal(await page.locator('table.loyf-general-emails a[href*=yowcl_wc_email_loyalty]').count(),0,'General contains ordinary emails only'); }
+
     await page.goto(base+'/wp-admin/admin.php?page=loyf-emails');assert.equal(new URL(page.url()).searchParams.get('email_group'),'loyalty','Emails submenu redirects to Loyalty group');
     await page.goto(base+'/wp-admin/user-edit.php?user_id='+fixture.user_a);
     assert(await page.evaluate(()=>getComputedStyle(document.querySelector('.yoswc-user-points-upsell')).borderInlineStartColor===getComputedStyle(document.querySelector('#adminmenu a.wp-has-current-submenu')).backgroundColor),'Profile Premium card follows scheme');

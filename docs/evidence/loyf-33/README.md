@@ -12,3 +12,5 @@ Before images use Free `38a68d4b848b288808afd85774ff89eae13dc4d3`. After images 
 - Emails: General | Loyalty, native Woo table columns/status icons/description tips/Manage links, exactly three Free entries, held disclosure and mobile Manage controls. Loyalty → Emails redirects to this group. Native email editors and the full mailer registry remain unchanged; General lists the other registered emails and retains Woo global email options.
 
 Images prove presentation only. Native save/reload/restore, denied/held raw-row preservation, first-purchase validation/cutoff/retry, package and exact-head CI are separate evidence. Outbound mail/HTTP was blocked by the existing test-only isolation plugin.
+
+The pictured General/Loyalty tables use the classic email-list mode. When Woo's block email editor is enabled, General retains Woo's native listing and Edit template editor; only the three Free entries are filtered from its presentation metadata. Native browser coverage includes that editor destination separately from these images.
