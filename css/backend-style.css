@@ -237,7 +237,7 @@ td.current_points, td.total_earned {
 .yoswc-premium-preview-card {
 	background: #fff;
 	border: 1px solid #c3c4c7;
-	border-left: 4px solid #2271b1;
+	border-inline-start: 4px solid var(--loyf-admin-accent, currentColor);
 	border-radius: 4px;
 	max-width: 760px;
 	padding: 14px 16px;
@@ -259,4 +259,60 @@ td.current_points, td.total_earned {
 
 .yoswc-premium-preview-card__actions {
 	margin: 0;
+}
+
+/* Free workspace: native admin cards and existing Woo settings form. */
+.loyf-admin-header {
+	align-items: flex-start;
+	display: flex;
+	gap: 16px;
+	justify-content: space-between;
+	margin: 18px 0 16px;
+}
+.loyf-admin-header h1, .loyf-admin-header h2 { margin: 0 0 4px; }
+.loyf-admin-header p { color: #646970; margin: 0; }
+.loyf-admin-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.loyf-overview-filters {
+	align-items: center;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 16px;
+	padding: 12px;
+}
+.loyf-overview-filters label { font-weight: 600; }
+.loyf-overview-grid { display: grid; gap: 14px; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 16px; }
+.loyf-overview-card, .loyf-overview-panel {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 16px;
+}
+.loyf-overview-card { border-inline-start: 4px solid #72aee6; min-width: 0; }
+.loyf-overview-card h2 { color: #646970; font-size: 12px; margin: 0; text-transform: uppercase; }
+.loyf-overview-card strong { display: block; font-size: 28px; line-height: 1.2; margin: 8px 0; overflow-wrap: anywhere; }
+.loyf-overview-card p { color: #646970; margin: 0; }
+.loyf-overview-panel h2 { font-size: 16px; margin: 0 0 12px; }
+.loyf-overview-panel p:last-child { margin-bottom: 0; }
+.loyf-settings .loyf-settings-tabs { float: none; margin: 0 0 16px; }
+.loyf-settings .loyf-settings-tabs li { line-height: 2.4; }
+.loyf-settings .loyf-settings-tabs a { display: inline-block; }
+.loyf-settings .form-table { margin-bottom: 24px; }
+.loyf-settings h2 { margin-top: 24px; }
+.loyf-settings .loyf-admin-header h2 { margin-top: 0; }
+@media screen and (max-width: 960px) {
+	.loyf-overview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media screen and (max-width: 782px) {
+	.loyf-admin-header { flex-direction: column; }
+	.loyf-overview-grid { grid-template-columns: 1fr; }
+	.loyf-settings .form-table input:not([type="checkbox"]):not([type="radio"]),
+	.loyf-settings .form-table select, .loyf-settings .select2-container { box-sizing: border-box; min-width: 0 !important; max-width: 100%; }
+	.loyf-settings .loyalty_customization tr, .loyf-settings .loyalty_customization_message tr,
+	.loyf-settings .loyalty_customization_display tr { display: block; }
+	.loyf-settings .loyalty_customization td, .loyf-settings .loyalty_customization_message td,
+	.loyf-settings .loyalty_customization_display td { display: flex; flex-wrap: wrap; justify-content: flex-start; }
 }

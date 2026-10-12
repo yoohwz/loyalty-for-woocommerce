@@ -31,9 +31,10 @@ class YOSWC_Loyalty_Settings {
 		$current_section = $this->get_query_value( 'section', 'general' );
 		$current_subsection = $this->get_query_value( 'subsection' );
 
-        echo '<ul class="subsubsub">';
+        echo '<div class="loyf-settings"><div class="loyf-admin-header"><div><h2>' . esc_html__( 'Loyalty settings', 'loyalty-for-woocommerce' ) . '</h2><p>' . esc_html__( 'Configure your Free loyalty program.', 'loyalty-for-woocommerce' ) . '</p></div><a class="button" href="' . esc_url( admin_url( 'admin.php?page=loyf-overview' ) ) . '">' . esc_html__( 'Overview', 'loyalty-for-woocommerce' ) . '</a></div>';
+        echo '<nav aria-label="' . esc_attr__( 'Loyalty settings sections', 'loyalty-for-woocommerce' ) . '"><ul class="subsubsub loyf-settings-tabs">';
         $this->output_sub_sub_tabs($current_section, $current_subsection);
-		echo '</ul><br class="clear" />';
+		echo '</ul></nav><br class="clear" />';
 
         if ($current_section === 'general' && $current_subsection === 'add_remove_role') {
             $this->role_manager->display_add_remove_role();
@@ -52,6 +53,7 @@ class YOSWC_Loyalty_Settings {
         } else {
             $this->output_loyalty_level_point_settings();
         }
+        echo '</div>';
     }
 
 	public function output_sub_sub_tabs($current_section) {
@@ -70,7 +72,7 @@ class YOSWC_Loyalty_Settings {
 
 		foreach ($sub_sub_tabs as $section_id => $section_label) {
 			$class = ($current_section === $section_id) ? 'current' : '';
-			echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=loyalty&section=' . $section_id ) ) . '" class="' . esc_attr( $class ) . '">' . esc_html( $section_label ) . '</a>';
+			echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=loyalty&section=' . $section_id ) ) . '" class="' . esc_attr( $class ) . '"' . ( 'current' === $class ? ' aria-current="page"' : '' ) . '>' . esc_html( $section_label ) . '</a>';
 			if ($i < $count) {
 				echo ' | ';
 			}
