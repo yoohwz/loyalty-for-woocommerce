@@ -107,4 +107,19 @@ cr_fail(static function(){YOWCL_Free_Readers::member_count();},'Member upper bou
 $wpdb->query("DELETE FROM {$wpdb->usermeta} WHERE user_id IN (".implode(',',$stress).')');$wpdb->query("DELETE FROM {$wpdb->users} WHERE ID IN (".implode(',',$stress).')');
 // Nontransactional snapshots and enclosing writers are denied without conversion/commit.
 $wpdb->query('START TRANSACTION');cr_fail(static function(){YOWCL_Free_Readers::snapshot(static function(){});},'No nested transaction authority');$wpdb->query('ROLLBACK');
+// Overview presentation retains exact reader values, failures and read-only state.
+wp_set_current_user(1);$_GET=array();$before=cr_snapshot();
+ob_start();YOWCL_Free_Reader_Admin::overview();$overview=ob_get_clean();
+loyf_equal(5,substr_count($overview,'class="loyf-overview-card"'),'Five Free metrics only');
+loyf_assert(false!==strpos($overview,esc_html(YOWCL_Free_Readers::outstanding()['value'])),'Exact stored decimal in overview');
+loyf_assert(false!==strpos($overview,'Accounts with held balances:'),'Held coverage remains visible');
+$_GET=array('period'=>'30');ob_start();YOWCL_Free_Reader_Admin::overview();$recent_overview=ob_get_clean();
+loyf_assert(false!==strpos($recent_overview,'value="30" selected='),'Existing recent filter remains selected');
+loyf_equal($before,cr_snapshot(),'Overview/filter rendering does not mutate stored state');
+$wpdb->suppress_errors(true);
+// Fail all reader queries without turning failed evidence into zero.
+$reader_failure=static function($sql){return false!==strpos($sql,'yo_loyalty_points_log') ? 'SELECT * FROM loyf31_missing_table' : $sql;};
+add_filter('query',$reader_failure,PHP_INT_MAX);ob_start();YOWCL_Free_Reader_Admin::overview();$failed_overview=ob_get_clean();remove_filter('query',$reader_failure,PHP_INT_MAX);$wpdb->suppress_errors(false);
+loyf_assert(false!==strpos($failed_overview,'<strong>Unavailable</strong>'),'Failed flow proof visibly unavailable');
+$_GET=array();wp_set_current_user($a);loyf_equal(false,YOWCL_Free_Reader_Admin::allowed(),'Customer cannot access admin overview/settings');wp_set_current_user(1);
 echo 'Native Basic Free consumers PASS Woo'.WC_VERSION.' '.getenv('LOYF_STORAGE')."\n";

@@ -1,10 +1,22 @@
 <?php
-/** Small Woo-native overview and separate administrator CSV read action. */
+/** Free admin navigation, read-only overview and administrator CSV read action. */
 defined( 'ABSPATH' ) || exit;
 class YOWCL_Free_Reader_Admin {
     public static function boot() {
-        add_action( 'admin_menu', static function () { add_submenu_page( 'woocommerce', __( 'Loyalty overview', 'loyalty-for-woocommerce' ), __( 'Loyalty overview', 'loyalty-for-woocommerce' ), 'manage_options', 'loyf-overview', array( __CLASS__, 'overview' ) ); } );
+        add_action( 'admin_menu', array( __CLASS__, 'menu' ), 40 );
         add_action( 'admin_post_loyf_export_customers', array( __CLASS__, 'export' ) );
+    }
+    public static function menu() {
+        if ( ! YOWCL_Free_Core::owns() ) { return; }
+        add_menu_page( __( 'Loyalty overview', 'loyalty-for-woocommerce' ), __( 'Loyalty', 'loyalty-for-woocommerce' ), 'manage_options', 'loyf-overview', array( __CLASS__, 'overview' ), 'dashicons-awards', 56 );
+        add_submenu_page( 'loyf-overview', __( 'Loyalty overview', 'loyalty-for-woocommerce' ), __( 'Overview', 'loyalty-for-woocommerce' ), 'manage_options', 'loyf-overview', array( __CLASS__, 'overview' ) );
+        $settings_hook = add_submenu_page( 'loyf-overview', __( 'Loyalty settings', 'loyalty-for-woocommerce' ), __( 'Settings', 'loyalty-for-woocommerce' ), 'manage_options', 'loyf-settings', array( __CLASS__, 'settings' ) );
+        if ( $settings_hook ) { add_action( 'load-' . $settings_hook, array( __CLASS__, 'settings' ) ); }
+    }
+    public static function settings() {
+        if ( ! self::allowed() ) { wp_die( esc_html__( 'Loyalty settings are unavailable.', 'loyalty-for-woocommerce' ), '', array( 'response' => 403 ) ); }
+        wp_safe_redirect( admin_url( 'admin.php?page=wc-settings&tab=loyalty' ) );
+        exit;
     }
     public static function allowed() { return current_user_can( 'manage_options' ) && YOWCL_Free_Core::owns(); }
     public static function overview() {
@@ -17,11 +29,21 @@ class YOWCL_Free_Reader_Admin {
             try { $stock = YOWCL_Free_Readers::outstanding(); } catch ( Throwable $e ) {}
             try { $flows = YOWCL_Free_Readers::flows( $recent ); } catch ( Throwable $e ) {}
         } ); } catch ( Throwable $e ) { $members = $stock = $flows = null; }
-        echo '<div class="wrap"><h1>' . esc_html__( 'Loyalty overview', 'loyalty-for-woocommerce' ) . '</h1><form method="get"><input type="hidden" name="page" value="loyf-overview"><label for="loyf-period">' . esc_html__( 'Flow period', 'loyalty-for-woocommerce' ) . '</label> <select id="loyf-period" name="period"><option value="lifetime"' . selected( $recent, false, false ) . '>' . esc_html__( 'Lifetime', 'loyalty-for-woocommerce' ) . '</option><option value="30"' . selected( $recent, true, false ) . '>' . esc_html__( 'Recent 30 days', 'loyalty-for-woocommerce' ) . '</option></select> <button class="button">' . esc_html__( 'View', 'loyalty-for-woocommerce' ) . '</button></form>';
-        $metrics = array( __( 'Current eligible loyalty members', 'loyalty-for-woocommerce' )=>$members ?? $unavailable, __( 'Known gross points issued', 'loyalty-for-woocommerce' )=>$flows['issued'] ?? $unavailable, __( 'Known gross points redeemed', 'loyalty-for-woocommerce' )=>$flows['redeemed'] ?? $unavailable, __( 'Current available points outstanding', 'loyalty-for-woocommerce' )=>$stock['value'] ?? $unavailable, __( 'Distinct proven funded orders', 'loyalty-for-woocommerce' )=>$flows['orders'] ?? $unavailable );
-        echo '<table class="widefat striped"><tbody>';
-        foreach ( $metrics as $label => $value ) { echo '<tr><th scope="row">' . esc_html( $label ) . '</th><td>' . esc_html( (string) $value ) . '</td></tr>'; }
-        echo '</tbody></table><p>' . esc_html__( 'Members and stock cover current users admitted by saved Loyalty roles. Stock is stored balance as of now, including held balances; it is not historical spendable value.', 'loyalty-for-woocommerce' ) . '</p><p>' . esc_html__( 'Flows cover proven canonical events across users. Awards exclude imports, returns and reversals. Redeemed is gross funded checkout debit; returns do not reduce it. No redemption share is shown because a matching qualifying order denominator is not established.', 'loyalty-for-woocommerce' ) . '</p>';
+        echo '<div class="wrap loyf-overview"><div class="loyf-admin-header"><div><h1>' . esc_html__( 'Loyalty overview', 'loyalty-for-woocommerce' ) . '</h1><p>' . esc_html__( 'Free loyalty program · Read-only overview', 'loyalty-for-woocommerce' ) . '</p></div><div class="loyf-admin-actions"><a class="button" href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=loyalty' ) ) . '">' . esc_html__( 'Settings', 'loyalty-for-woocommerce' ) . '</a><a class="button" href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=loyalty&section=tools' ) ) . '">' . esc_html__( 'Tools', 'loyalty-for-woocommerce' ) . '</a></div></div>';
+        echo '<form method="get" class="loyf-overview-filters"><input type="hidden" name="page" value="loyf-overview"><label for="loyf-period">' . esc_html__( 'Flow period', 'loyalty-for-woocommerce' ) . '</label> <select id="loyf-period" name="period"><option value="lifetime"' . selected( $recent, false, false ) . '>' . esc_html__( 'Lifetime', 'loyalty-for-woocommerce' ) . '</option><option value="30"' . selected( $recent, true, false ) . '>' . esc_html__( 'Recent 30 days', 'loyalty-for-woocommerce' ) . '</option></select> <button class="button">' . esc_html__( 'View', 'loyalty-for-woocommerce' ) . '</button></form>';
+        $metrics = array(
+            array( __( 'Current eligible loyalty members', 'loyalty-for-woocommerce' ), $members ?? $unavailable, __( 'Current users with a saved Loyalty role.', 'loyalty-for-woocommerce' ) ),
+            array( __( 'Known gross points issued', 'loyalty-for-woocommerce' ), $flows['issued'] ?? $unavailable, __( 'Proven awards in the selected flow period.', 'loyalty-for-woocommerce' ) ),
+            array( __( 'Known gross points redeemed', 'loyalty-for-woocommerce' ), $flows['redeemed'] ?? $unavailable, __( 'Gross funded checkout debit in the selected flow period.', 'loyalty-for-woocommerce' ) ),
+            array( __( 'Current available points outstanding', 'loyalty-for-woocommerce' ), $stock['value'] ?? $unavailable, __( 'Stored balances now, including held balances.', 'loyalty-for-woocommerce' ) ),
+            array( __( 'Distinct proven funded orders', 'loyalty-for-woocommerce' ), $flows['orders'] ?? $unavailable, __( 'Orders with proven funding in the selected flow period.', 'loyalty-for-woocommerce' ) ),
+        );
+        echo '<div class="loyf-overview-grid">';
+        foreach ( $metrics as $metric ) {
+            echo '<section class="loyf-overview-card"><h2>' . esc_html( $metric[0] ) . '</h2><strong>' . esc_html( (string) $metric[1] ) . '</strong><p>' . esc_html( $metric[2] ) . '</p></section>';
+        }
+        echo '</div><section class="loyf-overview-panel"><h2>' . esc_html__( 'Data coverage', 'loyalty-for-woocommerce' ) . '</h2><p>';
+        echo esc_html__( 'Members and stock cover current users admitted by saved Loyalty roles. Stock is stored balance as of now, including held balances; it is not historical spendable value.', 'loyalty-for-woocommerce' ) . '</p><p>' . esc_html__( 'Flows cover proven canonical events across users. Awards exclude imports, returns and reversals. Redeemed is gross funded checkout debit; returns do not reduce it. No redemption share is shown because a matching qualifying order denominator is not established.', 'loyalty-for-woocommerce' ) . '</p>';
         /* translators: Number of accounts with held balances. */
         if ( $stock ) { echo '<p>' . esc_html( sprintf( __( 'Accounts with held balances: %d.', 'loyalty-for-woocommerce' ), $stock['held'] ) ) . '</p>'; }
         if ( $flows ) {
@@ -31,7 +53,7 @@ class YOWCL_Free_Reader_Admin {
             echo '<p>' . esc_html( sprintf( __( 'Excluded debits without native checkout funding proof: %d.', 'loyalty-for-woocommerce' ), $flows['unproven_debits'] ) ) . '</p>';
             if ( $recent ) { echo '<p>' . esc_html( wp_date( 'Y-m-d H:i:s', intdiv( $flows['start'], 1000000 ), new DateTimeZone( $flows['timezone'] ) ) . ' – ' . wp_date( 'Y-m-d H:i:s', intdiv( $flows['end'], 1000000 ), new DateTimeZone( $flows['timezone'] ) ) . ' (' . $flows['timezone'] . ')' ) . '</p>'; }
         }
-        echo '<p>' . esc_html__( 'Unavailable means failed or incomplete evidence, ambiguous metadata, unsupported precision, missing time proof, or the safe read limit. No value is repaired on this page.', 'loyalty-for-woocommerce' ) . '</p></div>';
+        echo '<p>' . esc_html__( 'Unavailable means failed or incomplete evidence, ambiguous metadata, unsupported precision, missing time proof, or the safe read limit. No value is repaired on this page.', 'loyalty-for-woocommerce' ) . '</p></section></div>';
     }
     public static function form() {
         if ( ! self::allowed() ) { return; }

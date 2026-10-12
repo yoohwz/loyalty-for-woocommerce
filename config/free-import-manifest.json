@@ -280,7 +280,7 @@
     {
       "target": "css/backend-style.css",
       "mode": "100644",
-      "sha256": "f448af97e7cc299abb4651655378f5e5332e432171b2e669b9d0407723d932c1"
+      "sha256": "e934b6e4922a209d78f033b5e68cca25005b66adf6f0307bdbfcdbf35dfd8076"
     },
     {
       "target": "css/customer-components.css",
@@ -345,7 +345,7 @@
     {
       "target": "inc/backend/settings.php",
       "mode": "100644",
-      "sha256": "188e95b432f6dac0d8a3a72e6922bc22efaa93b9d80cfe04f68a5b306ea77cbc"
+      "sha256": "a99ac587e2683079376fb8128258377cb85cb4d0b5ddb4ebaff9e4d1e51bfb49"
     },
     {
       "target": "inc/backend/settings/customization.php",
@@ -450,7 +450,7 @@
     {
       "target": "inc/cores/backend.php",
       "mode": "100644",
-      "sha256": "ef1a203b1bf9165d8e211f7bdf7ea075f61a2e76278a689cd8f0ceb5d9d6115f"
+      "sha256": "b2d48d13f8e6b5dc033362ae668c2931ccfc1e6ee1e4c45d62887e0c0d6d5de1"
     },
     {
       "target": "inc/cores/database.php",
@@ -515,7 +515,7 @@
     {
       "target": "inc/cores/helper/free-reader-admin.php",
       "mode": "100644",
-      "sha256": "98e373b3c6648fc8abf022d8f2ff66631225171fa0f9bf518f0745c100cba57f"
+      "sha256": "e667c346f1e1ad45f10c798c7553164e4be8415eea21507fed584d78f549fec8"
     },
     {
       "target": "inc/cores/helper/free-readers.php",
@@ -620,7 +620,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "20c679bd1f61c28093fce6af6868ab0de8e766bcf06a2c340c828281c9d1c0b1"
+      "sha256": "2da158d36a2c6cf3c5f969742be7f15aa8e3b332cf4656255325f906b6421d16"
     },
     {
       "target": "license.txt",
