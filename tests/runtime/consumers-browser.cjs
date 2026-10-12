@@ -89,6 +89,9 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     const rounding=page.locator('#loyalty_points_rounding');const original=await rounding.inputValue();const changed=original==='round_up'?'round_down':'round_up';
     await rounding.selectOption(changed);await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('button[name=save]').click()]);await page.getByText(/Your settings have been saved|General earning and level settings were saved/).waitFor();await page.reload();assert.equal(await rounding.inputValue(),changed,'Native Woo save/reload persists');
     await rounding.selectOption(original);await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('button[name=save]').click()]);await page.getByText(/Your settings have been saved|General earning and level settings were saved/).waitFor();
+    // Settings/email presentation is independent of order storage; exercise it once per Woo version.
+    // Existing consumer browser checks and native First Purchase fixtures still run for CPT and HPOS.
+    if(fixture.storage==='cpt') {
     assert.equal(await page.locator('.loyf-admin-header a[href*="loyf-overview"]').count(),0,'No Overview button on Settings');
     await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section=extra_points');
     assert.equal(await page.locator('[name=loyalty_extra_first_purchase_enabled]').count(),0);
@@ -136,6 +139,8 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     assert(await page.evaluate(()=>getComputedStyle(document.querySelector('.yoswc-user-points-upsell')).borderInlineStartColor===getComputedStyle(document.querySelector('#adminmenu a.wp-has-current-submenu')).backgroundColor),'Profile Premium card follows scheme');
     await page.goto(base+'/wp-admin/users.php');
     assert(await page.evaluate(()=>getComputedStyle(document.querySelector('.yoswc-user-points-upsell--modal')).borderInlineStartColor===getComputedStyle(document.querySelector('#adminmenu a.wp-has-current-submenu')).backgroundColor),'Points modal Premium card follows scheme');
+    console.log('Native Settings/email presentation browser PASS Woo'+fixture.version+' '+fixture.storage);
+    }
     await page.setViewportSize({width:1280,height:900});
     await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section=tools');
     const nonce=await page.locator('[name="loyf_export_nonce"]').inputValue();
