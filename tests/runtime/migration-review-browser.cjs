@@ -29,7 +29,7 @@ const fixture = mode => execFileSync(process.env.LOYF25_PHP || 'php', [process.e
   await page.goto(settings('extra_points'));
   for(const name of ['signup','login','review']){assert(await page.locator('[name=loyalty_extra_'+name+'_points]').isDisabled());assert.equal(await page.locator('a[href*=loyf-migration-review]').count(),0);}
   assert.equal(await page.locator('a[href*=loyf-migration-review]').count(),0);
-  await page.locator('[name=loyalty_extra_first_purchase_points]').fill('31');await page.locator('#loyalty_extra_first_purchase_enabled').check();await page.locator('button[name=save]').click();await page.getByText('Rewards being updated were skipped.',{exact:false}).waitFor();fixture('verify-held');fixture('verify-first');
+  await page.locator('[name=loyalty_extra_first_purchase_points]').fill('31');await page.locator('button[name=save]').click();await page.getByText('Rewards being updated were skipped.',{exact:false}).waitFor();fixture('verify-held');fixture('verify-first');
   for(const section of ['yowcl_wc_email_loyalty_points_reward','yowcl_wc_email_loyalty_points_deduct','yowcl_wc_email_loyalty_level_update']){
    await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=email&section='+section);
    assert((await page.locator('#mainform').innerText()).includes('Not active'));

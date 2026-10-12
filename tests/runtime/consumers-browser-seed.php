@@ -1,10 +1,12 @@
 <?php
 if(!defined('LOYF_RUNTIME_DISPOSABLE')){throw new RuntimeException('Disposable required');}
-wp_set_current_user(1);update_option('woocommerce_coming_soon','no');
+wp_set_current_user(1);update_user_meta(1,'admin_color','coffee');update_option('woocommerce_coming_soon','no');
 // This reader/editor fixture represents an already configured Woo store.
 update_option('woocommerce_onboarding_profile',array('completed'=>true));delete_transient('_wc_activation_redirect');
 update_option('loyalty_customization_loyalty_bubble',array('enabled'=>false));
 update_option('loyalty_customization_my_account',array('my_account'=>true,'my_account_slug'=>'my-points','my_account_label'=>'My Points'));
+// Exercise Woo's native template editor as well as the three classic Free editors.
+if(version_compare(WC_VERSION,'9.9','>=')){update_option('woocommerce_feature_block_email_editor_enabled','yes');}
 WC_Install::create_pages();YOWCL_Free_Referral::save(true,31);
 $a=get_user_by('login','consumer_a')->ID;$b=get_user_by('login','consumer_b')->ID;
 $token_a=YOWCL_Helper_Referrals::ensure_user_token($a);$token_b=YOWCL_Helper_Referrals::ensure_user_token($b);

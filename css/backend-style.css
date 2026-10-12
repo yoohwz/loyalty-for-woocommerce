@@ -176,7 +176,7 @@ td.current_points, td.total_earned {
 .yoswc-user-points-upsell {
 	background: #fff;
 	border: 1px solid #c3c4c7;
-	border-left: 4px solid #2271b1;
+	border-inline-start: 4px solid var(--loyf-admin-accent, currentColor);
 	border-radius: 4px;
 	margin: 12px 0 20px;
 	max-width: 760px;
@@ -315,4 +315,30 @@ td.current_points, td.total_earned {
 	.loyf-settings .loyalty_customization_display tr { display: block; }
 	.loyf-settings .loyalty_customization td, .loyf-settings .loyalty_customization_message td,
 	.loyf-settings .loyalty_customization_display td { display: flex; flex-wrap: wrap; justify-content: flex-start; }
+}
+
+/* Keep related controls together inside the native Woo settings form. */
+.loyf-premium-previews { margin: 24px 0; }
+.loyf-premium-previews summary { cursor: pointer; font-weight: 600; padding: 12px 0; }
+.loyf-settings .loyf-color-field { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 0 16px 8px 0; }
+.loyf-settings .loyf-color-field input[type="text"] { margin-right: 0 !important; }
+.loyf-settings td.loyalty_customization_membercard { display: table-cell; }
+.loyf-settings .form-table table { margin: 0; }
+.loyf-settings .form-table table th { padding-top: 10px; padding-bottom: 10px; }
+.loyf-email-list { overflow-x: auto; }
+.loyf-loyalty-emails .description { margin: 6px 0 0; }
+.loyf-loyalty-emails td:last-child { white-space: nowrap; }
+@media screen and (max-width: 782px) {
+	.loyf-settings .form-table table th { margin: 0; }
+	.loyf-settings .form-table table td { padding: 4px 0 16px; }
+	.loyf-settings td.loyalty_customization_membercard { display: block; }
+	.loyf-settings .loyf-color-field { display: flex; }
+	.loyf-settings .loyalty_customization td { gap: 6px; }
+	.loyf-settings .loyalty_customization .button { margin-left: 0; }
+	.loyf-loyalty-emails thead { display: none !important; }
+	.loyf-email-list .loyf-loyalty-emails, .loyf-email-list .loyf-loyalty-emails tbody, .loyf-email-list .loyf-loyalty-emails tr, .loyf-email-list .loyf-loyalty-emails td { display: block !important; width: auto !important; }
+	.loyf-loyalty-emails tr { border-bottom: 1px solid #c3c4c7; padding: 8px 0; }
+	.loyf-loyalty-emails td::before { content: attr(data-title) ": "; font-weight: 600; }
+	.loyf-loyalty-emails .wc-email-settings-table-actions .button { float: none; }
+	.loyf-loyalty-emails td:nth-child(2)::before, .loyf-loyalty-emails td:last-child::before { content: none; }
 }

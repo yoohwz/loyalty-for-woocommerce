@@ -7,6 +7,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     const browser = await chromium.launch({ headless:true, ...(process.env.LOYF_BROWSER_EXECUTABLE ? {executablePath:process.env.LOYF_BROWSER_EXECUTABLE} : {}) });
     let debugPage;
     try {
+    function versionAtLeast(actual,minimum){const a=actual.split('.').map(Number),b=minimum.split('.').map(Number);return a[0]>b[0]||(a[0]===b[0]&&a[1]>=b[1]);}
     const kinds = ['points-balance','points-history','level-progress','ways-to-earn','referral-link'];
     async function login(context, user) {
         const page = await context.newPage(); await page.goto(base + '/wp-login.php');
@@ -42,7 +43,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         assert.equal(privateResponse.status(),200);assert(privateResponse.headers()['cache-control'].includes('no-store'));
         assert((await privateResponse.json()).data['points-balance'].includes(value),'Private reader always uses current viewer');
         const customerPreview=await context.request.get(base+'/?rest_route=/wp/v2/block-renderer/loyf/points-balance&context=edit&user_id='+fixture.user_a,{headers:{'X-WP-Nonce':nonce}});assert(customerPreview.status()>=400,'Customer editor/REST permission boundary');
-        for(const slug of ['loyf-overview','loyf-settings']){const denied=await context.request.get(base+'/wp-admin/admin.php?page='+slug);assert.equal(denied.status(),403,'Customer admin access denied');}
+        for(const slug of ['loyf-overview','loyf-settings','loyf-emails']){const denied=await context.request.get(base+'/wp-admin/admin.php?page='+slug);assert.equal(denied.status(),403,'Customer admin access denied');}
         const exportDenial = await context.request.post(base + '/wp-admin/admin-post.php',{form:{action:'loyf_export_customers',loyf_export_nonce:nonce}});assert.equal(exportDenial.status(),403,'Customer export denied');
         await page.setViewportSize({width:375,height:812});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),'Responsive component layout');
         assert.equal(errors.length,0,'Shipped client browser exceptions');
@@ -88,6 +89,58 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     const rounding=page.locator('#loyalty_points_rounding');const original=await rounding.inputValue();const changed=original==='round_up'?'round_down':'round_up';
     await rounding.selectOption(changed);await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('button[name=save]').click()]);await page.getByText(/Your settings have been saved|General earning and level settings were saved/).waitFor();await page.reload();assert.equal(await rounding.inputValue(),changed,'Native Woo save/reload persists');
     await rounding.selectOption(original);await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('button[name=save]').click()]);await page.getByText(/Your settings have been saved|General earning and level settings were saved/).waitFor();
+    // Settings/email presentation is independent of order storage; exercise it once per Woo version.
+    // Existing consumer browser checks and native First Purchase fixtures still run for CPT and HPOS.
+    if(fixture.storage==='cpt') {
+    assert.equal(await page.locator('.loyf-admin-header a[href*="loyf-overview"]').count(),0,'No Overview button on Settings');
+    await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section=extra_points');
+    assert.equal(await page.locator('[name=loyalty_extra_first_purchase_enabled]').count(),0);
+    assert(await page.evaluate(()=>getComputedStyle(document.querySelector('.yoswc-contextual-premium-card')).borderInlineStartColor===getComputedStyle(document.querySelector('#adminmenu a.wp-has-current-submenu')).backgroundColor),'Extra points card follows scheme');
+    const first=page.locator('#loyalty_extra_first_purchase_points');const firstOriginal=await first.inputValue();
+    for(const amount of ['29','0',firstOriginal]) {
+        await first.fill(amount);await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('button[name=save]').click()]);await page.reload();assert.equal(await first.inputValue(),amount,'Amount-only First purchase save/reload');
+    }
+    for(const section of ['extra_points','referrals','customization','notification','tools','premium']) {
+        await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section='+section);
+        assert.equal(await page.locator('#mainform form').count(),0,'No nested form '+section);
+        assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile Settings '+section);
+    }
+    await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link',{name:'Notification',exact:true}).click();
+    await page.getByRole('link',{name:'Manage loyalty emails',exact:true}).click();await page.locator('.loyf-loyalty-emails').waitFor();
+    assert.equal(await page.locator('.loyf-loyalty-emails tbody tr').count(),3,'Only three Free emails');
+    assert.deepEqual(await page.locator('.loyf-loyalty-emails strong').allTextContents(),['Points earned','Points deducted','Level update']);
+    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile Loyalty emails');
+    assert(await page.evaluate(()=>[...document.querySelectorAll('.loyf-loyalty-emails .button')].every(e=>e.getBoundingClientRect().right<=innerWidth)),'Mobile Manage buttons are not clipped');
+    for(const label of ['Points earned','Points deducted','Level update']) {
+        await page.getByRole('link',{name:'Manage '+label,exact:true}).click();
+        const enabled=page.locator('input[id$="_enabled"]');const subject=page.locator('input[id$="_subject"]');
+        const wasEnabled=await enabled.isChecked();const oldSubject=await subject.inputValue();
+        await enabled.setChecked(!wasEnabled);await subject.fill('LOYF-33 '+label);
+        await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('button[name=save]').click()]);await page.reload();
+        assert.equal(await enabled.isChecked(),!wasEnabled);assert.equal(await subject.inputValue(),'LOYF-33 '+label,'Native email subject save/reload');
+        await page.getByRole('link',{name:'Back to Loyalty emails',exact:true}).click();await page.locator('.loyf-loyalty-emails').waitFor();
+        const row=page.locator('.loyf-loyalty-emails tbody tr').filter({has:page.getByText(label,{exact:true})});assert.equal(await row.getAttribute('data-loyf-status'),wasEnabled?'Disabled':'Enabled','Group shows actual native enablement');
+        await page.getByRole('link',{name:'Manage '+label,exact:true}).click();await enabled.setChecked(wasEnabled);await subject.fill(oldSubject);
+        await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('button[name=save]').click()]);await page.reload();assert.equal(await enabled.isChecked(),wasEnabled);assert.equal(await subject.inputValue(),oldSubject,'Native email restore');
+        await page.getByRole('link',{name:'Back to Loyalty emails',exact:true}).click();await page.locator('.loyf-loyalty-emails').waitFor();
+    }
+    await page.getByRole('navigation',{name:'Email groups'}).getByRole('link',{name:'General',exact:true}).click();
+    if(versionAtLeast(fixture.version,'9.9')) {
+        const nativeListing=page.locator('#wc_settings_email_listing_slotfill');await nativeListing.waitFor();
+        assert(await page.getByRole('navigation',{name:'Email groups'}).evaluate(nav=>Boolean(nav.compareDocumentPosition(document.querySelector('#wc_settings_email_listing_slotfill'))&Node.DOCUMENT_POSITION_FOLLOWING)),'Group navigation precedes native block listing');
+        const types=JSON.parse(await nativeListing.getAttribute('data-email-types'));assert(types.length>3);assert(!types.some(email=>email.id.startsWith('yowcl_loyalty_')),'Native block General excludes only three Free emails');
+        // Woo may create the email post on demand; its template ID is then the native editor entry.
+        const templateURL=await nativeListing.getAttribute('data-edit-template-url');assert(templateURL?templateURL.includes('post.php?post='):Boolean(await nativeListing.getAttribute('data-email-template-id')),'Native template editor entry retained');
+        const editTemplate=page.getByText('Edit template',{exact:true});await editTemplate.first().waitFor();await Promise.all([page.waitForURL(url=>url.pathname.endsWith('/post.php')),editTemplate.first().click()]);assert(page.url().includes('template='),'Native template editor reachable');
+    } else { await page.locator('table.loyf-general-emails').waitFor();assert(await page.locator('table.loyf-general-emails tbody tr').count()>3);assert.equal(await page.locator('table.loyf-general-emails a[href*=yowcl_wc_email_loyalty]').count(),0,'General contains ordinary emails only'); }
+
+    await page.goto(base+'/wp-admin/admin.php?page=loyf-emails');assert.equal(new URL(page.url()).searchParams.get('email_group'),'loyalty','Emails submenu redirects to Loyalty group');
+    await page.goto(base+'/wp-admin/user-edit.php?user_id='+fixture.user_a);
+    assert(await page.evaluate(()=>getComputedStyle(document.querySelector('.yoswc-user-points-upsell')).borderInlineStartColor===getComputedStyle(document.querySelector('#adminmenu a.wp-has-current-submenu')).backgroundColor),'Profile Premium card follows scheme');
+    await page.goto(base+'/wp-admin/users.php');
+    assert(await page.evaluate(()=>getComputedStyle(document.querySelector('.yoswc-user-points-upsell--modal')).borderInlineStartColor===getComputedStyle(document.querySelector('#adminmenu a.wp-has-current-submenu')).backgroundColor),'Points modal Premium card follows scheme');
+    console.log('Native Settings/email presentation browser PASS Woo'+fixture.version+' '+fixture.storage);
+    }
     await page.setViewportSize({width:1280,height:900});
     await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section=tools');
     const nonce=await page.locator('[name="loyf_export_nonce"]').inputValue();

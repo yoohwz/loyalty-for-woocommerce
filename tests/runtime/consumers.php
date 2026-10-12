@@ -122,4 +122,23 @@ $reader_failure=static function($sql){return false!==strpos($sql,'yo_loyalty_poi
 add_filter('query',$reader_failure,PHP_INT_MAX);ob_start();YOWCL_Free_Reader_Admin::overview();$failed_overview=ob_get_clean();remove_filter('query',$reader_failure,PHP_INT_MAX);$wpdb->suppress_errors(false);
 loyf_assert(false!==strpos($failed_overview,'<strong>Unavailable</strong>'),'Failed flow proof visibly unavailable');
 $_GET=array();wp_set_current_user($a);loyf_equal(false,YOWCL_Free_Reader_Admin::allowed(),'Customer cannot access admin overview/settings');wp_set_current_user(1);
+// Existing no-level availability messages remain intact, without editable bonus/customization controls.
+$roles=get_option('loyalty_levels_roles');update_option('loyalty_levels_roles',array());$before=cr_snapshot();
+foreach(array(new YOSWC_Loyalty_Settings_Extra_Points(),new YOSWC_Loyalty_Settings_Customization())as$screen){ob_start();$screen instanceof YOSWC_Loyalty_Settings_Extra_Points ? $screen->display_extra_points_settings() : $screen->display_customization_settings();$html=ob_get_clean();loyf_assert(false!==strpos($html,'Before start'),'No-level availability guidance retained');loyf_assert(false===strpos($html,'<input'),'No-level screen has no editable settings');}
+loyf_equal($before,cr_snapshot(),'No-level rendering is read-only');update_option('loyalty_levels_roles',$roles);
+// Grouped email presentation cannot change native registry, stored settings or held policy.
+$mailer=WC()->mailer();$keys=array_keys($mailer->get_emails());$options=array();
+foreach(array('email_reward'=>'points_reward','email_deduct'=>'points_deduct','email_level'=>'level_update')as$feature=>$family){$options[$feature]=array('name'=>'woocommerce_yowcl_loyalty_'.$family.'_settings');$options[$feature]['raw']=YOWCL_Free_Migrations::read($options[$feature]['name']);}
+$before=cr_snapshot();$_GET=array('email_group'=>'loyalty');ob_start();do_action('woocommerce_admin_field_loyf_loyalty_emails');$group=ob_get_clean();
+loyf_equal(3,substr_count($group,'data-loyf-email='),'Only three existing Free email rows');
+loyf_equal($keys,array_keys($mailer->get_emails()),'Grouping preserves complete mailer registry');
+loyf_equal($before,cr_snapshot(),'Grouped email rendering is read-only');
+foreach(array_keys($options)as$feature){$witness=YOWCL_Free_Migrations::read(YOWCL_Free_Migrations::witness($feature));update_option(YOWCL_Free_Migrations::witness($feature),'0');$held_before=cr_snapshot();ob_start();do_action('woocommerce_admin_field_loyf_loyalty_emails');$held=ob_get_clean();loyf_assert(false!==strpos($held,'data-loyf-status="Settings preserved"'),'Held email never appears active');loyf_equal($held_before,cr_snapshot(),'Held group rendering preserves settings');update_option(YOWCL_Free_Migrations::witness($feature),$witness);loyf_equal($options[$feature]['raw'],YOWCL_Free_Migrations::read($options[$feature]['name']),'Held row leaves raw option unchanged');}
+// Native extension columns own the whole cell, in both General and Loyalty tables.
+$extension_columns=static function($columns){$columns['loyf_test_extension']='Test extension';return $columns;};
+$extension_cell=static function($email){echo '<td class="loyf-test-extension">'.esc_html($email->id).'</td>';};
+add_filter('woocommerce_email_setting_columns',$extension_columns);add_action('woocommerce_email_setting_column_loyf_test_extension',$extension_cell);
+foreach(array('general','loyalty')as$group){ob_start();do_action('woocommerce_admin_field_loyf_loyalty_emails',array('group'=>$group));$custom=ob_get_clean();$expected='loyalty'===$group?3:count($keys)-3;loyf_equal($expected,substr_count($custom,'class="loyf-test-extension"'),'Native custom column owns exactly one cell per email');loyf_assert(!preg_match('/<td[^>]*>\s*<td\b/',$custom),'No nested extension cells');}
+remove_filter('woocommerce_email_setting_columns',$extension_columns);remove_action('woocommerce_email_setting_column_loyf_test_extension',$extension_cell);
+$_GET=array();
 echo 'Native Basic Free consumers PASS Woo'.WC_VERSION.' '.getenv('LOYF_STORAGE')."\n";

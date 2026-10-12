@@ -46,15 +46,14 @@ class YOSWC_Loyalty_Settings_Extra_Points {
         <h2><?php esc_html_e('Extra points settings', 'loyalty-for-woocommerce'); ?></h2>
         <?php if ( in_array( false, $ready, true ) ) { echo '<p class="description">' . esc_html__( 'Rewards being updated are read-only. You can save the other rewards.', 'loyalty-for-woocommerce' ) . '</p>'; } ?>
         
-        <table class="form-table">
         <?php wp_nonce_field('save_extra_points_settings_action', 'extra_points_settings_nonce'); ?>
+        <table class="form-table">
             <tbody>
                 <tr>
-                    <th scope="row"><label for="loyalty_extra_first_purchase_enabled"><?php esc_html_e( 'First purchase', 'loyalty-for-woocommerce' ); ?></label></th>
+                    <th scope="row"><label for="loyalty_extra_first_purchase_points"><?php esc_html_e( 'First purchase', 'loyalty-for-woocommerce' ); ?></label></th>
                     <td>
-                        <label><input type="checkbox" id="loyalty_extra_first_purchase_enabled" name="loyalty_extra_first_purchase_enabled" value="yes" <?php checked( 'yes', $first_purchase['first_purchase_enabled'] ?? 'no' ); ?> /> <?php esc_html_e( 'Enable First Purchase bonus', 'loyalty-for-woocommerce' ); ?></label>
-                        <input type="number" name="loyalty_extra_first_purchase_points" aria-label="<?php esc_attr_e( 'First Purchase points', 'loyalty-for-woocommerce' ); ?>" min="0" max="99999999" step="1" value="<?php echo esc_attr( $first_purchase['first_purchase_points'] ?? 0 ); ?>" />
-                        <p class="description"><?php esc_html_e( 'A fixed bonus for the first qualifying purchase. Only orders created after activation qualify; existing pending orders are excluded.', 'loyalty-for-woocommerce' ); ?></p>
+                        <input type="number" id="loyalty_extra_first_purchase_points" name="loyalty_extra_first_purchase_points" style="width: 84px;" aria-label="<?php esc_attr_e( 'First Purchase points', 'loyalty-for-woocommerce' ); ?>" min="0" max="99999999" step="1" value="<?php echo esc_attr( 'yes' === ( $first_purchase['first_purchase_enabled'] ?? 'no' ) ? ( $first_purchase['first_purchase_points'] ?? 0 ) : 0 ); ?>" />
+                        <p class="description"><?php esc_html_e( 'A fixed bonus for the first qualifying purchase. Set to 0 to disable. Only orders created after activation qualify; existing pending orders are excluded.', 'loyalty-for-woocommerce' ); ?></p>
                     </td>
                 </tr>
                 <tr valign="top">
@@ -136,7 +135,7 @@ class YOSWC_Loyalty_Settings_Extra_Points {
             .yoswc-contextual-premium-card {
                 background: #fff;
                 border: 1px solid #c3c4c7;
-                border-left: 4px solid #2271b1;
+                border-inline-start: 4px solid var(--loyf-admin-accent, currentColor);
                 border-radius: 4px;
                 margin: 16px 0 22px;
                 max-width: 960px;
@@ -224,7 +223,7 @@ class YOSWC_Loyalty_Settings_Extra_Points {
                     YOWCL_Free_Migrations::save( 'levelup','loyalty_extra_reviews_gamification_rules',array( 'levelup_points'=>$map,'levelup_enabled'=>$enabled ? 'yes' : 'no' ) );
                     $saved[] = __( 'Level up','loyalty-for-woocommerce' );
                 }
-                if ( null !== $first ) { YOWCL_Free_First_Purchase::save( isset( $_POST['loyalty_extra_first_purchase_enabled'] ),$first ); $saved[] = __( 'First purchase','loyalty-for-woocommerce' ); }
+                if ( null !== $first ) { YOWCL_Free_First_Purchase::save( YOWCL_Free_First_Purchase::points( $first ) > 0,$first ); $saved[] = __( 'First purchase','loyalty-for-woocommerce' ); }
             } );
             $held=array(); foreach(array('signup','login','review','levelup') as $feature) { if (!YOWCL_Free_Migrations::ready($feature) || !YOWCL_Free_Migrations::readable($feature)) { $held[]=$feature; } }
             if ($held && class_exists('WC_Admin_Settings')) {

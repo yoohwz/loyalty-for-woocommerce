@@ -280,7 +280,7 @@
     {
       "target": "css/backend-style.css",
       "mode": "100644",
-      "sha256": "e934b6e4922a209d78f033b5e68cca25005b66adf6f0307bdbfcdbf35dfd8076"
+      "sha256": "dc24db3aa04ac22b33fd1e4459eab1c63359a87b6221049d679973b9f1110eb7"
     },
     {
       "target": "css/customer-components.css",
@@ -310,7 +310,7 @@
     {
       "target": "inc/backend/actions/emails/notifications-email.php",
       "mode": "100644",
-      "sha256": "c3ea7712c8fad993f52a0993bec6562658a614a53b2e0446fa75400477cd12ec"
+      "sha256": "62bad6f74ea56fb36af5a47b853207e2a03071db541ed58f95b4566f69080102"
     },
     {
       "target": "inc/backend/actions/extra-points/level-up.php",
@@ -345,17 +345,17 @@
     {
       "target": "inc/backend/settings.php",
       "mode": "100644",
-      "sha256": "a99ac587e2683079376fb8128258377cb85cb4d0b5ddb4ebaff9e4d1e51bfb49"
+      "sha256": "26e95ac3dc96b279c421ca7ef6cd0101efd772ade687ed2ac0fbe4dd527542aa"
     },
     {
       "target": "inc/backend/settings/customization.php",
       "mode": "100644",
-      "sha256": "ec33971d20e4e86536cd335cdb2367e4a4fd6e49ac97b318605e02bcfc9edc51"
+      "sha256": "671828f3611425b4e63b7c21789ca15ade8bc571d4b027216bc09a9a8de9d015"
     },
     {
       "target": "inc/backend/settings/extra-points.php",
       "mode": "100644",
-      "sha256": "149ed330ce1a4f9b3ba1fde7a1b73b3bbbf1ee2f866f9add5dcf19d11544110f"
+      "sha256": "2f7b3597d5db2f4a11b971fbacfcee36c49e9a246fd5e16bf79278e632c86cf9"
     },
     {
       "target": "inc/backend/settings/files/yol_import_sample.csv",
@@ -390,12 +390,12 @@
     {
       "target": "inc/backend/settings/notification.php",
       "mode": "100644",
-      "sha256": "ab8be1e0348eb79008aefe174d28f605629d7f04da1a0862d36daba616f94535"
+      "sha256": "0551b33c4a8a933646329f9ab3d0f038848766f1fd4779a8b4b71261c7586954"
     },
     {
       "target": "inc/backend/settings/referrals.php",
       "mode": "100644",
-      "sha256": "d41cae258c2a4cbd1ab27adc1d469c993d4482e69a175e567b538d02840a36d3"
+      "sha256": "50529987434b839df1bf8a8c173fe00e0d294baa25c2468e68c0b3c5e6afb59d"
     },
     {
       "target": "inc/backend/settings/tools.php",
@@ -450,7 +450,7 @@
     {
       "target": "inc/cores/backend.php",
       "mode": "100644",
-      "sha256": "b2d48d13f8e6b5dc033362ae668c2931ccfc1e6ee1e4c45d62887e0c0d6d5de1"
+      "sha256": "14301b557476603d9e9a16ce3cab82e4af9cc0faadf837031439c3ce0d00f17f"
     },
     {
       "target": "inc/cores/database.php",
@@ -515,7 +515,7 @@
     {
       "target": "inc/cores/helper/free-reader-admin.php",
       "mode": "100644",
-      "sha256": "e667c346f1e1ad45f10c798c7553164e4be8415eea21507fed584d78f549fec8"
+      "sha256": "46cae584f6d28386e2f59ded8792cf9019e31d59c08974632b758f90c6f8793c"
     },
     {
       "target": "inc/cores/helper/free-readers.php",
@@ -620,7 +620,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "2da158d36a2c6cf3c5f969742be7f15aa8e3b332cf4656255325f906b6421d16"
+      "sha256": "89260627ead58cf792e351d5ca95dbca8db125029f65a8554fb1b6dd7ee71e01"
     },
     {
       "target": "license.txt",
