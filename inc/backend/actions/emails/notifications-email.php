@@ -4,6 +4,10 @@ defined('ABSPATH') || exit;
 class YOSWC_Loyalty_Notifications_Email {
     public function __construct() {
         add_filter('woocommerce_email_classes', array($this, 'register'));
+        add_action('woocommerce_email_settings_before', array($this, 'email_group_backlink'));
+        add_filter('woocommerce_email_settings', array($this, 'grouped_settings'));
+        add_action('woocommerce_admin_field_loyf_email_groups', array($this, 'group_navigation'));
+        add_action('woocommerce_admin_field_loyf_loyalty_emails', array($this, 'loyalty_email_table'));
         foreach (array('points_reward','points_deduct','level_update') as $family) {
             $id='yowcl_loyalty_'.$family;
             $feature='level_update'===$family ? 'email_level' : ('points_deduct'===$family ? 'email_deduct' : 'email_reward');
@@ -29,6 +33,89 @@ class YOSWC_Loyalty_Notifications_Email {
             foreach (array('yowcl_', 'woocommerce_') as $prefix) { add_action($prefix . 'loyalty_' . $event, array($this, 'send_' . $event . '_email'), 5, $argc); }
         }
         if (did_action('woocommerce_email') && WC()->mailer()) { WC()->mailer()->emails = $this->register(WC()->mailer()->emails); }
+    }
+    /** Group only the settings presentation; the mailer registry and native editors stay intact. */
+    public function grouped_settings($settings) {
+        $loyalty = isset($_GET['email_group']) && is_string($_GET['email_group']) && 'loyalty' === wp_unslash($_GET['email_group']);
+        if ($loyalty) {
+            return array(
+                array('type'=>'title','title'=>__('Loyalty emails','loyalty-for-woocommerce'),'desc'=>__('Manage the three Free loyalty email notifications.','loyalty-for-woocommerce')),
+                array('type'=>'loyf_email_groups'),
+                array('type'=>'loyf_loyalty_emails','group'=>'loyalty'),
+                array('type'=>'sectionend'),
+            );
+        }
+        $result = array();
+        foreach ($settings as $field) {
+            if (in_array($field['type'] ?? '', array('email_notification','email_notification_block_emails'), true)) {
+                $result[] = array('type'=>'loyf_email_groups');
+                $field = array('type'=>'loyf_loyalty_emails','group'=>'general');
+            }
+            $result[] = $field;
+        }
+        return $result;
+    }
+    public function group_navigation() {
+        $loyalty = isset($_GET['email_group']) && is_string($_GET['email_group']) && 'loyalty' === wp_unslash($_GET['email_group']);
+        echo '<tr><td colspan="2"><nav aria-label="' . esc_attr__('Email groups','loyalty-for-woocommerce') . '"><ul class="subsubsub">';
+        foreach (array(''=>__('General','loyalty-for-woocommerce'),'loyalty'=>__('Loyalty','loyalty-for-woocommerce')) as $group=>$label) {
+            $current = $loyalty === ('loyalty' === $group);
+            echo '<li><a href="' . esc_url(admin_url('admin.php?page=wc-settings&tab=email' . ($group ? '&email_group=loyalty' : ''))) . '"' . ($current ? ' class="current" aria-current="page"' : '') . '>' . esc_html($label) . '</a>' . ($group ? '' : ' | ') . '</li>';
+        }
+        echo '</ul></nav><br class="clear" /></td></tr>';
+    }
+    public function email_group_backlink($email) {
+        if (in_array($email->id, array('yowcl_loyalty_points_reward','yowcl_loyalty_points_deduct','yowcl_loyalty_level_update'), true)) {
+            echo '<p><a href="' . esc_url(admin_url('admin.php?page=wc-settings&tab=email&email_group=loyalty')) . '">' . esc_html__('Back to Loyalty emails','loyalty-for-woocommerce') . '</a></p>';
+        }
+    }
+    public function loyalty_email_table($value = array()) {
+        $loyalty = 'loyalty' === ($value['group'] ?? 'loyalty');
+        if ($loyalty) { $GLOBALS['hide_save_button'] = true; }
+        $emails = WC()->mailer()->get_emails();
+        $labels = array('YOWCL_WC_Email_Loyalty_Points_Reward'=>__('Points earned','loyalty-for-woocommerce'),'YOWCL_WC_Email_Loyalty_Points_Deduct'=>__('Points deducted','loyalty-for-woocommerce'),'YOWCL_WC_Email_Loyalty_Level_Update'=>__('Level update','loyalty-for-woocommerce'));
+        $columns = apply_filters('woocommerce_email_setting_columns', array('status'=>'','name'=>__('Email','woocommerce'),'email_type'=>__('Content type','woocommerce'),'recipient'=>__('Recipient(s)','woocommerce'),'actions'=>''));
+        $rows = $loyalty ? array_intersect_key($emails,$labels) : array_diff_key($emails,$labels);
+        echo '<tr><td class="wc_emails_wrapper" colspan="2"><div class="loyf-email-list"><table class="widefat wc_emails ' . ($loyalty ? 'loyf-loyalty-emails' : 'loyf-general-emails') . '"><thead><tr>';
+        foreach ($columns as $key=>$heading) { echo '<th scope="col" class="wc-email-settings-table-' . esc_attr($key) . '">' . esc_html($heading) . '</th>'; }
+        echo '</tr></thead><tbody>';
+        foreach ($rows as $key=>$email) {
+            $feature = 'yowcl_loyalty_level_update' === $email->id ? 'email_level' : ('yowcl_loyalty_points_deduct' === $email->id ? 'email_deduct' : 'email_reward');
+            $held = $loyalty && (!YOWCL_Free_Migrations::ready($feature) || !YOWCL_Free_Migrations::readable($feature));
+            $enabled = !$held && $email->is_enabled();
+            $status = $held ? __('Settings preserved','loyalty-for-woocommerce') : ($email->is_manual() ? __('Manually sent','woocommerce') : ($enabled ? __('Enabled','woocommerce') : __('Disabled','woocommerce')));
+            $label = $labels[$key] ?? $email->get_title();
+            $url = admin_url('admin.php?page=wc-settings&tab=email&section=' . strtolower($key) . '&email_group=' . ($loyalty ? 'loyalty' : 'general'));
+            echo '<tr' . ($loyalty ? ' data-loyf-email="' . esc_attr(strtolower(substr($key,strlen('YOWCL_WC_Email_Loyalty_')))) . '"' : '') . ' data-loyf-status="' . esc_attr($status) . '">';
+            foreach ($columns as $column=>$heading) {
+                echo '<td class="wc-email-settings-table-' . esc_attr($column) . '" data-title="' . esc_attr('status' === $column ? __('Status','loyalty-for-woocommerce') : $heading) . '">';
+                switch ($column) {
+                    case 'status':
+                        $class = $held ? 'dashicons dashicons-warning' : ($email->is_manual() ? 'status-manual' : ($enabled ? 'status-enabled' : 'status-disabled'));
+                        echo '<span class="' . esc_attr($class) . ' tips" data-tip="' . esc_attr($status) . '" aria-label="' . esc_attr($status) . '">' . ($held ? '' : esc_html($status)) . '</span>';
+                        break;
+                    case 'name':
+                        echo '<a href="' . esc_url($url) . '"><strong>' . esc_html($label) . '</strong></a> ' . wc_help_tip($email->get_description());
+                        if ($held) { echo '<p class="description">' . esc_html(YOWCL_Free_Migrations::held_settings_message($feature)) . '</p>'; }
+                        break;
+                    case 'email_type': echo esc_html($email->get_content_type()); break;
+                    case 'recipient':
+                        echo esc_html($email->is_customer_email() ? __('Customer','woocommerce') : $email->get_recipient());
+                        if (class_exists('Automattic\\WooCommerce\\Utilities\\FeaturesUtil') && \Automattic\WooCommerce\Utilities\FeaturesUtil::feature_is_enabled('email_improvements')) {
+                            foreach (array('get_cc_recipient','get_bcc_recipient') as $method) { if (method_exists($email,$method) && ($recipient=$email->$method())) { echo '<br>' . esc_html($recipient); } }
+                        }
+                        break;
+                    case 'actions':
+                        /* translators: Name of the email notification. */
+                        echo '<a class="button alignright" aria-label="' . esc_attr(sprintf(__('Manage %s','loyalty-for-woocommerce'),$label)) . '" href="' . esc_url($url) . '">' . esc_html__('Manage','woocommerce') . '</a>';
+                        break;
+                    default: do_action('woocommerce_email_setting_column_' . $column,$email);
+                }
+                echo '</td>';
+            }
+            echo '</tr>';
+        }
+        echo '</tbody></table></div></td></tr>';
     }
     /** Preserve native option shape while bypassing pre-transaction cache images. */
     public function committed_settings($pre, $option) {

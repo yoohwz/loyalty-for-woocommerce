@@ -21,20 +21,18 @@ class YOSWC_Loyalty_Backend {
 	public function enqueue_scripts() {
 		if (is_admin()) {
 			wp_enqueue_style('loyalty-backend-css', plugin_dir_url(__FILE__) . '../../css/backend-style.css', array(), hash_file( 'sha256', plugin_dir_path(__FILE__) . '../../css/backend-style.css' ));
-            if ( 'wc-settings' === ( $_GET['page'] ?? '' ) && 'loyalty' === ( $_GET['tab'] ?? '' ) ) {
-                wp_enqueue_script( 'jquery' );
-                // Read the native selected menu color, including custom admin schemes.
-                wp_add_inline_script( 'jquery-core', <<<'JS'
+            wp_enqueue_script( 'jquery' );
+            // Read the native selected menu color, including custom admin schemes.
+            wp_add_inline_script( 'jquery-core', <<<'JS'
 jQuery(function () {
-    var workspace = document.querySelector('.loyf-settings');
+    var workspace = document.documentElement;
     var menu = document.querySelector('#adminmenu a.wp-has-current-submenu,#adminmenu li.current a.menu-top');
     if (workspace && menu) {
         workspace.style.setProperty('--loyf-admin-accent', getComputedStyle(menu).backgroundColor);
     }
 });
 JS
-                );
-            }
+            );
 		}
 	}
 

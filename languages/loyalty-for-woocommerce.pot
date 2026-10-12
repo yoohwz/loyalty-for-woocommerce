@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-12T04:50:08+00:00\n"
+"POT-Creation-Date: 2026-10-12T06:38:08+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
@@ -48,11 +48,11 @@ msgid "Member"
 msgstr ""
 
 #: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-base.php:325
-#: inc/backend/settings.php:287
-#: inc/backend/settings/extra-points.php:65
-#: inc/backend/settings/extra-points.php:75
-#: inc/backend/settings/extra-points.php:85
-#: inc/backend/settings/extra-points.php:113
+#: inc/backend/settings.php:299
+#: inc/backend/settings/extra-points.php:64
+#: inc/backend/settings/extra-points.php:74
+#: inc/backend/settings/extra-points.php:84
+#: inc/backend/settings/extra-points.php:112
 #: inc/backend/users/users-points.php:20
 #: inc/cores/helper/free-customer-components.php:55
 #: inc/frontend/loyalty-info-bubble.php:472
@@ -74,6 +74,7 @@ msgstr ""
 
 #: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-deduct.php:9
 #: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-deduct.php:30
+#: inc/backend/actions/emails/notifications-email.php:76
 msgid "Points deducted"
 msgstr ""
 
@@ -88,6 +89,7 @@ msgstr ""
 #. translators: Store currency.
 #: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-reward.php:9
 #: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-reward.php:30
+#: inc/backend/actions/emails/notifications-email.php:76
 #: inc/cores/helper/free-onboarding.php:319
 msgid "Points earned"
 msgstr ""
@@ -100,8 +102,52 @@ msgstr ""
 msgid "You earned {earned_points} points"
 msgstr ""
 
-#: inc/backend/actions/emails/notifications-email.php:17
+#: inc/backend/actions/emails/notifications-email.php:21
+#: inc/backend/actions/emails/notifications-email.php:86
 msgid "Settings preserved"
+msgstr ""
+
+#: inc/backend/actions/emails/notifications-email.php:42
+#: inc/cores/helper/free-reader-admin.php:15
+msgid "Loyalty emails"
+msgstr ""
+
+#: inc/backend/actions/emails/notifications-email.php:42
+msgid "Manage the three Free loyalty email notifications."
+msgstr ""
+
+#: inc/backend/actions/emails/notifications-email.php:60
+msgid "Email groups"
+msgstr ""
+
+#: inc/backend/actions/emails/notifications-email.php:61
+#: inc/backend/settings.php:61
+msgid "General"
+msgstr ""
+
+#: inc/backend/actions/emails/notifications-email.php:61
+#: inc/backend/settings.php:26
+#: inc/cores/helper/free-reader-admin.php:11
+#: inc/frontend/loyalty-info-bubble.php:59
+msgid "Loyalty"
+msgstr ""
+
+#: inc/backend/actions/emails/notifications-email.php:69
+msgid "Back to Loyalty emails"
+msgstr ""
+
+#: inc/backend/actions/emails/notifications-email.php:76
+msgid "Level update"
+msgstr ""
+
+#: inc/backend/actions/emails/notifications-email.php:91
+msgid "Status"
+msgstr ""
+
+#. translators: Name of the email notification.
+#: inc/backend/actions/emails/notifications-email.php:110
+#, php-format
+msgid "Manage %s"
 msgstr ""
 
 #. translators: %s: order number
@@ -123,12 +169,6 @@ msgstr ""
 msgid "Your cart or redemption rules changed. Please reapply points."
 msgstr ""
 
-#: inc/backend/settings.php:26
-#: inc/cores/helper/free-reader-admin.php:11
-#: inc/frontend/loyalty-info-bubble.php:59
-msgid "Loyalty"
-msgstr ""
-
 #: inc/backend/settings.php:34
 #: inc/cores/helper/free-migrations.php:972
 #: inc/cores/helper/free-onboarding.php:294
@@ -140,17 +180,8 @@ msgstr ""
 msgid "Configure your Free loyalty program."
 msgstr ""
 
-#: inc/backend/settings.php:34
-#: inc/cores/helper/free-reader-admin.php:12
-msgid "Overview"
-msgstr ""
-
 #: inc/backend/settings.php:35
 msgid "Loyalty settings sections"
-msgstr ""
-
-#: inc/backend/settings.php:61
-msgid "General"
 msgstr ""
 
 #: inc/backend/settings.php:62
@@ -170,280 +201,284 @@ msgid "Notification"
 msgstr ""
 
 #: inc/backend/settings.php:66
-#: inc/cores/helper/free-reader-admin.php:32
+#: inc/cores/helper/free-reader-admin.php:39
 msgid "Tools"
 msgstr ""
 
 #: inc/backend/settings.php:67
-#: inc/backend/settings.php:128
-#: inc/backend/settings.php:204
+#: inc/backend/settings.php:140
+#: inc/backend/settings.php:216
 msgid "Premium"
 msgstr ""
 
-#: inc/backend/settings.php:120
+#: inc/backend/settings.php:95
+msgid "Explore Premium features"
+msgstr ""
+
+#: inc/backend/settings.php:132
 msgid "Referral coupons and referee rewards"
 msgstr ""
 
-#: inc/backend/settings.php:121
+#: inc/backend/settings.php:133
 msgid "Point expiration and advanced redemption rules"
 msgstr ""
 
-#: inc/backend/settings.php:122
-#: inc/backend/settings/extra-points.php:164
+#: inc/backend/settings.php:134
+#: inc/backend/settings/extra-points.php:163
 msgid "Birthday, account anniversary, and profile completion rewards"
 msgstr ""
 
-#: inc/backend/settings.php:123
-#: inc/backend/settings/extra-points.php:165
+#: inc/backend/settings.php:135
+#: inc/backend/settings/extra-points.php:164
 msgid "Purchase milestone and lifetime spend rewards"
 msgstr ""
 
-#: inc/backend/settings.php:124
+#: inc/backend/settings.php:136
 msgid "Advanced earning rules by product, category, and payment method"
 msgstr ""
 
-#: inc/backend/settings.php:125
+#: inc/backend/settings.php:137
 msgid "Level discounts and scheduled level resets"
 msgstr ""
 
-#: inc/backend/settings.php:131
+#: inc/backend/settings.php:143
 msgid "Upgrade when your loyalty program needs more automation"
 msgstr ""
 
-#: inc/backend/settings.php:133
+#: inc/backend/settings.php:145
 msgid "The free plugin includes the core loyalty point workflow. Premium adds referral campaigns, advanced earning rules, and automated rewards for stores that need deeper retention tools."
 msgstr ""
 
-#: inc/backend/settings.php:142
+#: inc/backend/settings.php:154
 msgid "Premium add-on detected."
 msgstr ""
 
-#: inc/backend/settings.php:145
-#: inc/backend/settings.php:221
-#: inc/backend/settings/extra-points.php:170
+#: inc/backend/settings.php:157
+#: inc/backend/settings.php:233
+#: inc/backend/settings/extra-points.php:169
 #: inc/backend/users/user-profile-points.php:153
 #: inc/backend/users/users-points.php:136
 msgid "View Premium features"
 msgstr ""
 
-#: inc/backend/settings.php:148
+#: inc/backend/settings.php:160
 msgid "Read documentation"
 msgstr ""
 
-#: inc/backend/settings.php:198
+#: inc/backend/settings.php:210
 msgid "Premium features"
 msgstr ""
 
-#: inc/backend/settings.php:242
+#: inc/backend/settings.php:254
 #: inc/backend/settings/general-add-remove-user-role.php:72
 msgid "Loyalty levels"
 msgstr ""
 
-#: inc/backend/settings.php:244
+#: inc/backend/settings.php:256
 msgid "Add new / Remove"
 msgstr ""
 
-#: inc/backend/settings.php:248
+#: inc/backend/settings.php:260
 msgid "Set loyalty levels"
 msgstr ""
 
-#: inc/backend/settings.php:250
+#: inc/backend/settings.php:262
 msgid "Select user roles to set those are loyalty levels"
 msgstr ""
 
-#: inc/backend/settings.php:254
+#: inc/backend/settings.php:266
 msgid "Select user roles"
 msgstr ""
 
-#: inc/backend/settings.php:260
+#: inc/backend/settings.php:272
 msgid "Level rules"
 msgstr ""
 
-#: inc/backend/settings.php:266
+#: inc/backend/settings.php:278
 msgid "Advanced loyalty level controls"
 msgstr ""
 
-#: inc/backend/settings.php:267
+#: inc/backend/settings.php:279
 msgid "Premium adds scheduled level resets and automatic discounts based on loyalty levels."
 msgstr ""
 
-#: inc/backend/settings.php:269
+#: inc/backend/settings.php:281
 msgid "Reset levels monthly, quarterly, or yearly"
 msgstr ""
 
-#: inc/backend/settings.php:270
+#: inc/backend/settings.php:282
 msgid "Apply percentage discounts by loyalty level"
 msgstr ""
 
-#: inc/backend/settings.php:271
+#: inc/backend/settings.php:283
 msgid "Exclude coupons or taxes from level discounts"
 msgstr ""
 
-#: inc/backend/settings.php:293
+#: inc/backend/settings.php:305
 msgid "Earning status"
 msgstr ""
 
-#: inc/backend/settings.php:295
+#: inc/backend/settings.php:307
 msgid "Select the order status so that the customer can be earned their points."
 msgstr ""
 
-#: inc/backend/settings.php:299
-#: inc/backend/settings.php:349
+#: inc/backend/settings.php:311
+#: inc/backend/settings.php:361
 msgid "Select order status"
 msgstr ""
 
-#: inc/backend/settings.php:305
+#: inc/backend/settings.php:317
 msgid "Earning rules"
 msgstr ""
 
-#: inc/backend/settings.php:311
+#: inc/backend/settings.php:323
 msgid "Advanced earning and display controls"
 msgstr ""
 
-#: inc/backend/settings.php:312
+#: inc/backend/settings.php:324
 msgid "Premium adds more control over how points are named, displayed, and earned."
 msgstr ""
 
-#: inc/backend/settings.php:314
+#: inc/backend/settings.php:326
 msgid "Customize the point label shown to customers"
 msgstr ""
 
-#: inc/backend/settings.php:315
+#: inc/backend/settings.php:327
 msgid "Create product and category-specific earning rules"
 msgstr ""
 
-#: inc/backend/settings.php:316
+#: inc/backend/settings.php:328
 msgid "Reward selected payment methods and high-value orders"
 msgstr ""
 
-#: inc/backend/settings.php:320
+#: inc/backend/settings.php:332
 msgid "Earning options"
 msgstr ""
 
-#: inc/backend/settings.php:321
+#: inc/backend/settings.php:333
 msgid "Check the option that you want to calculate include/exclude in order value for the earning point."
 msgstr ""
 
-#: inc/backend/settings.php:326
+#: inc/backend/settings.php:338
 msgid "Price after using coupons"
 msgstr ""
 
-#: inc/backend/settings.php:327
+#: inc/backend/settings.php:339
 msgid "Excluding taxes"
 msgstr ""
 
-#: inc/backend/settings.php:331
+#: inc/backend/settings.php:343
 msgid "Point rounding"
 msgstr ""
 
-#: inc/backend/settings.php:335
+#: inc/backend/settings.php:347
 #: inc/cores/helper/free-onboarding.php:320
 msgid "Round up"
 msgstr ""
 
-#: inc/backend/settings.php:336
+#: inc/backend/settings.php:348
 #: inc/cores/helper/free-onboarding.php:320
 msgid "Round down"
 msgstr ""
 
-#: inc/backend/settings.php:340
+#: inc/backend/settings.php:352
 msgid "Choose how to round the earning points amount."
 msgstr ""
 
-#: inc/backend/settings.php:343
+#: inc/backend/settings.php:355
 msgid "Deduction status"
 msgstr ""
 
-#: inc/backend/settings.php:345
+#: inc/backend/settings.php:357
 msgid "Select the order status so that the customer can be deducted their points."
 msgstr ""
 
-#: inc/backend/settings.php:356
+#: inc/backend/settings.php:368
 msgid "Point expiration controls"
 msgstr ""
 
-#: inc/backend/settings.php:357
+#: inc/backend/settings.php:369
 msgid "Premium helps keep balances fresh with configurable point expiration rules."
 msgstr ""
 
-#: inc/backend/settings.php:359
+#: inc/backend/settings.php:371
 msgid "Expire points after a fixed lifetime"
 msgstr ""
 
-#: inc/backend/settings.php:360
+#: inc/backend/settings.php:372
 msgid "Expire points after customer inactivity"
 msgstr ""
 
-#: inc/backend/settings.php:361
+#: inc/backend/settings.php:373
 msgid "Set expiration duration in days, weeks, months, or years"
 msgstr ""
 
-#: inc/backend/settings.php:365
+#: inc/backend/settings.php:377
 msgid "Using points"
 msgstr ""
 
-#: inc/backend/settings.php:367
+#: inc/backend/settings.php:379
 msgid "Allow users to using points"
 msgstr ""
 
-#: inc/backend/settings.php:373
+#: inc/backend/settings.php:385
 msgid "Using rules"
 msgstr ""
 
-#: inc/backend/settings.php:379
+#: inc/backend/settings.php:391
 msgid "Advanced redemption controls"
 msgstr ""
 
-#: inc/backend/settings.php:380
+#: inc/backend/settings.php:392
 msgid "Premium adds more ways to control how customers redeem points."
 msgstr ""
 
-#: inc/backend/settings.php:382
+#: inc/backend/settings.php:394
 msgid "Set minimum and maximum points per redemption"
 msgstr ""
 
-#: inc/backend/settings.php:383
+#: inc/backend/settings.php:395
 msgid "Require a minimum cart value before points can be used"
 msgstr ""
 
-#: inc/backend/settings.php:384
+#: inc/backend/settings.php:396
 msgid "Redeem points for selected products, coupon codes, or free shipping"
 msgstr ""
 
-#: inc/backend/settings.php:385
+#: inc/backend/settings.php:397
 msgid "Control whether point discounts combine with coupons"
 msgstr ""
 
-#: inc/backend/settings.php:386
+#: inc/backend/settings.php:398
 msgid "Set expiration rules for redeemed rewards"
 msgstr ""
 
-#: inc/backend/settings.php:409
+#: inc/backend/settings.php:421
 msgid "Settings were not saved because the confirmation expired. Reload this page and try again."
 msgstr ""
 
-#: inc/backend/settings.php:460
-#: inc/backend/settings.php:464
+#: inc/backend/settings.php:472
+#: inc/backend/settings.php:476
 msgid "General settings"
 msgstr ""
 
-#: inc/backend/settings.php:467
+#: inc/backend/settings.php:479
 msgid "General earning and level settings"
 msgstr ""
 
-#: inc/backend/settings.php:478
+#: inc/backend/settings.php:490
 msgid "Redemption"
 msgstr ""
 
-#: inc/backend/settings.php:481
+#: inc/backend/settings.php:493
 msgid "Redemption is not active while its settings are being updated. General earning and level settings were saved."
 msgstr ""
 
-#: inc/backend/settings.php:484
+#: inc/backend/settings.php:496
 msgid "The save could not be completed. Reload to review current settings."
 msgstr ""
 
-#: inc/backend/settings.php:485
+#: inc/backend/settings.php:497
 #, php-format
 msgid "Settings saved before this error: %s."
 msgstr ""
@@ -758,7 +793,7 @@ msgid "Enable to display message in Checkout page."
 msgstr ""
 
 #: inc/backend/settings/customization.php:626
-#: inc/backend/settings/extra-points.php:183
+#: inc/backend/settings/extra-points.php:182
 #: inc/backend/settings/general-add-remove-user-role.php:19
 #: inc/backend/settings/general-add-remove-user-role.php:26
 #: inc/backend/settings/tools.php:133
@@ -776,92 +811,88 @@ msgid "Rewards being updated are read-only. You can save the other rewards."
 msgstr ""
 
 #: inc/backend/settings/extra-points.php:53
-#: inc/backend/settings/extra-points.php:227
+#: inc/backend/settings/extra-points.php:226
 msgid "First purchase"
 msgstr ""
 
 #: inc/backend/settings/extra-points.php:55
-msgid "Enable First Purchase bonus"
-msgstr ""
-
-#: inc/backend/settings/extra-points.php:56
 #: inc/cores/helper/free-onboarding.php:328
 msgid "First Purchase points"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:57
-msgid "A fixed bonus for the first qualifying purchase. Only orders created after activation qualify; existing pending orders are excluded."
+#: inc/backend/settings/extra-points.php:56
+msgid "A fixed bonus for the first qualifying purchase. Set to 0 to disable. Only orders created after activation qualify; existing pending orders are excluded."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:62
-#: inc/backend/settings/extra-points.php:216
+#: inc/backend/settings/extra-points.php:61
+#: inc/backend/settings/extra-points.php:215
 msgid "Sign-up"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:67
+#: inc/backend/settings/extra-points.php:66
 msgid "Points awarded to customers when they sign up."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:72
-#: inc/backend/settings/extra-points.php:216
+#: inc/backend/settings/extra-points.php:71
+#: inc/backend/settings/extra-points.php:215
 msgid "Log-in"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:77
+#: inc/backend/settings/extra-points.php:76
 msgid "Points awarded to customers when they log-in daily."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:82
-#: inc/backend/settings/extra-points.php:216
+#: inc/backend/settings/extra-points.php:81
+#: inc/backend/settings/extra-points.php:215
 #: inc/cores/helper/free-customer-components.php:93
 #: inc/frontend/loyalty-info-bubble.php:274
 msgid "Product review"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:87
+#: inc/backend/settings/extra-points.php:86
 msgid "Points awarded to customers for leaving a product review."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:92
-#: inc/backend/settings/extra-points.php:225
+#: inc/backend/settings/extra-points.php:91
+#: inc/backend/settings/extra-points.php:224
 msgid "Level up"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:120
+#: inc/backend/settings/extra-points.php:119
 msgid "Points awarded to customers for reaching a level role."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:161
+#: inc/backend/settings/extra-points.php:160
 msgid "Automate more customer reward actions in Premium"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:162
+#: inc/backend/settings/extra-points.php:161
 msgid "These core rules cover sign-up, daily login, product review, level-up, and First Purchase rewards. Premium adds lifecycle and purchase-based automations for deeper retention workflows."
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:166
+#: inc/backend/settings/extra-points.php:165
 msgid "Inactivity win-back campaigns and achievement points"
 msgstr ""
 
-#: inc/backend/settings/extra-points.php:196
-#: inc/backend/settings/extra-points.php:206
+#: inc/backend/settings/extra-points.php:195
+#: inc/backend/settings/extra-points.php:205
 #: inc/cores/helper/free-cart.php:42
 msgid "A valid whole points amount is required."
 msgstr ""
 
 #. translators: Names of settings whose saves completed.
-#: inc/backend/settings/extra-points.php:232
+#: inc/backend/settings/extra-points.php:231
 #, php-format
 msgid "Rewards being updated were skipped. Saved settings: %s."
 msgstr ""
 
 #. translators: Names of settings whose saves completed.
-#: inc/backend/settings/extra-points.php:232
+#: inc/backend/settings/extra-points.php:231
 msgid "None submitted"
 msgstr ""
 
 #. translators: Comma-separated names of settings whose saves completed.
-#: inc/backend/settings/extra-points.php:238
+#: inc/backend/settings/extra-points.php:237
 #, php-format
 msgid "Settings saved before this error: %s. Reload this page to review them."
 msgstr ""
@@ -963,7 +994,12 @@ msgstr ""
 msgid "Manage loyalty email enablement and customization in WooCommerce email settings."
 msgstr ""
 
+#: inc/backend/settings/notification.php:8
+msgid "Manage loyalty emails"
+msgstr ""
+
 #: inc/backend/settings/referrals.php:7
+#: inc/backend/settings/referrals.php:11
 msgid "Referral Lite"
 msgstr ""
 
@@ -971,11 +1007,11 @@ msgstr ""
 msgid "Earn fixed points when a registered customer follows your link and completes their first qualifying order. Cancelled, failed or refunded orders reverse the referral reward."
 msgstr ""
 
-#: inc/backend/settings/referrals.php:11
+#: inc/backend/settings/referrals.php:12
 msgid "Enable Referral Lite"
 msgstr ""
 
-#: inc/backend/settings/referrals.php:12
+#: inc/backend/settings/referrals.php:13
 #: inc/cores/helper/free-onboarding.php:328
 msgid "Referrer points"
 msgstr ""
@@ -1343,7 +1379,7 @@ msgstr ""
 
 #: inc/cores/helper/free-core.php:97
 #: inc/cores/helper/free-migrations.php:562
-#: inc/cores/helper/free-reader-admin.php:25
+#: inc/cores/helper/free-reader-admin.php:32
 msgid "Unavailable"
 msgstr ""
 
@@ -1701,134 +1737,143 @@ msgstr ""
 
 #: inc/cores/helper/free-reader-admin.php:11
 #: inc/cores/helper/free-reader-admin.php:12
-#: inc/cores/helper/free-reader-admin.php:32
+#: inc/cores/helper/free-reader-admin.php:39
 msgid "Loyalty overview"
 msgstr ""
 
+#: inc/cores/helper/free-reader-admin.php:12
+msgid "Overview"
+msgstr ""
+
 #: inc/cores/helper/free-reader-admin.php:13
-#: inc/cores/helper/free-reader-admin.php:32
+#: inc/cores/helper/free-reader-admin.php:39
 msgid "Settings"
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:17
+#: inc/cores/helper/free-reader-admin.php:15
+msgid "Emails"
+msgstr ""
+
+#: inc/cores/helper/free-reader-admin.php:19
+#: inc/cores/helper/free-reader-admin.php:24
 msgid "Loyalty settings are unavailable."
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:23
+#: inc/cores/helper/free-reader-admin.php:30
 msgid "Loyalty overview is unavailable."
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:32
+#: inc/cores/helper/free-reader-admin.php:39
 msgid "Free loyalty program · Read-only overview"
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:33
+#: inc/cores/helper/free-reader-admin.php:40
 msgid "Flow period"
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:33
+#: inc/cores/helper/free-reader-admin.php:40
 msgid "Lifetime"
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:33
+#: inc/cores/helper/free-reader-admin.php:40
 msgid "Recent 30 days"
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:33
+#: inc/cores/helper/free-reader-admin.php:40
 msgid "View"
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:35
+#: inc/cores/helper/free-reader-admin.php:42
 msgid "Current eligible loyalty members"
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:35
+#: inc/cores/helper/free-reader-admin.php:42
 msgid "Current users with a saved Loyalty role."
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:36
+#: inc/cores/helper/free-reader-admin.php:43
 msgid "Known gross points issued"
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:36
+#: inc/cores/helper/free-reader-admin.php:43
 msgid "Proven awards in the selected flow period."
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:37
+#: inc/cores/helper/free-reader-admin.php:44
 msgid "Known gross points redeemed"
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:37
+#: inc/cores/helper/free-reader-admin.php:44
 msgid "Gross funded checkout debit in the selected flow period."
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:38
+#: inc/cores/helper/free-reader-admin.php:45
 msgid "Current available points outstanding"
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:38
+#: inc/cores/helper/free-reader-admin.php:45
 msgid "Stored balances now, including held balances."
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:39
+#: inc/cores/helper/free-reader-admin.php:46
 msgid "Distinct proven funded orders"
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:39
+#: inc/cores/helper/free-reader-admin.php:46
 msgid "Orders with proven funding in the selected flow period."
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:45
+#: inc/cores/helper/free-reader-admin.php:52
 msgid "Data coverage"
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:46
+#: inc/cores/helper/free-reader-admin.php:53
 msgid "Members and stock cover current users admitted by saved Loyalty roles. Stock is stored balance as of now, including held balances; it is not historical spendable value."
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:46
+#: inc/cores/helper/free-reader-admin.php:53
 msgid "Flows cover proven canonical events across users. Awards exclude imports, returns and reversals. Redeemed is gross funded checkout debit; returns do not reduce it. No redemption share is shown because a matching qualifying order denominator is not established."
 msgstr ""
 
 #. translators: Number of accounts with held balances.
-#: inc/cores/helper/free-reader-admin.php:48
+#: inc/cores/helper/free-reader-admin.php:55
 #, php-format
 msgid "Accounts with held balances: %d."
 msgstr ""
 
 #. translators: Number of unproven historical rows.
-#: inc/cores/helper/free-reader-admin.php:51
+#: inc/cores/helper/free-reader-admin.php:58
 #, php-format
 msgid "Excluded unproven legacy rows: %d."
 msgstr ""
 
 #. translators: Number of debits without checkout funding proof.
-#: inc/cores/helper/free-reader-admin.php:53
+#: inc/cores/helper/free-reader-admin.php:60
 #, php-format
 msgid "Excluded debits without native checkout funding proof: %d."
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:56
+#: inc/cores/helper/free-reader-admin.php:63
 msgid "Unavailable means failed or incomplete evidence, ambiguous metadata, unsupported precision, missing time proof, or the safe read limit. No value is repaired on this page."
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:60
+#: inc/cores/helper/free-reader-admin.php:67
 msgid "Export customer loyalty state"
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:60
+#: inc/cores/helper/free-reader-admin.php:67
 msgid "Current eligible customers only; user ID, email, exact stored balances and Loyalty level. Maximum 10,000 customers. This CSV is not an import template. A final complete record is required; an error record or missing footer means incomplete. Exact numbers and unsafe spreadsheet text are exported as tab-prefixed text."
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:63
+#: inc/cores/helper/free-reader-admin.php:70
 msgid "Download customer CSV"
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:108
+#: inc/cores/helper/free-reader-admin.php:115
 msgid "Export access denied."
 msgstr ""
 
-#: inc/cores/helper/free-reader-admin.php:115
+#: inc/cores/helper/free-reader-admin.php:122
 msgid "Export unavailable. No complete customer export was produced."
 msgstr ""
 

@@ -31,7 +31,7 @@ class YOSWC_Loyalty_Settings {
 		$current_section = $this->get_query_value( 'section', 'general' );
 		$current_subsection = $this->get_query_value( 'subsection' );
 
-        echo '<div class="loyf-settings"><div class="loyf-admin-header"><div><h2>' . esc_html__( 'Loyalty settings', 'loyalty-for-woocommerce' ) . '</h2><p>' . esc_html__( 'Configure your Free loyalty program.', 'loyalty-for-woocommerce' ) . '</p></div><a class="button" href="' . esc_url( admin_url( 'admin.php?page=loyf-overview' ) ) . '">' . esc_html__( 'Overview', 'loyalty-for-woocommerce' ) . '</a></div>';
+        echo '<div class="loyf-settings"><div class="loyf-admin-header"><div><h2>' . esc_html__( 'Loyalty settings', 'loyalty-for-woocommerce' ) . '</h2><p>' . esc_html__( 'Configure your Free loyalty program.', 'loyalty-for-woocommerce' ) . '</p></div></div>';
         echo '<nav aria-label="' . esc_attr__( 'Loyalty settings sections', 'loyalty-for-woocommerce' ) . '"><ul class="subsubsub loyf-settings-tabs">';
         $this->output_sub_sub_tabs($current_section, $current_subsection);
 		echo '</ul></nav><br class="clear" />';
@@ -82,8 +82,20 @@ class YOSWC_Loyalty_Settings {
 	}
 
 	public function output_loyalty_level_point_settings() {
-		woocommerce_admin_fields($this->get_loyalty_levels_settings());
-		woocommerce_admin_fields($this->get_loyalty_points_settings());
+		$previews = array();
+		foreach ( array( $this->get_loyalty_levels_settings(), $this->get_loyalty_points_settings() ) as $settings ) {
+			$fields = array();
+			foreach ( $settings as $field ) {
+				if ( 'yoswc_premium_preview' === ( $field['type'] ?? '' ) ) { $previews[] = $field; }
+				else { $fields[] = $field; }
+			}
+			woocommerce_admin_fields( $fields );
+		}
+		if ( $previews ) {
+			echo '<details class="loyf-premium-previews"><summary>' . esc_html__( 'Explore Premium features', 'loyalty-for-woocommerce' ) . '</summary><table class="form-table"><tbody>';
+			foreach ( $previews as $preview ) { $this->render_premium_preview_card( $preview ); }
+			echo '</tbody></table></details>';
+		}
 	}
 
 	public function output_extra_points_settings() {

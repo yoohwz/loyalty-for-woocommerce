@@ -223,28 +223,28 @@ class YOSWC_Loyalty_Settings_Customization {
 					</th>
 					<td class="loyalty_customization_membercard">
 						<!-- Text Color -->
-						<?php esc_html_e('Text:', 'loyalty-for-woocommerce'); ?> 
+						<span class="loyf-color-field"><label for="loyalty_membercard_text_color"><?php esc_html_e('Text:', 'loyalty-for-woocommerce'); ?></label>
 						<input type="color" name="loyalty_membercard_text_color" id="loyalty_membercard_text_color"
 							value="<?php echo esc_attr($membercard['membercard_text_color'] ?? '#000000'); ?>" style="width: 30.2px; height: 30.2px;" />
 						<input type="text" name="loyalty_membercard_text_color_hex" id="loyalty_membercard_text_color_hex"
 							style="width: 80px; margin-right: 15px;" value="<?php echo esc_attr($membercard['membercard_text_color'] ?? '' ); ?>" 
-							placeholder="#000000" maxlength="7" />
+							placeholder="#000000" maxlength="7" /></span>
 
 						<!-- Background Color -->
-						<?php esc_html_e('Background:', 'loyalty-for-woocommerce'); ?> 
+						<span class="loyf-color-field"><label for="loyalty_membercard_background_color"><?php esc_html_e('Background:', 'loyalty-for-woocommerce'); ?></label>
 						<input type="color" name="loyalty_membercard_background_color" id="loyalty_membercard_background_color"
 							value="<?php echo esc_attr($membercard['membercard_background_color'] ?? '#f9f9f9'); ?>" style="width: 30.2px; height: 30.2px;" />
 						<input type="text" name="loyalty_membercard_background_color_hex" id="loyalty_membercard_background_color_hex"
 							style="width: 80px; margin-right: 15px;" value="<?php echo esc_attr($membercard['membercard_background_color'] ?? '' ); ?>" 
-							placeholder="#f9f9f9" maxlength="7" />
+							placeholder="#f9f9f9" maxlength="7" /></span>
 
 						<!-- Border Color -->
-						<?php esc_html_e('Border:', 'loyalty-for-woocommerce'); ?> 
+						<span class="loyf-color-field"><label for="loyalty_membercard_border_color"><?php esc_html_e('Border:', 'loyalty-for-woocommerce'); ?></label>
 						<input type="color" name="loyalty_membercard_border_color" id="loyalty_membercard_border_color"
 							value="<?php echo esc_attr($membercard['membercard_border_color'] ?? '#cccccc'); ?>" style="width: 30.2px; height: 30.2px;" />
 						<input type="text" name="loyalty_membercard_border_color_hex" id="loyalty_membercard_border_color_hex"
 							style="width: 80px;" value="<?php echo esc_attr($membercard['membercard_border_color'] ?? '' ); ?>" 
-							placeholder="#cccccc" maxlength="7" />
+							placeholder="#cccccc" maxlength="7" /></span>
 					</td>
 				</tr>
 				<tr valign="top">
@@ -342,28 +342,28 @@ class YOSWC_Loyalty_Settings_Customization {
 									</th>
 									<td>
 										<!-- Text Color -->
-										<?php esc_html_e('Text:', 'loyalty-for-woocommerce'); ?> 
+										<span class="loyf-color-field"><label for="loyalty_message_shop_page_text_color"><?php esc_html_e('Text:', 'loyalty-for-woocommerce'); ?></label>
 										<input type="color" name="loyalty_message_shop_page_text_color" id="loyalty_message_shop_page_text_color"
 											value="<?php echo esc_attr($message_shop_page['shop_page_text_color'] ?? '#ffffff'); ?>" style="width: 30.2px; height: 30.2px;" />
 										<input type="text" name="loyalty_message_shop_page_text_color_hex" id="loyalty_message_shop_page_text_color_hex"
 											style="width: 80px; margin-right: 15px;" value="<?php echo esc_attr($message_shop_page['shop_page_text_color']); ?>" 
-											placeholder="#ffffff" maxlength="7" />
+											placeholder="#ffffff" maxlength="7" /></span>
 
 										<!-- Background Color -->
-										<?php esc_html_e('Background:', 'loyalty-for-woocommerce'); ?> 
+										<span class="loyf-color-field"><label for="loyalty_message_shop_page_background_color"><?php esc_html_e('Background:', 'loyalty-for-woocommerce'); ?></label>
 										<input type="color" name="loyalty_message_shop_page_background_color" id="loyalty_message_shop_page_background_color"
 											value="<?php echo esc_attr($message_shop_page['shop_page_background_color'] ?? '#ffffff'); ?>" style="width: 30.2px; height: 30.2px;" />
 										<input type="text" name="loyalty_message_shop_page_background_color_hex" id="loyalty_message_shop_page_background_color_hex"
 											style="width: 80px; margin-right: 15px;" value="<?php echo esc_attr($message_shop_page['shop_page_background_color']); ?>" 
-											placeholder="#ffffff" maxlength="7" />
+											placeholder="#ffffff" maxlength="7" /></span>
 
 										<!-- Border Color -->
-										<?php esc_html_e('Border:', 'loyalty-for-woocommerce'); ?> 
+										<span class="loyf-color-field"><label for="loyalty_message_shop_page_border_color"><?php esc_html_e('Border:', 'loyalty-for-woocommerce'); ?></label>
 										<input type="color" name="loyalty_message_shop_page_border_color" id="loyalty_message_shop_page_border_color"
 											value="<?php echo esc_attr($message_shop_page['shop_page_border_color'] ?? '#ffffff'); ?>" style="width: 30.2px; height: 30.2px;" />
 										<input type="text" name="loyalty_message_shop_page_border_color_hex" id="loyalty_message_shop_page_border_color_hex"
 											style="width: 80px;" value="<?php echo esc_attr($message_shop_page['shop_page_border_color']); ?>" 
-											placeholder="#ffffff" maxlength="7" />
+											placeholder="#ffffff" maxlength="7" /></span>
 									</td>
 								</tr>
 								<tr valign="top" id="loyalty_message_shop_page_guest_row" style="<?php echo ($message_shop_page['shop_page']) ? '' : 'display: none;'; ?>">
@@ -439,28 +439,28 @@ class YOSWC_Loyalty_Settings_Customization {
 									</th>
 									<td>
 										<!-- Text Color -->
-										<?php esc_html_e('Text:', 'loyalty-for-woocommerce'); ?> 
+										<span class="loyf-color-field"><label for="loyalty_message_product_page_text_color"><?php esc_html_e('Text:', 'loyalty-for-woocommerce'); ?></label>
 										<input type="color" name="loyalty_message_product_page_text_color" id="loyalty_message_product_page_text_color"
 											value="<?php echo esc_attr($message_product_page['product_page_text_color'] ?? '#ffffff'); ?>" style="width: 30.2px; height: 30.2px;" />
 										<input type="text" name="loyalty_message_product_page_color_hex" id="loyalty_message_product_page_text_color_hex"
 											style="width: 80px; margin-right: 15px;" value="<?php echo esc_attr($message_product_page['product_page_text_color']); ?>" 
-											placeholder="#ffffff" maxlength="7" />
+											placeholder="#ffffff" maxlength="7" /></span>
 
 										<!-- Background Color -->
-										<?php esc_html_e('Background:', 'loyalty-for-woocommerce'); ?> 
+										<span class="loyf-color-field"><label for="loyalty_message_product_page_background_color"><?php esc_html_e('Background:', 'loyalty-for-woocommerce'); ?></label>
 										<input type="color" name="loyalty_message_product_page_background_color" id="loyalty_message_product_page_background_color"
 											value="<?php echo esc_attr($message_product_page['product_page_background_color'] ?? '#ffffff'); ?>" style="width: 30.2px; height: 30.2px;" />
 										<input type="text" name="loyalty_message_product_page_background_color_hex" id="loyalty_message_product_page_background_color_hex"
 											style="width: 80px; margin-right: 15px;" value="<?php echo esc_attr($message_product_page['product_page_background_color']); ?>" 
-											placeholder="#ffffff" maxlength="7" />
+											placeholder="#ffffff" maxlength="7" /></span>
 
 										<!-- Border Color -->
-										<?php esc_html_e('Border:', 'loyalty-for-woocommerce'); ?> 
+										<span class="loyf-color-field"><label for="loyalty_message_product_page_border_color"><?php esc_html_e('Border:', 'loyalty-for-woocommerce'); ?></label>
 										<input type="color" name="loyalty_message_product_page_border_color" id="loyalty_message_product_page_border_color"
 											value="<?php echo esc_attr($message_product_page['product_page_border_color'] ?? '#ffffff'); ?>" style="width: 30.2px; height: 30.2px;" />
 										<input type="text" name="loyalty_message_product_page_border_color_hex" id="loyalty_message_product_page_border_color_hex"
 											style="width: 80px;" value="<?php echo esc_attr($message_product_page['product_page_border_color']); ?>" 
-											placeholder="#ffffff" maxlength="7" />
+											placeholder="#ffffff" maxlength="7" /></span>
 									</td>
 								</tr>
 								<tr valign="top" id="loyalty_message_product_page_guest_row" style="<?php echo ($message_product_page['product_page']) ? '' : 'display: none;'; ?>">

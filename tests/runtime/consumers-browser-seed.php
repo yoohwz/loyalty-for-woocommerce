@@ -1,6 +1,6 @@
 <?php
 if(!defined('LOYF_RUNTIME_DISPOSABLE')){throw new RuntimeException('Disposable required');}
-wp_set_current_user(1);update_option('woocommerce_coming_soon','no');
+wp_set_current_user(1);update_user_meta(1,'admin_color','coffee');update_option('woocommerce_coming_soon','no');
 // This reader/editor fixture represents an already configured Woo store.
 update_option('woocommerce_onboarding_profile',array('completed'=>true));delete_transient('_wc_activation_redirect');
 update_option('loyalty_customization_loyalty_bubble',array('enabled'=>false));
