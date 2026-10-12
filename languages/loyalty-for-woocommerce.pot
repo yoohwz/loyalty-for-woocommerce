@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-12T10:27:29+00:00\n"
+"POT-Creation-Date: 2026-10-12T11:04:11+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
@@ -74,7 +74,7 @@ msgstr ""
 
 #: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-deduct.php:9
 #: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-deduct.php:30
-#: inc/backend/actions/emails/notifications-email.php:98
+#: inc/backend/actions/emails/notifications-email.php:97
 msgid "Points deducted"
 msgstr ""
 
@@ -89,7 +89,7 @@ msgstr ""
 #. translators: Store currency.
 #: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-reward.php:9
 #: inc/backend/actions/emails/class-yowcl-wc-email-loyalty-points-reward.php:30
-#: inc/backend/actions/emails/notifications-email.php:98
+#: inc/backend/actions/emails/notifications-email.php:97
 #: inc/cores/helper/free-onboarding.php:319
 msgid "Points earned"
 msgstr ""
@@ -103,7 +103,7 @@ msgid "You earned {earned_points} points"
 msgstr ""
 
 #: inc/backend/actions/emails/notifications-email.php:22
-#: inc/backend/actions/emails/notifications-email.php:108
+#: inc/backend/actions/emails/notifications-email.php:107
 msgid "Settings preserved"
 msgstr ""
 
@@ -116,36 +116,36 @@ msgstr ""
 msgid "Manage the three Free loyalty email notifications."
 msgstr ""
 
-#: inc/backend/actions/emails/notifications-email.php:82
+#: inc/backend/actions/emails/notifications-email.php:81
 msgid "Email groups"
 msgstr ""
 
-#: inc/backend/actions/emails/notifications-email.php:83
+#: inc/backend/actions/emails/notifications-email.php:82
 #: inc/backend/settings.php:65
 msgid "General"
 msgstr ""
 
-#: inc/backend/actions/emails/notifications-email.php:83
+#: inc/backend/actions/emails/notifications-email.php:82
 #: inc/backend/settings.php:27
 #: inc/cores/helper/free-reader-admin.php:11
 #: inc/frontend/loyalty-info-bubble.php:59
 msgid "Loyalty"
 msgstr ""
 
-#: inc/backend/actions/emails/notifications-email.php:91
+#: inc/backend/actions/emails/notifications-email.php:90
 msgid "Back to Loyalty emails"
 msgstr ""
 
-#: inc/backend/actions/emails/notifications-email.php:98
+#: inc/backend/actions/emails/notifications-email.php:97
 msgid "Level update"
 msgstr ""
 
-#: inc/backend/actions/emails/notifications-email.php:114
+#: inc/backend/actions/emails/notifications-email.php:113
 msgid "Status"
 msgstr ""
 
 #. translators: Name of the email notification.
-#: inc/backend/actions/emails/notifications-email.php:133
+#: inc/backend/actions/emails/notifications-email.php:132
 #, php-format
 msgid "Manage %s"
 msgstr ""

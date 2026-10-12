@@ -125,12 +125,14 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     }
     await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link',{name:'Notification',exact:true}).click();
     await page.getByRole('link',{name:'Manage loyalty emails',exact:true}).click();await page.locator('.loyf-loyalty-emails').waitFor();
+    assert(await page.getByRole('navigation',{name:'Email groups'}).evaluate(nav=>!nav.closest('td')&&Boolean(nav.compareDocumentPosition([...document.querySelectorAll('#mainform h2')][0])&Node.DOCUMENT_POSITION_FOLLOWING)),'Email groups use the native sections location before the heading');
     assert.equal(await page.locator('.loyf-loyalty-emails tbody tr').count(),3,'Only three Free emails');
     assert.deepEqual(await page.locator('.loyf-loyalty-emails strong').allTextContents(),['Points earned','Points deducted','Level update']);
     assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile Loyalty emails');
     assert(await page.evaluate(()=>[...document.querySelectorAll('.loyf-loyalty-emails .button')].every(e=>e.getBoundingClientRect().right<=innerWidth)),'Mobile Manage buttons are not clipped');
     for(const label of ['Points earned','Points deducted','Level update']) {
         await page.getByRole('link',{name:'Manage '+label,exact:true}).click();
+        assert.equal(await page.getByRole('navigation',{name:'Email groups'}).count(),0,'Native individual email editor navigation retained');
         const enabled=page.locator('input[id$="_enabled"]');const subject=page.locator('input[id$="_subject"]');
         const wasEnabled=await enabled.isChecked();const oldSubject=await subject.inputValue();
         await enabled.setChecked(!wasEnabled);await subject.fill('LOYF-33 '+label);
@@ -143,6 +145,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         await page.getByRole('link',{name:'Back to Loyalty emails',exact:true}).click();await page.locator('.loyf-loyalty-emails').waitFor();
     }
     await page.getByRole('navigation',{name:'Email groups'}).getByRole('link',{name:'General',exact:true}).click();
+    assert(await page.getByRole('navigation',{name:'Email groups'}).evaluate(nav=>{const heading=document.querySelector('#mainform h2');return Boolean(nav.compareDocumentPosition(heading)&Node.DOCUMENT_POSITION_FOLLOWING)&&Math.abs(nav.querySelector('.subsubsub').getBoundingClientRect().left-heading.getBoundingClientRect().left)<1;}),'General email sections precede and align with the native heading');
     if(versionAtLeast(fixture.version,'9.9')) {
         const nativeListing=page.locator('#wc_settings_email_listing_slotfill');await nativeListing.waitFor();
         assert(await page.getByRole('navigation',{name:'Email groups'}).evaluate(nav=>Boolean(nav.compareDocumentPosition(document.querySelector('#wc_settings_email_listing_slotfill'))&Node.DOCUMENT_POSITION_FOLLOWING)),'Group navigation precedes native block listing');
