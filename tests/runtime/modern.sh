@@ -26,10 +26,10 @@ PY
   trap - EXIT; exit "$result"
 }
 trap cleanup EXIT
+export MYSQL_PWD="$LOY_DB_PASSWORD" LOYF_FIXTURE="$repo/tests/fixtures/free-1.2.2.json"
 if [[ -z "${LOYF_WP_CLI_PHAR:-}" ]]; then
   export LOYF_WP_CLI_PHAR="$task_tmp/wp.phar"
-export MYSQL_PWD="$LOY_DB_PASSWORD" LOYF_FIXTURE="$repo/tests/fixtures/free-1.2.2.json"
-curl -fsSL --retry 3 https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar -o "$task_tmp/wp.phar"
+  curl -fsSL --retry 3 https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar -o "$task_tmp/wp.phar"
 fi
 if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
   if [[ -z "${LOYF_PLAYWRIGHT_PATH:-}" ]]; then

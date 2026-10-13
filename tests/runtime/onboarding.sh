@@ -26,7 +26,7 @@ trap cleanup EXIT
 export MYSQL_PWD="$LOY_DB_PASSWORD"
 if [[ -z "${LOYF_WP_CLI_PHAR:-}" ]]; then
   export LOYF_WP_CLI_PHAR="$task_tmp/wp.phar"
-curl -fsSL --retry 3 https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar -o "$task_tmp/wp.phar"
+  curl -fsSL --retry 3 https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar -o "$task_tmp/wp.phar"
 fi
 mkdir -p "$task_tmp/template"
 php "$LOYF_WP_CLI_PHAR" --path="$task_tmp/template" core download --version=6.8.3 --skip-content --quiet
