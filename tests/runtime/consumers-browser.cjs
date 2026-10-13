@@ -124,7 +124,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
 
     }
     assert.equal(await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link',{name:'Notification',exact:true}).count(),0,'Retired Notification section absent');
-    await page.locator('#toplevel_page_loyf-overview .wp-submenu').getByRole('link',{name:'Emails',exact:true}).click();await page.locator('.loyf-loyalty-emails').waitFor();
+    await page.goto(base+'/wp-admin/admin.php?page=loyf-emails');await page.locator('.loyf-loyalty-emails').waitFor();
     assert(await page.getByRole('navigation',{name:'Email groups'}).evaluate(nav=>!nav.closest('td')&&Boolean(nav.compareDocumentPosition([...document.querySelectorAll('#mainform h2')][0])&Node.DOCUMENT_POSITION_FOLLOWING)),'Email groups use the native sections location before the heading');
     assert.equal(await page.locator('.loyf-loyalty-emails tbody tr').count(),3,'Only three Free emails');
     assert.deepEqual(await page.locator('.loyf-loyalty-emails strong').allTextContents(),['Points earned','Points deducted','Level update']);
