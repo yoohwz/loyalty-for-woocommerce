@@ -141,7 +141,7 @@ LOYF13_CURRENT_STABLE=1 bash tests/runtime/modern.sh
 
 The first command selects WP6.3/Woo8.2.2/CPT and WP7.1.3/Woo11.2.0/CPT for native consumers, retirement and migration fixtures. The second selects WP7.1.3/Woo11.2.0 with both CPT/HPOS sync-off and retains the full native/Blocks/referral browser/earning-message cases. Normal FULL hosted dispatch keeps all four established runners and the approved6.8.3/7.0 matrix unchanged. Use distinct `LOYF11_BROWSER_PORT` (activation retirement) and `LOYF_BROWSER_PORT` (modern/consumers) if running local suites concurrently. Referral Copy measurement waits for native cart hydration and accepts only explicitly read-only cart GET subrequests in Woo's POST batch transport; unknown/value-changing requests still fail.
 
-Current versions were verified from official WordPress and Woo release sources on2026-10-08, then executed; readme compatibility metadata is7.1.3/11.2.0. The last retained hosted runtime took18m14s before these per-feature native regressions; the bounded runtime budget is30minutes, with no removed assertions, skipped required suite or extra runner fan-out.
+Current versions were verified from official WordPress and Woo release sources on2026-10-08, then executed; readme compatibility metadata is7.1.3/11.2.0. The last retained hosted runtime took18m14s before these per-feature native regressions; the bounded runtime budget is35minutes, with no removed assertions, skipped required suite or extra runner fan-out.
 
 ### Exact package and WordPress.org audit
 
