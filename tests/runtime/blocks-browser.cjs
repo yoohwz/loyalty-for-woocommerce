@@ -24,11 +24,13 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         await page.reload();
         const surface = page.locator('.loyf-blocks-redemption');
         await surface.waitFor({state:'visible'});
+        await page.waitForFunction(() => !document.querySelector('.wp-block-woocommerce-cart.is-loading, .wp-block-woocommerce-checkout.is-loading'));
+        await page.waitForFunction(() => [...document.querySelectorAll('.wc-block-components-totals-footer-item .wc-block-components-totals-item__value')].some(node=>node.getBoundingClientRect().width>0 && /[0-9]/.test(node.textContent)));
         assert.equal(await surface.count(), 1, 'One Loyalty group after responsive rerender');
-        await page.getByRole('button', {name:'Add a coupon', exact:true}).click();
+        await page.getByRole('button', {name:/^Add (a coupon|coupons)$/}).click();
         await page.getByLabel('Enter code', {exact:true}).fill('appearance-only');
         await surface.getByLabel('Points to apply').fill('');
-        await page.getByText('Subtotal', {exact:true}).filter({visible:true}).click();
+        await surface.getByText('Loyalty points', {exact:true}).click();
         const appearance = await page.evaluate(() => {
             const group = document.querySelector('.loyf-blocks-redemption');
             const input = group.querySelector('input');
@@ -36,14 +38,16 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
             const apply = group.querySelector('button');
             const nativeButton = document.querySelector('.wc-block-components-totals-coupon__button');
             const skin = node => { const css = getComputedStyle(node); return Object.fromEntries(['color','backgroundColor','borderRadius','fontFamily','fontSize','borderTopWidth','borderTopStyle','borderTopColor'].map(key => [key,css[key]])); };
-            const label = [...document.querySelectorAll('.wc-block-components-totals-item__label')].find(node=>node.textContent==='Subtotal' && node.getBoundingClientRect().width>0);
+            const visible = node => node.getBoundingClientRect().width>0;
+            // Woo11.1 omits a redundant Cart subtotal; its native total has the same inset.
+            const label = [...document.querySelectorAll('.wc-block-components-totals-item__label')].find(node=>node.textContent==='Subtotal' && visible(node)) || [...document.querySelectorAll('.wc-block-components-totals-footer-item .wc-block-components-totals-item__label')].find(visible);
             const row = label.closest('.wc-block-components-totals-item');
             const rect = input.getBoundingClientRect();
             return {input:skin(input), coupon:skin(coupon), button:skin(apply), nativeButton:skin(nativeButton), left:rect.left, expectedLeft:label.getBoundingClientRect().left, right:rect.right, expectedRight:row.getBoundingClientRect().right - parseFloat(getComputedStyle(row).paddingRight), overflow:document.documentElement.scrollWidth > innerWidth, inlineStyles:[...group.querySelectorAll('input[style],button[style]')].map(node=>node.getAttribute('style')), inlineSkin:[...group.querySelectorAll('input,button')].some(node=>['color','background','background-color','border','border-radius','padding','font','font-size','box-shadow','width','height'].some(property=>node.style.getPropertyValue(property))), nativeInput:input.parentElement.classList.contains('wc-block-components-text-input'), nativeButtonClass:apply.classList.contains('wc-block-components-button')};
         });
         assert.deepEqual(appearance.input, appearance.coupon, 'Input inherits native coupon appearance');
         assert.deepEqual(appearance.button, appearance.nativeButton, 'Button inherits native coupon appearance');
-        assert(Math.abs(appearance.left-appearance.expectedLeft)<2, 'Loyalty left edge matches subtotal');
+        assert(Math.abs(appearance.left-appearance.expectedLeft)<2, 'Loyalty left edge matches native totals: ' + JSON.stringify(appearance));
         assert(appearance.right<=appearance.expectedRight+2, 'Loyalty controls stay inside totals right edge');
         assert(!appearance.overflow && !appearance.inlineSkin && appearance.nativeInput && appearance.nativeButtonClass, JSON.stringify(appearance));
         // Native Tab order reaches Apply without submitting Checkout or a coupon.
@@ -52,7 +56,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         assert.equal(await page.evaluate(()=>document.activeElement.textContent), 'Apply points');
         assert.notEqual(await surface.getByRole('button',{name:'Apply points',exact:true}).evaluate(node=>getComputedStyle(node).outlineStyle), 'none', 'Native keyboard focus is visible');
         await page.getByLabel('Enter code', {exact:true}).fill('');
-        await page.getByRole('button', {name:'Add a coupon', exact:true}).click();
+        await page.getByRole('button', {name:/^Add (a coupon|coupons)$/}).click();
         if (process.env.LOYF_BROWSER_EVIDENCE) {
             fs.mkdirSync(process.env.LOYF_BROWSER_EVIDENCE,{recursive:true});
             await page.screenshot({path:process.env.LOYF_BROWSER_EVIDENCE + '/' + (process.env.LOYF_BROWSER_THEME || 'default') + '-' + kind + '-' + width + '.png',fullPage:true});

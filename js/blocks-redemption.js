@@ -5,7 +5,7 @@
     const { createElement: h, useState, useRef, useId } = wp.element;
     const { __, sprintf } = wp.i18n;
     const { ExperimentalDiscountsMeta, extensionCartUpdate } = wc.blocksCheckout;
-    const { TextInput, Button } = wc.blocksComponents;
+    const { TextInput, Button, TotalsWrapper } = wc.blocksComponents;
     if (!ExperimentalDiscountsMeta || !extensionCartUpdate) return;
     function operationId() {
         if (window.crypto.randomUUID) return window.crypto.randomUUID();
@@ -43,7 +43,7 @@
                 .catch(failure => { if (failure && failure.code === 'loyf_redemption_rejected' && failure.data && failure.data.status === 409) pending.current = null; setError(__('Points could not be updated. Retry the same request or refresh your cart.', 'loyalty-for-woocommerce')); })
                 .finally(() => setBusy(false));
         }
-        return h('div', { className: 'loyf-blocks-redemption' + (context === 'woocommerce/checkout' ? ' loyf-blocks-redemption--checkout' : ''), role: 'group', 'aria-label': __('Loyalty points', 'loyalty-for-woocommerce'), 'aria-busy': busy },
+        return h(TotalsWrapper, null, h('div', { className: 'loyf-blocks-redemption wc-block-components-totals-item', role: 'group', 'aria-label': __('Loyalty points', 'loyalty-for-woocommerce'), 'aria-busy': busy },
             data.enabled && h('p', null, h('strong', null, __('Loyalty points', 'loyalty-for-woocommerce'))),
             data.enabled && h('p', null, sprintf(__('Available points: %d', 'loyalty-for-woocommerce'), data.available)),
             data.enabled && h('div', { className: 'loyf-blocks-redemption__controls' },
@@ -55,7 +55,7 @@
             showEarned && h('p', null, sprintf(__('You will earn %d points with this purchase.', 'loyalty-for-woocommerce'), data.earned)),
             data.message && h('p', { role: 'status' }, data.message),
             busy && h('p', { role: 'status' }, __('Updating points…', 'loyalty-for-woocommerce')),
-            error && h('p', { role: 'alert' }, error));
+            error && h('p', { role: 'alert' }, error)));
     }
     wp.plugins.registerPlugin('loyf-redemption', { scope: 'woocommerce-checkout', render: () => h(ExperimentalDiscountsMeta, null, h(Redemption)) });
 })(window.wp, window.wc);

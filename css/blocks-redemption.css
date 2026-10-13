@@ -3,10 +3,7 @@
     display: grid;
     gap: 1em;
     min-width: 0;
-    padding: 16px 0;
 }
-.is-large .loyf-blocks-redemption[role="group"],
-.loyf-blocks-redemption.loyf-blocks-redemption--checkout { padding-inline: 16px; }
 .loyf-blocks-redemption p { margin: 0; }
 .loyf-blocks-redemption__controls,
 .loyf-blocks-redemption__selection {
