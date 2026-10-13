@@ -1,0 +1,9 @@
+# LOYF-39 native presentation
+
+Real disposable WordPress6.8.3 / WooCommerce9.9.5 / CPT screenshots. No installed Human site or customer data is used. `before-*` is admitted base `dd0598ecb0c84dcccb35c137ebd8ce20f70d24c2`; `twentytwentyfive-*` (1.3) and `storefront-*` (4.6.2) use the product changes introduced in `5053605` (the full candidate and exact CI are bound on the PR). Viewports are desktop1280 and mobile390. Different totals reflect repeated synthetic add-to-cart setup, not a conversion change.
+
+Cart keeps Loyalty in the native discounts/totals flow between Subtotal and Total, before Proceed to Checkout. Checkout keeps it inside Order summary before Total and before the mobile Place Order section. Coupon fields, order fields and CTAs keep their own native structure. The existing official DiscountsMeta Slot remains the mount; no merchant page content is rewritten.
+
+The group orders heading/available balance, native Points to apply + Apply, selected discount + Remove, then notices. Wrapper-only spacing follows the native16px inset on large Cart and Checkout; small Cart follows its un-inset totals. Woo TextInput and the default Woo Button own all field/button skin. Computed appearance is compared to that page's native coupon input/Apply in the existing browser fixture. The stylesheet contains no input/button selectors, colors, typography, borders or shadows.
+
+These images show presentation, not payment certification. Native state/totals/lost-response replay and hosted exact-head FULL evidence are separate on the PR. The existing Woo9.9.5 Checkout Slot disappears on a live breakpoint switch on both admitted base and candidate; each screenshot hydrates at its target viewport. Normal cart rerender and refresh remain covered; mount/lifecycle redesign is not part of this presentation-only candidate.
