@@ -5,7 +5,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     const fixture = JSON.parse(fs.readFileSync(process.env.LOYF_BROWSER_FIXTURE, 'utf8'));
     const base = process.env.LOYF_BROWSER_URL;
     const browser = await chromium.launch({ headless: true, ...(process.env.LOYF_BROWSER_EXECUTABLE ? {executablePath:process.env.LOYF_BROWSER_EXECUTABLE}: {}) });
-    const page = await browser.newPage();
+    const page = await browser.newPage({viewport:{width:1280,height:900}});
     page.setDefaultTimeout(30000);
     await page.addInitScript(() => { window.crypto.randomUUID = undefined; });
     const calls = [], errors = [], updates = [];
@@ -20,12 +20,16 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     async function presentation(kind, width) {
         // Hydrate each native responsive layout at its target size. Woo9.9.5 already
         // loses its DiscountsMeta fill on a live Checkout breakpoint switch (base too).
-        await page.setViewportSize({width, height:900});
-        await page.reload();
+        if (page.viewportSize().width !== width) {
+            await page.setViewportSize({width, height:900});
+            await page.reload({waitUntil:'domcontentloaded'});
+        }
         const surface = page.locator('.loyf-blocks-redemption');
         await surface.waitFor({state:'visible'});
         await page.waitForFunction(() => !document.querySelector('.wp-block-woocommerce-cart.is-loading, .wp-block-woocommerce-checkout.is-loading'));
         await page.waitForFunction(() => [...document.querySelectorAll('.wc-block-components-totals-footer-item .wc-block-components-totals-item__value')].some(node=>node.getBoundingClientRect().width>0 && /[0-9]/.test(node.textContent)));
+        // Appearance measures hydrated Woo controls with the real theme font loaded.
+        await page.evaluate(() => document.fonts.ready);
         assert.equal(await surface.count(), 1, 'One Loyalty group after responsive rerender');
         await page.getByRole('button', {name:/^Add (a coupon|coupons)$/}).click();
         await page.getByLabel('Enter code', {exact:true}).fill('appearance-only');
@@ -64,15 +68,20 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         console.log('Native presentation ' + kind + ' ' + width + ' ' + JSON.stringify(appearance));
     }
     try {
-        await page.goto(base + '/wp-login.php');
+        // Native login redirects directly into this fixture's Cart, adding its product once.
+        await page.goto(base + '/wp-login.php?redirect_to=' + encodeURIComponent(base + '/?page_id=' + fixture.cart + '&add-to-cart=' + fixture.product), {waitUntil:'domcontentloaded'});
         // WordPress schedules delayed username focus; set both fixture fields atomically.
         await page.evaluate(() => { document.querySelector('#user_login').value = 'blocks_browser'; document.querySelector('#user_pass').value = 'disposable-only'; });
-        await Promise.all([page.waitForURL(url => !url.pathname.includes('wp-login')), page.locator('#wp-submit').click()]);
-        await page.goto(base + '/?add-to-cart=' + fixture.product);
+        await Promise.all([page.waitForURL(url => !url.pathname.includes('wp-login'), {waitUntil:'domcontentloaded'}), page.locator('#wp-submit').click()]);
         for (const target of [fixture.cart, fixture.checkout]) {
-            await page.goto(base + '/?page_id=' + target);
+            // Navigate to the clean page URL so reload cannot replay add-to-cart.
+            // The first desktop sample hydrates here; only a breakpoint
+            // change needs the retained native reload before measuring the next sample.
+            await page.setViewportSize({width:1280,height:900});
+            await page.goto(base + '/?page_id=' + target, {waitUntil:'domcontentloaded'});
             const surface = page.locator('.loyf-blocks-redemption');
             await surface.waitFor({ state:'visible', timeout:30000 });
+            await surface.getByText(/Available points: 50/).waitFor();
             assert.match(await surface.innerText(), /Available points: 50/);
             assert(!/You will earn/.test(await surface.innerText()), 'Disabled earning messages must not hide redemption');
             await presentation(target === fixture.cart ? 'cart' : 'checkout',1280);
@@ -105,7 +114,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
             if (target === fixture.cart) { assert(updates.length >= replayStart + 2, 'Native extension batch observed'); assert.deepEqual(updates[replayStart], updates[replayStart + 1], 'Lost response retries original immutable UUID and terms'); }
             assert.notEqual(await page.locator('.wc-block-components-totals-footer-item .wc-block-components-totals-item__value').filter({visible:true}).innerText(), originalTotal, 'Apply changes native totals');
             assert.equal(await surface.count(),1, 'Native cart update keeps one group');
-            await page.reload();
+            await page.reload({waitUntil:'domcontentloaded'});
             await surface.waitFor({ state:'visible' });
             await page.waitForFunction(() => [...document.querySelectorAll('.loyf-blocks-redemption')].some(node => /20 points applied/.test(node.textContent)));
             assert.equal(await surface.getByLabel('Points to apply').inputValue(), '', 'Fresh selected page starts with an empty input');
@@ -124,22 +133,23 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
             assert.deepEqual(updates[removeStart], updates[removeStart + 1], 'Empty input must replay the original remove request');
             assert.equal(await page.locator('.wc-block-components-totals-footer-item .wc-block-components-totals-item__value').filter({visible:true}).innerText(), originalTotal, 'Remove restores native totals');
         }
-        for (const state of ['zero','low','held']) {
+        // Each denied-state actor owns a separate session/cart; no shared value writes.
+        await Promise.all(['zero','low','held'].map(async state => {
             const context = await browser.newContext();
             const actor = await context.newPage();
-            await actor.goto(base + '/wp-login.php');
+            await actor.goto(base + '/wp-login.php?redirect_to=' + encodeURIComponent(base + '/?page_id=' + fixture.cart + '&add-to-cart=' + fixture.product), {waitUntil:'domcontentloaded'});
             // Keep the retained native login's atomic fields: WP schedules username focus.
             await actor.evaluate(state => { document.querySelector('#user_login').value='blocks_browser_' + state; document.querySelector('#user_pass').value='disposable-only'; },state);
-            await Promise.all([actor.waitForURL(url=>!url.pathname.includes('wp-login')),actor.locator('#wp-submit').click()]);
-            await actor.goto(base + '/?add-to-cart=' + fixture.product);
+            await Promise.all([actor.waitForURL(url=>!url.pathname.includes('wp-login'), {waitUntil:'domcontentloaded'}),actor.locator('#wp-submit').click()]);
             for (const target of [fixture.cart,fixture.checkout]) {
-                await actor.goto(base + '/?page_id=' + target);
+                await actor.goto(base + '/?page_id=' + target, {waitUntil:'domcontentloaded'});
                 const group = actor.locator('.loyf-blocks-redemption');
                 await group.waitFor({state:'visible'});
                 if (state === 'held') {
                     assert.match(await group.getByRole('status').innerText(), /Points are unavailable/);
                     assert.equal(await group.locator('input,button').count(),0, 'Held balance has no mutation controls');
                 } else {
+                    await group.getByText(new RegExp('Available points: ' + (state==='zero' ? 0 : 5))).waitFor();
                     assert.match(await group.innerText(), new RegExp('Available points: ' + (state==='zero' ? 0 : 5)));
                     await group.getByLabel('Points to apply').fill('10');
                     await group.getByRole('button',{name:'Apply points',exact:true}).click();
@@ -148,7 +158,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
                 }
             }
             await context.close();
-        }
+        }));
         const denied = await page.evaluate(async () => {
             const response = await fetch('/?rest_route=/wc/store/v1/cart/extensions', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({namespace:'loyf-redemption',data:{action:'apply',points:'20',operation_id:'00000000-0000-4000-8000-000000000001'}})});
             return response.status;
@@ -161,10 +171,12 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         assert.equal(guestData.show_earned_cart, false); assert.equal(guestData.show_earned_checkout, false);
         assert.deepEqual(Object.keys(guestData).sort(), ['available','discount','earned','enabled','message','minimum','operation_id','selected','show_earned_cart','show_earned_checkout']);
         const guestPage = await guest.newPage();
-        await guestPage.goto(base + '/?add-to-cart=' + fixture.product);
+        await guestPage.goto(base + '/?add-to-cart=' + fixture.product, {waitUntil:'domcontentloaded'});
         for (const target of [fixture.cart,fixture.checkout]) {
-            await guestPage.goto(base + '/?page_id=' + target);
+            await guestPage.goto(base + '/?page_id=' + target, {waitUntil:'domcontentloaded'});
             await guestPage.locator('.wc-block-components-totals-footer-item').filter({visible:true}).waitFor();
+            await guestPage.waitForFunction(() => !document.querySelector('.wp-block-woocommerce-cart.is-loading, .wp-block-woocommerce-checkout.is-loading'));
+            await guestPage.waitForFunction(() => [...document.querySelectorAll('.wc-block-components-totals-footer-item .wc-block-components-totals-item__value')].some(node=>node.getBoundingClientRect().width>0 && /[0-9]/.test(node.textContent)));
             assert.equal(await guestPage.locator('.loyf-blocks-redemption').count(),0, 'Guest has no Loyalty controls');
         }
         await guest.close();
