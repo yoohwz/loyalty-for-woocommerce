@@ -124,8 +124,8 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
             const context = await browser.newContext();
             const actor = await context.newPage();
             await actor.goto(base + '/wp-login.php');
-            await actor.locator('#user_login').fill('blocks_browser_' + state);
-            await actor.locator('#user_pass').fill('disposable-only');
+            // Keep the retained native login's atomic fields: WP schedules username focus.
+            await actor.evaluate(state => { document.querySelector('#user_login').value='blocks_browser_' + state; document.querySelector('#user_pass').value='disposable-only'; },state);
             await Promise.all([actor.waitForURL(url=>!url.pathname.includes('wp-login')),actor.locator('#wp-submit').click()]);
             await actor.goto(base + '/?add-to-cart=' + fixture.product);
             for (const target of [fixture.cart,fixture.checkout]) {
