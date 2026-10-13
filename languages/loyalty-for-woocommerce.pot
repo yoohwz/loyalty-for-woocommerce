@@ -3,34 +3,39 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Loyalty for WooCommerce 1.2.2\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/loyf-37-worktree\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/loyalty-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-13T02:32:11+00:00\n"
+"POT-Creation-Date: 2026-10-13T02:35:09+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.9.0\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
 
 #. Plugin Name of the plugin
+#: loyalty-for-woocommerce.php
 msgid "Loyalty for WooCommerce"
 msgstr ""
 
 #. Plugin URI of the plugin
+#: loyalty-for-woocommerce.php
 msgid "https://wordpress.org/plugins/loyalty-for-woocommerce/"
 msgstr ""
 
 #. Description of the plugin
+#: loyalty-for-woocommerce.php
 msgid "Create a flexible loyalty program for WooCommerce—reward customers with points to boost repeat sales and customer retention."
 msgstr ""
 
 #. Author of the plugin
+#: loyalty-for-woocommerce.php
 msgid "YoOhw.com"
 msgstr ""
 
 #. Author URI of the plugin
+#: loyalty-for-woocommerce.php
 msgid "https://yoohw.com"
 msgstr ""
 
@@ -139,11 +144,13 @@ msgstr ""
 
 #. translators: Name of the email notification.
 #: inc/backend/actions/emails/notifications-email.php:132
+#, php-format
 msgid "Manage %s"
 msgstr ""
 
 #. translators: %s: order number
 #: inc/backend/actions/extra/first-purchase.php:111
+#, php-format
 msgid "First purchase bonus (Order #%s)"
 msgstr ""
 
@@ -449,6 +456,7 @@ msgid "The save could not be completed. Reload to review current settings."
 msgstr ""
 
 #: inc/backend/settings.php:481
+#, php-format
 msgid "Settings saved before this error: %s."
 msgstr ""
 
@@ -721,6 +729,7 @@ msgstr ""
 
 #. translators: %s: Link to Permalink Settings page
 #: inc/backend/settings/customization.php:556
+#, php-format
 msgid "You may have to save changes at %s to make it work probably."
 msgstr ""
 
@@ -730,6 +739,7 @@ msgstr ""
 
 #. translators: %s: Link to Permalink Settings page
 #: inc/backend/settings/customization.php:568
+#, php-format
 msgid "You can setup %s."
 msgstr ""
 
@@ -848,6 +858,7 @@ msgstr ""
 
 #. translators: Names of settings whose saves completed.
 #: inc/backend/settings/extra-points.php:231
+#, php-format
 msgid "Rewards being updated were skipped. Saved settings: %s."
 msgstr ""
 
@@ -858,6 +869,7 @@ msgstr ""
 
 #. translators: Comma-separated names of settings whose saves completed.
 #: inc/backend/settings/extra-points.php:237
+#, php-format
 msgid "Settings saved before this error: %s. Reload this page to review them."
 msgstr ""
 
@@ -978,6 +990,7 @@ msgstr ""
 
 #. translators: %1$s: URL to download the CSV sample file.
 #: inc/backend/settings/tools.php:48
+#, php-format
 msgid "Download the <a href=\"%1$s\" target=\"_blank\" rel=\"noopener\">CSV sample file</a> and add the entries to the correct column."
 msgstr ""
 
@@ -1071,11 +1084,13 @@ msgstr ""
 
 #. translators: %d: number of rows imported.
 #: inc/backend/settings/tools.php:227
+#, php-format
 msgid "Successfully imported %d row(s)."
 msgstr ""
 
 #. translators: %d: number of rows that failed to import.
 #: inc/backend/settings/tools.php:237
+#, php-format
 msgid "%d row(s) failed to import."
 msgstr ""
 
@@ -1233,6 +1248,7 @@ msgstr ""
 
 #. translators: %s: Loyalty level role.
 #: inc/backend/users/user-profile-points.php:224
+#, php-format
 msgid "Level updated: %s"
 msgstr ""
 
@@ -1377,11 +1393,13 @@ msgstr ""
 
 #. translators: Stored earned points.
 #: inc/cores/helper/free-customer-components.php:75
+#, php-format
 msgid "Earned points: %s"
 msgstr ""
 
 #. translators: 1: next Loyalty level, 2: earned points threshold.
 #: inc/cores/helper/free-customer-components.php:79
+#, php-format
 msgid "Next level: %1$s at %2$s earned points."
 msgstr ""
 
@@ -1433,6 +1451,7 @@ msgstr ""
 
 #. translators: Canonical option container name, never its stored contents.
 #: inc/cores/helper/free-migrations.php:53
+#, php-format
 msgid "The saved Loyalty settings container (%s) has an unsupported format. Its original data was preserved. Restore or repair the original complete container using verified backups before changing this feature."
 msgstr ""
 
@@ -1616,16 +1635,19 @@ msgstr ""
 
 #. translators: Number of accounts with held balances.
 #: inc/cores/helper/free-reader-admin.php:55
+#, php-format
 msgid "Accounts with held balances: %d."
 msgstr ""
 
 #. translators: Number of unproven historical rows.
 #: inc/cores/helper/free-reader-admin.php:58
+#, php-format
 msgid "Excluded unproven legacy rows: %d."
 msgstr ""
 
 #. translators: Number of debits without checkout funding proof.
 #: inc/cores/helper/free-reader-admin.php:60
+#, php-format
 msgid "Excluded debits without native checkout funding proof: %d."
 msgstr ""
 
@@ -1655,6 +1677,7 @@ msgstr ""
 
 #. translators: 1: referral type, 2: recipient type, 3: order number.
 #: inc/cores/helper/free-referral.php:37
+#, php-format
 msgid "Referral %1$s reward (%2$s) for order %3$s"
 msgstr ""
 
@@ -1740,10 +1763,12 @@ msgstr ""
 
 #. translators: %s: Gateway transaction reference, when supplied.
 #: inc/cores/helper/order-redemption.php:664
+#, php-format
 msgid "Late payment after Loyalty redemption return or incomplete recovery; manual review required. Merchant must resolve the payment. Reference: %s"
 msgstr ""
 
 #: inc/cores/helper/referral-rewards.php:273
+#, php-format
 msgid "Referral reward reversed for order %s"
 msgstr ""
 
@@ -1754,12 +1779,14 @@ msgstr ""
 #. translators: %d: Minimum points.
 #: inc/frontend/cart-checkout.php:44
 #: inc/frontend/cart-checkout.php:67
+#, php-format
 msgid "You must apply at least %d points."
 msgstr ""
 
 #. translators: %d: Maximum points.
 #: inc/frontend/cart-checkout.php:46
 #: inc/frontend/cart-checkout.php:69
+#, php-format
 msgid "You cannot apply more than %d points."
 msgstr ""
 
@@ -1769,6 +1796,7 @@ msgstr ""
 #: inc/frontend/cart-checkout.php:167
 #: inc/frontend/cart-checkout.php:192
 #: js/blocks-redemption.js:46
+#, php-format,js-format
 msgid "You will earn %d points with this purchase."
 msgstr ""
 
@@ -1787,6 +1815,7 @@ msgstr ""
 
 #. translators: %d: Available points.
 #: inc/frontend/cart-checkout.php:132
+#, php-format
 msgid "You have %d points available."
 msgstr ""
 
@@ -1796,6 +1825,7 @@ msgstr ""
 
 #. translators: %d: Applied points.
 #: inc/frontend/cart-checkout.php:144
+#, php-format
 msgid "%d points are applied to this cart."
 msgstr ""
 
@@ -1853,6 +1883,7 @@ msgstr ""
 
 #. translators: %d: Number of visible reward details.
 #: inc/frontend/loyalty-info-bubble.php:110
+#, php-format
 msgid "%d details"
 msgstr ""
 
@@ -1892,6 +1923,7 @@ msgstr ""
 
 #. translators: %s: Points amount.
 #: inc/frontend/loyalty-info-bubble.php:227
+#, php-format
 msgid "Unlock at %s earned."
 msgstr ""
 
@@ -1930,6 +1962,7 @@ msgstr ""
 
 #. translators: 1: Loyalty level, 2: Points amount.
 #: inc/frontend/loyalty-info-bubble.php:285
+#, php-format
 msgid "Reach %1$s: %2$s"
 msgstr ""
 
@@ -1947,6 +1980,7 @@ msgstr ""
 
 #. translators: 1: Points amount, 2: Money amount.
 #: inc/frontend/loyalty-info-bubble.php:317
+#, php-format
 msgid "%1$s can be used for %2$s off."
 msgstr ""
 
@@ -1956,6 +1990,7 @@ msgstr ""
 
 #. translators: %s: Place list.
 #: inc/frontend/loyalty-info-bubble.php:338
+#, php-format
 msgid "Customers can use points on: %s."
 msgstr ""
 
@@ -1970,6 +2005,7 @@ msgstr ""
 
 #. translators: 1: Bonus label, 2: Points amount.
 #: inc/frontend/loyalty-info-bubble.php:362
+#, php-format
 msgid "%1$s: %2$s"
 msgstr ""
 
@@ -1980,11 +2016,13 @@ msgstr ""
 
 #. translators: 1: Loyalty level, 2: Points amount, 3: Money amount.
 #: inc/frontend/loyalty-info-bubble.php:384
+#, php-format
 msgid "%1$s members earn %2$s for every %3$s spent."
 msgstr ""
 
 #. translators: 1: Points amount, 2: Loyalty level.
 #: inc/frontend/loyalty-info-bubble.php:404
+#, php-format
 msgid "%1$s to reach %2$s."
 msgstr ""
 
@@ -1994,11 +2032,13 @@ msgstr ""
 
 #. translators: 1: Points number, 2: Point label.
 #: inc/frontend/loyalty-info-bubble.php:690
+#, php-format
 msgid "%1$s %2$s"
 msgstr ""
 
 #. translators: %s: Customer first name.
 #: inc/frontend/my-account.php:170
+#, php-format
 msgid "%s's Reward Summary"
 msgstr ""
 
@@ -2037,6 +2077,7 @@ msgstr ""
 
 #. translators: 1: Points left to reach next level, 2: Next level.
 #: inc/frontend/my-account.php:306
+#, php-format
 msgid "Earn %1$s points more to reach %2$s level."
 msgstr ""
 
@@ -2054,11 +2095,13 @@ msgstr ""
 
 #. translators: %d: Points customers can earn by purchasing the product.
 #: inc/frontend/product-message.php:84
+#, php-format
 msgid "Earn<b>&nbsp;%d points&nbsp;</b>when you purchase this product"
 msgstr ""
 
 #. translators: Earning points.
 #: inc/frontend/shop-message.php:50
+#, php-format
 msgid "<b>%d&nbsp;</b> points"
 msgstr ""
 
@@ -2069,6 +2112,7 @@ msgstr ""
 #: templates/emails/plain/loyalty-level-update.php:25
 #: templates/emails/plain/loyalty-points-deduct.php:25
 #: templates/emails/plain/loyalty-points-reward.php:25
+#, php-format
 msgid "Hi %s,"
 msgstr ""
 
@@ -2083,6 +2127,7 @@ msgstr ""
 
 #. translators: 1: Loyalty level name, 2: Total earned points.
 #: templates/emails/loyalty-level-update.php:47
+#, php-format
 msgid "Your loyalty level is now %1$s. You have earned %2$s in total."
 msgstr ""
 
@@ -2103,6 +2148,7 @@ msgstr ""
 #: templates/emails/plain/loyalty-level-update.php:41
 #: templates/emails/plain/loyalty-points-deduct.php:42
 #: templates/emails/plain/loyalty-points-reward.php:42
+#, php-format
 msgid "Earn %1$s more to reach %2$s."
 msgstr ""
 
@@ -2119,11 +2165,13 @@ msgstr ""
 #: templates/emails/loyalty-level-update.php:123
 #: templates/emails/loyalty-points-deduct.php:140
 #: templates/emails/loyalty-points-reward.php:140
+#, php-format
 msgid "View %s"
 msgstr ""
 
 #. translators: 1: Deducted points, 2: Current points balance.
 #: templates/emails/loyalty-points-deduct.php:46
+#, php-format
 msgid "%1$s were deducted from your loyalty account. Your current balance is %2$s."
 msgstr ""
 
@@ -2143,6 +2191,7 @@ msgstr ""
 
 #. translators: 1: Earned points, 2: Current points balance.
 #: templates/emails/loyalty-points-reward.php:46
+#, php-format
 msgid "You earned %1$s. Your updated balance is %2$s."
 msgstr ""
 
@@ -2174,6 +2223,7 @@ msgstr ""
 #: templates/emails/plain/loyalty-level-update.php:53
 #: templates/emails/plain/loyalty-points-deduct.php:58
 #: templates/emails/plain/loyalty-points-reward.php:58
+#, php-format
 msgid "View %s:"
 msgstr ""
 
@@ -2212,10 +2262,12 @@ msgid "Points could not be updated. Retry the same request or refresh your cart.
 msgstr ""
 
 #: js/blocks-redemption.js:45
+#, js-format
 msgid "Available points: %d"
 msgstr ""
 
 #: js/blocks-redemption.js:48
+#, js-format
 msgid "%d points applied: %s"
 msgstr ""
 

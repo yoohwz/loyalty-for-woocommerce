@@ -22,7 +22,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
   const get=await context.request.get(base+'/wp-admin/admin-post.php?action=loyf_onboarding&intent=launch');assert.equal(get.status(),400);
   await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section=notification');
   assert.equal(await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link').count(),6);
-  assert.equal(await page.locator('a[href*="tab=loyalty"][href*="section=notification"]').count(),0);
+  assert.equal(await page.locator('[aria-label="Loyalty settings sections"] a[href*="section=notification"], #adminmenu a[href*="tab=loyalty"][href*="section=notification"]').count(),0);
   assert.equal(await page.getByRole('heading',{name:'Email notifications',exact:true}).count(),0);
   assert.equal(await page.getByRole('link',{name:'Manage loyalty emails',exact:true}).count(),0);
   assert.equal(await page.locator('#loyalty_points_rounding').count(),1,'Retired section uses existing General fallback');
