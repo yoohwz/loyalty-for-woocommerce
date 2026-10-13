@@ -26,15 +26,20 @@ PY
   trap - EXIT; exit "$result"
 }
 trap cleanup EXIT
-export LOYF_WP_CLI_PHAR="$task_tmp/wp.phar"
+if [[ -z "${LOYF_WP_CLI_PHAR:-}" ]]; then
+  export LOYF_WP_CLI_PHAR="$task_tmp/wp.phar"
 export MYSQL_PWD="$LOY_DB_PASSWORD" LOYF_FIXTURE="$repo/tests/fixtures/free-1.2.2.json"
 curl -fsSL --retry 3 https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar -o "$task_tmp/wp.phar"
+fi
 if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
   if [[ -z "${LOYF_PLAYWRIGHT_PATH:-}" ]]; then
     npm install --prefix "$task_tmp/browser" playwright@1.56.1 --no-audit --no-fund
     export LOYF_PLAYWRIGHT_PATH="$task_tmp/browser/node_modules/playwright"
   fi
   if [[ -z "${LOYF_BROWSER_EXECUTABLE:-}" ]]; then node "$(dirname "$LOYF_PLAYWRIGHT_PATH")/playwright/cli.js" install --with-deps chromium; fi
+fi
+if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
+  curl -fsSL --retry 3 https://downloads.wordpress.org/theme/twentytwentyfive.1.3.zip -o "$task_tmp/theme.zip"
 fi
 versions_list=('6.8.3:9.9.5' '7.0:11.1.2'); storages=(cpt hpos)
 if [[ "${LOYF13_COMPAT_SUPPLEMENT:-}" == 1 ]]; then versions_list=('6.3:8.2.2' '7.1.3:11.2.0'); storages=(cpt); fi
@@ -44,7 +49,7 @@ for versions in "${versions_list[@]}"; do
     database="loyf_rt_$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')"; databases+=( "$database" )
     mysql --host="$LOY_DB_HOST" --port="${LOY_DB_PORT:-3306}" --user="$LOY_DB_USER" -e "CREATE DATABASE \`$database\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
     site="$task_tmp/$woocommerce-$storage"; mkdir -p "$site"
-    wp() { php "$task_tmp/wp.phar" --path="$site" "$@"; }
+    wp() { php "$LOYF_WP_CLI_PHAR" --path="$site" "$@"; }
     wp core download --version="$wordpress" --skip-content --quiet
     wp core config --dbname="$database" --dbuser="$LOY_DB_USER" --dbpass="$LOY_DB_PASSWORD" --dbhost="$LOY_DB_HOST:${LOY_DB_PORT:-3306}" --skip-check --quiet
     wp core install --url=http://loyf-consumers.invalid --title='Basic Free readers' --admin_user=loyf_admin --admin_password=disposable-only --admin_email=admin@example.invalid --skip-email --quiet
@@ -67,7 +72,6 @@ for versions in "${versions_list[@]}"; do
     wp eval-file "$repo/tests/runtime/migration-cache.php" --quiet
     wp eval-file "$repo/tests/runtime/opaque-containers.php" --quiet
     if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
-      curl -fsSL --retry 3 https://downloads.wordpress.org/theme/twentytwentyfive.1.3.zip -o "$task_tmp/theme.zip"
       wp theme install "$task_tmp/theme.zip" --activate --skip-plugins --skip-themes --quiet
       wp config delete DOING_AJAX --quiet
       export LOYF_BROWSER_URL="http://127.0.0.1:${LOYF_BROWSER_PORT:-18088}" LOYF_BROWSER_FIXTURE="$task_tmp/browser-fixture.json"

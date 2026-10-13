@@ -23,10 +23,13 @@ PY
   trap - EXIT; exit "$result"
 }
 trap cleanup EXIT
-export MYSQL_PWD="$LOY_DB_PASSWORD" LOYF_WP_CLI_PHAR="$task_tmp/wp.phar"
+export MYSQL_PWD="$LOY_DB_PASSWORD"
+if [[ -z "${LOYF_WP_CLI_PHAR:-}" ]]; then
+  export LOYF_WP_CLI_PHAR="$task_tmp/wp.phar"
 curl -fsSL --retry 3 https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar -o "$task_tmp/wp.phar"
+fi
 mkdir -p "$task_tmp/template"
-php "$task_tmp/wp.phar" --path="$task_tmp/template" core download --version=6.8.3 --skip-content --quiet
+php "$LOYF_WP_CLI_PHAR" --path="$task_tmp/template" core download --version=6.8.3 --skip-content --quiet
 curl -fsSL --retry 3 https://downloads.wordpress.org/plugin/woocommerce.9.9.5.zip -o "$task_tmp/woo.zip"
 mkdir -p "$task_tmp/template/wp-content/plugins" "$task_tmp/template/wp-content/mu-plugins"
 unzip -q "$task_tmp/woo.zip" -d "$task_tmp/template/wp-content/plugins"
@@ -47,7 +50,7 @@ for case in $cases; do
   database="loyf_rt_$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')"; databases+=( "$database" )
   mysql --host="$LOY_DB_HOST" --port="${LOY_DB_PORT:-3306}" --user="$LOY_DB_USER" -e "CREATE DATABASE \`$database\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
   site="$task_tmp/$case"; mkdir -p "$site"; cp -R "$task_tmp/template/." "$site/"
-  wp() { php "$task_tmp/wp.phar" --path="$site" "$@"; }
+  wp() { php "$LOYF_WP_CLI_PHAR" --path="$site" "$@"; }
   wp core config --dbname="$database" --dbuser="$LOY_DB_USER" --dbpass="$LOY_DB_PASSWORD" --dbhost="$LOY_DB_HOST:${LOY_DB_PORT:-3306}" --skip-check --quiet
   wp core install --url=http://loyf-onboarding.invalid --title=Onboarding --admin_user=loyf_admin --admin_password=disposable-only --admin_email=admin@example.invalid --skip-email --quiet
   wp config set DISABLE_WP_CRON true --raw --quiet
