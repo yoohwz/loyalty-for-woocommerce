@@ -85,7 +85,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     await page.goto(base+'/wp-admin/admin.php?page=loyf-settings');assert.equal(new URL(page.url()).searchParams.get('tab'),'loyalty','Settings shortcut reaches existing Woo form');
     assert.equal(await page.locator('#mainform').count(),1,'One native settings form');
     assert(await page.evaluate(()=>getComputedStyle(document.querySelector('.yoswc-premium-preview-card')).borderInlineStartColor===getComputedStyle(document.querySelector('#adminmenu a.wp-has-current-submenu')).backgroundColor),'Preview follows native admin scheme');
-    assert.equal(await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link').count(),7,'All Free sections retained');
+    assert.equal(await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link').count(),6,'Remaining Free sections retained');
     assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile General settings has no overflow');
     const rounding=page.locator('#loyalty_points_rounding');const original=await rounding.inputValue();const changed=original==='round_up'?'round_down':'round_up';
     await rounding.selectOption(changed);await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('button[name=save]').click()]);await page.getByText(/Your settings have been saved|General earning and level settings were saved/).waitFor();await page.reload();assert.equal(await rounding.inputValue(),changed,'Native Woo save/reload persists');
@@ -109,7 +109,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     for(const amount of ['29','0',firstOriginal]) {
         await first.fill(amount);await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('button[name=save]').click()]);await page.reload();assert.equal(await first.inputValue(),amount,'Amount-only First purchase save/reload');
     }
-    for(const section of ['extra_points','referrals','customization','notification','tools','premium']) {
+    for(const section of ['extra_points','referrals','customization','tools','premium']) {
         await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section='+section);
         assert.equal(await page.locator('#mainform form').count(),0,'No nested form '+section);
         assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile Settings '+section);

@@ -112,7 +112,7 @@ class YOWCL_Free_Migrations {
     }
     public static function locked( $callback ) {
         global $wpdb;
-        // Native onboarding/First Purchase services share the already held options owner.
+        // Native First Purchase services share the already held options owner.
         // A nested call must neither reacquire nor release that owner's named lock.
         if (null!==self::$owner) {
             self::assert_owner();
@@ -355,16 +355,9 @@ class YOWCL_Free_Migrations {
         if (null!==self::read(self::witness($feature).'_resolution')) { throw new RuntimeException('migration_resolution_pending'); }
         if (self::premium_history()) { throw new RuntimeException('migration_origin_unresolved'); }
         $name=self::witness($feature).'_before'; $raw=self::read($name);
-        if (null===$raw) {
-            $proof=YOWCL_Free_Onboarding::initial_proof();
-            if (!$proof) { throw new RuntimeException('migration_origin_unresolved'); }
-            $spec=self::specification($feature); $spec['before']=self::read($spec['target']);
-            $spec['origin']='fresh:'.hash('sha256',$proof);
-            self::validate_spec($feature,$spec); self::put($name,serialize($spec),null);
-        } else { $spec=self::decode($raw); }
-        $origin=$spec['origin']??'';
-        $fresh=YOWCL_Free_Onboarding::initial_proof();
-        if ('legacy:3c1aac240df03101561b856cddb603b1501fa41b'!==$origin && (!$fresh || 'fresh:'.hash('sha256',$fresh)!==$origin)) { throw new RuntimeException('migration_origin_unresolved'); }
+        if (null===$raw) { throw new RuntimeException('migration_origin_unresolved'); }
+        $spec=self::decode($raw);
+        if ('legacy:3c1aac240df03101561b856cddb603b1501fa41b'!==($spec['origin']??'')) { throw new RuntimeException('migration_origin_unresolved'); }
         $frozen=self::specification($feature,$spec['source'],true);
         if (serialize($frozen['patch'])!==serialize($spec['patch']) || $frozen['target']!==$spec['target']) { throw new RuntimeException('migration_malformed_evidence'); }
         self::finish($feature,$spec);
@@ -562,14 +555,10 @@ class YOWCL_Free_Migrations {
         try { $current=$select(self::read(self::target($feature))); } catch(Throwable $e) { $current=__('Unavailable','loyalty-for-woocommerce'); }
         return array('before'=>$select($spec['before']),'migration'=>$select(serialize($spec['patch'])),'current'=>$current);
     }
-    /** F1: only the request with actual conservative freshness proof may mutate at boot. */
+    /** Ordinary boot preserves completed-policy cache handover; conversion stays asynchronous. */
     public static function boot() {
-        if (YOWCL_Free_Onboarding::initial_proof()) { self::run(); }
-        else {
-            // Keep completed-policy cache handover without any synchronous conversion.
-            try { self::locked(function(){foreach(self::features() as $feature){if(self::ready($feature)){self::invalidate($feature);}}}); }
-            catch(Throwable $e) { foreach(self::features() as $feature){self::invalidate($feature);} }
-        }
+        try { self::locked(function(){foreach(self::features() as $feature){if(self::ready($feature)){self::invalidate($feature);}}}); }
+        catch(Throwable $e) { foreach(self::features() as $feature){self::invalidate($feature);} }
         add_action(self::HOOK,array(__CLASS__,'worker'),10,2);
         add_action('action_scheduler_init',array(__CLASS__,'schedule'));
         add_action('init',array(__CLASS__,'schedule'),20);

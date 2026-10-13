@@ -191,4 +191,4 @@ YOWCL_Free_Migrations::session(); loyf_equal(null,WC()->session->get('yoswc_loya
 WC()->session->set('loyf_funded_selection',array('id'=>'fixture')); WC()->session->set('yoswc_loyalty_applied_points',20); YOWCL_Free_Migrations::session(); loyf_equal(20,WC()->session->get('yoswc_loyalty_applied_points'),'Canonical attempt retained');
 echo "Actual old-Free → refreshed-Free upgrade PASS\n";
 
-loyf_assert( ! YOWCL_Free_Onboarding::writable(), "Actual old-Free upgrade is review-only" );
+loyf_assert( ! class_exists( 'YOWCL_Free_Onboarding', false ), 'Retired setup is absent on actual old-Free upgrade' );

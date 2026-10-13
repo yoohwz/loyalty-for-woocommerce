@@ -1,17 +1,12 @@
 <?php
+// Retained activation runner: native retirement and bootstrap safety, no wizard execution.
 require_once __DIR__ . '/assertions.php';
-$case = getenv( 'LOYF11_CASE' ); $phase = getenv( 'LOYF11_PHASE' );
-function loyf11_input() {
-    return array( 'attempt'=>YOWCL_Free_Onboarding::state()['id'] ?? '', 'currency'=>get_woocommerce_currency(),'role'=>'customer','earn_points'=>'2','earn_amount'=>'5','rounding'=>'round_down','earn_status'=>array( 'wc-processing','wc-completed' ),'deduct_status'=>array( 'wc-failed','wc-cancelled','wc-refunded' ),'bubble'=>'yes','account'=>'yes','redeem'=>'yes','redeem_points'=>'100','redeem_amount'=>'1','first'=>'yes','first_points'=>'25','referral'=>'yes','referral_points'=>'10' );
+$case=getenv('LOYF11_CASE');$phase=getenv('LOYF11_PHASE');
+function loyf37_state() {
+ global $wpdb;
+ $options=$wpdb->get_results("SELECT option_name,option_value,autoload FROM {$wpdb->options} WHERE option_name LIKE 'loyalty\_%' OR option_name LIKE 'loyf\_%' OR option_name LIKE 'woocommerce_yowcl\_%' ORDER BY option_name",ARRAY_A);
+ return array($options,$wpdb->get_results("SELECT * FROM {$wpdb->usermeta} WHERE meta_key IN ('user_points','user_earning_points','_yowcl_loyalty_level','_yoswc_role_claims') ORDER BY umeta_id",ARRAY_A),get_option($wpdb->prefix.'user_roles'),$wpdb->get_results("SELECT * FROM {$wpdb->prefix}yo_loyalty_points_log ORDER BY id",ARRAY_A));
 }
-function loyf11_snapshot() {
-    global $wpdb;
-    $o = array(); foreach ( YOWCL_Free_Onboarding::names() as $name ) { $o[$name] = $wpdb->get_var( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name=%s",$name ) ); }
-    return array( $o,$wpdb->get_results( "SELECT * FROM {$wpdb->usermeta} WHERE meta_key IN ('user_points','user_earning_points','_yowcl_loyalty_level','_yoswc_role_claims') ORDER BY umeta_id",ARRAY_A ),$wpdb->get_results( "SELECT * FROM {$wpdb->prefix}yo_loyalty_points_log ORDER BY id",ARRAY_A ),get_option( $wpdb->prefix . 'user_roles' ),$wpdb->get_results( "SELECT action_id,hook,args,status FROM {$wpdb->prefix}actionscheduler_actions WHERE hook LIKE 'yowcl%' ORDER BY action_id",ARRAY_A ) );
-}
-function loyf11_render() { ob_start(); YOWCL_Free_Onboarding::render(); return ob_get_clean(); }
-function loyf11_denied( $callback,$label ) { try { $callback(); } catch ( Throwable $e ) { return; } throw new LogicException( 'Expected denial: ' . $label ); }
-if ( 'worker' === $phase ) { return; }
 if ( 'seed' === $phase ) {
     global $wpdb;
     // Ordinary pre-adoption users and orders are deliberately present in every case.
@@ -41,122 +36,52 @@ if ( 'seed' === $phase ) {
         $wpdb->query( "CREATE TABLE {$wpdb->prefix}yo_loyalty_points_log (id mediumint NOT NULL AUTO_INCREMENT,user_id bigint NOT NULL,action varchar(255) NOT NULL,order_id bigint NOT NULL,amount decimal(10,2) NOT NULL,description text NOT NULL,date datetime NOT NULL,PRIMARY KEY(id)) ENGINE=InnoDB" );
         $wpdb->insert( $wpdb->prefix . 'yo_loyalty_points_log',array( 'id'=>77,'user_id'=>$user,'action'=>'legacy_reward','order_id'=>$o->get_id(),'amount'=>'9.50','description'=>'Untouched legacy','date'=>'2020-01-01 00:00:00' ) );
     }
-    if ( 'assessment-failure' === $case ) { file_put_contents( getenv( 'LOYF11_FAIL_FILE' ),'once' ); }
-    $fixture['protected'] = $wpdb->get_results( "SELECT option_name,option_value FROM {$wpdb->options} WHERE option_name IN ('loyalty_points_earning_rules','loyalty_referral_coupon','yowcl_license_key','loyf_core_cutover_v1','loyf_migration_signup_v1','loyf_onboarding_v1') ORDER BY option_name",ARRAY_A );
+    if (in_array($case,array('proven','started','complete','dismissed','review'),true)) {
+        add_option('loyf_onboarding_v1',array('version'=>1,'status'=>$case,'id'=>'historical-attempt','terms'=>array('redeem'=>true),'before'=>array('opaque'=>'preserve')), '', false);
+        add_option('loyalty_points_earning_rules',array('customer'=>array('points'=>'17','amount'=>'23')));
+        add_option('loyalty_points_using_rules',array('points'=>'100','amount'=>'1','unknown'=>'partial-launch'));
+        add_option('loyalty_points_using_point','yes');
+        foreach(array('signup','login','review','levelup','redemption','email_reward','email_deduct','email_level') as $feature){add_option('loyf_migration_'.$feature.'_v1','1','',false);}
+    }
+    $fixture['protected'] = $wpdb->get_results( "SELECT option_name,option_value,autoload FROM {$wpdb->options} WHERE option_name IN ('loyalty_points_earning_rules','loyalty_points_using_rules','loyalty_points_using_point','loyalty_referral_coupon','yowcl_license_key','loyf_core_cutover_v1','loyf_migration_signup_v1','loyf_onboarding_v1') ORDER BY option_name",ARRAY_A );
+    $fixture['meta'] = $wpdb->get_results("SELECT * FROM {$wpdb->usermeta} WHERE meta_key IN ('user_points','user_earning_points','_yowcl_loyalty_level','_yoswc_role_claims') ORDER BY umeta_id",ARRAY_A);
+    $fixture['roles'] = get_option($wpdb->prefix.'user_roles');
     file_put_contents( getenv( 'LOYF11_FIXTURE' ),wp_json_encode( $fixture ) ); return;
 }
-wp_set_current_user( get_user_by( 'login','loyf_admin' )->ID );
-// Call the native Loyalty bootstrap owners; Woo admin_init requires a real admin screen.
-if ( class_exists( 'YOSWC_Loyalty_Backend',false ) ) { YOSWC_Loyalty_Backend::check_version(); }
-if ( class_exists( 'YOSWC_Loyalty_Settings_Customization',false ) ) { YOSWC_Loyalty_Settings_Customization::set_default_message_settings(); }
-$fixture = json_decode( file_get_contents( getenv( 'LOYF11_FIXTURE' ) ),true );
-if ( 'bootstrap-merchant' === $phase ) {
-    $_POST=array('earning_point_rules_nonce'=>wp_create_nonce('save_earning_point_rules'),'loyalty_earning_points'=>array('customer'=>'7'),'loyalty_earning_amount'=>array('customer'=>'5'));
-    (new YOSWC_Loyalty_Settings())->save_earning_point_rules();
-    loyf_equal('7',get_option('loyalty_points_earning_rules')['customer']['points'],'Native merchant save during bootstrap'); return;
+
+wp_set_current_user(get_user_by('login','loyf_admin')->ID);
+global $wpdb;
+$fixture=json_decode(file_get_contents(getenv('LOYF11_FIXTURE')),true);
+loyf_assert(!class_exists('YOWCL_Free_Onboarding',false),'No retired setup class');
+loyf_equal(false,has_action('admin_post_loyf_onboarding'),'No retired POST writer');
+loyf_assert(!file_exists(WP_PLUGIN_DIR.'/loyalty-for-woocommerce/js/onboarding.js'),'No retired JS');
+foreach($fixture['protected'] as $row){loyf_equal($row,$wpdb->get_row($wpdb->prepare("SELECT option_name,option_value,autoload FROM {$wpdb->options} WHERE option_name=%s",$row['option_name']),ARRAY_A),'Protected option '.$row['option_name']);}
+loyf_equal($fixture['meta'],$wpdb->get_results("SELECT * FROM {$wpdb->usermeta} WHERE meta_key IN ('user_points','user_earning_points','_yowcl_loyalty_level','_yoswc_role_claims') ORDER BY umeta_id",ARRAY_A),'Economic metadata exact');
+loyf_equal($fixture['roles'],get_option($wpdb->prefix.'user_roles'),'Physical roles exact');
+if('bad-cutover'===$case){loyf_assert(!class_exists('YOWCL_Points_Transaction',false),'Invalid cutover prevents writer inclusion');echo "Native invalid cutover safety PASS\n";return;}
+loyf_assert(class_exists('YOWCL_Points_Transaction',false),'Core writer booted behind cutover');
+if('log'===$case){$row=$wpdb->get_row("SELECT * FROM {$wpdb->prefix}yo_loyalty_points_log WHERE id=77",ARRAY_A);loyf_equal('9.50',$row['amount'],'Historical fractional row');loyf_equal(null,$row['event_key'],'No fabricated identity');}
+else{loyf_equal(array(),$wpdb->get_results("SELECT * FROM {$wpdb->prefix}yo_loyalty_points_log",ARRAY_A),'Activation awards no points');}
+if('reactivation-before'===$phase){file_put_contents(getenv('LOYF11_FIXTURE').'.reactivation',wp_json_encode(loyf37_state()));return;}
+if('reactivation-after'===$phase){loyf_equal(json_decode(file_get_contents(getenv('LOYF11_FIXTURE').'.reactivation'),true),loyf37_state(),'Reactivation exact state');return;}
+if('browser-before'===$phase){file_put_contents(getenv('LOYF11_FIXTURE').'.browser',wp_json_encode(loyf37_state()));return;}
+if('browser-after'===$phase){loyf_equal(json_decode(file_get_contents(getenv('LOYF11_FIXTURE').'.browser'),true),loyf37_state(),'Retired HTTP routes cannot write');return;}
+// Ordinary boot never manufactures synchronous fresh migration authority.
+if(!in_array($case,array('proven','started','complete','dismissed','review'),true)){
+ foreach(YOWCL_Free_Migrations::features() as $feature){loyf_equal(null,YOWCL_Free_Migrations::read(YOWCL_Free_Migrations::witness($feature).'_before'),'No fresh evidence '.$feature);}
 }
-if ( in_array($case,array('bootstrap-race','seal-race','assessment-race'),true) ) {
-    loyf_equal('review',YOWCL_Free_Onboarding::state()['status'],'Competing bootstrap retires unsealed proof');
-    loyf_assert(!YOWCL_Free_Onboarding::writable(),'Interleaved bootstrap is review-only');
-    $before=loyf11_snapshot(); $input=loyf11_input();
-    loyf11_denied(static function()use($input){YOWCL_Free_Onboarding::launch($input);},'Bootstrap cannot absorb merchant save');
-    loyf_equal($before,loyf11_snapshot(),'Denied bootstrap Launch has no business writes');
-    loyf_equal('7',get_option('loyalty_points_earning_rules')['customer']['points'],'Bootstrap retains native merchant7/5');
-    echo 'Native onboarding bootstrap concurrency PASS '.$case."\n";return;
+if('fresh'===$case){
+ loyf_equal(null,get_option('loyf_onboarding_v1',null),'Fresh install creates no setup state');
+ loyf_equal(null,get_option('loyalty_points_earning_rules',null),'No default earning conversion');
+ loyf_equal(null,get_option('loyalty_points_using_point',null),'No default redemption enablement');
+ loyf_equal(null,get_option('loyalty_points_using_rules',null),'No default redemption conversion');
+ // Use the existing registered scheduler/worker to settle inactive policies before manual configuration.
+ YOWCL_Free_Migrations::schedule();
+ foreach(as_get_scheduled_actions(array('hook'=>YOWCL_Free_Migrations::HOOK,'status'=>'pending','per_page'=>100)) as $action){do_action(YOWCL_Free_Migrations::HOOK,...array_values($action->get_args()));}
+ foreach(YOWCL_Free_Migrations::features() as $feature){loyf_assert(YOWCL_Free_Migrations::ready($feature),'Inactive migration ready '.$feature);}
+ $_POST=array('earning_point_rules_nonce'=>wp_create_nonce('save_earning_point_rules'),'loyalty_earning_points'=>array('customer'=>'7'),'loyalty_earning_amount'=>array('customer'=>'5'));
+ (new YOSWC_Loyalty_Settings())->save_earning_point_rules();
+ loyf_equal('7',get_option('loyalty_points_earning_rules')['customer']['points'],'Native manual earning save');
+ loyf_equal(null,get_option('loyf_onboarding_v1',null),'Manual save never revives setup');
 }
-if ( 'browser-debug' === $phase ) {
-    $s=YOWCL_Free_Onboarding::state(); $m=new ReflectionMethod('YOWCL_Free_Onboarding','program_snapshot'); $m->setAccessible(true); $actual=$m->invoke(null);
-    echo wp_json_encode(array('status'=>$s['status'],'writable'=>YOWCL_Free_Onboarding::writable(),'added'=>array_diff_key($actual,$s['program']??array()),'changed'=>array_diff_assoc($actual,$s['program']??array()))),PHP_EOL;return;
-}
-if ( 'browser-check' === $phase && 'browser-exit' === $case ) {
-    loyf_equal('dismissed',YOWCL_Free_Onboarding::state()['status'],'Shipped Exit persisted dismissal');
-    loyf_equal(json_decode(file_get_contents(getenv('LOYF11_FIXTURE').'.view.json'),true),loyf11_snapshot(),'Shipped Exit has no business writes');echo "Native onboarding browser Exit PASS\n";return;
-}
-if ('browser-check'===$phase && 'browser-blank'===$case) {
-    $before=json_decode(file_get_contents(getenv('LOYF11_FIXTURE').'.view.json'),true);$after=loyf11_snapshot();
-    loyf_equal('dismissed',YOWCL_Free_Onboarding::state()['status'],'Fresh skip remains dismissed after General save');
-    foreach(array('loyalty_points_using_rules','loyalty_points_using_point') as $name){loyf_equal($before[0][$name]??null,$after[0][$name]??null,'Fresh blank redemption preserved '.$name);}
-    foreach(array(1,2,3,4) as $part){loyf_equal($before[$part],$after[$part],'Fresh General save no economic/role/scheduled writes');}
-    loyf_equal('7',get_option('loyalty_points_earning_rules')['customer']['points'],'Fresh blank redemption allows earning save');
-    loyf_equal('round_down',get_option('loyalty_points_rounding'),'Fresh blank redemption allows rounding save');
-    echo "Native fresh activation/Quick Start skip/blank redemption General Save PASS\n";return;
-}
-if ( 'browser-check' === $phase ) {
-    loyf_equal( 'complete',YOWCL_Free_Onboarding::state()['status'],'Browser Launch completed' );
-    loyf_equal( '7',get_option( 'loyalty_points_earning_rules' )['customer']['points'],'Stale tab preserves later native Woo save' );
-    loyf_equal( null,get_option( YOWCL_Free_First_Purchase::WITNESS,null ),'Browser skipped First Purchase' );
-    loyf_equal( null,get_option( YOWCL_Free_Referral::OPTION,null ),'Browser skipped Referral Lite' );
-    loyf_equal( array(),loyf_rows( $fixture['user'] ),'Browser previews/Launch never mint value' );
-    echo "Native onboarding browser saved choices PASS\n"; return;
-}
-if ( ! in_array( $case,array( 'fresh','skip','late-setting','late-balance','failure','first-failure','referral-failure','unknown-referral','disconnect','parallel','merchant-race','browser','browser-exit','browser-blank','dismiss' ),true ) ) {
-    loyf_assert( ! YOWCL_Free_Onboarding::writable(),'Footprint is review-only: ' . $case );
-    $html = loyf11_render(); loyf_assert( false === strpos( $html,'id="loyf-quick-start"' ),'No writable review form' );
-    global $wpdb;
-    foreach ( $fixture['protected'] as $row ) { loyf_equal( $row['option_value'],$wpdb->get_var( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name=%s",$row['option_name'] ) ),'Footprint preserved ' . $row['option_name'] ); }
-    if ( 'balance' === $case ) { loyf_equal( '9.5',get_user_meta( $fixture['user'],'user_points',true ),'Fractional balance unchanged' ); }
-    if ( 'log' === $case ) { $r=$wpdb->get_row( "SELECT * FROM {$wpdb->prefix}yo_loyalty_points_log WHERE id=77",ARRAY_A ); loyf_equal( '9.50',$r['amount'],'History amount' ); loyf_equal( null,$r['event_key'],'Historical NULL identity' ); }
-    echo 'Native onboarding footprint PASS ' . $case . "\n"; return;
-}
-loyf_assert( YOWCL_Free_Onboarding::writable(),'Unseeded activation is fresh: ' . $case );
-$before = loyf11_snapshot(); $html = loyf11_render(); loyf_equal( $before,loyf11_snapshot(),'Rendering is business read-only' ); loyf_assert( false !== strpos( $html,'id="loyf-quick-start"' ),'Shipped wizard' );
-$input = loyf11_input();
-foreach ( array( 'earn_points'=>array( '-1','1.5','1e3','999999999',array() ),'earn_amount'=>array( '0','INF','0.001','1e100',array() ),'rounding'=>array( 'unknown' ),'currency'=>array( 'INVALID' ),'role'=>array( 'administrator' ),'earn_status'=>array( array( 'wc-pending' ),array( array() ) ) ) as $key=>$values ) {
-    foreach ( $values as $value ) { $bad=$input; $bad[$key]=$value; loyf11_denied( static function () use ( $bad ) { YOWCL_Free_Onboarding::launch( $bad ); },'Bad ' . $key ); loyf_equal( $before,loyf11_snapshot(),'Invalid input has no writes' ); }
-}
-wp_set_current_user( $fixture['user'] ); loyf11_denied( static function () use ( $input ) { YOWCL_Free_Onboarding::launch( $input ); },'Customer denied' ); wp_set_current_user( get_user_by( 'login','loyf_admin' )->ID );
-if ( 'browser' === $case || 'browser-exit' === $case || 'browser-blank' === $case ) { file_put_contents(getenv('LOYF11_FIXTURE').'.view.json',wp_json_encode($before)); echo "Browser fixture fresh PASS\n"; return; }
-if ( 'late-setting' === $case ) { update_option( 'loyalty_extra_points_rules',array( 'signup_enabled'=>'yes','signup_points'=>'13','merchant'=>'preserve' ) ); $before=loyf11_snapshot(); loyf11_denied( static function () use ( $input ) { YOWCL_Free_Onboarding::launch( $input ); },'Prior merchant settings' ); loyf_equal( $before,loyf11_snapshot(),'No stale launch writes' ); return; }
-if ( 'late-balance' === $case ) { update_user_meta( $fixture['user'],'user_points',19 ); $before=loyf11_snapshot(); loyf11_denied( static function () use ( $input ) { YOWCL_Free_Onboarding::launch( $input ); },'Used program' ); loyf_equal( $before,loyf11_snapshot(),'No used-program writes' ); return; }
-if ( 'skip' === $case || 'dismiss' === $case ) { unset( $input['first'],$input['referral'],$input['redeem'] ); }
-if ( 'dismiss' === $case ) {
-    $s=YOWCL_Free_Onboarding::state(); $s['status']='dismissed'; update_option( YOWCL_Free_Onboarding::OPTION,$s,false );
-    loyf11_denied( static function () use ( $input ) { YOWCL_Free_Onboarding::launch( $input ); },'Dismissed invitation' ); loyf_equal( $before,loyf11_snapshot(),'Dismiss no business writes' ); return;
-}
-$faults=array( 'failure'=>'onboarding_settings_write','first-failure'=>'first_purchase_settings_write','referral-failure'=>'onboarding_referral_save','unknown-referral'=>'onboarding_referral_saved','disconnect'=>'onboarding_settings_write' );
-if ( isset( $faults[$case] ) ) {
-    $hook=static function ( $step,$key ) use ( $case,$faults ) { if ( $step !== $faults[$case] ) { return; } if ( 'disconnect' === $case ) { global $wpdb; $killer=new mysqli( getenv('LOY_DB_HOST'),getenv('LOY_DB_USER'),getenv('LOY_DB_PASSWORD'),DB_NAME,(int)getenv('LOY_DB_PORT') ?: 3306 ); $killer->query('KILL CONNECTION '.mysqli_thread_id($wpdb->dbh)); $killer->close(); } throw new RuntimeException( 'injected_onboarding_failure' ); };
-    add_action( 'yowcl_reward_test_checkpoint',$hook,10,2 );
-    loyf11_denied( static function () use ( $input ) { YOWCL_Free_Onboarding::launch( $input ); },'Injected interruption' ); remove_action( 'yowcl_reward_test_checkpoint',$hook,10 );
-    if ( 'disconnect' === $case ) { global $wpdb; $wpdb->check_connection( false ); }
-    loyf_equal( 'started',YOWCL_Free_Onboarding::state()['status'],'Failure keeps consumed incomplete invitation' );
-    $partial=loyf11_snapshot(); loyf11_denied( static function () use ( $input ) { YOWCL_Free_Onboarding::launch( $input ); },'Replay cannot rerun services' ); loyf_equal( $partial,loyf11_snapshot(),'Failed replay preserves partial outcomes' );
-    if ( in_array( $case,array( 'failure','disconnect' ),true ) ) { loyf_equal( $before,$partial,'Atomic baseline rollback' ); }
-    if ( 'first-failure' === $case ) { loyf_equal( null,get_option( YOWCL_Free_First_Purchase::WITNESS,null ),'Native pair rollback no fake epoch' ); }
-    loyf_equal( array(),loyf_rows( $fixture['user'] ),'Failed wizard never minted value' ); echo 'Native onboarding interruption PASS ' . $case . "\n"; return;
-}
-if ( in_array( $case,array( 'parallel','merchant-race' ),true ) ) {
-    $barrier=tempnam(sys_get_temp_dir(),'loyf11-worker-'); unlink($barrier);
-    $env=getenv(); $env['LOYF11_PHASE']='worker'; $env['LOYF11_BARRIER']=$barrier;
-    $pipes=array(); $worker=proc_open(array(PHP_BINARY,getenv('LOYF_WP_CLI_PHAR'),'--path='.ABSPATH,'eval-file',__DIR__.'/onboarding-worker.php','--quiet'),array(0=>array('pipe','r'),1=>array('pipe','w'),2=>array('pipe','w')),$pipes,null,$env);
-    loyf_assert(is_resource($worker),'Native independent worker'); fclose($pipes[0]);
-    $until=microtime(true)+15; while(!file_exists($barrier.'.ready')&&microtime(true)<$until){usleep(20000);} loyf_assert(file_exists($barrier.'.ready'),'Independent worker booted before Launch');
-    $dispatched=false;
-    $pause=static function($step,$key)use($case,$barrier,&$dispatched){
-        if('onboarding_settings_write'===$step&&!$dispatched){$dispatched=true;file_put_contents($barrier.'.go','go');usleep(150000);loyf_assert(!file_exists($barrier.'.done'),'Contender blocked by actual native ownership');}
-        if('merchant-race'===$case&&'onboarding_baseline_committed'===$step){$until=microtime(true)+10;while(!file_exists($barrier.'.done')&&microtime(true)<$until){usleep(20000);}loyf_assert(file_exists($barrier.'.done'),'Native merchant save completed after row lock');}
-    };
-    add_action('yowcl_reward_test_checkpoint',$pause,10,2);
-    try {
-        if('merchant-race'===$case){loyf11_denied(static function()use($input){YOWCL_Free_Onboarding::launch($input);},'Concurrent native settings change');}
-        else{YOWCL_Free_Onboarding::launch($input);}
-    } finally {remove_action('yowcl_reward_test_checkpoint',$pause,10);}
-    $out=stream_get_contents($pipes[1]);$err=stream_get_contents($pipes[2]);fclose($pipes[1]);fclose($pipes[2]);loyf_equal(0,proc_close($worker),'Native worker '.$out.$err);
-    foreach(array('.ready','.go','.done')as$suffix){if(file_exists($barrier.$suffix)){unlink($barrier.$suffix);}}
-    if('merchant-race'===$case){loyf_equal('started',YOWCL_Free_Onboarding::state()['status'],'Concurrent changed settings never complete');loyf_equal('7',get_option('loyalty_points_earning_rules')['customer']['points'],'Native merchant value retained');$partial=loyf11_snapshot();loyf11_denied(static function()use($input){YOWCL_Free_Onboarding::launch($input);},'No concurrent retry clobber');loyf_equal($partial,loyf11_snapshot(),'No concurrent clobber');echo "Native onboarding merchant concurrency PASS\n";return;}
-    echo "Native onboarding parallel Launch PASS\n";
-}
-YOWCL_Free_Onboarding::launch( $input );
-loyf_equal( 'complete',YOWCL_Free_Onboarding::state()['status'],'Confirmed completion' );
-loyf_equal( array( 'customer' ),get_option( 'loyalty_levels_roles' ),'Selected customer baseline' );
-loyf_equal( array(),loyf_rows( $fixture['user'] ),'Launch no history/value' );
-loyf_equal( $before[1],loyf11_snapshot()[1],'Launch no user/role meta' ); loyf_equal( $before[3],loyf11_snapshot()[3],'Launch no physical role configuration' ); loyf_equal( $before[4],loyf11_snapshot()[4],'Launch no AS economic delivery' );
-$saved=loyf11_snapshot(); YOWCL_Free_Onboarding::launch( $input ); loyf_equal( $saved,loyf11_snapshot(),'Idempotent same attempt' );
-update_option( 'loyalty_points_earning_rules',array( 'customer'=>array( 'points'=>'7','amount'=>'5' ) ) ); $later=loyf11_snapshot(); YOWCL_Free_Onboarding::launch( $input ); loyf_equal( $later,loyf11_snapshot(),'Replay preserves later authoritative save' );
-if ( 'skip' === $case ) { loyf_equal( null,get_option( YOWCL_Free_First_Purchase::WITNESS,null ),'Skipped First creates no epoch' ); loyf_equal( null,get_option( YOWCL_Free_Referral::OPTION,null ),'Skipped referral creates no setting' ); }
-else {
-    $config=YOWCL_Free_First_Purchase::configuration(); loyf_assert( $config['ready'] && $config['effective'],'Native real First epoch' );
-    $old=wc_get_order( $fixture['order'] ); $old->update_status( 'processing' ); loyf_assert( ! get_user_meta( $fixture['user'],'first_purchase_rewarded',true ),'Pre-Launch pending excluded from First Purchase' );
-    loyf_equal( array( 'enabled'=>true,'points'=>10 ),YOWCL_Free_Referral::settings(),'Selected native referral terms' );
-}
-echo 'Native onboarding Launch PASS ' . $case . "\n";
+echo 'Native setup retirement/activation PASS '.$case."\n";

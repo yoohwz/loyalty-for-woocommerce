@@ -345,7 +345,7 @@
     {
       "target": "inc/backend/settings.php",
       "mode": "100644",
-      "sha256": "bc390e63ff6ec2ef2b208674612459360b514c844d738f3ee1ef8ee12cb7c5b3"
+      "sha256": "037053121676394a9e2dd8903d1c361b9902233b446f7b7325a212641c94bb70"
     },
     {
       "target": "inc/backend/settings/customization.php",
@@ -386,11 +386,6 @@
       "target": "inc/backend/settings/general-using-point-rules.php",
       "mode": "100644",
       "sha256": "b0e6d1369c2369e6e849cbdaed0349bfd3eb4e019b21ac2737d82b2ef8e68101"
-    },
-    {
-      "target": "inc/backend/settings/notification.php",
-      "mode": "100644",
-      "sha256": "0551b33c4a8a933646329f9ab3d0f038848766f1fd4779a8b4b71261c7586954"
     },
     {
       "target": "inc/backend/settings/referrals.php",
@@ -500,12 +495,7 @@
     {
       "target": "inc/cores/helper/free-migrations.php",
       "mode": "100644",
-      "sha256": "fca8acb1c8701c31f5d5062791f7251e5ee5101b62d3bf5d36b0448e43fc8070"
-    },
-    {
-      "target": "inc/cores/helper/free-onboarding.php",
-      "mode": "100644",
-      "sha256": "00ca9ff3ee6988026997e298d5d2c399b0414b3a8ec2475198a6cdf78d7d89d5"
+      "sha256": "dd8b7c0d9471a12635483d1ca471c5ccc03e746bdca0611b3c45f3df61a12c39"
     },
     {
       "target": "inc/cores/helper/free-order-actions.php",
@@ -583,11 +573,6 @@
       "sha256": "1c50d372214055a9adc5336386e5199327aa98be0abc062297b3ca911c7b9362"
     },
     {
-      "target": "js/onboarding.js",
-      "mode": "100644",
-      "sha256": "dfcc44354b1f30f2a8ffb2a65913a1f6f7e0da4c35f2f420762b3d0a6e7106f6"
-    },
-    {
       "target": "js/referral-lite.js",
       "mode": "100644",
       "sha256": "daf1d6ca948df3700209ab24d643fee5bffbc8c9a31871d0c65ba2a476bec874"
@@ -620,7 +605,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "ed89436e961994e5db5a6e7c9706348e83abc8d806003565c0f37baacaff5167"
+      "sha256": "0568c9f5d47b7c27625a48d121241ea32815a57e6a19ab058a35622ac5708090"
     },
     {
       "target": "license.txt",
@@ -630,12 +615,12 @@
     {
       "target": "loyalty-for-woocommerce.php",
       "mode": "100644",
-      "sha256": "4368693b70304741772ef422ce2d5157e3b3e82f866cf12465d6f9b921bd79a0"
+      "sha256": "0ecf2a1d43a62095114573dba6b8afff8fd8da49fa8f3a4df14f569137e0c7ea"
     },
     {
       "target": "readme.txt",
       "mode": "100644",
-      "sha256": "f6ce434d5303c99254fa40a970dd3c39e1e4fcc6900f5af8a8e302c90ff6545d"
+      "sha256": "d5dc658e5aed1d9643ecea1fa56b09ddf6f3da0ec6184606e669d8b1c7b7a705"
     }
   ],
   "blocked_mixed_modules": [

@@ -24,8 +24,6 @@ $intercept = static function ( $pre, $args, $url ) use ( &$calls ) {
     return new WP_Error( 'loyf_disposable_http_blocked', 'No external transport in this fixture.' );
 };
 add_filter( 'pre_http_request', $intercept, PHP_INT_MAX, 3 );
-$snapshot = new ReflectionMethod( 'YOWCL_Free_Onboarding', 'program_snapshot' );
-$snapshot->setAccessible( true );
 $version = get_option( 'yoswc_loyalty_version', null );
 try {
     loyf_assert( ! class_exists( 'YOSWC_Loyalty_Push_Subscription', false ), 'Retired reporting symbol loaded' );
@@ -38,11 +36,6 @@ try {
         do_action( 'admin_init' );
         loyf_equal( YOSWC_LOYALTY_VERSION, get_option( 'yoswc_loyalty_version' ), 'Absent version bookkeeping' );
         loyf_equal( $row, $read(), 'Dormant reporting option mutated on absent-version boot' );
-        $program = $snapshot->invoke( null );
-        loyf_assert( ! array_key_exists( $name, $program ), 'Historical reporting option entered onboarding authority' );
-        $restore( null );
-        loyf_equal( $program, $snapshot->invoke( null ), 'Reporting option changed program snapshot' );
-        $restore( $row );
         update_option( 'yoswc_loyalty_version', 'historical-version' );
         do_action( 'admin_init' );
         do_action( 'admin_init' );
@@ -55,7 +48,7 @@ try {
         loyf_assert( ! $call['plugin_origin'], 'Plugin-origin administration HTTP: ' . $call['url'] );
         loyf_assert( in_array( $call['url'], array( 'https://api.wordpress.org/plugins/update-check/1.1/', 'http://api.wordpress.org/plugins/update-check/1.1/' ), true ), 'Unclassified administration HTTP: ' . $call['url'] );
     }
-    echo "Installation reporting retirement: PASS (absent/yes/no/malformed; native admin_init; unchanged version handling and onboarding snapshot).\n";
+    echo "Installation reporting retirement: PASS (absent/yes/no/malformed; native admin_init; unchanged version handling).\n";
 } finally {
     $restore( $original );
     if ( null === $version ) { delete_option( 'yoswc_loyalty_version' ); }

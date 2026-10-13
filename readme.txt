@@ -32,7 +32,7 @@ The free version focuses on the core loyalty workflow: earning points, redeeming
 * Manually reward or deduct points from user profiles and the Users screen
 * Import point balances from CSV
 * Offer optional First Purchase rewards and Referral Lite for registered customers
-* Set up a new program with the optional Quick Start wizard
+* Configure your program directly in the Loyalty settings
 * Review current available point stock and reward activity in a basic Dashboard
 * Add points, level, progress, referral and history blocks or shortcodes
 * Export current customer loyalty state as snapshot CSV with completion indicators
@@ -49,9 +49,9 @@ The free version focuses on the core loyalty workflow: earning points, redeeming
 4. Enable customer-facing displays such as the Loyalty bubble, cart message, checkout message, or My Account points tab.
 5. Customers earn points from eligible actions and redeem available points during checkout.
 
-== Quick Start and Existing Stores ==
+== Configuration and Existing Stores ==
 
-A genuinely new Free installation can use Quick Start to choose earning, redemption, levels and optional rewards. Previewing or leaving the wizard does not launch a program. Existing or previously used stores receive a review path rather than an automatic reset.
+Configure earning, redemption, levels and optional rewards directly in Loyalty settings. Activation does not launch a reward program. Existing points, history and settings are preserved; updates use the existing background migration and safety guards.
 
 When the source of a migrated feature's settings cannot be established, that feature stays on hold. An administrator can review and keep complete current terms, explicitly adopt valid legacy Free terms, or disable the feature using Free settings. This does not change balances or history, restore old snapshots automatically, or reset Premium configuration.
 
