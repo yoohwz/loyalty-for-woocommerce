@@ -64,7 +64,11 @@ if('log'===$case){$row=$wpdb->get_row("SELECT * FROM {$wpdb->prefix}yo_loyalty_p
 else{loyf_equal(array(),$wpdb->get_results("SELECT * FROM {$wpdb->prefix}yo_loyalty_points_log",ARRAY_A),'Activation awards no points');}
 if('reactivation-before'===$phase){file_put_contents(getenv('LOYF11_FIXTURE').'.reactivation',wp_json_encode(loyf37_state()));return;}
 if('reactivation-after'===$phase){loyf_equal(json_decode(file_get_contents(getenv('LOYF11_FIXTURE').'.reactivation'),true),loyf37_state(),'Reactivation exact state');return;}
-if('browser-before'===$phase){file_put_contents(getenv('LOYF11_FIXTURE').'.browser',wp_json_encode(loyf37_state()));return;}
+if('browser-before'===$phase){
+ // Warm the unchanged admin_init defaults before the read-only HTTP comparison.
+ YOSWC_Loyalty_Backend::check_version();
+ YOSWC_Loyalty_Settings_Customization::set_default_message_settings();
+ file_put_contents(getenv('LOYF11_FIXTURE').'.browser',wp_json_encode(loyf37_state()));return;}
 if('browser-after'===$phase){loyf_equal(json_decode(file_get_contents(getenv('LOYF11_FIXTURE').'.browser'),true),loyf37_state(),'Retired HTTP routes cannot write');return;}
 // Ordinary boot never manufactures synchronous fresh migration authority.
 if(!in_array($case,array('proven','started','complete','dismissed','review'),true)){
