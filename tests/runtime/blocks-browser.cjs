@@ -28,7 +28,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         await page.getByRole('button', {name:'Add a coupon', exact:true}).click();
         await page.getByLabel('Enter code', {exact:true}).fill('appearance-only');
         await surface.getByLabel('Points to apply').fill('');
-        await page.getByText('Subtotal', {exact:true}).click();
+        await page.getByText('Subtotal', {exact:true}).filter({visible:true}).click();
         const appearance = await page.evaluate(() => {
             const group = document.querySelector('.loyf-blocks-redemption');
             const input = group.querySelector('input');
@@ -36,7 +36,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
             const apply = group.querySelector('button');
             const nativeButton = document.querySelector('.wc-block-components-totals-coupon__button');
             const skin = node => { const css = getComputedStyle(node); return Object.fromEntries(['color','backgroundColor','borderRadius','fontFamily','fontSize','borderTopWidth','borderTopStyle','borderTopColor'].map(key => [key,css[key]])); };
-            const label = [...document.querySelectorAll('.wc-block-components-totals-item__label')].find(node=>node.textContent==='Subtotal');
+            const label = [...document.querySelectorAll('.wc-block-components-totals-item__label')].find(node=>node.textContent==='Subtotal' && node.getBoundingClientRect().width>0);
             const row = label.closest('.wc-block-components-totals-item');
             const rect = input.getBoundingClientRect();
             return {input:skin(input), coupon:skin(coupon), button:skin(apply), nativeButton:skin(nativeButton), left:rect.left, expectedLeft:label.getBoundingClientRect().left, right:rect.right, expectedRight:row.getBoundingClientRect().right - parseFloat(getComputedStyle(row).paddingRight), overflow:document.documentElement.scrollWidth > innerWidth, inlineStyles:[...group.querySelectorAll('input[style],button[style]')].map(node=>node.getAttribute('style')), inlineSkin:[...group.querySelectorAll('input,button')].some(node=>['color','background','background-color','border','border-radius','padding','font','font-size','box-shadow','width','height'].some(property=>node.style.getPropertyValue(property))), nativeInput:input.parentElement.classList.contains('wc-block-components-text-input'), nativeButtonClass:apply.classList.contains('wc-block-components-button')};
@@ -73,7 +73,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
             assert(!/You will earn/.test(await surface.innerText()), 'Disabled earning messages must not hide redemption');
             await presentation(target === fixture.cart ? 'cart' : 'checkout',1280);
             await presentation(target === fixture.cart ? 'cart' : 'checkout',390);
-            const originalTotal = await page.locator('.wc-block-components-totals-footer-item .wc-block-components-totals-item__value').innerText();
+            const originalTotal = await page.locator('.wc-block-components-totals-footer-item .wc-block-components-totals-item__value').filter({visible:true}).innerText();
             await surface.getByRole('button', {name:'Apply points',exact:true}).press('Enter');
             assert.match(await surface.getByRole('alert').innerText(), /Enter a whole points amount/);
             await surface.getByLabel('Points to apply').fill('9999');
@@ -99,7 +99,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
             await page.waitForFunction(() => [...document.querySelectorAll('.loyf-blocks-redemption')].some(node => /20 points applied/.test(node.textContent)));
             await surface.getByRole('button', { name:'Apply points', exact:true }).waitFor();
             if (target === fixture.cart) { assert(updates.length >= replayStart + 2, 'Native extension batch observed'); assert.deepEqual(updates[replayStart], updates[replayStart + 1], 'Lost response retries original immutable UUID and terms'); }
-            assert.notEqual(await page.locator('.wc-block-components-totals-footer-item .wc-block-components-totals-item__value').innerText(), originalTotal, 'Apply changes native totals');
+            assert.notEqual(await page.locator('.wc-block-components-totals-footer-item .wc-block-components-totals-item__value').filter({visible:true}).innerText(), originalTotal, 'Apply changes native totals');
             assert.equal(await surface.count(),1, 'Native cart update keeps one group');
             await page.reload();
             await surface.waitFor({ state:'visible' });
@@ -118,7 +118,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
             await surface.getByRole('button', { name:'Apply points', exact:true }).waitFor();
             assert(lostRemove && updates.length >= removeStart + 2, 'Lost remove response replay observed');
             assert.deepEqual(updates[removeStart], updates[removeStart + 1], 'Empty input must replay the original remove request');
-            assert.equal(await page.locator('.wc-block-components-totals-footer-item .wc-block-components-totals-item__value').innerText(), originalTotal, 'Remove restores native totals');
+            assert.equal(await page.locator('.wc-block-components-totals-footer-item .wc-block-components-totals-item__value').filter({visible:true}).innerText(), originalTotal, 'Remove restores native totals');
         }
         for (const state of ['zero','low','held']) {
             const context = await browser.newContext();
@@ -160,7 +160,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         await guestPage.goto(base + '/?add-to-cart=' + fixture.product);
         for (const target of [fixture.cart,fixture.checkout]) {
             await guestPage.goto(base + '/?page_id=' + target);
-            await guestPage.locator('.wc-block-components-totals-footer-item').waitFor();
+            await guestPage.locator('.wc-block-components-totals-footer-item').filter({visible:true}).waitFor();
             assert.equal(await guestPage.locator('.loyf-blocks-redemption').count(),0, 'Guest has no Loyalty controls');
         }
         await guest.close();
