@@ -6,6 +6,16 @@ repo=$(git rev-parse --show-toplevel)
 [[ -n "${LOY_DB_HOST:-}" && -n "${LOY_DB_USER:-}" && -n "${LOY_DB_PASSWORD:-}" ]] || exit 2
 candidate=$(git rev-parse HEAD)
 [[ -z $(git status --porcelain --untracked-files=all) ]] || { echo 'Clean committed candidate required' >&2; exit 2; }
+browser_opcache=${LOYF_BROWSER_OPCACHE:-0}
+case "$browser_opcache" in
+  0|1) ;;
+  *) echo 'LOYF_BROWSER_OPCACHE must be 0 or 1' >&2; exit 2 ;;
+esac
+if [[ "$browser_opcache" == 1 ]]; then
+  php -r 'exit(PHP_OS_FAMILY === "Linux" && PHP_MAJOR_VERSION === 8 && PHP_MINOR_VERSION === 2 && extension_loaded("Zend OPcache") ? 0 : 1);' || {
+    echo 'Browser OPcache requires Linux PHP 8.2 with Zend OPcache' >&2; exit 2;
+  }
+fi
 task_tmp=$(mktemp -d "${TMPDIR:-/tmp}/loyf-consumers.XXXXXXXX")
 databases=()
 server_pid=
@@ -78,10 +88,10 @@ for versions in "${versions_list[@]}"; do
       wp option update siteurl "$LOYF_BROWSER_URL" --quiet; wp option update home "$LOYF_BROWSER_URL" --quiet
       wp option update loyalty_customization_cart_checkout '{"cart":0,"checkout":0}' --format=json --quiet
       wp eval-file "$repo/tests/runtime/consumers-browser-seed.php" --quiet
-      # This disposable correctness fixture does not certify opcode/JIT optimization.
-      # Keep its interpreter mode explicit; engine crashes must still fail the whole leg.
-      browser_php=(php -d opcache.enable=0 -d opcache.enable_cli=0 -d opcache.jit=0 -d opcache.jit_buffer_size=0)
-      "${browser_php[@]}" -r 'echo "Browser fixture interpreter: ", json_encode(array("php"=>PHP_VERSION,"opcache"=>ini_get("opcache.enable"),"opcache_cli"=>ini_get("opcache.enable_cli"),"jit"=>ini_get("opcache.jit"),"jit_buffer"=>ini_get("opcache.jit_buffer_size"))), PHP_EOL;'
+      # Reuse compiled frozen PHP within this site/server only; bytecode optimization/JIT stay disabled.
+      # Engine crashes still fail the whole leg; no response or database cache is added.
+      browser_php=(php -d opcache.enable="$browser_opcache" -d opcache.enable_cli="$browser_opcache" -d opcache.optimization_level=0 -d opcache.jit=0 -d opcache.jit_buffer_size=0)
+      "${browser_php[@]}" -r 'echo "Browser fixture interpreter: ", json_encode(array("php"=>PHP_VERSION,"opcache"=>ini_get("opcache.enable"),"opcache_cli"=>ini_get("opcache.enable_cli"),"optimizer"=>ini_get("opcache.optimization_level"),"jit"=>ini_get("opcache.jit"),"jit_buffer"=>ini_get("opcache.jit_buffer_size"))), PHP_EOL;'
       "${browser_php[@]}" -S "127.0.0.1:${LOYF_BROWSER_PORT:-18088}" -t "$site" "$repo/tests/runtime/browser-router.php" > "$task_tmp/browser-server.log" 2>&1 & server_pid=$!
       node "$repo/tests/runtime/consumers-browser.cjs"
       kill "$server_pid"; wait "$server_pid" 2>/dev/null || true; server_pid=

@@ -190,6 +190,7 @@ jobs:
           LOY_DB_HOST: 127.0.0.1
           LOY_DB_USER: root
           LOY_DB_PASSWORD: loy-runtime-only
+          LOYF_BROWSER_OPCACHE: '1'
         run: |
           TIMEFORMAT="LOYF_CI_GROUP run.sh %3R seconds"
           time bash tests/runtime/run.sh
