@@ -177,10 +177,10 @@ jobs:
       - name: Prepare pinned runtime tools once
         run: |
           curl -fsSL --retry 3 https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar -o "$RUNNER_TEMP/loyf-wp.phar"
-          echo "LOYF_WP_CLI_PHAR=$RUNNER_TEMP/loyf-wp.phar" >> "$GITHUB_ENV"
           export LOYF_PLAYWRIGHT_PATH="$RUNNER_TEMP/loyf-browser/node_modules/playwright"
           npm install --prefix "$RUNNER_TEMP/loyf-browser" playwright@1.56.1 --no-audit --no-fund
           node "$LOYF_PLAYWRIGHT_PATH/cli.js" install --with-deps chromium
+          echo "LOYF_WP_CLI_PHAR=$RUNNER_TEMP/loyf-wp.phar" >> "$GITHUB_ENV"
           echo "LOYF_PLAYWRIGHT_PATH=$LOYF_PLAYWRIGHT_PATH" >> "$GITHUB_ENV"
           echo "LOYF_BROWSER_EXECUTABLE=$(node -e 'console.log(require(process.env.LOYF_PLAYWRIGHT_PATH).chromium.executablePath())')" >> "$GITHUB_ENV"
 
