@@ -42,8 +42,6 @@ class YOSWC_Loyalty_Settings {
             $this->output_referrals_settings();
 		} elseif ('customization' === $current_section) {
 			$this->output_customization_settings();
-		} elseif ('notification' === $current_section) {
-			$this->output_notification_settings();
         } elseif ('tools' === $current_section) {
 			$this->output_tools_settings();
         } elseif ('premium' === $current_section) {
@@ -66,7 +64,6 @@ class YOSWC_Loyalty_Settings {
 			'extra_points' => __('Extra points', 'loyalty-for-woocommerce'),
 			'referrals'     => __('Referrals', 'loyalty-for-woocommerce'),
 			'customization' => __('Customization', 'loyalty-for-woocommerce'),
-			'notification' => __('Notification', 'loyalty-for-woocommerce'),
 			'tools' => __('Tools', 'loyalty-for-woocommerce'),
 			'premium' => __('Premium', 'loyalty-for-woocommerce')
 		);
@@ -104,11 +101,6 @@ class YOSWC_Loyalty_Settings {
 		$customization_settings = new YOSWC_Loyalty_Settings_Customization();
 		$customization_settings->display_customization_settings();
 	}	
-
-	public function output_notification_settings() {
-		$notification_settings = new YOSWC_Loyalty_Settings_Notification();
-		$notification_settings->display_notification_settings();
-	}
 
 	public function output_tools_settings() {
 		$tools_settings = new YOSWC_Loyalty_Settings_Tools();
@@ -502,10 +494,6 @@ class YOSWC_Loyalty_Settings {
 			$customization_settings->save_customization_settings();
 		}
 	
-		if ($current_section === 'notification') {
-			$notification_settings = new YOSWC_Loyalty_Settings_Notification();
-			$notification_settings->save_notification_settings();
-		}
 
 	}
 	
@@ -632,7 +620,8 @@ class YOSWC_Loyalty_Settings {
 			return $default;
 		}
 
-		return sanitize_key( $value );
+		$value = sanitize_key( $value );
+		return 'section' === $key && 'notification' === $value ? 'general' : $value;
 	}
 
 	public function includes() {
@@ -643,7 +632,6 @@ class YOSWC_Loyalty_Settings {
 		include_once plugin_dir_path(__FILE__) . '/settings/extra-points.php';
 		include_once plugin_dir_path(__FILE__) . '/settings/referrals.php';
 		include_once plugin_dir_path(__FILE__) . '/settings/customization.php';
-		include_once plugin_dir_path(__FILE__) . '/settings/notification.php';
 		include_once plugin_dir_path(__FILE__) . '/settings/tools.php';
 
 		include_once plugin_dir_path(__FILE__) . '/actions/extra-points/sign-up.php';

@@ -85,8 +85,10 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     await page.goto(base+'/wp-admin/admin.php?page=loyf-settings');assert.equal(new URL(page.url()).searchParams.get('tab'),'loyalty','Settings shortcut reaches existing Woo form');
     assert.equal(await page.locator('#mainform').count(),1,'One native settings form');
     assert(await page.evaluate(()=>getComputedStyle(document.querySelector('.yoswc-premium-preview-card')).borderInlineStartColor===getComputedStyle(document.querySelector('#adminmenu a.wp-has-current-submenu')).backgroundColor),'Preview follows native admin scheme');
-    assert.equal(await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link').count(),7,'All Free sections retained');
+    assert.equal(await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link').count(),6,'Remaining Free sections retained');
     assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile General settings has no overflow');
+    await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section=notification');
+    assert.equal(await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link',{name:'General',exact:true}).getAttribute('aria-current'),'page','Retired Notification URL selects the General fallback');
     const rounding=page.locator('#loyalty_points_rounding');const original=await rounding.inputValue();const changed=original==='round_up'?'round_down':'round_up';
     await rounding.selectOption(changed);await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('button[name=save]').click()]);await page.getByText(/Your settings have been saved|General earning and level settings were saved/).waitFor();await page.reload();assert.equal(await rounding.inputValue(),changed,'Native Woo save/reload persists');
     await rounding.selectOption(original);await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('button[name=save]').click()]);await page.getByText(/Your settings have been saved|General earning and level settings were saved/).waitFor();
@@ -109,7 +111,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     for(const amount of ['29','0',firstOriginal]) {
         await first.fill(amount);await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('button[name=save]').click()]);await page.reload();assert.equal(await first.inputValue(),amount,'Amount-only First purchase save/reload');
     }
-    for(const section of ['extra_points','referrals','customization','notification','tools','premium']) {
+    for(const section of ['extra_points','referrals','customization','tools','premium']) {
         await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section='+section);
         assert.equal(await page.locator('#mainform form').count(),0,'No nested form '+section);
         assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile Settings '+section);
@@ -123,8 +125,8 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         }
 
     }
-    await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link',{name:'Notification',exact:true}).click();
-    await page.getByRole('link',{name:'Manage loyalty emails',exact:true}).click();await page.locator('.loyf-loyalty-emails').waitFor();
+    assert.equal(await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link',{name:'Notification',exact:true}).count(),0,'Retired Notification section absent');
+    await page.goto(base+'/wp-admin/admin.php?page=loyf-emails');await page.locator('.loyf-loyalty-emails').waitFor();
     assert(await page.getByRole('navigation',{name:'Email groups'}).evaluate(nav=>!nav.closest('td')&&Boolean(nav.compareDocumentPosition([...document.querySelectorAll('#mainform h2')][0])&Node.DOCUMENT_POSITION_FOLLOWING)),'Email groups use the native sections location before the heading');
     assert.equal(await page.locator('.loyf-loyalty-emails tbody tr').count(),3,'Only three Free emails');
     assert.deepEqual(await page.locator('.loyf-loyalty-emails strong').allTextContents(),['Points earned','Points deducted','Level update']);
