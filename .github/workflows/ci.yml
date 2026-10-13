@@ -180,6 +180,10 @@ jobs:
           LOY_DB_USER: root
           LOY_DB_PASSWORD: loy-runtime-only
         run: |
+          export LOYF_PLAYWRIGHT_PATH="$RUNNER_TEMP/loyf-browser/node_modules/playwright"
+          npm install --prefix "$RUNNER_TEMP/loyf-browser" playwright@1.56.1 --no-audit --no-fund
+          node "$LOYF_PLAYWRIGHT_PATH/cli.js" install --with-deps chromium
+          export LOYF_BROWSER_EXECUTABLE="$(node -e 'console.log(require(process.env.LOYF_PLAYWRIGHT_PATH).chromium.executablePath())')"
           bash tests/runtime/run.sh
           bash tests/runtime/modern.sh
           bash tests/runtime/onboarding.sh
