@@ -2,9 +2,10 @@
 (function (wp, wc) {
     'use strict';
     if (!wp || !wc || !wc.blocksCheckout || !wc.wcBlocksData) return;
-    const { createElement: h, useState, useRef } = wp.element;
+    const { createElement: h, useState, useRef, useId } = wp.element;
     const { __, sprintf } = wp.i18n;
     const { ExperimentalDiscountsMeta, extensionCartUpdate } = wc.blocksCheckout;
+    const { TextInput, Button } = wc.blocksComponents;
     if (!ExperimentalDiscountsMeta || !extensionCartUpdate) return;
     function operationId() {
         if (window.crypto.randomUUID) return window.crypto.randomUUID();
@@ -14,6 +15,7 @@
         return hex.slice(0, 8) + '-' + hex.slice(8, 12) + '-' + hex.slice(12, 16) + '-' + hex.slice(16, 20) + '-' + hex.slice(20);
     }
     function Redemption({ context }) {
+        const inputId = 'loyf-points-' + useId();
         const data = wp.data.useSelect(select => {
             const cart = select(wc.wcBlocksData.CART_STORE_KEY).getCartData();
             return cart.extensions && cart.extensions['loyf-redemption'];
@@ -41,14 +43,18 @@
                 .catch(failure => { if (failure && failure.code === 'loyf_redemption_rejected' && failure.data && failure.data.status === 409) pending.current = null; setError(__('Points could not be updated. Retry the same request or refresh your cart.', 'loyalty-for-woocommerce')); })
                 .finally(() => setBusy(false));
         }
-        return h('div', { className: 'loyf-blocks-redemption' },
+        return h('div', { className: 'loyf-blocks-redemption' + (context === 'woocommerce/checkout' ? ' loyf-blocks-redemption--checkout' : ''), role: 'group', 'aria-label': __('Loyalty points', 'loyalty-for-woocommerce'), 'aria-busy': busy },
+            data.enabled && h('p', null, h('strong', null, __('Loyalty points', 'loyalty-for-woocommerce'))),
             data.enabled && h('p', null, sprintf(__('Available points: %d', 'loyalty-for-woocommerce'), data.available)),
+            data.enabled && h('div', { className: 'loyf-blocks-redemption__controls' },
+                h('div', { className: 'loyf-blocks-redemption__field' }, h(TextInput, { id: inputId, label: __('Points to apply', 'loyalty-for-woocommerce'), type: 'number', inputMode: 'numeric', min: data.minimum, max: data.available, value: points, disabled: busy || !!pending.current, onChange: setPoints })),
+                h(Button, { type: 'button', disabled: busy, onClick: () => update('apply') }, pending.current ? __('Retry points update', 'loyalty-for-woocommerce') : __('Apply points', 'loyalty-for-woocommerce'))),
+            data.selected > 0 && h('div', { className: 'loyf-blocks-redemption__selection' },
+                h('p', { role: 'status' }, sprintf(__('%d points applied: %s', 'loyalty-for-woocommerce'), data.selected, data.discount)),
+                h(Button, { type: 'button', disabled: busy || !!pending.current, onClick: () => update('remove') }, __('Remove points', 'loyalty-for-woocommerce'))),
             showEarned && h('p', null, sprintf(__('You will earn %d points with this purchase.', 'loyalty-for-woocommerce'), data.earned)),
             data.message && h('p', { role: 'status' }, data.message),
-            data.selected > 0 && h('p', null, sprintf(__('%d points applied: %s', 'loyalty-for-woocommerce'), data.selected, data.discount)),
-            data.enabled && h(wp.components.TextControl, { label: __('Points to apply', 'loyalty-for-woocommerce'), type: 'number', min: data.minimum, max: data.available, value: points, disabled: busy || !!pending.current, onChange: setPoints }),
-            data.enabled && h(wp.components.Button, { variant: 'secondary', disabled: busy, onClick: () => update('apply') }, pending.current ? __('Retry points update', 'loyalty-for-woocommerce') : __('Apply points', 'loyalty-for-woocommerce')),
-            data.selected > 0 && h(wp.components.Button, { variant: 'tertiary', disabled: busy || !!pending.current, onClick: () => update('remove') }, __('Remove points', 'loyalty-for-woocommerce')),
+            busy && h('p', { role: 'status' }, __('Updating points…', 'loyalty-for-woocommerce')),
             error && h('p', { role: 'alert' }, error));
     }
     wp.plugins.registerPlugin('loyf-redemption', { scope: 'woocommerce-checkout', render: () => h(ExperimentalDiscountsMeta, null, h(Redemption)) });

@@ -1,0 +1,21 @@
+/* Layout only. WooCommerce Blocks and the theme own all control appearance. */
+.loyf-blocks-redemption[role="group"] {
+    display: grid;
+    gap: 1em;
+    min-width: 0;
+    padding: 16px 0;
+}
+.is-large .loyf-blocks-redemption[role="group"],
+.loyf-blocks-redemption.loyf-blocks-redemption--checkout { padding-inline: 16px; }
+.loyf-blocks-redemption p { margin: 0; }
+.loyf-blocks-redemption__controls,
+.loyf-blocks-redemption__selection {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: .75em;
+}
+.loyf-blocks-redemption__field {
+    flex: 1 1 10em;
+    min-width: 0;
+}
