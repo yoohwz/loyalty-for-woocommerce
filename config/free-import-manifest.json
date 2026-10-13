@@ -345,7 +345,7 @@
     {
       "target": "inc/backend/settings.php",
       "mode": "100644",
-      "sha256": "037053121676394a9e2dd8903d1c361b9902233b446f7b7325a212641c94bb70"
+      "sha256": "e875e87b43f628fc5b7a25e9bebf9407f53c690ebf6e92774a47bdde36ab4759"
     },
     {
       "target": "inc/backend/settings/customization.php",

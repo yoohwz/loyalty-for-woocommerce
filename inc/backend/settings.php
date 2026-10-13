@@ -620,7 +620,8 @@ class YOSWC_Loyalty_Settings {
 			return $default;
 		}
 
-		return sanitize_key( $value );
+		$value = sanitize_key( $value );
+		return 'section' === $key && 'notification' === $value ? 'general' : $value;
 	}
 
 	public function includes() {

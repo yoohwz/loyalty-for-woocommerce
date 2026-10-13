@@ -87,6 +87,8 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     assert(await page.evaluate(()=>getComputedStyle(document.querySelector('.yoswc-premium-preview-card')).borderInlineStartColor===getComputedStyle(document.querySelector('#adminmenu a.wp-has-current-submenu')).backgroundColor),'Preview follows native admin scheme');
     assert.equal(await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link').count(),6,'Remaining Free sections retained');
     assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile General settings has no overflow');
+    await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section=notification');
+    assert.equal(await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link',{name:'General',exact:true}).getAttribute('aria-current'),'page','Retired Notification URL selects the General fallback');
     const rounding=page.locator('#loyalty_points_rounding');const original=await rounding.inputValue();const changed=original==='round_up'?'round_down':'round_up';
     await rounding.selectOption(changed);await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('button[name=save]').click()]);await page.getByText(/Your settings have been saved|General earning and level settings were saved/).waitFor();await page.reload();assert.equal(await rounding.inputValue(),changed,'Native Woo save/reload persists');
     await rounding.selectOption(original);await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('button[name=save]').click()]);await page.getByText(/Your settings have been saved|General earning and level settings were saved/).waitFor();
