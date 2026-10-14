@@ -222,3 +222,14 @@ The existing `blocks-browser.cjs` additionally checks one Loyalty group at1280px
 Optional `LOYF_BROWSER_EVIDENCE=/absolute/external/directory` retains presentation screenshots; `LOYF_BROWSER_THEME` labels an explicitly activated disposable theme. It does not change product behavior or skip assertions. Local evidence may additionally execute this same fixture on Storefront; canonical FULL retains both pinned Woo versions and CPT/HPOS. Source/candidate commands, exact SHA, screenshots and any unavailable theme/transport coverage belong on the task PR. The frontend uses the existing DiscountsMeta Slot, Woo's native components/default button variant and a small wrapper-only layout stylesheet; no control skin or merchant block-content rewrite is introduced.
 
 Viewport evidence hydrates each page at its target size. On Woo9.9.5 the existing Checkout DiscountsMeta Slot loses its fill when switching a live responsive breakpoint; this is reproducible on the admitted base as well as the presentation candidate and is not certified as fixed. Normal native cart updates and page refresh are covered separately. Changing the mount/registration lifecycle is outside this presentation-only candidate.
+
+## Retained release artifact verification
+
+`PYTHONDONTWRITEBYTECODE=1 python3 tests/ci/release-artifact-test.py` runs an
+external Git fixture and offline ZIP/SVN-layout rehearsal. It proves repeatable
+builds, retained checksum verification without rewriting the ZIP, receipt
+SHA/tree/version/purpose/inventory binding, missing artifact refusal, metadata
+consistency, wrong root/source drift denial and merged-main ancestry/package
+no-drift. It grants no release authority and contacts no production SVN. See
+[the release runbook](.github/RELEASING.md) for one final-candidate FULL CI,
+separate exact-artifact Acceptance and Human publication authorization.

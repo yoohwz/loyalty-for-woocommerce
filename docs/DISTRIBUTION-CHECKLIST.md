@@ -16,6 +16,10 @@ Official references checked2026-10-08: [Plugin guidelines](https://developer.wor
 
 ## Future checklist — only after separate Human release authorization
 
+Follow [the release runbook](../.github/RELEASING.md) for the one final-candidate
+FULL gate, retained external ZIP/receipt, fast eligible POST_MERGE and offline
+pre-SVN verification. Never rebuild accepted bytes during publication.
+
 1. Recover the merged/accepted engineering commit and obtain the Human's actual release version/destination. Do not select a new number or tag from this document.
 2. Apply that authorized version consistently to the plugin header, readme Stable tag, a new truthful changelog/Upgrade Notice entry, intended SVN tag and package naming. Preserve genuine older changelog entries. Refresh compatibility claims only for versions actually executed at release time.
 3. Recompute affected overlay hashes, regenerate the POT if product strings change, stage the authorized exact source, ZIP and extract externally, then re-run the package audit/official validators and appropriate native compatibility tests. Preserve declared GPL/license/provenance for every included asset/dependency.

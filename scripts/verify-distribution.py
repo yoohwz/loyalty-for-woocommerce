@@ -80,11 +80,20 @@ def git_output(source, *args):
 def verify_version(stage, expected):
     plugin = (Path(stage) / "loyalty-for-woocommerce" / "loyalty-for-woocommerce.php").read_text()
     changelog = (Path(stage) / "loyalty-for-woocommerce" / "changelog.txt").read_text()
+    readme = (Path(stage) / "loyalty-for-woocommerce" / "readme.txt").read_text()
+    stable = re.findall(r"(?mi)^Stable tag:[ \t]*([^\s]+)[ \t]*$", readme)
+    sections = re.split(r"(?m)^== Changelog ==[ \t]*$", readme)
+    readme_entry = next((line for line in sections[1].splitlines() if re.match(r"^=(?!=)", line)), None) if len(sections) == 2 else None
+    readme_current = re.fullmatch(r"=\s+([^\s=]+)\s+\([^)]*\)\s+=", readme_entry) if readme_entry else None
     header = re.search(r"(?m)^\s*\* Version:\s*([^\s]+)", plugin)
     first_entry = next((line for line in changelog.splitlines() if re.match(r"^=(?!=)", line)), None)
     current = re.fullmatch(r"=\s+([^\s=]+)\s+\([^)]*\)\s+=", first_entry) if first_entry else None
     if not header or header.group(1) != expected:
         fail("Plugin header version does not match requested version")
+    if stable != [expected]:
+        fail("Readme Stable tag does not match requested version")
+    if not readme_current or readme_current.group(1) != expected:
+        fail("Current readme changelog version does not match plugin header")
     if not current or current.group(1) != expected:
         fail("Current changelog version does not match plugin header")
 
