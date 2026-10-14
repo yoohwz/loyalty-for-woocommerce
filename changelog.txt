@@ -2,6 +2,15 @@
 
 == Changelog ==
 
+= 1.3.0 (Oct 14, 2026) =
+* New: Added optional First Purchase bonuses and Referral Lite rewards for registered referrers after a qualifying first purchase.
+* New: Added a Loyalty Overview, customer points/level/progress/referral/history blocks and shortcodes, and snapshot CSV export with completion and balance-state indicators.
+* Improve: Added funded point redemption in WooCommerce Cart/Checkout Blocks and support for HPOS order storage alongside Classic checkout.
+* Fix: Hardened rewards, redemption, returns and manual point operations against duplicate requests and retries, with safer recovery after interrupted processing.
+* Improve: Preserved historical points, logs and settings during upgrades. Unverified legacy reward, redemption and email settings are paused safely until configured in Loyalty settings.
+* Improve: Refreshed Loyalty settings, the My Points Referrals card and contextual Premium previews; grouped Loyalty notifications in native WooCommerce Emails settings.
+* Privacy: Removed automatic installation/subscription reporting to YoOhw; optional store-managed transactional emails remain available.
+
 = 1.2.2 (Jun 13, 2026) =
 * Fix: Reworked point redemption to use the WooCommerce session and cart discount fee instead of generated `yosl-loyalty-{user_id}` coupons.
 * Fix: Corrected admin JavaScript asset paths for user point modals.

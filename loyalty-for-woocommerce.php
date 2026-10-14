@@ -3,7 +3,7 @@
  * Plugin Name: Loyalty for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/loyalty-for-woocommerce/
  * Description: Create a flexible loyalty program for WooCommerce—reward customers with points to boost repeat sales and customer retention.
- * Version: 1.2.2
+ * Version: 1.3.0
  * Author: YoOhw.com
  * Author URI: https://yoohw.com
  * Requires at least: 6.3
