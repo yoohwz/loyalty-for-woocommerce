@@ -44,8 +44,6 @@ class YOSWC_Loyalty_Settings {
 			$this->output_customization_settings();
         } elseif ('tools' === $current_section) {
 			$this->output_tools_settings();
-        } elseif ('premium' === $current_section) {
-			$this->output_premium_settings();
         } else {
             $this->output_loyalty_level_point_settings();
         }
@@ -64,8 +62,7 @@ class YOSWC_Loyalty_Settings {
 			'extra_points' => __('Extra points', 'loyalty-for-woocommerce'),
 			'referrals'     => __('Referrals', 'loyalty-for-woocommerce'),
 			'customization' => __('Customization', 'loyalty-for-woocommerce'),
-			'tools' => __('Tools', 'loyalty-for-woocommerce'),
-			'premium' => __('Premium', 'loyalty-for-woocommerce')
+			'tools' => __('Tools', 'loyalty-for-woocommerce')
 		);
 
 		$count = count($sub_sub_tabs);
@@ -95,6 +92,7 @@ class YOSWC_Loyalty_Settings {
 	public function output_referrals_settings() {
 		$referrals_settings = new YOSWC_Loyalty_Settings_Referrals();
 		$referrals_settings->display_referrals_settings();
+        YOWCL_Free_Reader_Admin::premium_card( 'referrals' );
 	}
 
 	public function output_customization_settings() {
@@ -105,85 +103,7 @@ class YOSWC_Loyalty_Settings {
 	public function output_tools_settings() {
 		$tools_settings = new YOSWC_Loyalty_Settings_Tools();
 		$tools_settings->display_tools_settings();
-	}
-
-	public function output_premium_settings() {
-		$is_premium = $this->is_premium_active();
-		$premium_url = apply_filters( 'yoswc_loyalty_premium_url', 'https://yoohw.com/product/woocommerce-loyalty-points-and-rewards/' );
-		$docs_url = apply_filters( 'yoswc_loyalty_premium_docs_url', 'https://yoohw.com/docs/category/woocommerce-loyalty/' );
-
-		$premium_features = array(
-			__( 'Referral coupons and referee rewards', 'loyalty-for-woocommerce' ),
-			__( 'Point expiration and advanced redemption rules', 'loyalty-for-woocommerce' ),
-			__( 'Birthday, account anniversary, and profile completion rewards', 'loyalty-for-woocommerce' ),
-			__( 'Purchase milestone and lifetime spend rewards', 'loyalty-for-woocommerce' ),
-			__( 'Advanced earning rules by product, category, and payment method', 'loyalty-for-woocommerce' ),
-			__( 'Level discounts and scheduled level resets', 'loyalty-for-woocommerce' ),
-		);
-		?>
-		<h2><?php esc_html_e( 'Premium', 'loyalty-for-woocommerce' ); ?></h2>
-		<div class="yoswc-premium-settings">
-			<div class="yoswc-premium-settings__card">
-				<h3><?php esc_html_e( 'Upgrade when your loyalty program needs more automation', 'loyalty-for-woocommerce' ); ?></h3>
-				<p>
-					<?php esc_html_e( 'The free plugin includes the core loyalty point workflow. Premium adds referral campaigns, advanced earning rules, and automated rewards for stores that need deeper retention tools.', 'loyalty-for-woocommerce' ); ?>
-				</p>
-				<ul>
-					<?php foreach ( $premium_features as $premium_feature ) : ?>
-						<li><?php echo esc_html( $premium_feature ); ?></li>
-					<?php endforeach; ?>
-				</ul>
-				<p class="yoswc-premium-settings__actions">
-					<?php if ( $is_premium ) : ?>
-						<span class="yoswc-premium-settings__status"><?php esc_html_e( 'Premium add-on detected.', 'loyalty-for-woocommerce' ); ?></span>
-					<?php else : ?>
-						<a class="button button-primary" href="<?php echo esc_url( $premium_url ); ?>" target="_blank" rel="noopener">
-							<?php esc_html_e( 'View Premium features', 'loyalty-for-woocommerce' ); ?>
-						</a>
-						<a class="button" href="<?php echo esc_url( $docs_url ); ?>" target="_blank" rel="noopener">
-							<?php esc_html_e( 'Read documentation', 'loyalty-for-woocommerce' ); ?>
-						</a>
-					<?php endif; ?>
-				</p>
-			</div>
-		</div>
-		<style>
-			.yoswc-premium-settings {
-				display: grid;
-				grid-template-columns: minmax(0, 1fr);
-				gap: 16px;
-				max-width: 960px;
-			}
-			.yoswc-premium-settings__card {
-				background: #fff;
-				border: 1px solid #c3c4c7;
-				border-radius: 4px;
-				padding: 18px 20px;
-			}
-			.yoswc-premium-settings__card h3 {
-				margin: 0 0 8px;
-				font-size: 16px;
-			}
-			.yoswc-premium-settings__card p {
-				margin-top: 0;
-			}
-			.yoswc-premium-settings__card ul {
-				list-style: disc;
-				margin: 12px 0 0 20px;
-			}
-			.yoswc-premium-settings__actions {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 8px;
-				margin: 16px 0 0;
-			}
-			.yoswc-premium-settings__status {
-				display: inline-block;
-				font-weight: 600;
-				color: #008a20;
-			}
-		</style>
-		<?php
+        YOWCL_Free_Reader_Admin::premium_card( 'tools' );
 	}
 
 	public function render_premium_preview_card( $value ) {
@@ -621,7 +541,7 @@ class YOSWC_Loyalty_Settings {
 		}
 
 		$value = sanitize_key( $value );
-		return 'section' === $key && 'notification' === $value ? 'general' : $value;
+		return 'section' === $key && in_array( $value, array( 'notification', 'premium' ), true ) ? 'general' : $value;
 	}
 
 	public function includes() {

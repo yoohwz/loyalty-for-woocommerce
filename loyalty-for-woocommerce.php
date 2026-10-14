@@ -79,7 +79,11 @@ class YOSWC_Loyalty {
 
 	public function add_action_links($links) {
 		$settings_link = '<a href="admin.php?page=wc-settings&tab=loyalty">Settings</a>';
-		array_unshift($links, $settings_link);
+		$actions = array( $settings_link );
+        if ( current_user_can( 'manage_options' ) && class_exists( 'YOWCL_Free_Core' ) && YOWCL_Free_Core::owns() && ! apply_filters( 'yoswc_loyalty_is_premium', false ) ) {
+            $actions[] = '<a href="' . esc_url( apply_filters( 'yoswc_loyalty_premium_url', 'https://yoohw.com/product/woocommerce-loyalty-points-and-rewards/' ) ) . '" target="_blank" rel="noopener noreferrer"><strong>' . esc_html__( 'Upgrade Premium ↗', 'loyalty-for-woocommerce' ) . '</strong></a>';
+        }
+        $links = array_merge( $actions, $links );
 		return $links;
 	}
 }

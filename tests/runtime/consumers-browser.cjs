@@ -43,7 +43,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         assert.equal(privateResponse.status(),200);assert(privateResponse.headers()['cache-control'].includes('no-store'));
         assert((await privateResponse.json()).data['points-balance'].includes(value),'Private reader always uses current viewer');
         const customerPreview=await context.request.get(base+'/?rest_route=/wp/v2/block-renderer/loyf/points-balance&context=edit&user_id='+fixture.user_a,{headers:{'X-WP-Nonce':nonce}});assert(customerPreview.status()>=400,'Customer editor/REST permission boundary');
-        for(const slug of ['loyf-overview','loyf-settings','loyf-emails']){const denied=await context.request.get(base+'/wp-admin/admin.php?page='+slug);assert.equal(denied.status(),403,'Customer admin access denied');}
+        for(const slug of ['loyf-overview','loyf-settings','loyf-emails','loyf-campaigns-preview','loyf-history-preview']){const denied=await context.request.get(base+'/wp-admin/admin.php?page='+slug);assert.equal(denied.status(),403,'Customer admin access denied');}
         const exportDenial = await context.request.post(base + '/wp-admin/admin-post.php',{form:{action:'loyf_export_customers',loyf_export_nonce:nonce}});assert.equal(exportDenial.status(),403,'Customer export denied');
         await page.setViewportSize({width:375,height:812});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),'Responsive component layout');
         assert.equal(errors.length,0,'Shipped client browser exceptions');
@@ -78,14 +78,48 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     assert.equal(await page.locator('#toplevel_page_loyf-overview').count(),1,'One top-level Loyalty menu');
     assert.equal(await page.locator('#toplevel_page_loyf-overview .wp-submenu a').allTextContents().then(items=>items.filter(item=>item==='Overview').length),1,'One Overview submenu');
     assert.equal(await page.locator('#toplevel_page_woocommerce .wp-submenu a[href*="loyf-overview"]').count(),0,'No duplicate Woo Overview');
-    assert.deepEqual(await page.locator('#toplevel_page_loyf-overview .wp-submenu a').allTextContents(),['Overview','Emails','Settings'],'Loyalty submenu order');
+    assert.deepEqual(await page.locator('#toplevel_page_loyf-overview .wp-submenu a').allTextContents(),['Overview','Campaigns','Points history','Emails','Settings'],'Loyalty submenu order');
+    assert.equal(await page.locator('[data-loyf-premium="overview"]').count(),1);
+    for(const [slug,heading] of [['loyf-campaigns-preview','Loyalty campaigns'],['loyf-history-preview','Points history']]) {
+        await page.goto(base+'/wp-admin/admin.php?page='+slug,{waitUntil:'domcontentloaded'});
+        await page.getByRole('heading',{name:heading,exact:true}).waitFor();
+        await page.getByText('Premium preview · Example only',{exact:true}).waitFor();
+        assert.equal(await page.locator('.loyf-preview input,.loyf-preview button,.loyf-preview form').count(),0,'Static illustration has no execution controls');
+        assert(!(await page.locator('.loyf-preview').innerText()).includes('consumer_a'),'Preview contains no store identities');
+        for(const width of [1280,390]){await page.setViewportSize({width,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Preview contained at '+width);}
+    }
+    await page.goto(base+'/wp-admin/plugins.php',{waitUntil:'domcontentloaded'});
+    const pluginRow=page.locator('tr[data-slug="loyalty-for-woocommerce"]');
+    const upgrade=pluginRow.getByRole('link',{name:'Upgrade Premium ↗',exact:true});
+    assert.equal(await upgrade.count(),1);assert.equal(await upgrade.locator('strong').count(),1);
+    assert.equal(await upgrade.getAttribute('rel'),'noopener noreferrer');
+    assert.deepEqual((await pluginRow.locator('.row-actions a').allTextContents()).slice(0,3),['Settings','Upgrade Premium ↗','Deactivate']);
+    await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section=premium',{waitUntil:'domcontentloaded'});
+    assert.equal(await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link',{name:'Premium',exact:true}).count(),0);
+    assert.equal(await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link',{name:'General',exact:true}).getAttribute('aria-current'),'page');
+    assert.equal(await page.locator('.yoswc-premium-settings').count(),0,'Retired renderer absent');
+    for(const section of ['referrals','customization','tools']) {
+        await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section='+section,{waitUntil:'domcontentloaded'});
+        const card=page.locator('[data-loyf-premium="'+section+'"]');assert.equal(await card.count(),1);
+        const summary=card.locator('summary');await summary.focus();await page.keyboard.press('Enter');
+        assert(await card.locator('details').evaluate(details=>details.open),'Native keyboard disclosure opens');
+        await page.keyboard.press('Enter');assert(!(await card.locator('details').evaluate(details=>details.open)),'Native keyboard disclosure closes');
+        assert(await card.evaluate(card=>getComputedStyle(card).borderInlineStartColor===getComputedStyle(document.querySelector('#adminmenu a.wp-has-current-submenu')).backgroundColor),'Native scheme accent');
+        assert.equal(await page.locator('#mainform form').count(),0);
+        assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Contextual card mobile containment');
+    }
+    await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=email&email_group=loyalty',{waitUntil:'domcontentloaded'});
+    assert.equal(await page.locator('.loyf-loyalty-emails tbody tr').count(),3);
+    assert.equal(await page.locator('[data-loyf-premium="emails"]').count(),1);
+    assert(await page.locator('[data-loyf-premium="emails"]').evaluate(card=>Boolean(document.querySelector('.loyf-loyalty-emails').compareDocumentPosition(card)&Node.DOCUMENT_POSITION_FOLLOWING)),'Teaser follows real emails');
+    await page.goto(base+'/wp-admin/admin.php?page=loyf-overview',{waitUntil:'domcontentloaded'});
     assert.equal(await page.locator('.loyf-overview-card').count(),5);
     await page.getByLabel('Flow period',{exact:true}).selectOption('30');await page.getByRole('button',{name:'View',exact:true}).click();assert.equal(new URL(page.url()).searchParams.get('period'),'30');
     await page.setViewportSize({width:390,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile overview has no overflow');
     await page.goto(base+'/wp-admin/admin.php?page=loyf-settings',{waitUntil:'domcontentloaded'});assert.equal(new URL(page.url()).searchParams.get('tab'),'loyalty','Settings shortcut reaches existing Woo form');
     assert.equal(await page.locator('#mainform').count(),1,'One native settings form');
     assert(await page.evaluate(()=>getComputedStyle(document.querySelector('.yoswc-premium-preview-card')).borderInlineStartColor===getComputedStyle(document.querySelector('#adminmenu a.wp-has-current-submenu')).backgroundColor),'Preview follows native admin scheme');
-    assert.equal(await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link').count(),6,'Remaining Free sections retained');
+    assert.equal(await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link').count(),5,'Remaining Free sections retained');
     assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile General settings has no overflow');
     await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section=notification',{waitUntil:'domcontentloaded'});
     assert.equal(await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link',{name:'General',exact:true}).getAttribute('aria-current'),'page','Retired Notification URL selects the General fallback');

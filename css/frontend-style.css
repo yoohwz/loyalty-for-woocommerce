@@ -656,3 +656,27 @@
 	.loyalty-card-container {justify-content: center; flex-wrap: wrap;}
 	.loyalty-card-details {width: 100%; margin-top: 10px;}
 }
+
+/* My Points alone: keep bubble and customer-component referral controls intact. */
+.loyalty-points-card + .loyf-referral-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    padding: 30px 40px;
+    margin: 0 auto 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    max-width: 100%;
+}
+.loyalty-points-card + .loyf-referral-card h3,
+.loyalty-points-card + .loyf-referral-card p,
+.loyalty-points-card + .loyf-referral-card label,
+.loyalty-points-card + .loyf-referral-card [role="status"] { flex-basis: 100%; margin: 0; }
+.loyalty-points-card + .loyf-referral-card input { flex: 1 1 220px; min-width: 0; max-width: 100%; box-sizing: border-box; }
+.loyalty-points-card + .loyf-referral-card button { flex: 0 0 auto; }
+@media screen and (max-width: 600px) {
+    .loyalty-points-card + .loyf-referral-card { padding: 20px; }
+}

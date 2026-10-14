@@ -103,7 +103,11 @@ class YOWCL_Free_Referral {
         try { $link = YOWCL_Helper_Referrals::link_to_home( get_current_user_id() ); } catch ( Throwable $e ) { return; }
         if ( ! $link ) { return; }
         $id = 'loyf-referral-' . sanitize_key( $scope );
-        echo '<div class="loyf-referral"><label for="' . esc_attr( $id ) . '">' . esc_html__( 'Your referral link', 'loyalty-for-woocommerce' ) . '</label> <input id="' . esc_attr( $id ) . '" type="text" readonly value="' . esc_attr( $link ) . '"> <button type="button" data-loyf-referral-copy="' . esc_attr( $id ) . '" data-copied="' . esc_attr__( 'Link copied', 'loyalty-for-woocommerce' ) . '" data-failed="' . esc_attr__( 'Select and copy the link', 'loyalty-for-woocommerce' ) . '">' . esc_html__( 'Copy link', 'loyalty-for-woocommerce' ) . '</button> <span role="status" aria-live="polite"></span></div>';
+        echo '<div class="loyf-referral' . ( 'account' === $scope ? ' loyf-referral-card' : '' ) . '">';
+        if ( 'account' === $scope ) {
+            echo '<h3>' . esc_html__( 'Referrals', 'loyalty-for-woocommerce' ) . '</h3><p>' . esc_html__( 'Share your link with friends and earn points on their first qualifying order.', 'loyalty-for-woocommerce' ) . '</p>';
+        }
+        echo '<label for="' . esc_attr( $id ) . '">' . esc_html__( 'Your referral link', 'loyalty-for-woocommerce' ) . '</label> <input id="' . esc_attr( $id ) . '" type="text" readonly value="' . esc_attr( $link ) . '"> <button type="button" data-loyf-referral-copy="' . esc_attr( $id ) . '" data-copied="' . esc_attr__( 'Link copied', 'loyalty-for-woocommerce' ) . '" data-failed="' . esc_attr__( 'Select and copy the link', 'loyalty-for-woocommerce' ) . '">' . esc_html__( 'Copy link', 'loyalty-for-woocommerce' ) . '</button> <span role="status" aria-live="polite"></span></div>';
     }
 }
 add_action( 'woocommerce_checkout_order_created', array( 'YOWCL_Referral_Rewards', 'attach' ), PHP_INT_MAX );
