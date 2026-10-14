@@ -113,13 +113,33 @@ class PolicyTest(unittest.TestCase):
                    LOY_EVENT='push', LOY_REF='refs/heads/other')
         self.assertNotEqual(0, subprocess.run(['bash', '-c', shell], env=env, capture_output=True).returncode)
 
+    def test_timed_runtime_dispatch_remains_fail_closed(self):
+        workflow = (ROOT / '.github/workflows/ci.yml').read_text()
+        block = workflow.split('      - name: Run disposable runtime scenarios\n')[1].split('        run: |\n')[1].split('\n  required:')[0]
+        shell = '\n'.join(line[10:] for line in block.splitlines())
+        runners = ['run.sh', 'modern.sh', 'onboarding.sh', 'consumers.sh']
+        with tempfile.TemporaryDirectory(prefix='loyf-dispatch-') as directory:
+            tmp = Path(directory)
+            fake = tmp / 'bash'
+            fake.write_text('#!/bin/sh\necho "$1" >> "$CALLS"\nif [ -n "$FAIL_RUNNER" ] && [ "${1##*/}" = "$FAIL_RUNNER" ]; then exit 9; fi\n')
+            fake.chmod(0o755)
+            for failure in ['', *runners]:
+                calls = tmp / 'calls'
+                calls.write_text('')
+                env = dict(os.environ, PATH=directory + ':' + os.environ['PATH'], CALLS=str(calls), FAIL_RUNNER=failure)
+                result = subprocess.run(['/bin/bash', '-e', '-c', shell], env=env, capture_output=True)
+                expected = runners[:runners.index(failure) + 1] if failure else runners
+                self.assertEqual(expected, [Path(line).name for line in calls.read_text().splitlines()])
+                self.assertEqual(9 if failure else 0, result.returncode)
+
     def test_accepted_base_policy_and_workflow_wiring(self):
         workflow = (ROOT / '.github/workflows/ci.yml').read_text()
         self.assertIn('types: [opened, synchronize, reopened, ready_for_review]', workflow)
         self.assertEqual(1, workflow.count("if: needs.syntax.outputs.mode == 'FULL'"))
         self.assertIn('needs: [syntax, runtime]', workflow)
         self.assertIn("if: ${{ always() && (github.event_name != 'pull_request' || github.event.pull_request.draft == false) }}", workflow)
-        self.assertIn('run: |\n          bash tests/runtime/run.sh\n          bash tests/runtime/modern.sh', workflow)
+        runtime = workflow.split('      - name: Run disposable runtime scenarios\n')[1].split('        run: |\n')[1].split('\n  required:')[0]
+        self.assertEqual(['run', 'modern', 'onboarding', 'consumers'], re.findall(r'^          time bash tests/runtime/(\w+)\.sh$', runtime, re.M))
         block = workflow.split('      - name: Classify with accepted base policy\n')[1].split('        run: |\n')[1].split('\n      - name:')[0]
         shell = '\n'.join(line[10:] for line in block.splitlines())
         with tempfile.TemporaryDirectory(prefix='loy-output-') as out:

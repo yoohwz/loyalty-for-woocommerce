@@ -3,6 +3,8 @@ if(!defined('LOYF_RUNTIME_DISPOSABLE')){throw new RuntimeException('Disposable r
 wp_set_current_user(1);update_user_meta(1,'admin_color','coffee');update_option('woocommerce_coming_soon','no');
 // This reader/editor fixture represents an already configured Woo store.
 update_option('woocommerce_onboarding_profile',array('completed'=>true));delete_transient('_wc_activation_redirect');
+// The disposable configured admin has completed the core editor setup UI.
+global $wpdb;update_user_meta(1,$wpdb->get_blog_prefix().'persisted_preferences',array('core/edit-post'=>array('welcomeGuide'=>false),'core'=>array('enableChoosePatternModal'=>false),'_modified'=>gmdate('c')));
 update_option('loyalty_customization_loyalty_bubble',array('enabled'=>false));
 update_option('loyalty_customization_my_account',array('my_account'=>true,'my_account_slug'=>'my-points','my_account_label'=>'My Points'));
 // Exercise Woo's native template editor as well as the three classic Free editors.

@@ -6,6 +6,16 @@ repo=$(git rev-parse --show-toplevel)
 [[ -n "${LOY_DB_HOST:-}" && -n "${LOY_DB_USER:-}" && -n "${LOY_DB_PASSWORD:-}" ]] || exit 2
 candidate=$(git rev-parse HEAD)
 [[ -z $(git status --porcelain --untracked-files=all) ]] || { echo 'Clean committed candidate required' >&2; exit 2; }
+browser_opcache=${LOYF_BROWSER_OPCACHE:-0}
+case "$browser_opcache" in
+  0|1) ;;
+  *) echo 'LOYF_BROWSER_OPCACHE must be 0 or 1' >&2; exit 2 ;;
+esac
+if [[ "$browser_opcache" == 1 ]]; then
+  php -r 'exit(PHP_OS_FAMILY === "Linux" && PHP_MAJOR_VERSION === 8 && PHP_MINOR_VERSION === 2 && extension_loaded("Zend OPcache") ? 0 : 1);' || {
+    echo 'Browser OPcache requires Linux PHP 8.2 with Zend OPcache' >&2; exit 2;
+  }
+fi
 task_tmp=$(mktemp -d "${TMPDIR:-/tmp}/loyf-modern.XXXXXXXX")
 databases=()
 server_pid=
@@ -26,15 +36,20 @@ PY
   trap - EXIT; exit "$result"
 }
 trap cleanup EXIT
-export LOYF_WP_CLI_PHAR="$task_tmp/wp.phar"
 export MYSQL_PWD="$LOY_DB_PASSWORD" LOYF_FIXTURE="$repo/tests/fixtures/free-1.2.2.json"
-curl -fsSL --retry 3 https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar -o "$task_tmp/wp.phar"
+if [[ -z "${LOYF_WP_CLI_PHAR:-}" ]]; then
+  export LOYF_WP_CLI_PHAR="$task_tmp/wp.phar"
+  curl -fsSL --retry 3 https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar -o "$task_tmp/wp.phar"
+fi
 if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
   if [[ -z "${LOYF_PLAYWRIGHT_PATH:-}" ]]; then
     npm install --prefix "$task_tmp/browser" playwright@1.56.1 --no-audit --no-fund
     export LOYF_PLAYWRIGHT_PATH="$task_tmp/browser/node_modules/playwright"
   fi
   if [[ -z "${LOYF_BROWSER_EXECUTABLE:-}" ]]; then node "$(dirname "$LOYF_PLAYWRIGHT_PATH")/playwright/cli.js" install --with-deps chromium; fi
+fi
+if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
+  curl -fsSL --retry 3 https://downloads.wordpress.org/theme/twentytwentyfive.1.3.zip -o "$task_tmp/theme.zip"
 fi
 versions_list=('6.8.3:9.9.5' '7.0:11.1.2')
 if [[ "${LOYF13_CURRENT_STABLE:-}" == 1 ]]; then versions_list=('7.1.3:11.2.0'); fi
@@ -44,7 +59,7 @@ for versions in "${versions_list[@]}"; do
     database="loyf_rt_$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')"; databases+=( "$database" )
     mysql --host="$LOY_DB_HOST" --port="${LOY_DB_PORT:-3306}" --user="$LOY_DB_USER" -e "CREATE DATABASE \`$database\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
     site="$task_tmp/$woocommerce-$storage"; mkdir -p "$site"
-    wp() { php "$task_tmp/wp.phar" --path="$site" "$@"; }
+    wp() { php "$LOYF_WP_CLI_PHAR" --path="$site" "$@"; }
     wp core download --version="$wordpress" --skip-content --quiet
     wp core config --dbname="$database" --dbuser="$LOY_DB_USER" --dbpass="$LOY_DB_PASSWORD" --dbhost="$LOY_DB_HOST:${LOY_DB_PORT:-3306}" --skip-check --quiet
     wp core install --url=http://loyf-modern.invalid --title='Modern Free matrix' --admin_user=loyf_admin --admin_password=disposable-only --admin_email=admin@example.invalid --skip-email --quiet
@@ -65,17 +80,16 @@ for versions in "${versions_list[@]}"; do
     wp eval-file "$repo/tests/runtime/first-purchase.php" --quiet
     wp eval-file "$repo/tests/runtime/modern.php" --quiet
     if [[ "${LOYF_SKIP_BROWSER:-}" != 1 ]]; then
-      curl -fsSL --retry 3 https://downloads.wordpress.org/theme/twentytwentyfive.1.3.zip -o "$task_tmp/theme.zip"
       wp theme install "$task_tmp/theme.zip" --activate --skip-plugins --skip-themes --quiet
       wp config delete DOING_AJAX --quiet
       export LOYF_BROWSER_URL="http://127.0.0.1:${LOYF_BROWSER_PORT:-18088}" LOYF_BROWSER_FIXTURE="$task_tmp/browser-fixture.json"
       wp option update siteurl "$LOYF_BROWSER_URL" --quiet; wp option update home "$LOYF_BROWSER_URL" --quiet
       wp option update loyalty_customization_cart_checkout '{"cart":0,"checkout":0}' --format=json --quiet
       wp eval-file "$repo/tests/runtime/browser-seed.php" --quiet
-      # This disposable correctness fixture does not certify opcode/JIT optimization.
-      # Keep its interpreter mode explicit; engine crashes must still fail the whole leg.
-      browser_php=(php -d opcache.enable=0 -d opcache.enable_cli=0 -d opcache.jit=0 -d opcache.jit_buffer_size=0)
-      "${browser_php[@]}" -r 'echo "Browser fixture interpreter: ", json_encode(array("php"=>PHP_VERSION,"opcache"=>ini_get("opcache.enable"),"opcache_cli"=>ini_get("opcache.enable_cli"),"jit"=>ini_get("opcache.jit"),"jit_buffer"=>ini_get("opcache.jit_buffer_size"))), PHP_EOL;'
+      # Reuse compiled frozen PHP within this site/server only; bytecode optimization/JIT stay disabled.
+      # Engine crashes still fail the whole leg; no response or database cache is added.
+      browser_php=(php -d opcache.enable="$browser_opcache" -d opcache.enable_cli="$browser_opcache" -d opcache.optimization_level=0 -d opcache.jit=0 -d opcache.jit_buffer_size=0)
+      "${browser_php[@]}" -r 'echo "Browser fixture interpreter: ", json_encode(array("php"=>PHP_VERSION,"opcache"=>ini_get("opcache.enable"),"opcache_cli"=>ini_get("opcache.enable_cli"),"optimizer"=>ini_get("opcache.optimization_level"),"jit"=>ini_get("opcache.jit"),"jit_buffer"=>ini_get("opcache.jit_buffer_size"))), PHP_EOL;'
       "${browser_php[@]}" -S "127.0.0.1:${LOYF_BROWSER_PORT:-18088}" -t "$site" "$repo/tests/runtime/browser-router.php" > "$task_tmp/browser-server.log" 2>&1 & server_pid=$!
       node "$repo/tests/runtime/referral-browser.cjs"
       node "$repo/tests/runtime/blocks-browser.cjs"
