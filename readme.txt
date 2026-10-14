@@ -5,7 +5,7 @@ Requires at least: 6.3
 Tested up to: 7.1.3
 WC tested up to: 11.2.0
 Requires PHP: 7.4
-Stable tag: 1.2.2
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,7 +33,7 @@ The free version focuses on the core loyalty workflow: earning points, redeeming
 * Import point balances from CSV
 * Offer optional First Purchase rewards and Referral Lite for registered customers
 * Configure your program directly in the Loyalty settings
-* Review current available point stock and reward activity in a basic Dashboard
+* Review current available point stock and reward activity in Loyalty Overview
 * Add points, level, progress, referral and history blocks or shortcodes
 * Export current customer loyalty state as snapshot CSV with completion indicators
 * Redefine customer loyalty levels from existing earned points
@@ -53,7 +53,7 @@ The free version focuses on the core loyalty workflow: earning points, redeeming
 
 Configure earning, redemption, levels and optional rewards directly in Loyalty settings. Activation does not launch a reward program. Existing points, history and settings are preserved; updates use the existing background migration and safety guards.
 
-When the source of a migrated feature's settings cannot be established, that feature stays on hold. An administrator can review and keep complete current terms, explicitly adopt valid legacy Free terms, or disable the feature using Free settings. This does not change balances or history, restore old snapshots automatically, or reset Premium configuration.
+When the source of a migrated feature's settings cannot be established, the existing background migration safely pauses that feature while preserving its saved terms. Review and configure rewards, redemption and notifications in Loyalty settings after updating. Unreadable settings remain on hold; check WooCommerce logs if processing cannot finish. Migration does not change balances or history, restore old snapshots automatically, or reset Premium configuration.
 
 == Loyalty Points and Rewards ==
 
@@ -85,9 +85,9 @@ The frontend Loyalty bubble helps customers understand your rewards program with
 
 You can also show reward messages on shop pages, product pages, cart, checkout, and the customer My Account area.
 
-== Dashboard, Blocks and CSV Export ==
+== Loyalty Overview, Blocks and CSV Export ==
 
-The basic Dashboard distinguishes current available point stock from reward activity. Missing, historical or held data carries a coverage or Unavailable indication; it is not converted into a misleading exact total.
+Loyalty Overview distinguishes current available point stock from reward activity. Missing, historical or held data carries a coverage or Unavailable indication; it is not converted into a misleading exact total.
 
 Customer points, level, progress, referral and history components are available as Gutenberg blocks and shortcodes. Logged-in customers see their own information; guest views do not expose another customer's balance or referral link.
 
@@ -166,33 +166,16 @@ The plugin includes hooks for earning, redemption, logging, and email flows. Leg
 
 == Changelog ==
 
-= 1.2.2 (Jun 13, 2026) =
-* Fix: Reworked point redemption to use the WooCommerce session and cart discount fee instead of generated `yosl-loyalty-{user_id}` coupons.
-* Fix: Corrected admin JavaScript asset paths for user point modals.
-* Improve: Updated third-party service disclosure and limited the YoOhw subscription request to the first successful install connection.
-* Improve: Added translation-safe fallbacks for default point labels and My Account labels.
-
-= 1.2.1 (Jun 6, 2026) =
-* Fix: Added a WooCommerce runtime guard for older WordPress versions that do not enforce plugin dependencies.
-* Fix: Removed unnecessary guest AJAX handlers from loyalty points actions.
-* Improve: Cleaned translation text domains, translator comments, and package metadata for WordPress.org readiness.
-
-= 1.2.0 (Jun 1, 2026) =
-* New: Added a frontend Loyalty bubble with reward levels, earning rules, bonus rewards, point redemption, and customer reward summary.
-* New: Added Customization settings for Loyalty bubble visibility and bottom-left/bottom-right placement.
-* New: Added premium previews for Advanced earning rules and Redeem products in the General settings.
-
-= 1.1.5 (Apr 27, 2026) =
-* Improve: Optimized and cleaned functionality.
-* Improve: WooCommerce 10.7 compatibility.
-
-= 1.1.4 and older =
-* Earlier releases added member card customization, extra point actions, import tools, level recalculation, email notifications, compatibility improvements, and initial loyalty points features.
+= 1.3.0 (Oct 14, 2026) =
+* New: Added optional First Purchase bonuses and Referral Lite rewards for registered referrers after a qualifying first purchase.
+* New: Added a Loyalty Overview, customer points/level/progress/referral/history blocks and shortcodes, and snapshot CSV export with completion and balance-state indicators.
+* Improve: Added funded point redemption in WooCommerce Cart/Checkout Blocks and support for HPOS order storage alongside Classic checkout.
+* Fix: Hardened rewards, redemption, returns and manual point operations against duplicate requests and retries, with safer recovery after interrupted processing.
+* Improve: Preserved historical points, logs and settings during upgrades. Unverified legacy reward, redemption and email settings are paused safely until configured in Loyalty settings.
+* Improve: Refreshed Loyalty settings, the My Points Referrals card and contextual Premium previews; grouped Loyalty notifications in native WooCommerce Emails settings.
+* Privacy: Removed automatic installation/subscription reporting to YoOhw; optional store-managed transactional emails remain available.
 
 == Upgrade Notice ==
 
-= 1.2.2 =
-Recommended update for WordPress.org readiness, third-party service disclosure, translation fallbacks, and package metadata.
-
-= 1.2.1 =
-Recommended update for WordPress.org readiness, WooCommerce dependency handling, translation cleanup, and loyalty points action hardening.
+= 1.3.0 =
+Existing points and history are preserved. Review Loyalty settings after updating: unverified legacy rewards, redemption and notifications may be paused until configured.

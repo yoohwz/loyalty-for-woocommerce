@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/assertions.php';
 global $wpdb;
-loyf_equal( '1.2.2', YOSWC_LOYALTY_VERSION, 'Identity/version' );
+loyf_equal( json_decode( file_get_contents( __DIR__ . '/../../config/free-import-manifest.json' ), true )['free']['version'], YOSWC_LOYALTY_VERSION, 'Identity/version' );
 loyf_assert( class_exists( 'YOWCL_Points_Transaction' ), 'Hardened core boot' );
 $pre = get_option( 'loyf_fixture_pre' ); $table = YOSWC_Loyalty_Database::get_table_name();
 $row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id=%d", $pre['row']['id'] ), ARRAY_A );

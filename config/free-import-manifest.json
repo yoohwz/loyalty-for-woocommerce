@@ -12,7 +12,7 @@
     "slug": "loyalty-for-woocommerce",
     "main_file": "loyalty-for-woocommerce.php",
     "text_domain": "loyalty-for-woocommerce",
-    "version": "1.2.2",
+    "version": "1.3.0",
     "plugin_name": "Loyalty for WooCommerce",
     "plugin_uri": "https://wordpress.org/plugins/loyalty-for-woocommerce/"
   },
@@ -275,7 +275,7 @@
     {
       "target": "changelog.txt",
       "mode": "100644",
-      "sha256": "31a639983f4335fd7583137d0be5d64b14a47006221e9d7a6c34bfe543d8ab70"
+      "sha256": "9c36fec631eea500f51e0d51d61409b5f7d034cfa684e5f5c1c0d245f2a1cbe7"
     },
     {
       "target": "css/backend-style.css",
@@ -610,7 +610,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "fc16cb93f413a587cb8fd7c5c51364bc53dee30910f2b75acde9594bcee909e6"
+      "sha256": "ca1c0af0083eb2d556fc20f5fa0b458cbed4697261944dc07e9614a805274570"
     },
     {
       "target": "license.txt",
@@ -620,12 +620,12 @@
     {
       "target": "loyalty-for-woocommerce.php",
       "mode": "100644",
-      "sha256": "391bff13fc1842f0dc369a0f12355b0d2222aa2f3238f3f7aa29f42af407059b"
+      "sha256": "918cd2159e11500c0e3cdb010328d279d57c2707dfa0e472338941cb126c4613"
     },
     {
       "target": "readme.txt",
       "mode": "100644",
-      "sha256": "d5dc658e5aed1d9643ecea1fa56b09ddf6f3da0ec6184606e669d8b1c7b7a705"
+      "sha256": "c9ba6c85313d8efebbc193fdf68fd87685901e09d546e63a5d682cea9ea10141"
     }
   ],
   "blocked_mixed_modules": [

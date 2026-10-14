@@ -13,6 +13,7 @@ import zipfile
 
 sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[2]
+VERSION = json.loads((ROOT / 'config/free-import-manifest.json').read_text())['free']['version']
 spec = importlib.util.spec_from_file_location('package', ROOT / 'scripts/verify-distribution.py')
 package = importlib.util.module_from_spec(spec); spec.loader.exec_module(package)
 
@@ -23,19 +24,19 @@ class Metadata(unittest.TestCase):
             root = Path(work) / 'loyalty-for-woocommerce'; root.mkdir()
             for path in ('loyalty-for-woocommerce.php', 'readme.txt', 'changelog.txt'):
                 shutil.copyfile(ROOT / path, root / path)
-            package.verify_version(work, '1.2.2')
+            package.verify_version(work, VERSION)
             for path, old, new in (
-                ('loyalty-for-woocommerce.php', 'Version: 1.2.2', 'Version: 9.9.9'),
-                ('readme.txt', 'Stable tag: 1.2.2', 'Stable tag: trunk'),
-                ('readme.txt', 'Stable tag: 1.2.2', 'Stable tag: 1.2.2\nStable tag: 1.2.2'),
-                ('readme.txt', 'Stable tag: 1.2.2', ''),
-                ('readme.txt', '= 1.2.2 (', '= 9.9.9 ('),
-                ('changelog.txt', '= 1.2.2 (', '= 9.9.9 ('),
+                ('loyalty-for-woocommerce.php', f'Version: {VERSION}', 'Version: 9.9.9'),
+                ('readme.txt', f'Stable tag: {VERSION}', 'Stable tag: trunk'),
+                ('readme.txt', f'Stable tag: {VERSION}', f'Stable tag: {VERSION}\nStable tag: {VERSION}'),
+                ('readme.txt', f'Stable tag: {VERSION}', ''),
+                ('readme.txt', f'= {VERSION} (', '= 9.9.9 ('),
+                ('changelog.txt', f'= {VERSION} (', '= 9.9.9 ('),
             ):
                 original = (root / path).read_text()
                 (root / path).write_text(original.replace(old, new, 1))
                 with self.subTest(path=path, new=new), self.assertRaises(ValueError):
-                    package.verify_version(work, '1.2.2')
+                    package.verify_version(work, VERSION)
                 (root / path).write_text(original)
 
 
@@ -65,7 +66,7 @@ class Artifact(unittest.TestCase):
     @classmethod
     def invoke(cls, command, *args, ok=True):
         result = subprocess.run([sys.executable, str(cls.repo / 'scripts/release-artifact.py'), command,
-                                 '--sha', cls.sha, '--version', '1.2.2', '--purpose', 'VERIFICATION_ONLY', *args],
+                                 '--sha', cls.sha, '--version', VERSION, '--purpose', 'VERIFICATION_ONLY', *args],
                                 capture_output=True, text=True)
         if (result.returncode == 0) != ok:
             raise AssertionError(result.stdout + result.stderr)
@@ -164,7 +165,7 @@ class Artifact(unittest.TestCase):
         self.assertTrue((trunk / 'loyalty-for-woocommerce.php').is_file())
         self.assertFalse((trunk / 'loyalty-for-woocommerce').exists())
         self.assertEqual('unchanged', (assets / 'keep.txt').read_text())
-        tag = directory / 'tags/1.2.2'; tag.parent.mkdir(); shutil.copytree(trunk, tag)
+        tag = directory / f'tags/{VERSION}'; tag.parent.mkdir(); shutil.copytree(trunk, tag)
         self.assertEqual(self.receipt['inventory'], package.files_under(tag))
 
 
