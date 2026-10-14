@@ -335,3 +335,42 @@ td.current_points, td.total_earned {
 	.loyf-loyalty-emails .wc-email-settings-table-actions .button { float: none; }
 	.loyf-loyalty-emails td:nth-child(2)::before, .loyf-loyalty-emails td:last-child::before { content: none; }
 }
+
+/* Contextual discovery stays within the owning Loyalty screen. */
+.loyf-premium-card {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-inline-start: 4px solid var(--loyf-admin-accent, currentColor);
+    border-radius: 4px;
+    margin: 24px 0;
+    padding: 16px 20px;
+    max-width: 960px;
+    box-sizing: border-box;
+}
+.loyf-premium-card h2 { margin: 0 0 8px; }
+.loyf-premium-card summary { cursor: pointer; width: fit-content; }
+.loyf-premium-card summary:focus-visible,
+.loyf-preview-table:focus-visible { outline: 2px solid var(--loyf-admin-accent, currentColor); outline-offset: 3px; }
+.loyf-premium-card details[open] summary { margin-bottom: 12px; }
+.loyf-preview-label { font-weight: 600; }
+/* Premium-inspired campaign structure, with readable examples instead of fields. */
+.loyf-campaign-examples { display: grid; gap: 16px; max-width: 1120px; margin: 20px 0; }
+.loyf-campaign-example { background: #fff; border: 1px solid #c3c4c7; border-inline-start: 4px solid #c3c4c7; border-radius: 6px; overflow: hidden; }
+.loyf-campaign-example summary { padding: 12px 16px; background: #f6f7f7; cursor: pointer; font-size: 16px; font-weight: 600; }
+.loyf-campaign-example summary:focus-visible { outline: 2px solid var(--loyf-admin-accent, currentColor); outline-offset: -3px; }
+.loyf-example-badge { display: inline-block; background: #e9ecef; border: 1px solid #dcdcde; border-radius: 20px; padding: 2px 10px; margin-inline-start: 12px; font-size: 12px; vertical-align: middle; }
+.loyf-campaign-body { padding: 0 16px; }
+.loyf-campaign-body section { padding: 18px 0; border-top: 1px solid #e5e5e5; }
+.loyf-campaign-body h2, .loyf-history-filters h2 { font-size: 14px; margin: 0 0 12px; }
+.loyf-example-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 0; }
+.loyf-example-fields dt { font-weight: 600; margin-bottom: 6px; }
+.loyf-example-fields dd { margin: 0; padding: 10px 12px; background: #f6f7f7; border-radius: 4px; }
+.loyf-history-filters { background: #fff; border: 1px solid #c3c4c7; padding: 16px; margin-top: 20px; }
+.loyf-history-filters .loyf-example-fields { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.loyf-preview-table { overflow-x: auto; max-width: 100%; }
+.loyf-preview-table table { min-width: 760px; }
+.loyf-preview-table caption { text-align: start; padding: 12px 0; font-weight: 600; }
+@media screen and (max-width: 782px) {
+    .loyf-example-fields, .loyf-history-filters .loyf-example-fields { grid-template-columns: 1fr; }
+    .loyf-premium-card { padding: 14px; }
+}

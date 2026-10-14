@@ -137,6 +137,11 @@ class YOSWC_Loyalty_Notifications_Email {
             echo '</tr>';
         }
         echo '</tbody></table></div></td></tr>';
+        if ( $loyalty ) {
+            echo '<tr><td colspan="2">';
+            YOWCL_Free_Reader_Admin::premium_card( 'emails' );
+            echo '</td></tr>';
+        }
     }
     /** Preserve native option shape while bypassing pre-transaction cache images. */
     public function committed_settings($pre, $option) {

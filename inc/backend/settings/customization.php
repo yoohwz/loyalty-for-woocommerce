@@ -575,6 +575,8 @@ class YOSWC_Loyalty_Settings_Customization {
 			</tbody>
 		</table>
 
+        <?php YOWCL_Free_Reader_Admin::premium_card( 'customization' ); ?>
+
 		<!-- Cart & Checkout display Settings -->
 		<table class="form-table">
 			<tbody>

@@ -89,12 +89,14 @@ class YOSWC_Loyalty_Frontend {
 			$border_color = isset($membercard['membercard_border_color']) ? esc_attr($membercard['membercard_border_color']) : '#cccccc';
 	
 			$membercard_css = "
-				.loyalty-points-card {
+				.loyalty-points-card,
+                .loyalty-points-card + .loyf-referral-card {
 					color: {$text_color};
 					background-color: {$background_color};
 					border: 1px solid {$border_color};
 				}
-				.loyalty-points-card h3 {
+				.loyalty-points-card h3,
+                .loyalty-points-card + .loyf-referral-card h3 {
 					color: {$text_color};
 				}
 			";

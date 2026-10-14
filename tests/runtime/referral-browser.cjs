@@ -41,6 +41,20 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     assert.equal(await page.evaluate(()=>navigator.clipboard.readText()),base+'/?ref='+f.token);assert.deepEqual(posts,[]);
     await page.goto(base+'/?page_id='+f.account+'&'+encodeURIComponent(f.account_slug)+'=1');
     assert.equal(await page.locator('#loyf-referral-account').inputValue(),base+'/?ref='+f.token);
+    assert.equal(await page.locator('.loyf-referral-card').count(),1,'Single My Points referral card');
+    assert(await page.locator('.loyf-referral-card').evaluate(card=>card.previousElementSibling.matches('.loyalty-points-card')&&card.nextElementSibling.id==='my-points-table'),'Membercard → referral → history');
+    assert.equal(await page.locator('.woocommerce-MyAccount-content a[href*="yoohw.com/product"]').count(),0,'No storefront Premium advertising');
+    for(const width of [1280,390]){
+      await page.setViewportSize({width,height:844});
+      assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'My Points containment '+width);
+      await page.locator('#loyf-referral-account').focus();await page.keyboard.press('Tab');
+      assert.equal(await page.evaluate(()=>document.activeElement.dataset.loyfReferralCopy),'loyf-referral-account','Copy follows input in keyboard order');
+      await page.keyboard.press('Enter');await page.locator('.loyf-referral-card [role="status"]').getByText('Link copied',{exact:true}).waitFor();
+    }
+    await page.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async()=>{throw new Error('denied');}}}));
+    await page.locator('[data-loyf-referral-copy="loyf-referral-account"]').click();
+    await page.locator('.loyf-referral-card [role="status"]').getByText('Select and copy the link',{exact:true}).waitFor();
+    assert(await page.locator('#loyf-referral-account').evaluate(input=>document.activeElement===input&&input.selectionStart===0&&input.selectionEnd===input.value.length),'Copy denial selects readable link');
     console.log('Native referral cookie/copy browser PASS Woo'+f.version+' '+f.storage);
   } finally { await browser.close(); }
 })().catch(e=>{console.error(e);process.exitCode=1;});

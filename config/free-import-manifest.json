@@ -280,7 +280,7 @@
     {
       "target": "css/backend-style.css",
       "mode": "100644",
-      "sha256": "73072713ec66310ea772bcd7c8bb98fa1dece91a59b2793bf25ae3ef4856ab67"
+      "sha256": "52b8905bbc866cd18db6e64b2a0e4ac97a987dff1992937743d6c819933e4677"
     },
     {
       "target": "css/blocks-redemption.css",
@@ -295,7 +295,7 @@
     {
       "target": "css/frontend-style.css",
       "mode": "100644",
-      "sha256": "1c1292285ba8cf282b2f24440f8e027fa0e64fbb437082ec6c2570d25ffafb43"
+      "sha256": "4dc6730fc0a71ba1399f1cfdedc3b5f78d1b06c571296f7dc5bf7433601d8428"
     },
     {
       "target": "img/reward.svg",
@@ -315,7 +315,7 @@
     {
       "target": "inc/backend/actions/emails/notifications-email.php",
       "mode": "100644",
-      "sha256": "17883631d98e755b74acc90a3ec2c40aa0c06527257b9dab95ccbd129ab61706"
+      "sha256": "aa51bf3b468f85b0b68020fe916615ee0ba684dce9824896a806e09175069aec"
     },
     {
       "target": "inc/backend/actions/extra-points/level-up.php",
@@ -350,12 +350,12 @@
     {
       "target": "inc/backend/settings.php",
       "mode": "100644",
-      "sha256": "e875e87b43f628fc5b7a25e9bebf9407f53c690ebf6e92774a47bdde36ab4759"
+      "sha256": "42e2ffe23397cef31bb5349d5ac6efd5907ea8b094dca2d3ac8e916dc4481584"
     },
     {
       "target": "inc/backend/settings/customization.php",
       "mode": "100644",
-      "sha256": "671828f3611425b4e63b7c21789ca15ade8bc571d4b027216bc09a9a8de9d015"
+      "sha256": "d661f0d187056196797fb2b5565068511a5d3a961d3215057ab45226e808f2bc"
     },
     {
       "target": "inc/backend/settings/extra-points.php",
@@ -460,7 +460,7 @@
     {
       "target": "inc/cores/frontend.php",
       "mode": "100644",
-      "sha256": "6dec9f347e24907c654d5bfde78c64be4883ad2c8f117355d093e76b514e171c"
+      "sha256": "0197e12d470a8e86ae62a9cbf639259797b97459e2eeed11bf507e8c596964ff"
     },
     {
       "target": "inc/cores/helper/free-admin.php",
@@ -510,7 +510,7 @@
     {
       "target": "inc/cores/helper/free-reader-admin.php",
       "mode": "100644",
-      "sha256": "33923642a0a85e9eab26759985d7f25403872342fe5eb1d3c99cf44caf8c6c54"
+      "sha256": "ff2db08563ebb8b8c1a32382e2e0a1594d47bae94ad526718cfabeac3201e6d3"
     },
     {
       "target": "inc/cores/helper/free-readers.php",
@@ -520,7 +520,7 @@
     {
       "target": "inc/cores/helper/free-referral.php",
       "mode": "100644",
-      "sha256": "af6dda2a3e898d8ea28b7fd5cdf3eae408708357c1ed3d3189adb6bfe1396345"
+      "sha256": "8e28dca5a1fdffaf6a50dc0619a1f1870b741a54d5c723d0a2749f582d9f77fa"
     },
     {
       "target": "inc/cores/notices.php",
@@ -540,7 +540,7 @@
     {
       "target": "inc/frontend/my-account.php",
       "mode": "100644",
-      "sha256": "469d2343e741062a1a7cda1872a8e66f788ad1984c000187216d43ee31ebf47f"
+      "sha256": "33249364bf492ee134ab66ec2158c4c9222108f9db61416fe22fc0dd7eb427b3"
     },
     {
       "target": "inc/frontend/product-message.php",
@@ -610,7 +610,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "f924212bf21a1a8dcae07de4b791345edef941fbb9dd27d116a69d7a50ef24a2"
+      "sha256": "fc16cb93f413a587cb8fd7c5c51364bc53dee30910f2b75acde9594bcee909e6"
     },
     {
       "target": "license.txt",
@@ -620,7 +620,7 @@
     {
       "target": "loyalty-for-woocommerce.php",
       "mode": "100644",
-      "sha256": "0ecf2a1d43a62095114573dba6b8afff8fd8da49fa8f3a4df14f569137e0c7ea"
+      "sha256": "391bff13fc1842f0dc369a0f12355b0d2222aa2f3238f3f7aa29f42af407059b"
     },
     {
       "target": "readme.txt",

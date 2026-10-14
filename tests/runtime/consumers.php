@@ -85,6 +85,29 @@ foreach(array(array('wc-completed'),serialize(array('wc-completed')))as$statuses
 $account_page=get_option('woocommerce_myaccount_page_id');update_option('woocommerce_myaccount_page_id',0);$missing=loyf_ajax('wp_ajax_loyf_customer_components',array('nonce'=>wp_create_nonce('wp_rest'),'kinds'=>array('points-history')));loyf_assert(false!==strpos($missing['data']['points-history'],'not enabled'),'Missing account page state');update_option('woocommerce_myaccount_page_id',$account_page);
 $levels=get_option('loyalty_levels_rules');update_option('loyalty_levels_rules',array('loyf_gold'=>array('from'=>'bad')));loyf_equal(null,YOWCL_Free_Readers::customer($a)['level'],'Unknown level configuration is not guessed');update_option('loyalty_levels_rules',$levels);
 wp_set_current_user(0);loyf_equal(false,loyf_ajax('wp_ajax_loyf_customer_components',$fields)['success'],'Guest denied');wp_set_current_user($b);loyf_equal(false,loyf_ajax('wp_ajax_loyf_customer_components',$fields)['success'],'A nonce cannot authorize B');wp_set_current_user(1);
+// Static Premium discovery is read-only and enforces admin + edition ownership.
+$preview_editor=wp_insert_user(array('user_login'=>'preview_editor','user_email'=>'preview-editor@example.invalid','user_pass'=>'disposable-only','role'=>'editor'));loyf_assert(!is_wp_error($preview_editor),'Create preview editor fixture');
+$before=cr_snapshot();
+foreach(array('account','bubble') as $scope){ob_start();YOWCL_Free_Referral::render_link($scope);loyf_equal('',ob_get_clean(),'Disabled referral has no empty card');}
+foreach(array('campaigns_preview','history_preview') as $method){
+    ob_start();YOWCL_Free_Reader_Admin::$method();$preview=ob_get_clean();
+    loyf_assert(false!==strpos($preview,'Premium preview') && false!==strpos($preview,'Example only'),'Explicit illustrative preview');
+    loyf_assert(false===strpos($preview,'consumer_') && false===strpos($preview,'<form') && false===strpos($preview,'<input'),'No real identities or execution controls');
+}
+foreach(array('overview','emails','referrals','customization','tools') as $context){ob_start();YOWCL_Free_Reader_Admin::premium_card($context);$html=ob_get_clean();loyf_assert(false!==strpos($html,'<details>'),'Native disclosure '.$context);}
+loyf_equal($before,cr_snapshot(),'Preview renders preserve accounting and settings');
+$preview_die=static function(){return static function(){throw new LOYF_Test_Die();};};
+add_filter('wp_die_handler',$preview_die,PHP_INT_MAX);add_filter('wp_die_ajax_handler',$preview_die,PHP_INT_MAX);
+foreach(array(0,$a,$b,$preview_editor) as $viewer){
+    wp_set_current_user($viewer);
+    foreach(array('campaigns_preview','history_preview') as $method){$denied=false;try{YOWCL_Free_Reader_Admin::$method();}catch(LOYF_Test_Die $e){$denied=true;}loyf_assert($denied,'Preview permission denied');}
+    ob_start();YOWCL_Free_Reader_Admin::premium_card('referrals');loyf_equal('',ob_get_clean(),'No customer promotional markup');
+}
+wp_set_current_user(1);$active=get_option('active_plugins');update_option('active_plugins',array_merge($active,array('wc-loyalty/wc-loyalty.php')));
+foreach(array('campaigns_preview','history_preview') as $method){$denied=false;try{YOWCL_Free_Reader_Admin::$method();}catch(LOYF_Test_Die $e){$denied=true;}loyf_assert($denied,'Premium owner denies Free preview');}
+ob_start();YOWCL_Free_Reader_Admin::menu();YOWCL_Free_Reader_Admin::premium_card('overview');loyf_equal('',ob_get_clean(),'Premium ownership hides Free discovery');
+update_option('active_plugins',$active);remove_filter('wp_die_handler',$preview_die,PHP_INT_MAX);remove_filter('wp_die_ajax_handler',$preview_die,PHP_INT_MAX);
+loyf_equal($before,cr_snapshot(),'Denied discovery preserves business state');
 // CSV does not touch import retry identity, has deterministic rows and preserves strings.
 $before=cr_snapshot();$csv=cr_csv();loyf_equal('complete',end($csv)[0],'CSV explicit completion');loyf_equal("\t9007199254740993.125",$csv[1][3],'CSV fractional exact available');loyf_equal("\t999999999999999999.500",$csv[1][4],'CSV exact earning spelling');loyf_equal('held',$csv[1][6],'CSV hold state');loyf_equal($csv,cr_csv(),'Repeated CSV deterministic');loyf_equal($before,cr_snapshot(),'CSV never changes import/accounting identity');
 foreach(array('=1+1','+1','-1','@SUM(A1)','＝1','＋1','－1','＠1',"\t=1","\r\n=1",'";=1,escaped')as$payload){$stream=fopen('php://temp','w+');YOWCL_Free_Reader_Admin::csv_row($stream,array('customer',$payload));rewind($stream);$parsed=fgetcsv($stream,0,',','"','');loyf_equal(YOWCL_Free_Reader_Admin::csv_cell($payload),$parsed[1],'Raw CSV parser fidelity');if(preg_match('/^[=+@\-＝＋－＠]/u',$payload)||preg_match('/[\x00-\x1f]/',$payload)){loyf_equal("\t",substr($parsed[1],0,1),'Spreadsheet guard');}fclose($stream);}
