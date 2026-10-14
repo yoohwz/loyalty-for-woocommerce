@@ -283,6 +283,11 @@
       "sha256": "73072713ec66310ea772bcd7c8bb98fa1dece91a59b2793bf25ae3ef4856ab67"
     },
     {
+      "target": "css/blocks-redemption.css",
+      "mode": "100644",
+      "sha256": "05abe7b243db45a8eb98c045aaf12bfe0bb122e167d09b7f36d214d141ce9da6"
+    },
+    {
       "target": "css/customer-components.css",
       "mode": "100644",
       "sha256": "5ffe3104e96e9dc3b3408d66481b2df628cc126e28950182fe92cf86efc491db"
@@ -465,7 +470,7 @@
     {
       "target": "inc/cores/helper/free-blocks-integration.php",
       "mode": "100644",
-      "sha256": "778fa7963f2041ff2e5c461c7e2bd90351ab5d1fe814900294e4a96ad318233b"
+      "sha256": "aeb160393bfe000462587be3b2598429776fb6ca5a1ba96980e9ea8f85201146"
     },
     {
       "target": "inc/cores/helper/free-blocks.php",
@@ -550,7 +555,7 @@
     {
       "target": "js/blocks-redemption.js",
       "mode": "100644",
-      "sha256": "8e458aa89c1dc1f476fa0cccf9a2de930c6f953e3e638e5345cd3251cddbfeaf"
+      "sha256": "48aec24e92fac5191c0b73157629a602341df3aedaa76bf856aa899fe695f707"
     },
     {
       "target": "js/customer-components.js",
@@ -605,7 +610,7 @@
     {
       "target": "languages/loyalty-for-woocommerce.pot",
       "mode": "100644",
-      "sha256": "c4a1ee33a60d0c178571ef6723e3e95e468424f61144e197a4a6f04d4d840ca4"
+      "sha256": "f924212bf21a1a8dcae07de4b791345edef941fbb9dd27d116a69d7a50ef24a2"
     },
     {
       "target": "license.txt",

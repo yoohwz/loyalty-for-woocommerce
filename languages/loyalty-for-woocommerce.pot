@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-13T02:35:09+00:00\n"
+"POT-Creation-Date: 2026-10-13T04:13:56+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: loyalty-for-woocommerce\n"
@@ -1795,7 +1795,7 @@ msgstr ""
 #: inc/frontend/cart-checkout.php:75
 #: inc/frontend/cart-checkout.php:167
 #: inc/frontend/cart-checkout.php:192
-#: js/blocks-redemption.js:46
+#: js/blocks-redemption.js:55
 #, php-format,js-format
 msgid "You will earn %d points with this purchase."
 msgstr ""
@@ -1830,12 +1830,12 @@ msgid "%d points are applied to this cart."
 msgstr ""
 
 #: inc/frontend/cart-checkout.php:148
-#: js/blocks-redemption.js:51
+#: js/blocks-redemption.js:54
 msgid "Remove points"
 msgstr ""
 
 #: inc/frontend/cart-checkout.php:153
-#: js/blocks-redemption.js:50
+#: js/blocks-redemption.js:51
 msgid "Apply points"
 msgstr ""
 
@@ -2253,30 +2253,39 @@ msgstr ""
 msgid "Earned:"
 msgstr ""
 
-#: js/blocks-redemption.js:31
+#: js/blocks-redemption.js:33
 msgid "Enter a whole points amount."
 msgstr ""
 
-#: js/blocks-redemption.js:41
+#: js/blocks-redemption.js:43
 msgid "Points could not be updated. Retry the same request or refresh your cart."
 msgstr ""
 
-#: js/blocks-redemption.js:45
-#, js-format
-msgid "Available points: %d"
+#: js/blocks-redemption.js:46
+#: js/blocks-redemption.js:47
+msgid "Loyalty points"
 msgstr ""
 
 #: js/blocks-redemption.js:48
 #, js-format
-msgid "%d points applied: %s"
-msgstr ""
-
-#: js/blocks-redemption.js:49
-msgid "Points to apply"
+msgid "Available points: %d"
 msgstr ""
 
 #: js/blocks-redemption.js:50
+msgid "Points to apply"
+msgstr ""
+
+#: js/blocks-redemption.js:51
 msgid "Retry points update"
+msgstr ""
+
+#: js/blocks-redemption.js:53
+#, js-format
+msgid "%d points applied: %s"
+msgstr ""
+
+#: js/blocks-redemption.js:57
+msgid "Updating points…"
 msgstr ""
 
 #: inc/blocks/level-progress/block.json
