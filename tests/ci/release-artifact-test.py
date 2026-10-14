@@ -48,7 +48,7 @@ class Artifact(unittest.TestCase):
         for path in ('scripts/release-artifact.py', 'scripts/verify-distribution.py'):
             shutil.copyfile(ROOT / path, cls.repo / path)
         cls.git('config', 'user.email', 'fixture@example.invalid'); cls.git('config', 'user.name', 'Offline fixture')
-        cls.git('add', 'scripts'); cls.git('commit', '-qm', 'Offline artifact fixture')
+        cls.git('add', 'scripts'); cls.git('commit', '--allow-empty', '-qm', 'Offline artifact fixture')
         cls.sha = cls.git('rev-parse', 'HEAD')
         cls.output = cls.work / 'artifact'; cls.output.mkdir()
         cls.invoke('build', '--output', str(cls.output))
