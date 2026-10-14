@@ -11,7 +11,7 @@ RUNNER = ROOT / 'tests/runtime/run.sh'
 
 
 class RuntimeTest(unittest.TestCase):
-    def run_case(self, failure='', checkout='/tmp/loyf-disposable-source', dirty=False):
+    def run_case(self, failure='', checkout='/tmp/loyf-disposable-source', dirty=False, shared_cli=False):
         with tempfile.TemporaryDirectory(prefix='loyf-harness-') as directory:
             tmp = Path(directory)
             if checkout == '/tmp/loyf-disposable-source':
@@ -41,9 +41,10 @@ echo "$*" >> "$CALLS"
 if [[ "$*" == *CREATE* && "$FAKE_FAIL" == create ]]; then exit 1; fi
 if [[ "$*" == *DROP* && "$FAKE_FAIL" == cleanup ]]; then exit 1; fi
 ''',
-                'curl': '#!/bin/bash\nexit 0\n',
+                'curl': '#!/bin/bash\necho curl >> "$CALLS"\nexit 0\n',
                 'php': '''#!/bin/bash
 echo "$*" >> "$CALLS"
+[[ -n "$LOYF_FIXTURE" ]] || exit 8
 if [[ "$*" == *seed.php* && "$FAKE_FAIL" == seed ]]; then exit 1; fi
 if [[ "$*" == *upgrade.php* && "$FAKE_FAIL" != incomplete_upgrade ]]; then echo 'Actual old-Free → refreshed-Free upgrade PASS'; fi
 if [[ "$*" == *characterization.php* || "$*" == *hardened.php* ]]; then
@@ -63,6 +64,11 @@ fi
                        LOYF_SKIP_BROWSER='1', LOY_RUNTIME_DISPOSABLE='1', LOY_DB_HOST='127.0.0.1', LOY_DB_USER='root',
                        LOY_DB_PASSWORD='disposable-only', CALLS=str(log), FAKE_FAIL=failure,
                        FAKE_REPO=checkout, FAKE_DIRTY='1' if dirty else '0')
+            env.pop('LOYF_WP_CLI_PHAR', None)
+            if shared_cli:
+                cli = tmp / 'shared-cli.phar'
+                cli.write_text('fixture')
+                env['LOYF_WP_CLI_PHAR'] = str(cli)
             result = subprocess.run(['bash', str(RUNNER)], cwd=ROOT, env=env, capture_output=True)
             calls = log.read_text() if log.exists() else ''
             self.assertFalse(list(tmp.glob('loyf-runtime.*')), 'All temporary site trees cleaned')
@@ -80,6 +86,14 @@ fi
         self.assertTrue(uncaptured)
         self.assertFalse(any('capture-legacy.php' in line for line in calls.splitlines() if '/uncaptured' in line))
         self.assertIn('historical baseline and hardened candidate PASS', result.stdout.decode())
+
+    def test_shared_cli_reuses_file_without_losing_fixture_or_cleanup(self):
+        result, calls = self.run_case(shared_cli=True)
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertNotIn('curl', calls)
+        self.assertIn('shared-cli.phar', calls)
+        self.assertEqual(3, calls.count('CREATE DATABASE'))
+        self.assertEqual(3, calls.count('DROP DATABASE'))
 
     def test_failure_cleanup_and_mismatch(self):
         for failure in ['create', 'seed', 'scenario', 'mismatch', 'cleanup', 'incomplete_upgrade']:

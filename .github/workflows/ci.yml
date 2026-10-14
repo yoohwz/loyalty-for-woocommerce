@@ -86,6 +86,7 @@ jobs:
           PYTHONDONTWRITEBYTECODE=1 python3 tests/ci/policy-test.py
           PYTHONDONTWRITEBYTECODE=1 python3 tests/ci/provenance-test.py
           PYTHONDONTWRITEBYTECODE=1 python3 tests/ci/runtime-test.py
+          PYTHONDONTWRITEBYTECODE=1 python3 tests/ci/browser-router-test.py
           PYTHONDONTWRITEBYTECODE=1 python3 tests/ci/import-contract-test.py
           PYTHONDONTWRITEBYTECODE=1 python3 tests/ci/extraction-test.py
           php tests/migration-opaque.php
@@ -140,7 +141,7 @@ jobs:
     if: needs.syntax.outputs.mode == 'FULL'
     name: Disposable WordPress and WooCommerce runtime
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 35
     services:
       mysql:
         image: mysql:8.0
@@ -173,17 +174,32 @@ jobs:
           extensions: mysqli
           coverage: none
 
+      - name: Prepare pinned runtime tools once
+        run: |
+          curl -fsSL --retry 3 https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar -o "$RUNNER_TEMP/loyf-wp.phar"
+          export LOYF_PLAYWRIGHT_PATH="$RUNNER_TEMP/loyf-browser/node_modules/playwright"
+          npm install --prefix "$RUNNER_TEMP/loyf-browser" playwright@1.56.1 --no-audit --no-fund
+          node "$LOYF_PLAYWRIGHT_PATH/cli.js" install --with-deps chromium
+          echo "LOYF_WP_CLI_PHAR=$RUNNER_TEMP/loyf-wp.phar" >> "$GITHUB_ENV"
+          echo "LOYF_PLAYWRIGHT_PATH=$LOYF_PLAYWRIGHT_PATH" >> "$GITHUB_ENV"
+          echo "LOYF_BROWSER_EXECUTABLE=$(node -e 'console.log(require(process.env.LOYF_PLAYWRIGHT_PATH).chromium.executablePath())')" >> "$GITHUB_ENV"
+
       - name: Run disposable runtime scenarios
         env:
           LOY_RUNTIME_DISPOSABLE: '1'
           LOY_DB_HOST: 127.0.0.1
           LOY_DB_USER: root
           LOY_DB_PASSWORD: loy-runtime-only
+          LOYF_BROWSER_OPCACHE: '1'
         run: |
-          bash tests/runtime/run.sh
-          bash tests/runtime/modern.sh
-          bash tests/runtime/onboarding.sh
-          bash tests/runtime/consumers.sh
+          TIMEFORMAT="LOYF_CI_GROUP run.sh %3R seconds"
+          time bash tests/runtime/run.sh
+          TIMEFORMAT="LOYF_CI_GROUP modern.sh %3R seconds"
+          time bash tests/runtime/modern.sh
+          TIMEFORMAT="LOYF_CI_GROUP onboarding.sh %3R seconds"
+          time bash tests/runtime/onboarding.sh
+          TIMEFORMAT="LOYF_CI_GROUP consumers.sh %3R seconds"
+          time bash tests/runtime/consumers.sh
 
   required:
     name: LOYF Required CI
