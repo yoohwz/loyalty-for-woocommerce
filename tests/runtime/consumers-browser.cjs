@@ -91,7 +91,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     await page.goto(base+'/wp-admin/plugins.php',{waitUntil:'domcontentloaded'});
     const pluginRow=page.locator('tr[data-slug="loyalty-for-woocommerce"]');
     const upgrade=pluginRow.getByRole('link',{name:'Upgrade Premium ↗',exact:true});
-    assert.equal(await upgrade.count(),1);assert.equal(await upgrade.locator('strong').count(),1);
+    assert.equal(await upgrade.count(),1);assert.equal(await upgrade.locator('strong').count(),0);assert.equal(await upgrade.evaluate(link=>getComputedStyle(link).fontWeight),'600');
     assert.equal(await upgrade.getAttribute('rel'),'noopener noreferrer');
     assert.deepEqual((await pluginRow.locator('.row-actions a').allTextContents()).slice(0,3),['Settings','Upgrade Premium ↗','Deactivate']);
     await page.goto(base+'/wp-admin/admin.php?page=wc-settings&tab=loyalty&section=premium',{waitUntil:'domcontentloaded'});
@@ -161,7 +161,7 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
     }
     assert.equal(await page.getByRole('navigation',{name:'Loyalty settings sections'}).getByRole('link',{name:'Notification',exact:true}).count(),0,'Retired Notification section absent');
     await page.goto(base+'/wp-admin/admin.php?page=loyf-emails',{waitUntil:'domcontentloaded'});await page.locator('.loyf-loyalty-emails').waitFor();
-    assert(await page.getByRole('navigation',{name:'Email groups'}).evaluate(nav=>!nav.closest('td')&&Boolean(nav.compareDocumentPosition([...document.querySelectorAll('#mainform h2')][0])&Node.DOCUMENT_POSITION_FOLLOWING)),'Email groups use the native sections location before the heading');
+    assert(await page.getByRole('navigation',{name:'Email groups'}).evaluate(nav=>Boolean(nav.compareDocumentPosition(document.querySelector('.loyf-loyalty-emails'))&Node.DOCUMENT_POSITION_FOLLOWING)),'Email groups precede the shared email table');
     assert.equal(await page.locator('.loyf-loyalty-emails tbody tr').count(),3,'Only three Free emails');
     assert.deepEqual(await page.locator('.loyf-loyalty-emails strong').allTextContents(),['Points earned','Points deducted','Level update']);
     assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile Loyalty emails');
@@ -174,14 +174,13 @@ const { chromium } = require(process.env.LOYF_PLAYWRIGHT_PATH);
         await enabled.setChecked(!wasEnabled);await subject.fill('LOYF-33 '+label);
         await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('button[name=save]').click()]);await page.reload({waitUntil:'domcontentloaded'});
         assert.equal(await enabled.isChecked(),!wasEnabled);assert.equal(await subject.inputValue(),'LOYF-33 '+label,'Native email subject save/reload');
-        await page.getByRole('link',{name:'Back to Loyalty emails',exact:true}).click();await page.locator('.loyf-loyalty-emails').waitFor();
+        assert.equal(await page.getByRole('link',{name:'Back to Loyalty emails',exact:true}).count(),0);await page.getByRole('link',{name:'Return to emails',exact:true}).click();await page.locator('.loyf-loyalty-emails').waitFor();
         const row=page.locator('.loyf-loyalty-emails tbody tr').filter({has:page.getByText(label,{exact:true})});assert.equal(await row.getAttribute('data-loyf-status'),wasEnabled?'Disabled':'Enabled','Group shows actual native enablement');
         await page.getByRole('link',{name:'Manage '+label,exact:true}).click();await enabled.setChecked(wasEnabled);await subject.fill(oldSubject);
         await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('button[name=save]').click()]);await page.reload({waitUntil:'domcontentloaded'});assert.equal(await enabled.isChecked(),wasEnabled);assert.equal(await subject.inputValue(),oldSubject,'Native email restore');
-        await page.getByRole('link',{name:'Back to Loyalty emails',exact:true}).click();await page.locator('.loyf-loyalty-emails').waitFor();
+        assert.equal(await page.getByRole('link',{name:'Back to Loyalty emails',exact:true}).count(),0);await page.getByRole('link',{name:'Return to emails',exact:true}).click();await page.locator('.loyf-loyalty-emails').waitFor();
     }
-    await page.getByRole('navigation',{name:'Email groups'}).getByRole('link',{name:'General',exact:true}).click();
-    assert(await page.getByRole('navigation',{name:'Email groups'}).evaluate(nav=>{const heading=document.querySelector('#mainform h2');return Boolean(nav.compareDocumentPosition(heading)&Node.DOCUMENT_POSITION_FOLLOWING)&&Math.abs(nav.querySelector('.subsubsub').getBoundingClientRect().left-heading.getBoundingClientRect().left)<1;}),'General email sections precede and align with the native heading');
+    await page.getByRole('navigation',{name:'Email groups'}).getByRole('link',{name:/^General \(\d+\)$/}).click();
     if(versionAtLeast(fixture.version,'9.9')) {
         const nativeListing=page.locator('#wc_settings_email_listing_slotfill');await nativeListing.waitFor();
         assert(await page.getByRole('navigation',{name:'Email groups'}).evaluate(nav=>Boolean(nav.compareDocumentPosition(document.querySelector('#wc_settings_email_listing_slotfill'))&Node.DOCUMENT_POSITION_FOLLOWING)),'Group navigation precedes native block listing');

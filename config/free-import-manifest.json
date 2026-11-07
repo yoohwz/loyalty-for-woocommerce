@@ -280,7 +280,7 @@
     {
       "target": "css/backend-style.css",
       "mode": "100644",
-      "sha256": "52b8905bbc866cd18db6e64b2a0e4ac97a987dff1992937743d6c819933e4677"
+      "sha256": "9a16e2485d80a3bd8751f956cde6b97ec1a76462b86a2ac711de5416434130ae"
     },
     {
       "target": "css/blocks-redemption.css",
@@ -315,7 +315,7 @@
     {
       "target": "inc/backend/actions/emails/notifications-email.php",
       "mode": "100644",
-      "sha256": "aa51bf3b468f85b0b68020fe916615ee0ba684dce9824896a806e09175069aec"
+      "sha256": "ae79e3ba96cce80724575393799b412a7d004cf22e78c908a2efdd705a12ca9f"
     },
     {
       "target": "inc/backend/actions/extra-points/level-up.php",
@@ -620,7 +620,7 @@
     {
       "target": "loyalty-for-woocommerce.php",
       "mode": "100644",
-      "sha256": "918cd2159e11500c0e3cdb010328d279d57c2707dfa0e472338941cb126c4613"
+      "sha256": "0c0be29bca26046ece2dafe3e0a34fbbc912c18680c9222377422e528646239a"
     },
     {
       "target": "readme.txt",
