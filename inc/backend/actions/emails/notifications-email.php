@@ -5,7 +5,7 @@ class YOSWC_Loyalty_Notifications_Email {
     public function __construct() {
         add_filter('woocommerce_email_classes', array($this, 'register'));
         add_filter('woocommerce_email_groups', array($this, 'register_email_group'));
-        add_filter('woocommerce_email_settings', array($this, 'grouped_settings'), 30);
+        add_filter('woocommerce_email_settings', array($this, 'grouped_settings'));
         add_action('woocommerce_admin_field_loyf_loyalty_emails', array($this, 'loyalty_email_table'));
         add_action('woocommerce_admin_field_loyf_general_block_emails', array($this, 'general_block_emails'));
         foreach (array('points_reward','points_deduct','level_update') as $family) {
@@ -58,7 +58,9 @@ class YOSWC_Loyalty_Notifications_Email {
                 if ('wc_settings_email_listing_slotfill' !== $html->get_attribute('id')) { continue; }
                 $types = json_decode($html->get_attribute('data-email-types'),true);
                 if (is_array($types)) {
-                    $types = array_values(array_filter($types, static function($email) { return !in_array($email['id'] ?? '', array('yowcl_loyalty_points_reward','yowcl_loyalty_points_deduct','yowcl_loyalty_level_update'),true); }));
+                    $grouped_ids = array();
+                    foreach (WC()->mailer()->get_emails() as $email) { if ('general' !== $this->email_group($email)) { $grouped_ids[] = $email->id; } }
+                    $types = array_values(array_filter($types, static function($email) use ($grouped_ids) { return !in_array($email['id'] ?? '', $grouped_ids, true); }));
                     $html->set_attribute('data-email-types',wp_json_encode($types));
                 }
                 break;

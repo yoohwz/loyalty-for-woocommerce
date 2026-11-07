@@ -65,7 +65,7 @@ foreach (array(false, true) as $cit) {
             $settings[1]['type'] = $type;
             $settings = apply_filters('woocommerce_email_settings', $settings);
             check(count($settings) === count($base) && $settings[2] === $base[2] && $settings[1]['id'] === 'notifications', 'Other Woo settings were changed');
-            check($settings[1]['type'] === (!$cit && $type === 'email_notification_block_emails' && !in_array($group, array('loyalty'), true) ? 'loyf_general_block_emails' : 'loyf_loyalty_emails'), 'Email renderer lost in filter chain');
+            check($settings[1]['type'] === ($type === 'email_notification_block_emails' && 'loyalty' !== $group && !($cit && 'crm' === $group) ? 'loyf_general_block_emails' : 'loyf_loyalty_emails'), 'Email renderer lost in filter chain');
         }
         unset($GLOBALS['hide_save_button']);
         ob_start(); $notifications->loyalty_email_table(); $html = ob_get_clean();
@@ -92,3 +92,31 @@ $_GET['email_group'] = 'loyalty';
 ob_start(); $notifications->loyalty_email_table(array('group'=>'general')); $html = ob_get_clean();
 check(strpos($html, '>new_order</strong>') !== false && strpos($html, '>Points earned</strong>') === false, 'Explicit renderer group contract lost');
 check(strpos($html, 'email_group=general" class="current') !== false, 'Explicit renderer navigation group mismatch');
+
+// Tag-processor and native settings-page doubles verify the payload contract, not WP's parser.
+class WP_HTML_Tag_Processor {
+    private $html;
+    private $visited = false;
+    public function __construct($html) { $this->html = $html; }
+    public function next_tag() { if ($this->visited) { return false; } $this->visited = true; return true; }
+    public function get_attribute($name) { preg_match('/' . preg_quote($name, '/') . '="([^"]*)"/', $this->html, $match); return isset($match[1]) ? html_entity_decode($match[1], ENT_QUOTES, 'UTF-8') : null; }
+    public function set_attribute($name, $value) { $this->html = preg_replace('/' . preg_quote($name, '/') . '="[^"]*"/', $name . '="' . esc_attr($value) . '"', $this->html); }
+    public function get_updated_html() { return $this->html; }
+}
+function wp_json_encode($value) { return json_encode($value); }
+class WC_Admin_Settings {
+    public static function get_settings_pages() { return array(new class {
+        public function get_id() { return 'email'; }
+        public function email_notification_setting_block_emails() {
+            $types = array_map(static function($email) { return array('id'=>$email->id); }, array_values($GLOBALS['emails']));
+            echo '<div id="wc_settings_email_listing_slotfill" data-email-types="' . esc_attr(json_encode($types)) . '" data-edit-template-url="post.php?post=42">Edit template</div>';
+        }
+    }); }
+}
+$_GET['email_group'] = 'general';
+ob_start(); $notifications->general_block_emails(); $html = ob_get_clean();
+check(strpos($html, 'data-edit-template-url="post.php?post=42"') !== false, 'Native template editor entry lost');
+preg_match('/data-email-types="([^"]*)"/', $html, $match);
+$types = json_decode(html_entity_decode($match[1], ENT_QUOTES, 'UTF-8'), true);
+check(array_column($types, 'id') === array('new_order'), 'General block listing must exclude both CRM and Loyalty groups');
+echo "PASS: native General template entry and group isolation with CIT active\n";
