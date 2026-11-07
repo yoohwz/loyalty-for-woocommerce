@@ -65,10 +65,11 @@ foreach (array(false, true) as $cit) {
             $settings[1]['type'] = $type;
             $settings = apply_filters('woocommerce_email_settings', $settings);
             check(count($settings) === count($base) && $settings[2] === $base[2] && $settings[1]['id'] === 'notifications', 'Other Woo settings were changed');
-            check($settings[1]['type'] === 'loyf_loyalty_emails', 'Email renderer lost in filter chain');
+            check($settings[1]['type'] === (!$cit && $type === 'email_notification_block_emails' && !in_array($group, array('loyalty'), true) ? 'loyf_general_block_emails' : 'loyf_loyalty_emails'), 'Email renderer lost in filter chain');
         }
         unset($GLOBALS['hide_save_button']);
         ob_start(); $notifications->loyalty_email_table(); $html = ob_get_clean();
+        check(empty($GLOBALS['hide_save_button']), 'Shared editable Woo settings must keep their Save control');
         $expected = 'loyalty' === $group ? 'yowcl_loyalty_points_reward' : ($cit && 'crm' === $group ? 'crm_task_assigned' : 'new_order');
         $expected_key = array_keys(array_filter($GLOBALS['emails'], static function($email) use ($expected) { return $email->id === $expected; }))[0];
         check(strpos($html, 'section=' . strtolower($expected_key) . '&amp;email_group=' . ('loyalty' === $group ? 'loyalty' : ($cit && 'crm' === $group ? 'crm' : 'general'))) !== false, 'Manage link missing or wrong group');
@@ -86,3 +87,8 @@ check(substr_count($html, 'data-loyf-status="Settings preserved"') === 3, 'Migra
 echo "PASS: migration hold presentation preserved\n";
 
 check(empty($GLOBALS['hooks']['woocommerce_email_settings_before']), 'Redundant Loyalty backlink is still registered');
+
+$_GET['email_group'] = 'loyalty';
+ob_start(); $notifications->loyalty_email_table(array('group'=>'general')); $html = ob_get_clean();
+check(strpos($html, '>new_order</strong>') !== false && strpos($html, '>Points earned</strong>') === false, 'Explicit renderer group contract lost');
+check(strpos($html, 'email_group=general" class="current') !== false, 'Explicit renderer navigation group mismatch');

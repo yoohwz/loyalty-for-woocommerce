@@ -315,7 +315,7 @@
     {
       "target": "inc/backend/actions/emails/notifications-email.php",
       "mode": "100644",
-      "sha256": "47a362dc12cef89bdc2335e38b2aa849514fa7313f516c0f101bd748dbae6985"
+      "sha256": "ba7935e6597787f351a8451f498d45e43126f213077179a7cce9a790976e912c"
     },
     {
       "target": "inc/backend/actions/extra-points/level-up.php",
