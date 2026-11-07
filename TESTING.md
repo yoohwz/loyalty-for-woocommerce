@@ -233,3 +233,7 @@ consistency, wrong root/source drift denial and merged-main ancestry/package
 no-drift. It grants no release authority and contacts no production SVN. See
 [the release runbook](.github/RELEASING.md) for one final-candidate FULL CI,
 separate exact-artifact Acceptance and Human publication authorization.
+
+## LOYF-49 email settings presentation
+
+`php tests/email-settings.php` executes the production grouped email presenter with priority-ordered hook and mailer doubles. It checks LOYF alone and the CIT priority-20 field/group contract, group counts/isolation, Manage URLs, malformed group fallback, preserved Woo fields, migration holds and removal of the redundant backlink. It does not certify native WordPress/Woo/CIT bootstrap or browser layout. Human-owned yoplay10 bounded read-only browser QA separately observed active LOYF+CIT, inline action links, General25/Loyalty3/CRM9 and both editors; those installed product files include unrelated 1.3.1 changes and are not the exact Git candidate.

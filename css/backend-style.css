@@ -374,3 +374,9 @@ td.current_points, td.total_earned {
     .loyf-example-fields, .loyf-history-filters .loyf-example-fields { grid-template-columns: 1fr; }
     .loyf-premium-card { padding: 14px; }
 }
+
+.loyf-email-group-tabs { margin: 16px 0 12px; }
+.loyf-email-group-tabs .subsubsub { float: none; margin: 0; padding: 0 0 2px; }
+.loyf-email-group-tabs .subsubsub li { margin: 0 8px 0 0; padding: 0; }
+.loyf-email-group-tabs .subsubsub a { font-size: 14px; font-weight: 600; line-height: 1.8; text-decoration: none; }
+.loyf-email-group-tabs .count { font-weight: 400; }
